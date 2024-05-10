@@ -1,0 +1,21 @@
+CREATE TABLE IF NOT EXISTS Serving (
+    id INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,
+    food_id INTEGER NOT NULL,
+    grams REAL NOT NULL
+);
+
+insert:
+INSERT INTO Serving (food_id, grams) VALUES (?, ?);
+
+getAll:
+SELECT * FROM Serving;
+
+update:
+UPDATE Serving
+    SET
+        food_id = :foodId,
+        grams = :grams
+WHERE id IS :id;
+
+delete:
+DELETE FROM Serving WHERE id IS :id;
