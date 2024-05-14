@@ -5,6 +5,7 @@ import io.ktor.client.request.*
 import io.ktor.client.statement.bodyAsText
 import io.ktor.http.ContentType
 import io.ktor.http.contentType
+import vanguard_unicon.model.User
 
 class UserDao {
     suspend fun fetchMessage(): String {
@@ -12,15 +13,15 @@ class UserDao {
         return response.bodyAsText()
     }
 
-    suspend fun addUser(name: String, email: String): String {
+    suspend fun addUser(user: User): String {
         val response = web.post("http://localhost:8080/users") {
             contentType(ContentType.Application.Json)
             setBody(
                 """
                     {
                         "id": 0,
-                        "name": "$name",
-                        "email": "$email",
+                        "name": "${user.name}",
+                        "email": "${user.email}",
                         "password": "hunter2"
                     }
                     """.trimIndent()

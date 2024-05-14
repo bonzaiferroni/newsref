@@ -17,6 +17,7 @@ import io.ktor.http.*
 
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
+import vanguard_unicon.model.User
 
 class HomeModel(private val userDao: UserDao) : ScreenModel {
 
@@ -35,16 +36,16 @@ class HomeModel(private val userDao: UserDao) : ScreenModel {
     }
 
     fun updateName(name: String) {
-        _state.value = _state.value.copy(name = name)
+        _state.value = _state.value.copy(user = _state.value.user.copy(name = name))
     }
 
     fun updateEmail(email: String) {
-        _state.value = _state.value.copy(email = email)
+        _state.value = _state.value.copy(user = _state.value.user.copy(email = email))
     }
 
     fun addUser() {
         screenModelScope.launch(Dispatchers.IO) {
-            val response = userDao.addUser(_state.value.name, _state.value.email)
+            val response = userDao.addUser(_state.value.user)
             _state.value = _state.value.copy(message = response)
         }
     }
@@ -53,6 +54,5 @@ class HomeModel(private val userDao: UserDao) : ScreenModel {
 data class HomeState(
     val counter: Int = 0,
     val message: String = "",
-    val name: String = "",
-    val email: String = "",
+    val user: User = User()
 )

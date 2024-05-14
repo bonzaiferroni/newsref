@@ -1,4 +1,4 @@
-package vanguard_unicorn.server.model
+package vanguard_unicon.model
 
 import kotlinx.serialization.Serializable
 import kotlin.time.Duration

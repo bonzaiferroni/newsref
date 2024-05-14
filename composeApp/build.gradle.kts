@@ -57,6 +57,7 @@ kotlin {
             implementation("io.ktor:ktor-client-okhttp:$ktorVersion")
 
             implementation(project(":chopui"))
+            implementation(project(":model"))
         }
         desktopMain.dependencies {
             implementation(compose.desktop.currentOs)
