@@ -24,8 +24,8 @@ import cafe.adriel.voyager.navigator.currentOrThrow
 import com.bollwerks.chopui.Scaffold
 import org.jetbrains.compose.resources.ExperimentalResourceApi
 import org.jetbrains.compose.resources.painterResource
-import sqldem.composeapp.generated.resources.Res
-import sqldem.composeapp.generated.resources.compose_multiplatform
+import vanguard_unicorn.composeapp.generated.resources.Res
+import vanguard_unicorn.composeapp.generated.resources.compose_multiplatform
 
 class HomeScreen : Screen {
     @Composable
@@ -66,6 +66,7 @@ class HomeScreen : Screen {
         }
     }
 
+    @OptIn(ExperimentalResourceApi::class)
     @Composable
     fun GreetingContent() {
         var showContent by remember { mutableStateOf(false) }

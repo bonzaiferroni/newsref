@@ -1,4 +1,4 @@
-rootProject.name = "SqlDem"
+rootProject.name = "vanguard_unicorn"
 enableFeaturePreview("TYPESAFE_PROJECT_ACCESSORS")
 
 pluginManagement {
@@ -20,3 +20,4 @@ dependencyResolutionManagement {
 
 include(":composeApp")
 include(":chopui")
+include(":server")
