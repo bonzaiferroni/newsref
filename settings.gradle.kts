@@ -1,4 +1,4 @@
-rootProject.name = "vanguard_unicorn"
+rootProject.name = "streetlight"
 enableFeaturePreview("TYPESAFE_PROJECT_ACCESSORS")
 
 pluginManagement {
