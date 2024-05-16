@@ -1,0 +1,54 @@
+CREATE TABLE IF NOT EXISTS Food (
+    id INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,
+    name TEXT NOT NULL,
+    description TEXT,
+    barcode TEXT,
+    serving_size REAL DEFAULT 0,
+    calories REAL DEFAULT 0,
+    protein REAL DEFAULT 0,
+    carbs REAL DEFAULT 0,
+    fat REAL DEFAULT 0,
+    fiber REAL DEFAULT 0
+);
+
+insertFood:
+INSERT OR REPLACE INTO Food(
+    id,
+    name,
+    description,
+    barcode,
+    serving_size,
+    calories,
+    protein,
+    carbs,
+    fat,
+    fiber
+)
+VALUES(?,?,?,?,?,?,?,?,?,?);
+
+insertName:
+INSERT OR REPLACE INTO Food(
+    name
+)
+VALUES(?);
+
+getAll:
+SELECT * FROM Food;
+
+update:
+UPDATE Food
+SET
+    name = :name,
+    description = :description,
+    barcode = :barcode,
+    serving_size = :serving_size,
+    calories = :calories,
+    protein = :protein,
+    carbs = :carbs,
+    fat = :fat,
+    fiber = :fiber
+WHERE id IS :id;
+
+delete:
+DELETE FROM Food
+WHERE id IS :id;

@@ -49,18 +49,8 @@ class HomeScreen : Screen {
                 Button(onClick = screenModel::fetchMessage) {
                     Text("fetch")
                 }
-                TextField(
-                    value = state.user.name,
-                    onValueChange = screenModel::updateName,
-                    label = { Text("Name") }
-                )
-                TextField(
-                    value = state.user.email,
-                    onValueChange = screenModel::updateEmail,
-                    label = { Text("Email") }
-                )
-                Button(onClick = screenModel::addUser) {
-                    Text("Add User")
+                Button(onClick = { navigator.push(CreateUserScreen()) }) {
+                    Text("Create User")
                 }
             }
         }

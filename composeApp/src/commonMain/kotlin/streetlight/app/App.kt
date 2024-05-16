@@ -6,9 +6,7 @@ import cafe.adriel.voyager.navigator.Navigator
 import cafe.adriel.voyager.transitions.SlideTransition
 import streetlight.app.data.FoodDao
 import streetlight.app.data.UserDao
-import streetlight.app.ui.FoodModel
-import streetlight.app.ui.HomeModel
-import streetlight.app.ui.HomeScreen
+import streetlight.app.ui.*
 import org.jetbrains.compose.ui.tooling.preview.Preview
 import org.kodein.di.DI
 import org.kodein.di.bindProvider
@@ -21,8 +19,11 @@ val di = DI {
             driver = DatabaseDriverFactory().create()
         )
     }
+    // daos
     bindProvider { UserDao() }
     bindProvider { FoodDao(instance()) }
+    // models
+    bindProvider { CreateUserModel(instance()) }
     bindProvider { FoodModel(instance()) }
     bindProvider { HomeModel(instance()) }
 }

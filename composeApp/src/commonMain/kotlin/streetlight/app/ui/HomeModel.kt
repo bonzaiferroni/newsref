@@ -25,21 +25,6 @@ class HomeModel(private val userDao: UserDao) : ScreenModel {
             _state.value = _state.value.copy(message = response)
         }
     }
-
-    fun updateName(name: String) {
-        _state.value = _state.value.copy(user = _state.value.user.copy(name = name))
-    }
-
-    fun updateEmail(email: String) {
-        _state.value = _state.value.copy(user = _state.value.user.copy(email = email))
-    }
-
-    fun addUser() {
-        screenModelScope.launch(Dispatchers.IO) {
-            val response = userDao.addUser(_state.value.user)
-            _state.value = _state.value.copy(message = response)
-        }
-    }
 }
 
 data class HomeState(
