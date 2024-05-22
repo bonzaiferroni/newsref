@@ -1,19 +1,13 @@
 package streetlight.app.ui
 
-import androidx.compose.runtime.State
-import androidx.compose.runtime.mutableStateOf
-import cafe.adriel.voyager.core.model.ScreenModel
 import cafe.adriel.voyager.core.model.screenModelScope
 import kotlinx.coroutines.launch
 import streetlight.app.data.UserDao
 import streetlight.model.User
 
-class CreateUserModel(private val userDao: UserDao) : ScreenModel {
-    private val _state = mutableStateOf(CreateUserState())
-    private var sv
-        get() = _state.value
-        set(value) { _state.value = value }
-    val state: State<CreateUserState> = _state
+class CreateUserModel(
+    private val userDao: UserDao
+) : UiModel<CreateUserState>(CreateUserState()) {
 
     fun updateName(name: String) {
         sv = sv.copy(user = sv.user.copy(name = name))
@@ -38,4 +32,4 @@ class CreateUserModel(private val userDao: UserDao) : ScreenModel {
 data class CreateUserState(
     val user: User = User(),
     val result: String = ""
-)
+) : UiState

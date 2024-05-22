@@ -26,6 +26,7 @@ val di = DI {
     bindProvider { CreateUserModel(instance()) }
     bindProvider { FoodModel(instance()) }
     bindProvider { HomeModel(instance()) }
+    // bindProvider { LocationListModel(instance()) }
 }
 
 @Composable

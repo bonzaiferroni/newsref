@@ -15,16 +15,7 @@ class UserDao {
     suspend fun addUser(user: User): String {
         val response = web.post("http://localhost:8080/users") {
             contentType(ContentType.Application.Json)
-            setBody(
-                """
-                    {
-                        "id": 0,
-                        "name": "${user.name}",
-                        "email": "${user.email}",
-                        "password": "hunter2"
-                    }
-                    """.trimIndent()
-            )
+            setBody(user)
         }
         return response.status.toString()
     }

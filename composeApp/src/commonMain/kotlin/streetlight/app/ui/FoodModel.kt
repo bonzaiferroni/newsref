@@ -11,9 +11,7 @@ import kotlinx.coroutines.launch
 
 class FoodModel(
     private val foodDao: FoodDao,
-) : ScreenModel {
-    private val _state = mutableStateOf(FoodState())
-    val state: State<FoodState> = _state
+) : UiModel<FoodState>(FoodState()) {
 
     init {
         screenModelScope.launch {
@@ -41,4 +39,4 @@ class FoodModel(
 data class FoodState(
     val foods: List<Food> = emptyList(),
     val newFood: Food = getBlankFood(),
-)
+) : UiState

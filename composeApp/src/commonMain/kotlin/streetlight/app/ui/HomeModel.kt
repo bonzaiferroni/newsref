@@ -10,19 +10,16 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import streetlight.model.User
 
-class HomeModel(private val userDao: UserDao) : ScreenModel {
-
-    private val _state = mutableStateOf(HomeState())
-    val state: State<HomeState> = _state
+class HomeModel(private val userDao: UserDao) : UiModel<HomeState>(HomeState()) {
 
     fun growCounter() {
-        _state.value = _state.value.copy(counter = _state.value.counter + 1)
+        sv = sv.copy(counter = sv.counter + 1)
     }
 
     fun fetchMessage() {
         screenModelScope.launch(Dispatchers.IO) {
             val response = userDao.fetchMessage()
-            _state.value = _state.value.copy(message = response)
+            sv = sv.copy(message = response)
         }
     }
 }
@@ -31,4 +28,4 @@ data class HomeState(
     val counter: Int = 0,
     val message: String = "",
     val user: User = User()
-)
+) : UiState
