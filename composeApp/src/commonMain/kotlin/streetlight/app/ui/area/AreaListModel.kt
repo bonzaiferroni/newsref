@@ -17,7 +17,7 @@ class AreaListModel(
 
     fun fetchAreas() {
         screenModelScope.launch(Dispatchers.IO) {
-            val areas = areaDao.fetchAreas()
+            val areas = areaDao.getAll()
             sv = sv.copy(areas = areas)
         }
     }

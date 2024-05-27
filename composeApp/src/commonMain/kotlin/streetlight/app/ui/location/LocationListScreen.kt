@@ -1,13 +1,11 @@
-package streetlight.app.ui
+package streetlight.app.ui.location
 
 import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
-import androidx.compose.material.Button
 import androidx.compose.material.Text
-import androidx.compose.material.TextField
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
@@ -23,14 +21,25 @@ class LocationListScreen : Screen {
         val navigator = LocalNavigator.current
         val screenModel = rememberScreenModel<LocationListModel>()
         val state by screenModel.state
-        Scaffold("Locations", navigator) {
+        Scaffold(
+            title = "Locations",
+            navigator = navigator,
+            floatingAction = { navigator?.push(CreateLocationScreen() {
+                // screenModel.updateHighlight(it)
+                screenModel.fetchLocations()
+            }) }
+        ) {
             Box(
                 modifier = Modifier.fillMaxSize(),
                 contentAlignment = Alignment.Center
             ) {
                 LazyColumn {
                     items(state.locations) {
-                        Text(it.name)
+                        val area = state.areas.find { area -> area.id == it.areaId }
+                        Row {
+                            Text(it.name)
+                            area?.let { Text("(${it.name})") }
+                        }
                     }
                 }
             }

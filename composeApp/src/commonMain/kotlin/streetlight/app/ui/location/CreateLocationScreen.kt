@@ -1,10 +1,9 @@
-package streetlight.app.ui
+package streetlight.app.ui.location
 
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.material.Button
 import androidx.compose.material.DropdownMenu
 import androidx.compose.material.DropdownMenuItem
@@ -15,6 +14,7 @@ import androidx.compose.material.TextField
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.MoreVert
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -28,12 +28,22 @@ import streetlight.app.chopui.Scaffold
 import streetlight.model.Area
 import streetlight.model.Location
 
-class CreateLocationScreen : Screen {
+class CreateLocationScreen(
+    private val onComplete: ((id: Int) -> Unit)?
+) : Screen {
     @Composable
     override fun Content() {
         val navigator = LocalNavigator.current
         val screenModel = rememberScreenModel<CreateLocationModel>()
         val state by screenModel.state
+
+        LaunchedEffect(state.isFinished) {
+            if (state.isFinished) {
+                navigator?.pop()
+                onComplete?.invoke(state.location.id)
+            }
+        }
+
         Scaffold("Add Location", navigator) {
             Box(
                 modifier = Modifier.fillMaxSize(),

@@ -1,4 +1,4 @@
-package streetlight.app.ui
+package streetlight.app.ui.location
 
 import cafe.adriel.voyager.core.model.screenModelScope
 import kotlinx.coroutines.Dispatchers
@@ -17,11 +17,11 @@ class CreateLocationModel(
 
     init {
         screenModelScope.launch(Dispatchers.IO) {
-            val areas = areaDao.fetchAreas()
+            val areas = areaDao.getAll()
             sv = sv.copy(areas = areas)
         }
     }
-    
+
     fun updateName(name: String) {
         sv = sv.copy(location = sv.location.copy(name = name))
     }
@@ -42,8 +42,12 @@ class CreateLocationModel(
 
     fun addLocation() {
         screenModelScope.launch(Dispatchers.IO) {
-            val result = locationDao.addLocation(sv.location)
-            sv = sv.copy(result = result, location = Location())
+            val id = locationDao.addLocation(sv.location)
+            sv = sv.copy(
+                result = "$id",
+                location = sv.location.copy(id = id),
+                isFinished = id > 0
+            )
         }
     }
 }
@@ -51,5 +55,6 @@ class CreateLocationModel(
 data class CreateLocationState(
     val location: Location = Location(),
     val areas: List<Area> = emptyList(),
+    val isFinished: Boolean = false,
     val result: String = ""
 ) : UiState

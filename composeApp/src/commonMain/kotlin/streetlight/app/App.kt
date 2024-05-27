@@ -16,6 +16,8 @@ import streetlight.app.data.AreaDao
 import streetlight.app.data.LocationDao
 import streetlight.app.ui.area.AreaListModel
 import streetlight.app.ui.area.CreateAreaModel
+import streetlight.app.ui.location.CreateLocationModel
+import streetlight.app.ui.location.LocationListModel
 
 val di = DI {
     bindProvider {
@@ -29,6 +31,7 @@ val di = DI {
     bindProvider { AreaDao() }
     bindProvider { FoodDao(instance()) }
     // models
+    bindProvider { LocationListModel(instance(), instance()) }
     bindProvider { AreaListModel(instance()) }
     bindProvider { CreateUserModel(instance()) }
     bindProvider { CreateLocationModel(instance(), instance()) }

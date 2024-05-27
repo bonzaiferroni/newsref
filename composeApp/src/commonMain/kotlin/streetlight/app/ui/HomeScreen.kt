@@ -24,7 +24,8 @@ import streetlight.app.chopui.Scaffold
 import org.jetbrains.compose.resources.ExperimentalResourceApi
 import org.jetbrains.compose.resources.painterResource
 import streetlight.app.ui.area.AreaListScreen
-import streetlight.app.ui.area.CreateAreaScreen
+import streetlight.app.ui.location.CreateLocationScreen
+import streetlight.app.ui.location.LocationListScreen
 import streetlight.composeapp.generated.resources.Res
 import streetlight.composeapp.generated.resources.compose_multiplatform
 
@@ -53,8 +54,8 @@ class HomeScreen : Screen {
                 Button(onClick = { navigator.push(CreateUserScreen()) }) {
                     Text("Create User")
                 }
-                Button(onClick = { navigator.push(CreateLocationScreen()) }) {
-                    Text("Create Location")
+                Button(onClick = { navigator.push(LocationListScreen()) }) {
+                    Text("Locations")
                 }
                 Button(onClick = { navigator.push(AreaListScreen()) }) {
                     Text("Areas")

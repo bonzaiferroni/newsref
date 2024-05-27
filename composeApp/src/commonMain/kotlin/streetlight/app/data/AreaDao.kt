@@ -23,7 +23,7 @@ class AreaDao : ApiDao() {
         }
     }
 
-    suspend fun fetchAreas(): List<Area> {
+    suspend fun getAll(): List<Area> {
         return web.get("$address/areas").body()
     }
 }
