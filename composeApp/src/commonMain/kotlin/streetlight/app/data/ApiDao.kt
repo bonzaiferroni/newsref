@@ -1,6 +1,5 @@
 package streetlight.app.data
 
-import streetlight.app.ui.UiState
-
-class ApiDao {
+open class ApiDao {
+    val address: String = "http://localhost:8080"
 }

@@ -3,6 +3,8 @@ package streetlight.app.ui
 import cafe.adriel.voyager.core.model.screenModelScope
 import kotlinx.coroutines.launch
 import streetlight.app.data.UserDao
+import streetlight.app.ui.model.UiModel
+import streetlight.app.ui.model.UiState
 import streetlight.model.User
 
 class CreateUserModel(

@@ -1,13 +1,12 @@
 package streetlight.app.ui
 
-import androidx.compose.runtime.State
-import androidx.compose.runtime.mutableStateOf
-import cafe.adriel.voyager.core.model.ScreenModel
 import cafe.adriel.voyager.core.model.screenModelScope
 import streetlight.app.data.UserDao
 
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
+import streetlight.app.ui.model.UiModel
+import streetlight.app.ui.model.UiState
 import streetlight.model.User
 
 class HomeModel(private val userDao: UserDao) : UiModel<HomeState>(HomeState()) {

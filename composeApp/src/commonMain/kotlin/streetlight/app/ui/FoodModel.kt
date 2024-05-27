@@ -1,13 +1,12 @@
 package streetlight.app.ui
 
-import androidx.compose.runtime.State
-import androidx.compose.runtime.mutableStateOf
-import cafe.adriel.voyager.core.model.ScreenModel
 import cafe.adriel.voyager.core.model.screenModelScope
 import streetlight.app.Food
 import streetlight.app.data.FoodDao
 import streetlight.app.utils.getBlankFood
 import kotlinx.coroutines.launch
+import streetlight.app.ui.model.UiModel
+import streetlight.app.ui.model.UiState
 
 class FoodModel(
     private val foodDao: FoodDao,

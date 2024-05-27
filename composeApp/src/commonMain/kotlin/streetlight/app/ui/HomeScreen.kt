@@ -52,6 +52,9 @@ class HomeScreen : Screen {
                 Button(onClick = { navigator.push(CreateUserScreen()) }) {
                     Text("Create User")
                 }
+                Button(onClick = { navigator.push(CreateLocationScreen()) }) {
+                    Text("Create Location")
+                }
             }
         }
     }

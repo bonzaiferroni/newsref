@@ -1,8 +1,7 @@
 package streetlight.app.ui
 
-import androidx.compose.runtime.State
-import androidx.compose.runtime.mutableStateOf
-import cafe.adriel.voyager.core.model.ScreenModel
+import streetlight.app.ui.model.UiModel
+import streetlight.app.ui.model.UiState
 import streetlight.model.Location
 
 class LocationListModel(

@@ -6,14 +6,14 @@ import io.ktor.http.ContentType
 import io.ktor.http.contentType
 import streetlight.model.User
 
-class UserDao {
+class UserDao : ApiDao() {
     suspend fun fetchMessage(): String {
-        val response = web.get("http://localhost:8080")
+        val response = web.get(address)
         return response.bodyAsText()
     }
 
     suspend fun addUser(user: User): String {
-        val response = web.post("http://localhost:8080/users") {
+        val response = web.post("$address/users") {
             contentType(ContentType.Application.Json)
             setBody(user)
         }
