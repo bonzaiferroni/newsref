@@ -1,4 +1,4 @@
-package streetlight.app.ui.model
+package streetlight.app.ui.abstract
 
 import androidx.compose.runtime.State
 import androidx.compose.runtime.mutableStateOf

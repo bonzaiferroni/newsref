@@ -4,10 +4,9 @@ import cafe.adriel.voyager.core.model.screenModelScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import streetlight.app.data.LocationDao
-import streetlight.app.ui.model.UiModel
-import streetlight.app.ui.model.UiState
+import streetlight.app.ui.abstract.UiModel
+import streetlight.app.ui.abstract.UiState
 import streetlight.model.Location
-import streetlight.model.User
 
 class CreateLocationModel(
     private val locationDao: LocationDao,

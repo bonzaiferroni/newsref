@@ -1,7 +1,7 @@
 package streetlight.app.ui
 
-import streetlight.app.ui.model.UiModel
-import streetlight.app.ui.model.UiState
+import streetlight.app.ui.abstract.UiModel
+import streetlight.app.ui.abstract.UiState
 import streetlight.model.Location
 
 class LocationListModel(
