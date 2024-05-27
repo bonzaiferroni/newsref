@@ -1,4 +1,4 @@
-package streetlight.app.ui
+package streetlight.app.ui.area
 
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -7,6 +7,7 @@ import androidx.compose.material.Button
 import androidx.compose.material.Text
 import androidx.compose.material.TextField
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -15,12 +16,22 @@ import cafe.adriel.voyager.kodein.rememberScreenModel
 import cafe.adriel.voyager.navigator.LocalNavigator
 import streetlight.app.chopui.Scaffold
 
-class CreateAreaScreen : Screen {
+class CreateAreaScreen(
+    private val onComplete: ((id: Int) -> Unit)?
+) : Screen {
     @Composable
     override fun Content() {
         val navigator = LocalNavigator.current
         val screenModel = rememberScreenModel<CreateAreaModel>()
         val state by screenModel.state
+
+        LaunchedEffect(state.isFinished) {
+            if (state.isFinished) {
+                navigator?.pop()
+                onComplete?.invoke(state.area.id)
+            }
+        }
+
         Scaffold("Add Area", navigator) {
             Box(
                 modifier = Modifier.fillMaxSize(),

@@ -8,7 +8,6 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.material.Button
 import androidx.compose.material.Text
-import androidx.compose.material.TextField
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -24,6 +23,8 @@ import cafe.adriel.voyager.navigator.currentOrThrow
 import streetlight.app.chopui.Scaffold
 import org.jetbrains.compose.resources.ExperimentalResourceApi
 import org.jetbrains.compose.resources.painterResource
+import streetlight.app.ui.area.AreaListScreen
+import streetlight.app.ui.area.CreateAreaScreen
 import streetlight.composeapp.generated.resources.Res
 import streetlight.composeapp.generated.resources.compose_multiplatform
 
@@ -55,8 +56,8 @@ class HomeScreen : Screen {
                 Button(onClick = { navigator.push(CreateLocationScreen()) }) {
                     Text("Create Location")
                 }
-                Button(onClick = { navigator.push(CreateAreaScreen()) }) {
-                    Text("Create Area")
+                Button(onClick = { navigator.push(AreaListScreen()) }) {
+                    Text("Areas")
                 }
             }
         }

@@ -14,6 +14,8 @@ import org.kodein.di.compose.withDI
 import org.kodein.di.instance
 import streetlight.app.data.AreaDao
 import streetlight.app.data.LocationDao
+import streetlight.app.ui.area.AreaListModel
+import streetlight.app.ui.area.CreateAreaModel
 
 val di = DI {
     bindProvider {
@@ -27,6 +29,7 @@ val di = DI {
     bindProvider { AreaDao() }
     bindProvider { FoodDao(instance()) }
     // models
+    bindProvider { AreaListModel(instance()) }
     bindProvider { CreateUserModel(instance()) }
     bindProvider { CreateLocationModel(instance(), instance()) }
     bindProvider { CreateAreaModel(instance()) }

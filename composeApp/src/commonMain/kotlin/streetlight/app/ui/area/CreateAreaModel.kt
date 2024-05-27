@@ -1,4 +1,4 @@
-package streetlight.app.ui
+package streetlight.app.ui.area
 
 import cafe.adriel.voyager.core.model.screenModelScope
 import kotlinx.coroutines.Dispatchers
@@ -18,13 +18,19 @@ class CreateAreaModel(
 
     fun addArea() {
         screenModelScope.launch(Dispatchers.IO) {
-            val result = areaDao.addArea(sv.area)
-            sv = sv.copy(result = result, area = Area())
+            val id = areaDao.addArea(sv.area)
+            val isFinished = id > 0
+            sv = sv.copy(
+                result = "result: $id",
+                area = sv.area.copy(id = id),
+                isFinished = isFinished
+            )
         }
     }
 }
 
 data class CreateAreaState(
     val area: Area = Area(),
+    val isFinished: Boolean = false,
     val result: String = ""
 ) : UiState
