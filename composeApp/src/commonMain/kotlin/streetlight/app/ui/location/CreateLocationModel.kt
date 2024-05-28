@@ -16,6 +16,10 @@ class CreateLocationModel(
 ) : UiModel<CreateLocationState>(CreateLocationState()) {
 
     init {
+        fetchAreas()
+    }
+
+    fun fetchAreas() {
         screenModelScope.launch(Dispatchers.IO) {
             val areas = areaDao.getAll()
             sv = sv.copy(areas = areas)
@@ -36,8 +40,8 @@ class CreateLocationModel(
         sv = sv.copy(location = sv.location.copy(longitude = number))
     }
 
-    fun updateArea(area: Area) {
-        sv = sv.copy(location = sv.location.copy(areaId = area.id))
+    fun updateArea(id: Int) {
+        sv = sv.copy(location = sv.location.copy(areaId = id))
     }
 
     fun addLocation() {

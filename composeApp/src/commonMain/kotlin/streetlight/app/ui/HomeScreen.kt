@@ -26,6 +26,8 @@ import org.jetbrains.compose.resources.painterResource
 import streetlight.app.ui.area.AreaListScreen
 import streetlight.app.ui.location.CreateLocationScreen
 import streetlight.app.ui.location.LocationListScreen
+import streetlight.app.ui.login.LoginScreen
+import streetlight.app.ui.login.LoginState
 import streetlight.composeapp.generated.resources.Res
 import streetlight.composeapp.generated.resources.compose_multiplatform
 
@@ -59,6 +61,9 @@ class HomeScreen : Screen {
                 }
                 Button(onClick = { navigator.push(AreaListScreen()) }) {
                     Text("Areas")
+                }
+                Button(onClick = { navigator.push(LoginScreen())}) {
+                    Text("Login")
                 }
             }
         }

@@ -24,7 +24,9 @@ import androidx.compose.ui.Modifier
 import cafe.adriel.voyager.core.screen.Screen
 import cafe.adriel.voyager.kodein.rememberScreenModel
 import cafe.adriel.voyager.navigator.LocalNavigator
+import cafe.adriel.voyager.navigator.Navigator
 import streetlight.app.chopui.Scaffold
+import streetlight.app.ui.area.CreateAreaScreen
 import streetlight.model.Area
 import streetlight.model.Location
 
@@ -65,7 +67,13 @@ class CreateLocationScreen(
                         onValueChange = screenModel::updateLongitude,
                         label = { Text("Longitude") }
                     )
-                    AreaChooser(state.location, state.areas, screenModel::updateArea)
+                    AreaChooser(
+                        navigator = navigator,
+                        location = state.location,
+                        areas = state.areas,
+                        updateArea = screenModel::updateArea,
+                        fetchAreas = screenModel::fetchAreas
+                    )
                     Button(onClick = screenModel::addLocation) {
                         Text("Add Location")
                     }
@@ -77,9 +85,11 @@ class CreateLocationScreen(
 
     @Composable
     fun AreaChooser(
+        navigator: Navigator?,
         location: Location,
         areas: List<Area>,
-        updateArea: (Area) -> Unit,
+        updateArea: (Int) -> Unit,
+        fetchAreas: () -> Unit,
     ) {
         var expanded by remember { mutableStateOf(false) }
         val area = areas.find { it.id == location.areaId }
@@ -99,10 +109,19 @@ class CreateLocationScreen(
                 }
             }
             DropdownMenu(expanded = expanded, onDismissRequest = { expanded = false }) {
+                DropdownMenuItem(onClick = {
+                    expanded = false
+                    navigator?.push(CreateAreaScreen() {
+                        updateArea(it)
+                        fetchAreas()
+                    })
+                }) {
+                    Text("New...")
+                }
                 areas.forEach { area ->
                     DropdownMenuItem(onClick = {
                         expanded = false
-                        updateArea(area)
+                        updateArea(area.id)
                     }) {
                         Text(area.name)
                     }

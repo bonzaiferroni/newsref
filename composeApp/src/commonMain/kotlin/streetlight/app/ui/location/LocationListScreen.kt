@@ -13,6 +13,7 @@ import androidx.compose.ui.Modifier
 import cafe.adriel.voyager.core.screen.Screen
 import cafe.adriel.voyager.kodein.rememberScreenModel
 import cafe.adriel.voyager.navigator.LocalNavigator
+import streetlight.app.chopui.BoxScaffold
 import streetlight.app.chopui.Scaffold
 
 class LocationListScreen : Screen {
@@ -21,7 +22,7 @@ class LocationListScreen : Screen {
         val navigator = LocalNavigator.current
         val screenModel = rememberScreenModel<LocationListModel>()
         val state by screenModel.state
-        Scaffold(
+        BoxScaffold(
             title = "Locations",
             navigator = navigator,
             floatingAction = { navigator?.push(CreateLocationScreen() {
@@ -29,17 +30,12 @@ class LocationListScreen : Screen {
                 screenModel.fetchLocations()
             }) }
         ) {
-            Box(
-                modifier = Modifier.fillMaxSize(),
-                contentAlignment = Alignment.Center
-            ) {
-                LazyColumn {
-                    items(state.locations) {
-                        val area = state.areas.find { area -> area.id == it.areaId }
-                        Row {
-                            Text(it.name)
-                            area?.let { Text("(${it.name})") }
-                        }
+            LazyColumn {
+                items(state.locations) {
+                    val area = state.areas.find { area -> area.id == it.areaId }
+                    Row {
+                        Text(it.name)
+                        area?.let { Text(" (${it.name})") }
                     }
                 }
             }

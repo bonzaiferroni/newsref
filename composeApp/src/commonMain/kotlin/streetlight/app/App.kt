@@ -10,14 +10,18 @@ import streetlight.app.ui.*
 import org.jetbrains.compose.ui.tooling.preview.Preview
 import org.kodein.di.DI
 import org.kodein.di.bindProvider
+import org.kodein.di.bindSingleton
 import org.kodein.di.compose.withDI
 import org.kodein.di.instance
 import streetlight.app.data.AreaDao
 import streetlight.app.data.LocationDao
+import streetlight.app.data.LoginDao
+import streetlight.app.data.WebClient
 import streetlight.app.ui.area.AreaListModel
 import streetlight.app.ui.area.CreateAreaModel
 import streetlight.app.ui.location.CreateLocationModel
 import streetlight.app.ui.location.LocationListModel
+import streetlight.app.ui.login.LoginModel
 
 val di = DI {
     bindProvider {
@@ -26,9 +30,11 @@ val di = DI {
         )
     }
     // daos
+    bindSingleton { WebClient() }
     bindProvider { UserDao() }
     bindProvider { LocationDao() }
-    bindProvider { AreaDao() }
+    bindProvider { AreaDao(instance()) }
+    bindProvider { LoginDao() }
     bindProvider { FoodDao(instance()) }
     // models
     bindProvider { LocationListModel(instance(), instance()) }
@@ -38,6 +44,7 @@ val di = DI {
     bindProvider { CreateAreaModel(instance()) }
     bindProvider { FoodModel(instance()) }
     bindProvider { HomeModel(instance()) }
+    bindProvider { LoginModel(instance()) }
     // bindProvider { LocationListModel(instance()) }
 }
 
