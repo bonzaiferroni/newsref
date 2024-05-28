@@ -5,13 +5,16 @@ import androidx.compose.material.Button
 import androidx.compose.material.Text
 import androidx.compose.material.TextField
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import cafe.adriel.voyager.core.screen.Screen
 import cafe.adriel.voyager.kodein.rememberScreenModel
 import cafe.adriel.voyager.navigator.LocalNavigator
 import streetlight.app.chopui.BoxScaffold
 
-class LoginScreen : Screen {
+class LoginScreen(
+    private val onLogin: (() -> Unit)? = null
+) : Screen {
     @Composable
     override fun Content() {
         val navigator = LocalNavigator.current
@@ -36,7 +39,13 @@ class LoginScreen : Screen {
                     onClick = screenModel::login) {
                     Text("Login")
                 }
-                Text(state.result)
+                Text("Logged in: ${state.loggedIn}")
+            }
+        }
+
+        LaunchedEffect(state.loggedIn) {
+            if (state.loggedIn) {
+                onLogin?.let { it() }
             }
         }
     }

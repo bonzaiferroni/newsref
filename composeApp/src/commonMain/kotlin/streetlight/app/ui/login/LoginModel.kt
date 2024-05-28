@@ -1,15 +1,15 @@
 package streetlight.app.ui.login
 
 import cafe.adriel.voyager.core.model.screenModelScope
+import io.ktor.http.HttpStatusCode
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
-import streetlight.app.data.LoginDao
-import streetlight.app.data.web
+import streetlight.app.data.ApiClient
 import streetlight.app.ui.abstract.UiModel
 import streetlight.app.ui.abstract.UiState
 
 class LoginModel(
-    private val loginDao: LoginDao
+    private val apiClient: ApiClient
 ) : UiModel<LoginState>(LoginState()) {
     fun updateUsername(username: String) {
         sv = sv.copy(username = username)
@@ -21,8 +21,11 @@ class LoginModel(
 
     fun login() {
         screenModelScope.launch(Dispatchers.IO) {
-            val result = loginDao.login(sv.username, sv.password)
-            sv = sv.copy(result = result)
+            val response = apiClient.login(sv.username, sv.password)
+            if (response.status != HttpStatusCode.OK) {
+                return@launch
+            }
+            sv = sv.copy(loggedIn = true)
         }
     }
 }
@@ -30,5 +33,5 @@ class LoginModel(
 data class LoginState(
     val username: String = "",
     val password: String = "",
-    val result: String = "",
+    val loggedIn: Boolean = false,
 ) : UiState

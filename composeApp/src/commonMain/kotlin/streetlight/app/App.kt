@@ -15,8 +15,7 @@ import org.kodein.di.compose.withDI
 import org.kodein.di.instance
 import streetlight.app.data.AreaDao
 import streetlight.app.data.LocationDao
-import streetlight.app.data.LoginDao
-import streetlight.app.data.WebClient
+import streetlight.app.data.ApiClient
 import streetlight.app.ui.area.AreaListModel
 import streetlight.app.ui.area.CreateAreaModel
 import streetlight.app.ui.location.CreateLocationModel
@@ -30,11 +29,10 @@ val di = DI {
         )
     }
     // daos
-    bindSingleton { WebClient() }
+    bindSingleton { ApiClient() }
     bindProvider { UserDao(instance()) }
     bindProvider { LocationDao(instance()) }
     bindProvider { AreaDao(instance()) }
-    bindProvider { LoginDao(instance()) }
     bindProvider { FoodDao(instance()) }
     // models
     bindProvider { LocationListModel(instance(), instance()) }

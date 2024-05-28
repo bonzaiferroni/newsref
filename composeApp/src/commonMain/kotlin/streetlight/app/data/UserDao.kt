@@ -4,7 +4,7 @@ import io.ktor.client.statement.bodyAsText
 import streetlight.model.User
 
 class UserDao(
-    private val web: WebClient,
+    private val web: ApiClient,
 ) {
     suspend fun fetchMessage(): String {
         val response = web.get("")

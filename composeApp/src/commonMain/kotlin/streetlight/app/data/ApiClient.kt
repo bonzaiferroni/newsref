@@ -12,9 +12,11 @@ import io.ktor.http.ContentType
 import io.ktor.http.HttpStatusCode
 import io.ktor.http.contentType
 import io.ktor.serialization.kotlinx.json.json
+import kotlinx.serialization.Serializable
 import kotlinx.serialization.json.Json
+import streetlight.model.User
 
-class WebClient {
+class ApiClient {
     val web = HttpClient(CIO) {
         install(ContentNegotiation) {
             json(Json { prettyPrint = true })
@@ -48,4 +50,17 @@ class WebClient {
     suspend fun get(endpoint: String): HttpResponse {
         return web.get("$address$endpoint")
     }
+
+    suspend fun login(username: String, password: String): HttpResponse {
+        val response = post("/login", User(name = username, password = password))
+        if (response.status == HttpStatusCode.OK) {
+            token = response.body<TokenBox>().token
+        }
+        return response
+    }
 }
+
+@Serializable
+data class TokenBox(
+    val token: String,
+)

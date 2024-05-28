@@ -5,6 +5,7 @@ plugins {
     alias(libs.plugins.androidApplication)
     alias(libs.plugins.jetbrainsCompose)
     alias(libs.plugins.sqlDelight)
+    id("org.jetbrains.kotlin.plugin.serialization") version "1.9.22"
 }
 
 kotlin {
