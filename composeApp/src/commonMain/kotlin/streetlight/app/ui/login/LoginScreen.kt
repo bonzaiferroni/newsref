@@ -10,7 +10,6 @@ import cafe.adriel.voyager.core.screen.Screen
 import cafe.adriel.voyager.kodein.rememberScreenModel
 import cafe.adriel.voyager.navigator.LocalNavigator
 import streetlight.app.chopui.BoxScaffold
-import streetlight.app.ui.location.LocationListModel
 
 class LoginScreen : Screen {
     @Composable

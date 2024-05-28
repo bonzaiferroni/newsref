@@ -31,10 +31,10 @@ val di = DI {
     }
     // daos
     bindSingleton { WebClient() }
-    bindProvider { UserDao() }
-    bindProvider { LocationDao() }
+    bindProvider { UserDao(instance()) }
+    bindProvider { LocationDao(instance()) }
     bindProvider { AreaDao(instance()) }
-    bindProvider { LoginDao() }
+    bindProvider { LoginDao(instance()) }
     bindProvider { FoodDao(instance()) }
     // models
     bindProvider { LocationListModel(instance(), instance()) }

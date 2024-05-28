@@ -7,12 +7,12 @@ import io.ktor.client.plugins.contentnegotiation.ContentNegotiation
 import io.ktor.client.request.get
 import io.ktor.client.request.post
 import io.ktor.client.request.setBody
+import io.ktor.client.statement.HttpResponse
 import io.ktor.http.ContentType
 import io.ktor.http.HttpStatusCode
 import io.ktor.http.contentType
 import io.ktor.serialization.kotlinx.json.json
 import kotlinx.serialization.json.Json
-import streetlight.model.Area
 
 class WebClient {
     val web = HttpClient(CIO) {
@@ -24,12 +24,8 @@ class WebClient {
 
     private var token = ""
 
-    suspend inline fun <reified T> create(endpoint: String, area: T): Int {
-        val response = web.post("$address$endpoint") {
-            contentType(ContentType.Application.Json)
-            setBody(area)
-        }
-        // return id from response
+    suspend inline fun <reified T> create(endpoint: String, data: T): Int {
+        val response = post("$address$endpoint", data)
         return if (response.status == HttpStatusCode.Created) {
             response.body()
         } else {
@@ -37,8 +33,19 @@ class WebClient {
         }
     }
 
-    suspend inline fun <reified T> get(endpoint: String): T {
+    suspend inline fun <reified T> post(endpoint: String, data: T): HttpResponse {
+        return web.post("$address$endpoint") {
+            contentType(ContentType.Application.Json)
+            setBody(data)
+        }
+    }
+
+    suspend inline fun <reified T> getBody(endpoint: String): T {
         val response = web.get("$address$endpoint")
         return response.body()
+    }
+
+    suspend fun get(endpoint: String): HttpResponse {
+        return web.get("$address$endpoint")
     }
 }
