@@ -3,14 +3,21 @@ package streetlight.app.data
 import io.ktor.client.HttpClient
 import io.ktor.client.call.body
 import io.ktor.client.engine.cio.CIO
+import io.ktor.client.plugins.auth.Auth
+import io.ktor.client.plugins.auth.providers.BearerTokens
+import io.ktor.client.plugins.auth.providers.bearer
 import io.ktor.client.plugins.contentnegotiation.ContentNegotiation
 import io.ktor.client.request.get
+import io.ktor.client.request.header
 import io.ktor.client.request.post
 import io.ktor.client.request.setBody
 import io.ktor.client.statement.HttpResponse
+import io.ktor.client.statement.request
 import io.ktor.http.ContentType
+import io.ktor.http.HttpHeaders
 import io.ktor.http.HttpStatusCode
 import io.ktor.http.contentType
+import io.ktor.http.headers
 import io.ktor.serialization.kotlinx.json.json
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.json.Json
@@ -25,9 +32,11 @@ class ApiClient {
     val address = "http://localhost:8080"
 
     private var token = ""
+    private val username = "admin"
+    private val password = "admin"
 
-    suspend inline fun <reified T> create(endpoint: String, data: T): Int {
-        val response = post("$address$endpoint", data)
+    suspend fun create(endpoint: String, data: Any): Int {
+        val response = authPost(endpoint, data)
         return if (response.status == HttpStatusCode.Created) {
             response.body()
         } else {
@@ -35,11 +44,23 @@ class ApiClient {
         }
     }
 
-    suspend inline fun <reified T> post(endpoint: String, data: T): HttpResponse {
+    suspend fun post(endpoint: String, data: Any): HttpResponse {
         return web.post("$address$endpoint") {
             contentType(ContentType.Application.Json)
             setBody(data)
+            header(HttpHeaders.Authorization, "Bearer $token")
         }
+    }
+
+    suspend fun authPost(endpoint: String, data: Any): HttpResponse {
+        var response = post(endpoint, data)
+        if (response.status == HttpStatusCode.Unauthorized) {
+            response = login(username, password)
+            if (response.status == HttpStatusCode.OK) {
+                return post(endpoint, data)
+            }
+        }
+        return response
     }
 
     suspend inline fun <reified T> getBody(endpoint: String): T {

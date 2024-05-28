@@ -3,8 +3,8 @@ package streetlight.app.data
 import streetlight.model.Area
 
 class AreaDao(
-    private val web: ApiClient,
+    private val client: ApiClient,
 ) {
-    suspend fun createArea(area: Area): Int = web.create("/areas", area)
-    suspend fun getAll(): List<Area> = web.getBody("/areas")
+    suspend fun createArea(area: Area): Int = client.create("/areas", area)
+    suspend fun getAll(): List<Area> = client.getBody("/areas")
 }
