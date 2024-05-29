@@ -45,7 +45,12 @@ class CreateEventModel(
         sv = sv.copy(search = search)
         screenModelScope.launch(Dispatchers.IO) {
             val locations = locationDao.search(search)
-            sv = sv.copy(locations = locations)
+            sv = sv.copy(
+                locations = locations,
+                event = sv.event.copy(
+                    locationId = locations.firstOrNull()?.id ?: 0
+                )
+            )
         }
     }
 
