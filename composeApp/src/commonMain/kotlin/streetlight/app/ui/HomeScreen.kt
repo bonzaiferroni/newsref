@@ -25,6 +25,7 @@ import org.jetbrains.compose.resources.ExperimentalResourceApi
 import org.jetbrains.compose.resources.painterResource
 import streetlight.app.ui.area.AreaListScreen
 import streetlight.app.ui.event.CreateEventScreen
+import streetlight.app.ui.event.EventListScreen
 import streetlight.app.ui.location.CreateLocationScreen
 import streetlight.app.ui.location.LocationListScreen
 import streetlight.app.ui.login.LoginScreen
@@ -49,16 +50,18 @@ class HomeScreen : Screen {
                 Button(onClick = { navigator.push(CreateUserScreen()) }) {
                     Text("Create User")
                 }
+                Button(onClick = { navigator.push(LoginScreen())}) {
+                    Text("Login")
+                }
                 Button(onClick = { navigator.push(LocationListScreen()) }) {
                     Text("Locations")
                 }
                 Button(onClick = { navigator.push(AreaListScreen()) }) {
                     Text("Areas")
                 }
-                Button(onClick = { navigator.push(LoginScreen())}) {
-                    Text("Login")
+                Button(onClick = { navigator.push(EventListScreen())}) {
+                    Text("Events")
                 }
-
             }
         }
     }

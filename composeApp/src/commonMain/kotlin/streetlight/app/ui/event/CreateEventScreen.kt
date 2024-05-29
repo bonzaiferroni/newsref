@@ -52,8 +52,6 @@ class CreateEventScreen(
                 contentAlignment = Alignment.Center
             ) {
                 Column {
-                    // time picker
-                    // time picker
                     TextField(
                         value = state.search,
                         onValueChange = screenModel::updateSearch,

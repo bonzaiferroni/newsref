@@ -1,5 +1,6 @@
 package streetlight.app.data
 
+import streetlight.dto.EventInfo
 import streetlight.model.Event
 
 class EventDao(
@@ -12,4 +13,6 @@ class EventDao(
         client.getBody("/events?search=$search&count=$count")
     suspend fun update(id: Int, event: Event): Boolean = client.update("/events", id, event)
     suspend fun delete(id: Int): Boolean = client.delete("/events", id)
+    suspend fun getInfo(id: Int): EventInfo? = client.getBody("/event_info/$id")
+    suspend fun getAllInfo(): List<EventInfo> = client.getBody("/event_info")
 }

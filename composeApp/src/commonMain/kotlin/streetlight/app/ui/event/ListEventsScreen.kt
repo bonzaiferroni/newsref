@@ -33,7 +33,7 @@ class EventListScreen : Screen {
             LazyColumn {
                 items(state.events) {
                     Row {
-                        // Text(it.name)
+                        Text(it.locationName)
                     }
                 }
             }
