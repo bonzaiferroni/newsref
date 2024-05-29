@@ -12,7 +12,7 @@ kotlin {
     androidTarget {
         compilations.all {
             kotlinOptions {
-                jvmTarget = "11"
+                jvmTarget = "21"
             }
         }
     }
@@ -61,6 +61,8 @@ kotlin {
             implementation("io.ktor:ktor-client-auth:$ktorVersion")
             implementation("io.ktor:ktor-serialization-kotlinx-json:$ktorVersion")
 
+            implementation("network.chaintech:kmp-date-time-picker:1.0.2")
+
             implementation(project(":chopui"))
             implementation(project(":model"))
         }
@@ -106,8 +108,8 @@ android {
         }
     }
     compileOptions {
-        sourceCompatibility = JavaVersion.VERSION_11
-        targetCompatibility = JavaVersion.VERSION_11
+        sourceCompatibility = JavaVersion.VERSION_21
+        targetCompatibility = JavaVersion.VERSION_21
     }
     dependencies {
         debugImplementation(libs.compose.ui.tooling)
