@@ -4,15 +4,15 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.material.Button
-import androidx.compose.material.DropdownMenu
-import androidx.compose.material.DropdownMenuItem
-import androidx.compose.material.Icon
-import androidx.compose.material.IconButton
-import androidx.compose.material.Text
-import androidx.compose.material.TextField
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.MoreVert
+import androidx.compose.material3.Button
+import androidx.compose.material3.DropdownMenu
+import androidx.compose.material3.DropdownMenuItem
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
+import androidx.compose.material3.Text
+import androidx.compose.material3.TextField
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
@@ -133,12 +133,13 @@ class CreateEventScreen(
             }
             DropdownMenu(expanded = expanded, onDismissRequest = { expanded = false }) {
                 durationOptions.forEach { kvp ->
-                    DropdownMenuItem(onClick = {
-                        expanded = false
-                        updateDuration(kvp.key)
-                    }) {
-                        Text(kvp.key)
-                    }
+                    DropdownMenuItem(
+                        onClick = {
+                            expanded = false
+                            updateDuration(kvp.key)
+                        },
+                        text = { Text(kvp.key) }
+                    )
                 }
             }
         }
@@ -169,21 +170,23 @@ class CreateEventScreen(
                 }
             }
             DropdownMenu(expanded = expanded, onDismissRequest = { expanded = false }) {
-                DropdownMenuItem(onClick = {
-                    expanded = false
-                    navigator?.push(CreateLocationScreen() {
-                        updateLocation(it)
-                    })
-                }) {
-                    Text("New...")
-                }
-                locations.forEach { location ->
-                    DropdownMenuItem(onClick = {
+                DropdownMenuItem(
+                    onClick = {
                         expanded = false
-                        updateLocation(location)
-                    }) {
-                        Text(location.name)
-                    }
+                        navigator?.push(CreateLocationScreen() {
+                            updateLocation(it)
+                        })
+                    },
+                    text = { Text("New...") }
+                )
+                locations.forEach { location ->
+                    DropdownMenuItem(
+                        onClick = {
+                            expanded = false
+                            updateLocation(location)
+                        },
+                        text = { Text(location.name) }
+                    )
                 }
             }
         }
