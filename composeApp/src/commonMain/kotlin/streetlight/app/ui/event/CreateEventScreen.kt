@@ -1,4 +1,4 @@
-package streetlight.app.ui.location
+package streetlight.app.ui.event
 
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -26,56 +26,47 @@ import cafe.adriel.voyager.kodein.rememberScreenModel
 import cafe.adriel.voyager.navigator.LocalNavigator
 import cafe.adriel.voyager.navigator.Navigator
 import streetlight.app.chopui.Scaffold
-import streetlight.app.ui.area.CreateAreaScreen
-import streetlight.model.Area
+import streetlight.app.ui.location.CreateLocationScreen
+import streetlight.model.Event
 import streetlight.model.Location
 
-class CreateLocationScreen(
-    private val onComplete: ((location: Location) -> Unit)?
+class CreateEventScreen(
+    private val onComplete: ((id: Int) -> Unit)? = null
 ) : Screen {
     @Composable
     override fun Content() {
         val navigator = LocalNavigator.current
-        val screenModel = rememberScreenModel<CreateLocationModel>()
+        val screenModel = rememberScreenModel<CreateEventModel>()
         val state by screenModel.state
 
         LaunchedEffect(state.isFinished) {
             if (state.isFinished) {
                 navigator?.pop()
-                onComplete?.invoke(state.location)
+                onComplete?.invoke(state.event.id)
             }
         }
 
-        Scaffold("Add Location", navigator) {
+        Scaffold("Add Event", navigator) {
             Box(
                 modifier = Modifier.fillMaxSize(),
                 contentAlignment = Alignment.Center
             ) {
                 Column {
+                    // time picker
+                    // time picker
                     TextField(
-                        value = state.location.name,
-                        onValueChange = screenModel::updateName,
-                        label = { Text("Name") }
+                        value = state.search,
+                        onValueChange = screenModel::updateSearch,
+                        label = { Text("Search") }
                     )
-                    TextField(
-                        value = state.location.latitude.toString(),
-                        onValueChange = screenModel::updateLatitude,
-                        label = { Text("Latitude") }
+                    LocationChooser(
+                        navigator,
+                        state.event,
+                        state.locations,
+                        screenModel::updateLocation,
                     )
-                    TextField(
-                        value = state.location.longitude.toString(),
-                        onValueChange = screenModel::updateLongitude,
-                        label = { Text("Longitude") }
-                    )
-                    AreaChooser(
-                        navigator = navigator,
-                        location = state.location,
-                        areas = state.areas,
-                        updateArea = screenModel::updateArea,
-                        fetchAreas = screenModel::fetchAreas
-                    )
-                    Button(onClick = screenModel::addLocation) {
-                        Text("Add Location")
+                    Button(onClick = screenModel::addEvent) {
+                        Text("Add Event")
                     }
                     Text(state.result)
                 }
@@ -84,21 +75,20 @@ class CreateLocationScreen(
     }
 
     @Composable
-    fun AreaChooser(
+    fun LocationChooser(
         navigator: Navigator?,
-        location: Location,
-        areas: List<Area>,
-        updateArea: (Int) -> Unit,
-        fetchAreas: () -> Unit,
+        event: Event,
+        locations: List<Location>,
+        updateLocation: (Location) -> Unit,
     ) {
         var expanded by remember { mutableStateOf(false) }
-        val area = areas.find { it.id == location.areaId }
+        val location = locations.find { it.id == event.locationId }
 
         Box {
             Row(
                 verticalAlignment = Alignment.CenterVertically
             ) {
-                area?.let {
+                location?.let {
                     Text(it.name)
                 }
                 IconButton(onClick = { expanded = !expanded }) {
@@ -111,19 +101,18 @@ class CreateLocationScreen(
             DropdownMenu(expanded = expanded, onDismissRequest = { expanded = false }) {
                 DropdownMenuItem(onClick = {
                     expanded = false
-                    navigator?.push(CreateAreaScreen() {
-                        updateArea(it)
-                        fetchAreas()
+                    navigator?.push(CreateLocationScreen() {
+                        updateLocation(it)
                     })
                 }) {
                     Text("New...")
                 }
-                areas.forEach { area ->
+                locations.forEach { location ->
                     DropdownMenuItem(onClick = {
                         expanded = false
-                        updateArea(area.id)
+                        updateLocation(location)
                     }) {
-                        Text(area.name)
+                        Text(location.name)
                     }
                 }
             }

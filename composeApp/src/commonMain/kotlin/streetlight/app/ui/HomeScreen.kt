@@ -24,6 +24,7 @@ import streetlight.app.chopui.Scaffold
 import org.jetbrains.compose.resources.ExperimentalResourceApi
 import org.jetbrains.compose.resources.painterResource
 import streetlight.app.ui.area.AreaListScreen
+import streetlight.app.ui.event.CreateEventScreen
 import streetlight.app.ui.location.CreateLocationScreen
 import streetlight.app.ui.location.LocationListScreen
 import streetlight.app.ui.login.LoginScreen
@@ -41,17 +42,9 @@ class HomeScreen : Screen {
         Scaffold {
             Column(Modifier.fillMaxWidth(), horizontalAlignment = Alignment.CenterHorizontally) {
                 ExtraScreenContent(navigator)
-                // GreetingContent()
                 Text("counter: ${state.counter}")
                 Button(onClick = screenModel::growCounter) {
                     Text("grow")
-                }
-                Button(onClick = { navigator.push(FoodScreen()) }) {
-                    Text("Food")
-                }
-                Text(state.message)
-                Button(onClick = screenModel::fetchMessage) {
-                    Text("fetch")
                 }
                 Button(onClick = { navigator.push(CreateUserScreen()) }) {
                     Text("Create User")
@@ -65,6 +58,7 @@ class HomeScreen : Screen {
                 Button(onClick = { navigator.push(LoginScreen())}) {
                     Text("Login")
                 }
+
             }
         }
     }

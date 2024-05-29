@@ -16,8 +16,10 @@ import org.kodein.di.instance
 import streetlight.app.data.AreaDao
 import streetlight.app.data.LocationDao
 import streetlight.app.data.ApiClient
+import streetlight.app.data.EventDao
 import streetlight.app.ui.area.AreaListModel
 import streetlight.app.ui.area.CreateAreaModel
+import streetlight.app.ui.event.CreateEventModel
 import streetlight.app.ui.location.CreateLocationModel
 import streetlight.app.ui.location.LocationListModel
 import streetlight.app.ui.login.LoginModel
@@ -34,12 +36,14 @@ val di = DI {
     bindProvider { LocationDao(instance()) }
     bindProvider { AreaDao(instance()) }
     bindProvider { FoodDao(instance()) }
+    bindProvider { EventDao(instance()) }
     // models
     bindProvider { LocationListModel(instance(), instance()) }
     bindProvider { AreaListModel(instance()) }
     bindProvider { CreateUserModel(instance()) }
     bindProvider { CreateLocationModel(instance(), instance()) }
     bindProvider { CreateAreaModel(instance()) }
+    bindProvider { CreateEventModel(instance(), instance()) }
     bindProvider { FoodModel(instance()) }
     bindProvider { HomeModel(instance()) }
     bindProvider { LoginModel(instance()) }

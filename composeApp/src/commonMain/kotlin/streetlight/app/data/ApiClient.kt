@@ -3,21 +3,17 @@ package streetlight.app.data
 import io.ktor.client.HttpClient
 import io.ktor.client.call.body
 import io.ktor.client.engine.cio.CIO
-import io.ktor.client.plugins.auth.Auth
-import io.ktor.client.plugins.auth.providers.BearerTokens
-import io.ktor.client.plugins.auth.providers.bearer
 import io.ktor.client.plugins.contentnegotiation.ContentNegotiation
 import io.ktor.client.request.get
 import io.ktor.client.request.header
-import io.ktor.client.request.post
+import io.ktor.client.request.request
 import io.ktor.client.request.setBody
 import io.ktor.client.statement.HttpResponse
-import io.ktor.client.statement.request
 import io.ktor.http.ContentType
 import io.ktor.http.HttpHeaders
+import io.ktor.http.HttpMethod
 import io.ktor.http.HttpStatusCode
 import io.ktor.http.contentType
-import io.ktor.http.headers
 import io.ktor.serialization.kotlinx.json.json
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.json.Json
@@ -36,7 +32,7 @@ class ApiClient {
     private val password = "admin"
 
     suspend fun create(endpoint: String, data: Any): Int {
-        val response = authPost(endpoint, data)
+        val response = authRequest(endpoint, HttpMethod.Post, data)
         return if (response.status == HttpStatusCode.Created) {
             response.body()
         } else {
@@ -44,20 +40,31 @@ class ApiClient {
         }
     }
 
-    suspend fun post(endpoint: String, data: Any): HttpResponse {
-        return web.post("$address$endpoint") {
+    suspend fun delete(endpoint: String, id: Int): Boolean {
+        val response = authRequest("$endpoint/$id", HttpMethod.Delete, null)
+        return response.status == HttpStatusCode.OK
+    }
+
+    suspend fun update(endpoint: String, id: Int, data: Any): Boolean {
+        val response = authRequest("$endpoint/$id", HttpMethod.Put, data)
+        return response.status == HttpStatusCode.OK
+    }
+
+    suspend fun request(endpoint: String, requestMethod: HttpMethod, data: Any?): HttpResponse {
+        return web.request("$address$endpoint") {
+            method = requestMethod
             contentType(ContentType.Application.Json)
             setBody(data)
             header(HttpHeaders.Authorization, "Bearer $token")
         }
     }
 
-    suspend fun authPost(endpoint: String, data: Any): HttpResponse {
-        var response = post(endpoint, data)
+    suspend fun authRequest(endpoint: String, requestMethod: HttpMethod, data: Any?): HttpResponse {
+        var response = request(endpoint, requestMethod, data)
         if (response.status == HttpStatusCode.Unauthorized) {
             response = login(username, password)
             if (response.status == HttpStatusCode.OK) {
-                return post(endpoint, data)
+                return request(endpoint, requestMethod, data)
             }
         }
         return response
@@ -73,7 +80,10 @@ class ApiClient {
     }
 
     suspend fun login(username: String, password: String): HttpResponse {
-        val response = post("/login", User(name = username, password = password))
+        val response = request(
+            "/login", HttpMethod.Post,
+            User(name = username, password = password)
+        )
         if (response.status == HttpStatusCode.OK) {
             token = response.body<TokenBox>().token
         }

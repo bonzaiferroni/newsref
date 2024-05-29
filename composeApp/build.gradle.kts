@@ -51,6 +51,7 @@ kotlin {
             implementation("cafe.adriel.voyager:voyager-kodein:$voyagerVersion")
             implementation("org.kodein.di:kodein-di-framework-compose:$kodeinVersion")
             implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:$coroutinesVersion")
+            implementation("org.jetbrains.kotlinx:kotlinx-datetime:0.6.0")
 
             val ktorVersion = "2.3.11"
             implementation("io.ktor:ktor-client-core:$ktorVersion")

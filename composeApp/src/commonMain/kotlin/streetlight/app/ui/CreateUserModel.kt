@@ -26,7 +26,7 @@ class CreateUserModel(
     fun addUser() {
         screenModelScope.launch {
             val result = userDao.addUser(sv.user)
-            sv = sv.copy(result = result, user = User())
+            sv = sv.copy(result = "id: $result", user = User())
         }
     }
 }

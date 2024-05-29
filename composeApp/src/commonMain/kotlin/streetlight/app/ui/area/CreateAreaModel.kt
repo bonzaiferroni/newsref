@@ -18,7 +18,7 @@ class CreateAreaModel(
 
     fun addArea() {
         screenModelScope.launch(Dispatchers.IO) {
-            val id = areaDao.createArea(sv.area)
+            val id = areaDao.create(sv.area)
             val isFinished = id > 0
             sv = sv.copy(
                 result = "result: $id",
