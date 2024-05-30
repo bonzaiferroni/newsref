@@ -5,6 +5,7 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.datetime.Clock
 import kotlinx.datetime.LocalDateTime
+import kotlinx.datetime.LocalTime
 import streetlight.app.data.EventDao
 import streetlight.app.data.LocationDao
 import streetlight.app.ui.abstract.UiModel
@@ -12,6 +13,7 @@ import streetlight.app.ui.abstract.UiState
 import streetlight.model.Event
 import streetlight.model.Location
 import streetlight.utils.toEpochSeconds
+import streetlight.utils.toLocalDateTime
 import streetlight.utils.toLocalEpochSeconds
 import kotlin.time.Duration.Companion.hours
 
@@ -20,22 +22,12 @@ class CreateEventModel(
     private val locationDao: LocationDao,
 ) : UiModel<CreateEventState>(CreateEventState()) {
 
-    fun updateStartTime(localDateTime: LocalDateTime, showPicker: Boolean) {
-        sv = sv.copy(
-            showStartPicker = showPicker,
-            event = sv.event.copy(
-                startTime = localDateTime.toEpochSeconds(),
-            )
-        )
+    fun updateStartTime(dateTime: LocalDateTime) {
+        sv = sv.copy(event = sv.event.copy(startTime = dateTime.toEpochSeconds()))
     }
 
-    fun finishEndTime(localDateTime: LocalDateTime) {
-        sv = sv.copy(
-            showEndPicker = false,
-            event = sv.event.copy(
-                endTime = localDateTime.toEpochSeconds(),
-            )
-        )
+    fun updateEndTime(dateTime: LocalDateTime) {
+        sv = sv.copy(event = sv.event.copy(endTime = dateTime.toEpochSeconds()))
     }
 
     fun updateLocation(location: Location) {
@@ -72,14 +64,6 @@ class CreateEventModel(
         }
     }
 
-    fun showStartPicker(show: Boolean) {
-        sv = sv.copy(showStartPicker = show)
-    }
-
-    fun showEndPicker(show: Boolean) {
-        sv = sv.copy(showEndPicker = show)
-    }
-
     fun updateDuration(duration: String) {
         val hours = durationOptions[duration] ?: return
         val endTime = sv.event.startTime + (hours * 60 * 60).toLong()
@@ -101,8 +85,6 @@ data class CreateEventState(
     val search: String = "",
     val locations: List<Location> = emptyList(),
     val result: String = "",
-    val showStartPicker: Boolean = false,
-    val showEndPicker: Boolean = false,
     val duration: String = defaultDuration
 ) : UiState
 

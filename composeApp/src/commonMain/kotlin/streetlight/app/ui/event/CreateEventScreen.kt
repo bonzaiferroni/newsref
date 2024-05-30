@@ -21,30 +21,24 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.unit.dp
 import cafe.adriel.voyager.core.screen.Screen
 import cafe.adriel.voyager.kodein.rememberScreenModel
 import cafe.adriel.voyager.navigator.LocalNavigator
 import cafe.adriel.voyager.navigator.Navigator
-import kotlinx.datetime.Clock
+import kotlinx.datetime.LocalDate
 import kotlinx.datetime.LocalDateTime
-import kotlinx.datetime.format
-import kotlinx.datetime.format.byUnicodePattern
-import network.chaintech.ui.datetimepicker.WheelDateTimePickerView
-import network.chaintech.utils.DateTimePickerView
-import network.chaintech.utils.TimeFormat
 import streetlight.app.chopui.Scaffold
+import streetlight.app.chopui.dialogs.DatePickerDialog
+import streetlight.app.chopui.dialogs.TimePickerDialog
 import streetlight.app.ui.location.CreateLocationScreen
 import streetlight.model.Event
 import streetlight.model.Location
 import streetlight.utils.toLocalDateTime
-import kotlin.time.Duration.Companion.days
+import streetlight.utils.toFormatString
 
 class CreateEventScreen(
     private val onComplete: ((id: Int) -> Unit)? = null
 ) : Screen {
-    val dateTimeFormat = LocalDateTime.Format { byUnicodePattern("yyyy-MM-dd HH:mm") }
-
     @Composable
     override fun Content() {
         val navigator = LocalNavigator.current
@@ -64,33 +58,14 @@ class CreateEventScreen(
                 contentAlignment = Alignment.Center
             ) {
                 Column {
-                    Button(onClick = { screenModel.showStartPicker(true) }) {
-                        Text(state.event.startTime.toLocalDateTime().format(dateTimeFormat))
-                    }
-                    WheelDateTimePickerView(
-                        title = "Start Time",
-                        onDoneClick = { screenModel.updateStartTime(it, false) },
-                        onDismiss = { screenModel.showStartPicker(false) },
-                        startDate = state.event.startTime.toLocalDateTime(),
-                        onDateChangeListener = { screenModel.updateStartTime(it, true) },
-                        showDatePicker = state.showStartPicker,
-                        height = 300.dp,
-                        minDate = Clock.System.now().toLocalDateTime(),
-                        maxDate = Clock.System.now().plus(100.days).toLocalDateTime(),
-                        timeFormat = TimeFormat.AM_PM,
-                        dateTimePickerView = DateTimePickerView.DIALOG_VIEW
+                    DateTimeRow(
+                        dateTime = state.event.startTime.toLocalDateTime(),
+                        updateTime = screenModel::updateStartTime
                     )
                     DurationChooser(state.duration, screenModel::updateDuration)
-                    Button(onClick = { screenModel.showEndPicker(true) }) {
-                        Text(state.event.endTime.toLocalDateTime().toString())
-                    }
-                    WheelDateTimePickerView(
-                        title = "End Time",
-                        onDoneClick = screenModel::finishEndTime,
-                        onDismiss = { screenModel.showEndPicker(false) },
-                        startDate = state.event.endTime.toLocalDateTime(),
-                        showDatePicker = state.showEndPicker,
-                        height = 200.dp,
+                    DateTimeRow(
+                        dateTime = state.event.endTime.toLocalDateTime(),
+                        updateTime = screenModel::updateEndTime
                     )
                     TextField(
                         value = state.search,
@@ -189,6 +164,44 @@ class CreateEventScreen(
                     )
                 }
             }
+        }
+    }
+
+    @Composable
+    fun DateTimeRow(
+        dateTime: LocalDateTime,
+        updateTime: (LocalDateTime) -> Unit,
+    ) {
+        var showTimePicker by remember { mutableStateOf(false) }
+        var showDatePicker by remember { mutableStateOf(false) }
+
+        Row {
+            Button(onClick = { showTimePicker = true }) {
+                Text(dateTime.toFormatString("H:mm"))
+            }
+            TimePickerDialog(
+                title = "Start Time",
+                initialTime = dateTime.time,
+                showDialog = showTimePicker,
+                onConfirm = {
+                    updateTime(LocalDateTime(dateTime.date, it))
+                    showTimePicker = false
+                },
+                onCancel = { showTimePicker = false }
+            )
+            Button(onClick = { showDatePicker = true }) {
+                Text(dateTime.toFormatString("yyyy-MM-dd"))
+            }
+            DatePickerDialog(
+                title = "Start Date",
+                initialDate = dateTime.date,
+                showDialog = showDatePicker,
+                onConfirm = {
+                    updateTime(LocalDateTime(it, dateTime.time))
+                    showDatePicker = false
+                },
+                onCancel = { showDatePicker = false }
+            )
         }
     }
 }
