@@ -15,4 +15,7 @@ captures
 !*.xcodeproj/project.xcworkspace/
 !*.xcworkspace/contents.xcworkspacedata
 **/xcshareddata/WorkspaceSettings.xcsettings
+
 /chopui/
+test.mv.db
+trace.mv.db

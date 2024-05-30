@@ -5,7 +5,6 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.datetime.Clock
 import kotlinx.datetime.LocalDateTime
-import kotlinx.datetime.LocalTime
 import streetlight.app.data.EventDao
 import streetlight.app.data.LocationDao
 import streetlight.app.ui.abstract.UiModel
@@ -13,9 +12,7 @@ import streetlight.app.ui.abstract.UiState
 import streetlight.model.Event
 import streetlight.model.Location
 import streetlight.utils.toEpochSeconds
-import streetlight.utils.toLocalDateTime
 import streetlight.utils.toLocalEpochSeconds
-import kotlin.time.Duration.Companion.hours
 
 class CreateEventModel(
     private val eventDao: EventDao,
@@ -23,11 +20,7 @@ class CreateEventModel(
 ) : UiModel<CreateEventState>(CreateEventState()) {
 
     fun updateStartTime(dateTime: LocalDateTime) {
-        sv = sv.copy(event = sv.event.copy(startTime = dateTime.toEpochSeconds()))
-    }
-
-    fun updateEndTime(dateTime: LocalDateTime) {
-        sv = sv.copy(event = sv.event.copy(endTime = dateTime.toEpochSeconds()))
+        sv = sv.copy(event = sv.event.copy(timeStart = dateTime.toEpochSeconds()))
     }
 
     fun updateLocation(location: Location) {
@@ -66,10 +59,9 @@ class CreateEventModel(
 
     fun updateDuration(duration: String) {
         val hours = durationOptions[duration] ?: return
-        val endTime = sv.event.startTime + (hours * 60 * 60).toLong()
         sv = sv.copy(
             event = sv.event.copy(
-                endTime = endTime
+                hours = hours
             ),
             duration = duration
         )
@@ -78,8 +70,8 @@ class CreateEventModel(
 
 data class CreateEventState(
     val event: Event = Event(
-        startTime = Clock.System.now().toLocalEpochSeconds(),
-        endTime = Clock.System.now().plus(1.hours).toLocalEpochSeconds(),
+        timeStart = Clock.System.now().toLocalEpochSeconds(),
+        hours = 1f,
     ),
     val isFinished: Boolean = false,
     val search: String = "",

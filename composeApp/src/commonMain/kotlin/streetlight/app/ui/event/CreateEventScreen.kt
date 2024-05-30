@@ -25,7 +25,6 @@ import cafe.adriel.voyager.core.screen.Screen
 import cafe.adriel.voyager.kodein.rememberScreenModel
 import cafe.adriel.voyager.navigator.LocalNavigator
 import cafe.adriel.voyager.navigator.Navigator
-import kotlinx.datetime.LocalDate
 import kotlinx.datetime.LocalDateTime
 import streetlight.app.chopui.Scaffold
 import streetlight.app.chopui.dialogs.DatePickerDialog
@@ -59,14 +58,10 @@ class CreateEventScreen(
             ) {
                 Column {
                     DateTimeRow(
-                        dateTime = state.event.startTime.toLocalDateTime(),
+                        dateTime = state.event.timeStart.toLocalDateTime(),
                         updateTime = screenModel::updateStartTime
                     )
                     DurationChooser(state.duration, screenModel::updateDuration)
-                    DateTimeRow(
-                        dateTime = state.event.endTime.toLocalDateTime(),
-                        updateTime = screenModel::updateEndTime
-                    )
                     TextField(
                         value = state.search,
                         onValueChange = screenModel::updateSearch,

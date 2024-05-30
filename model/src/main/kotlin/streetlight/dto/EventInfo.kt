@@ -8,7 +8,7 @@ data class EventInfo(
     val locationName: String,
     val locationId: Int,
     val timeStart: Long,
-    val timeEnd: Long,
+    val hours: Float,
     val latitude: Double,
     val longitude: Double,
     val areaId: Int,
