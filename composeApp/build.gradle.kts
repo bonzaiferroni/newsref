@@ -5,7 +5,7 @@ plugins {
     alias(libs.plugins.androidApplication)
     alias(libs.plugins.jetbrainsCompose)
     alias(libs.plugins.sqlDelight)
-    id("org.jetbrains.kotlin.plugin.serialization") version "1.9.22"
+    alias(libs.plugins.serialization)
 }
 
 kotlin {
@@ -23,8 +23,6 @@ kotlin {
     sourceSets {
         val desktopMain by getting
 
-        val coroutinesVersion = "1.8.0"
-        
         androidMain.dependencies {
             implementation(libs.compose.ui.tooling.preview)
             implementation(libs.androidx.activity.compose)
@@ -39,29 +37,23 @@ kotlin {
             implementation(compose.components.uiToolingPreview)
             implementation(libs.sqldelight.coroutines)
 
-            val voyagerVersion = "1.0.0"
-            val kodeinVersion = "7.21.2"
-
             // Navigator
-            implementation("cafe.adriel.voyager:voyager-navigator:$voyagerVersion")
+            implementation(libs.voyager.navigator)
+            implementation(libs.voyager.screenmodel)
+            implementation(libs.voyager.transitions)
+            implementation(libs.voyager.kodein)
             // Screen Model
-            implementation("cafe.adriel.voyager:voyager-screenmodel:$voyagerVersion")
             // Transitions
-            implementation("cafe.adriel.voyager:voyager-transitions:$voyagerVersion")
-            implementation("cafe.adriel.voyager:voyager-kodein:$voyagerVersion")
-            implementation("org.kodein.di:kodein-di-framework-compose:$kodeinVersion")
-            implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:$coroutinesVersion")
-            implementation("org.jetbrains.kotlinx:kotlinx-datetime:0.6.0")
+            implementation(libs.kodein.di.framework.compose)
+            implementation(libs.kotlinx.coroutines.core)
+            implementation(libs.kotlinx.datetime)
 
-            val ktorVersion = "2.3.11"
-            implementation("io.ktor:ktor-client-core:$ktorVersion")
-            implementation("io.ktor:ktor-client-cio:$ktorVersion")
-            implementation("io.ktor:ktor-client-okhttp:$ktorVersion")
-            implementation("io.ktor:ktor-client-content-negotiation:$ktorVersion")
-            implementation("io.ktor:ktor-client-auth:$ktorVersion")
-            implementation("io.ktor:ktor-serialization-kotlinx-json:$ktorVersion")
-
-            implementation("network.chaintech:kmp-date-time-picker:1.0.2")
+            implementation(libs.ktor.client.core)
+            implementation(libs.ktor.client.cio)
+            implementation(libs.ktor.client.okhttp)
+            implementation(libs.ktor.client.content.negotiation)
+            implementation(libs.ktor.client.auth)
+            implementation(libs.ktor.serialization.kotlinx.json)
 
             implementation(project(":chopui"))
             implementation(project(":model"))
@@ -69,7 +61,7 @@ kotlin {
         desktopMain.dependencies {
             implementation(compose.desktop.currentOs)
             implementation(libs.sqldelight.jvm)
-            implementation("org.jetbrains.kotlinx:kotlinx-coroutines-swing:$coroutinesVersion")
+            implementation(libs.kotlinx.coroutines.swing)
         }
     }
 
