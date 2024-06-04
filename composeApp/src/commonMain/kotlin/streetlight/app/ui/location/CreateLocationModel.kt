@@ -30,14 +30,20 @@ class CreateLocationModel(
         sv = sv.copy(location = sv.location.copy(name = name))
     }
 
-    fun updateLatitude(latitude: String) {
-        val number = latitude.toDoubleOrNull() ?: return
-        sv = sv.copy(location = sv.location.copy(latitude = number))
+    fun updateLatitude(value: String) {
+        val latitude = value.toDoubleOrNull() ?: sv.location.latitude
+        sv = sv.copy(
+            location = sv.location.copy(latitude = latitude),
+            latitude = value
+        )
     }
 
-    fun updateLongitude(longitude: String) {
-        val number = longitude.toDoubleOrNull() ?: return
-        sv = sv.copy(location = sv.location.copy(longitude = number))
+    fun updateLongitude(value: String) {
+        val longitude = value.toDoubleOrNull() ?: sv.location.longitude
+        sv = sv.copy(
+            location = sv.location.copy(longitude = longitude),
+            longitude = value
+        )
     }
 
     fun updateArea(id: Int) {
@@ -60,5 +66,7 @@ data class CreateLocationState(
     val location: Location = Location(),
     val areas: List<Area> = emptyList(),
     val isFinished: Boolean = false,
-    val result: String = ""
+    val result: String = "",
+    val latitude: String = "",
+    val longitude: String = ""
 ) : UiState

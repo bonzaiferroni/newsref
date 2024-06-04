@@ -58,12 +58,12 @@ class CreateLocationScreen(
                         label = { Text("Name") }
                     )
                     TextField(
-                        value = state.location.latitude.toString(),
+                        value = state.latitude,
                         onValueChange = screenModel::updateLatitude,
                         label = { Text("Latitude") }
                     )
                     TextField(
-                        value = state.location.longitude.toString(),
+                        value = state.longitude,
                         onValueChange = screenModel::updateLongitude,
                         label = { Text("Longitude") }
                     )
