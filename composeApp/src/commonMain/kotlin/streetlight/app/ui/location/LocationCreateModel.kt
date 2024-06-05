@@ -5,12 +5,12 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import streetlight.app.data.AreaDao
 import streetlight.app.data.LocationDao
-import streetlight.app.ui.abstract.UiModel
-import streetlight.app.ui.abstract.UiState
+import streetlight.app.ui.core.UiModel
+import streetlight.app.ui.core.UiState
 import streetlight.model.Area
 import streetlight.model.Location
 
-class CreateLocationModel(
+class LocationCreateModel(
     private val areaDao: AreaDao,
     private val locationDao: LocationDao,
 ) : UiModel<CreateLocationState>(CreateLocationState()) {

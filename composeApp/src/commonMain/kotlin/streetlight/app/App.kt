@@ -1,6 +1,6 @@
 package streetlight.app
 
-import androidx.compose.material.MaterialTheme
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.*
 import cafe.adriel.voyager.navigator.Navigator
 import cafe.adriel.voyager.transitions.SlideTransition
@@ -18,10 +18,10 @@ import streetlight.app.data.LocationDao
 import streetlight.app.data.ApiClient
 import streetlight.app.data.EventDao
 import streetlight.app.ui.area.AreaListModel
-import streetlight.app.ui.area.CreateAreaModel
-import streetlight.app.ui.event.CreateEventModel
+import streetlight.app.ui.area.AreaCreatorModel
+import streetlight.app.ui.event.EventCreateModel
 import streetlight.app.ui.event.EventListModel
-import streetlight.app.ui.location.CreateLocationModel
+import streetlight.app.ui.location.LocationCreateModel
 import streetlight.app.ui.location.LocationListModel
 import streetlight.app.ui.login.LoginModel
 
@@ -40,11 +40,11 @@ val di = DI {
     bindProvider { EventDao(instance()) }
     // models
     bindProvider { LocationListModel(instance(), instance()) }
+    bindProvider { LocationCreateModel(instance(), instance()) }
     bindProvider { AreaListModel(instance()) }
-    bindProvider { CreateUserModel(instance()) }
-    bindProvider { CreateLocationModel(instance(), instance()) }
-    bindProvider { CreateAreaModel(instance()) }
-    bindProvider { CreateEventModel(instance(), instance()) }
+    bindProvider { AreaCreatorModel(instance()) }
+    bindProvider { UserCreateModel(instance()) }
+    bindProvider { EventCreateModel(instance(), instance()) }
     bindProvider { EventListModel(instance()) }
     bindProvider { FoodModel(instance()) }
     bindProvider { HomeModel(instance()) }

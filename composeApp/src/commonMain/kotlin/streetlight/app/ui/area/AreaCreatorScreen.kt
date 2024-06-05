@@ -1,10 +1,13 @@
-package streetlight.app.ui
+package streetlight.app.ui.area
 
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.material3.*
+import androidx.compose.material3.Button
+import androidx.compose.material3.Text
+import androidx.compose.material3.TextField
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -13,35 +16,35 @@ import cafe.adriel.voyager.kodein.rememberScreenModel
 import cafe.adriel.voyager.navigator.LocalNavigator
 import streetlight.app.chopui.Scaffold
 
-class CreateUserScreen : Screen {
+class AreaCreatorScreen(
+    private val onComplete: ((id: Int) -> Unit)?
+) : Screen {
     @Composable
     override fun Content() {
         val navigator = LocalNavigator.current
-        val screenModel = rememberScreenModel<UserCreateModel>()
+        val screenModel = rememberScreenModel<AreaCreatorModel>()
         val state by screenModel.state
-        Scaffold("Add User", navigator) {
+
+        LaunchedEffect(state.isFinished) {
+            if (state.isFinished) {
+                navigator?.pop()
+                onComplete?.invoke(state.area.id)
+            }
+        }
+
+        Scaffold("Add Area", navigator) {
             Box(
                 modifier = Modifier.fillMaxSize(),
                 contentAlignment = Alignment.Center
             ) {
                 Column {
                     TextField(
-                        value = state.user.name,
+                        value = state.area.name,
                         onValueChange = screenModel::updateName,
                         label = { Text("Name") }
                     )
-                    TextField(
-                        value = state.user.email,
-                        onValueChange = screenModel::updateEmail,
-                        label = { Text("Email") }
-                    )
-                    TextField(
-                        value = state.user.password,
-                        onValueChange = screenModel::updatePassword,
-                        label = { Text("Password") }
-                    )
-                    Button(onClick = screenModel::addUser) {
-                        Text("Add User")
+                    Button(onClick = screenModel::addArea) {
+                        Text("Add Area")
                     }
                     Text(state.result)
                 }

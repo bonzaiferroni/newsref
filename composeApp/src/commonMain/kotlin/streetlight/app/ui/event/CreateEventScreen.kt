@@ -29,7 +29,7 @@ import kotlinx.datetime.LocalDateTime
 import streetlight.app.chopui.Scaffold
 import streetlight.app.chopui.dialogs.DatePickerDialog
 import streetlight.app.chopui.dialogs.TimePickerDialog
-import streetlight.app.ui.location.CreateLocationScreen
+import streetlight.app.ui.location.LocationCreateScreen
 import streetlight.model.Event
 import streetlight.model.Location
 import streetlight.utils.toLocalDateTime
@@ -41,7 +41,7 @@ class CreateEventScreen(
     @Composable
     override fun Content() {
         val navigator = LocalNavigator.current
-        val screenModel = rememberScreenModel<CreateEventModel>()
+        val screenModel = rememberScreenModel<EventCreateModel>()
         val state by screenModel.state
 
         LaunchedEffect(state.isFinished) {
@@ -143,8 +143,8 @@ class CreateEventScreen(
                 DropdownMenuItem(
                     onClick = {
                         expanded = false
-                        navigator?.push(CreateLocationScreen() {
-                            updateLocation(it)
+                        navigator?.push(LocationCreateScreen() {
+                            // updateLocation(it)
                         })
                     },
                     text = { Text("New...") }

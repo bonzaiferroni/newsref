@@ -4,8 +4,8 @@ import cafe.adriel.voyager.core.model.screenModelScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import streetlight.app.data.AreaDao
-import streetlight.app.ui.abstract.UiModel
-import streetlight.app.ui.abstract.UiState
+import streetlight.app.ui.core.UiModel
+import streetlight.app.ui.core.UiState
 import streetlight.model.Area
 
 class AreaListModel(

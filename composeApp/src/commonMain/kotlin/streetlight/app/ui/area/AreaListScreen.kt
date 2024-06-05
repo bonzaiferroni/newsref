@@ -25,8 +25,8 @@ class AreaListScreen : Screen {
         Scaffold(
             title = "Areas",
             navigator = navigator,
-            floatingAction = { navigator?.push(CreateAreaScreen() {
-                screenModel.updateHighlight(it)
+            floatingAction = { navigator?.push(AreaCreatorScreen() {
+                // screenModel.updateHighlight(it)
                 screenModel.fetchAreas()
             })}
         ) {

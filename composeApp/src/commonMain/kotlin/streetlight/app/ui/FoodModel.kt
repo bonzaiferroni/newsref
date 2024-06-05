@@ -5,8 +5,8 @@ import streetlight.app.Food
 import streetlight.app.data.FoodDao
 import streetlight.app.utils.getBlankFood
 import kotlinx.coroutines.launch
-import streetlight.app.ui.abstract.UiModel
-import streetlight.app.ui.abstract.UiState
+import streetlight.app.ui.core.UiModel
+import streetlight.app.ui.core.UiState
 
 class FoodModel(
     private val foodDao: FoodDao,

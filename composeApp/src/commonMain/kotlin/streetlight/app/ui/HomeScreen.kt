@@ -24,12 +24,9 @@ import streetlight.app.chopui.Scaffold
 import org.jetbrains.compose.resources.ExperimentalResourceApi
 import org.jetbrains.compose.resources.painterResource
 import streetlight.app.ui.area.AreaListScreen
-import streetlight.app.ui.event.CreateEventScreen
 import streetlight.app.ui.event.EventListScreen
-import streetlight.app.ui.location.CreateLocationScreen
 import streetlight.app.ui.location.LocationListScreen
 import streetlight.app.ui.login.LoginScreen
-import streetlight.app.ui.login.LoginState
 import streetlight.composeapp.generated.resources.Res
 import streetlight.composeapp.generated.resources.compose_multiplatform
 

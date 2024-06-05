@@ -1,7 +1,8 @@
-package streetlight.app.ui.area
+package streetlight.app.ui.core
 
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.ColumnScope
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material3.Button
 import androidx.compose.material3.Text
@@ -16,19 +17,26 @@ import cafe.adriel.voyager.kodein.rememberScreenModel
 import cafe.adriel.voyager.navigator.LocalNavigator
 import streetlight.app.chopui.Scaffold
 
-class CreateAreaScreen(
-    private val onComplete: ((id: Int) -> Unit)?
+abstract class DataCreateScreen <Data, Model: DataCreateModel<Data, DataCreateState<Data>>>(
+    private val onDataCreate: ((newData: Data) -> Unit)?
 ) : Screen {
+
+    @Composable
+    abstract fun provideModel(): DataCreateModel<Data, DataCreateState<Data>>
+
+    @Composable
+    abstract fun ColumnScope.DataContent()
+
     @Composable
     override fun Content() {
         val navigator = LocalNavigator.current
-        val screenModel = rememberScreenModel<CreateAreaModel>()
+        val screenModel = provideModel()
         val state by screenModel.state
 
         LaunchedEffect(state.isFinished) {
             if (state.isFinished) {
                 navigator?.pop()
-                onComplete?.invoke(state.area.id)
+                onDataCreate?.invoke(state.item)
             }
         }
 
@@ -38,15 +46,10 @@ class CreateAreaScreen(
                 contentAlignment = Alignment.Center
             ) {
                 Column {
-                    TextField(
-                        value = state.area.name,
-                        onValueChange = screenModel::updateName,
-                        label = { Text("Name") }
-                    )
-                    Button(onClick = screenModel::addArea) {
+                    DataContent()
+                    Button(onClick = screenModel::createData) {
                         Text("Add Area")
                     }
-                    Text(state.result)
                 }
             }
         }

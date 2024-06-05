@@ -26,23 +26,23 @@ import cafe.adriel.voyager.kodein.rememberScreenModel
 import cafe.adriel.voyager.navigator.LocalNavigator
 import cafe.adriel.voyager.navigator.Navigator
 import streetlight.app.chopui.Scaffold
-import streetlight.app.ui.area.CreateAreaScreen
+import streetlight.app.ui.area.AreaCreatorScreen
 import streetlight.model.Area
 import streetlight.model.Location
 
-class CreateLocationScreen(
-    private val onComplete: ((location: Location) -> Unit)?
+class LocationCreateScreen(
+    private val onComplete: ((newId: Int) -> Unit)?
 ) : Screen {
     @Composable
     override fun Content() {
         val navigator = LocalNavigator.current
-        val screenModel = rememberScreenModel<CreateLocationModel>()
+        val screenModel = rememberScreenModel<LocationCreateModel>()
         val state by screenModel.state
 
         LaunchedEffect(state.isFinished) {
             if (state.isFinished) {
                 navigator?.pop()
-                onComplete?.invoke(state.location)
+                onComplete?.invoke(state.location.id)
             }
         }
 
@@ -112,7 +112,7 @@ class CreateLocationScreen(
                 DropdownMenuItem(
                     onClick = {
                         expanded = false
-                        navigator?.push(CreateAreaScreen() {
+                        navigator?.push(AreaCreatorScreen() {
                             updateArea(it)
                             fetchAreas()
                         })

@@ -5,8 +5,8 @@ import io.ktor.http.HttpStatusCode
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import streetlight.app.data.ApiClient
-import streetlight.app.ui.abstract.UiModel
-import streetlight.app.ui.abstract.UiState
+import streetlight.app.ui.core.UiModel
+import streetlight.app.ui.core.UiState
 
 class LoginModel(
     private val apiClient: ApiClient

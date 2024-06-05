@@ -7,14 +7,14 @@ import kotlinx.datetime.Clock
 import kotlinx.datetime.LocalDateTime
 import streetlight.app.data.EventDao
 import streetlight.app.data.LocationDao
-import streetlight.app.ui.abstract.UiModel
-import streetlight.app.ui.abstract.UiState
+import streetlight.app.ui.core.UiModel
+import streetlight.app.ui.core.UiState
 import streetlight.model.Event
 import streetlight.model.Location
 import streetlight.utils.toEpochSeconds
 import streetlight.utils.toLocalEpochSeconds
 
-class CreateEventModel(
+class EventCreateModel(
     private val eventDao: EventDao,
     private val locationDao: LocationDao,
 ) : UiModel<CreateEventState>(CreateEventState()) {

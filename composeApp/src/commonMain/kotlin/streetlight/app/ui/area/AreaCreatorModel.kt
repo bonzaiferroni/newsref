@@ -4,13 +4,13 @@ import cafe.adriel.voyager.core.model.screenModelScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import streetlight.app.data.AreaDao
-import streetlight.app.ui.abstract.UiModel
-import streetlight.app.ui.abstract.UiState
+import streetlight.app.ui.core.UiModel
+import streetlight.app.ui.core.UiState
 import streetlight.model.Area
 
-class CreateAreaModel(
+class AreaCreatorModel(
     private val areaDao: AreaDao,
-) : UiModel<CreateAreaState>(CreateAreaState()) {
+) : UiModel<AreaCratorState>(AreaCratorState()) {
 
     fun updateName(name: String) {
         sv = sv.copy(area = sv.area.copy(name = name))
@@ -29,7 +29,7 @@ class CreateAreaModel(
     }
 }
 
-data class CreateAreaState(
+data class AreaCratorState(
     val area: Area = Area(),
     val isFinished: Boolean = false,
     val result: String = ""
