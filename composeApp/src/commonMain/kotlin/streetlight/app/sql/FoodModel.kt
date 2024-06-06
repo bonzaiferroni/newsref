@@ -1,8 +1,7 @@
-package streetlight.app.ui
+package streetlight.app.sql
 
 import cafe.adriel.voyager.core.model.screenModelScope
 import streetlight.app.Food
-import streetlight.app.io.FoodDao
 import streetlight.app.utils.getBlankFood
 import kotlinx.coroutines.launch
 import streetlight.app.ui.core.UiModel

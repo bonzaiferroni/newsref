@@ -1,6 +1,6 @@
 package streetlight.app
 
-import streetlight.app.io.FoodDao
+import streetlight.app.sql.FoodDao
 
 class DesktopAppModule : AppModule {
     private val db by lazy {

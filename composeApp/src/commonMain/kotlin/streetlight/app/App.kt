@@ -4,7 +4,7 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.*
 import cafe.adriel.voyager.navigator.Navigator
 import cafe.adriel.voyager.transitions.SlideTransition
-import streetlight.app.io.FoodDao
+import streetlight.app.sql.FoodDao
 import streetlight.app.io.UserDao
 import streetlight.app.ui.*
 import org.jetbrains.compose.ui.tooling.preview.Preview
@@ -17,6 +17,7 @@ import streetlight.app.io.AreaDao
 import streetlight.app.io.LocationDao
 import streetlight.app.io.ApiClient
 import streetlight.app.io.EventDao
+import streetlight.app.sql.FoodModel
 import streetlight.app.ui.data.AreaListModel
 import streetlight.app.ui.data.AreaCreatorModel
 import streetlight.app.ui.data.EventCreatorModel

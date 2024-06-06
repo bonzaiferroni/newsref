@@ -40,7 +40,6 @@ class HomeScreen : Screen {
 
         Scaffold {
             Column(Modifier.fillMaxWidth(), horizontalAlignment = Alignment.CenterHorizontally) {
-                ExtraScreenContent(navigator)
                 Text("counter: ${state.counter}")
                 Button(onClick = screenModel::growCounter) {
                     Text("grow")
@@ -77,13 +76,6 @@ class HomeScreen : Screen {
                 Image(painterResource(Res.drawable.compose_multiplatform), null)
                 Text("Compose: $greeting")
             }
-        }
-    }
-
-    @Composable
-    fun ExtraScreenContent(navigator: Navigator) {
-        Button(onClick = { navigator.push(ExtraScreen())}) {
-            Text("Extra")
         }
     }
 }

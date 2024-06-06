@@ -1,4 +1,4 @@
-package streetlight.app.ui
+package streetlight.app.sql
 
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row

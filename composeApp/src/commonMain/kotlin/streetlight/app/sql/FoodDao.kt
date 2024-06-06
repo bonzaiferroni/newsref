@@ -1,4 +1,4 @@
-package streetlight.app.io
+package streetlight.app.sql
 
 import app.cash.sqldelight.coroutines.asFlow
 import app.cash.sqldelight.coroutines.mapToList
