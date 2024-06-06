@@ -1,6 +1,5 @@
-package streetlight.app.data
+package streetlight.app.io
 
-import io.ktor.client.statement.bodyAsText
 import streetlight.model.User
 
 class UserDao(

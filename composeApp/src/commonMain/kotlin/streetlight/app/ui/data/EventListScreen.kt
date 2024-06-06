@@ -1,12 +1,11 @@
-package streetlight.app.ui.event
+package streetlight.app.ui.data
 
 import androidx.compose.runtime.Composable
 import cafe.adriel.voyager.kodein.rememberScreenModel
-import streetlight.app.data.EventDao
+import streetlight.app.io.EventDao
 import streetlight.app.ui.core.DataListModel
 import streetlight.app.ui.core.DataListScreen
 import streetlight.dto.EventInfo
-import streetlight.model.Event
 
 class EventListScreen : DataListScreen<EventInfo>() {
 

@@ -1,9 +1,9 @@
-package streetlight.app.ui.location
+package streetlight.app.ui.data
 
 import androidx.compose.runtime.Composable
 import cafe.adriel.voyager.kodein.rememberScreenModel
-import streetlight.app.data.AreaDao
-import streetlight.app.data.LocationDao
+import streetlight.app.io.AreaDao
+import streetlight.app.io.LocationDao
 import streetlight.app.ui.core.DataListModel
 import streetlight.app.ui.core.DataListScreen
 import streetlight.model.Area

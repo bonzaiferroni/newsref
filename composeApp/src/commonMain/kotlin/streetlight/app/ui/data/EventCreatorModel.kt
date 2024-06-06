@@ -1,12 +1,12 @@
-package streetlight.app.ui.event
+package streetlight.app.ui.data
 
 import cafe.adriel.voyager.core.model.screenModelScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.datetime.Clock
 import kotlinx.datetime.LocalDateTime
-import streetlight.app.data.EventDao
-import streetlight.app.data.LocationDao
+import streetlight.app.io.EventDao
+import streetlight.app.io.LocationDao
 import streetlight.app.ui.core.UiModel
 import streetlight.app.ui.core.UiState
 import streetlight.model.Event

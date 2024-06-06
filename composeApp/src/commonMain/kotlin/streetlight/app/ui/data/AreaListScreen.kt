@@ -1,4 +1,4 @@
-package streetlight.app.ui.area
+package streetlight.app.ui.data
 
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize

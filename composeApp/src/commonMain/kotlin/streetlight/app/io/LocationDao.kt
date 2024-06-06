@@ -1,4 +1,4 @@
-package streetlight.app.data
+package streetlight.app.io
 
 import streetlight.model.Location
 

@@ -23,9 +23,10 @@ import cafe.adriel.voyager.navigator.currentOrThrow
 import streetlight.app.chopui.Scaffold
 import org.jetbrains.compose.resources.ExperimentalResourceApi
 import org.jetbrains.compose.resources.painterResource
-import streetlight.app.ui.area.AreaListScreen
-import streetlight.app.ui.event.EventListScreen
-import streetlight.app.ui.location.LocationListScreen
+import streetlight.app.ui.data.AreaListScreen
+import streetlight.app.ui.data.UserCreatorScreen
+import streetlight.app.ui.data.EventListScreen
+import streetlight.app.ui.data.LocationListScreen
 import streetlight.app.ui.login.LoginScreen
 import streetlight.composeapp.generated.resources.Res
 import streetlight.composeapp.generated.resources.compose_multiplatform
@@ -44,7 +45,7 @@ class HomeScreen : Screen {
                 Button(onClick = screenModel::growCounter) {
                     Text("grow")
                 }
-                Button(onClick = { navigator.push(CreateUserScreen()) }) {
+                Button(onClick = { navigator.push(UserCreatorScreen()) }) {
                     Text("Create User")
                 }
                 Button(onClick = { navigator.push(LoginScreen())}) {

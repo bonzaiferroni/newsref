@@ -1,10 +1,10 @@
-package streetlight.app.ui.location
+package streetlight.app.ui.data
 
 import cafe.adriel.voyager.core.model.screenModelScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
-import streetlight.app.data.AreaDao
-import streetlight.app.data.LocationDao
+import streetlight.app.io.AreaDao
+import streetlight.app.io.LocationDao
 import streetlight.app.ui.core.UiModel
 import streetlight.app.ui.core.UiState
 import streetlight.model.Area

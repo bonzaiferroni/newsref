@@ -1,6 +1,6 @@
 package streetlight.app.ui
 
-import streetlight.app.data.UserDao
+import streetlight.app.io.UserDao
 
 import streetlight.app.ui.core.UiModel
 import streetlight.app.ui.core.UiState

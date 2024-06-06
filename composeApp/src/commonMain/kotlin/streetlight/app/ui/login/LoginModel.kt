@@ -4,7 +4,7 @@ import cafe.adriel.voyager.core.model.screenModelScope
 import io.ktor.http.HttpStatusCode
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
-import streetlight.app.data.ApiClient
+import streetlight.app.io.ApiClient
 import streetlight.app.ui.core.UiModel
 import streetlight.app.ui.core.UiState
 

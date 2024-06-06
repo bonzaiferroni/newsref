@@ -4,8 +4,8 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.*
 import cafe.adriel.voyager.navigator.Navigator
 import cafe.adriel.voyager.transitions.SlideTransition
-import streetlight.app.data.FoodDao
-import streetlight.app.data.UserDao
+import streetlight.app.io.FoodDao
+import streetlight.app.io.UserDao
 import streetlight.app.ui.*
 import org.jetbrains.compose.ui.tooling.preview.Preview
 import org.kodein.di.DI
@@ -13,16 +13,17 @@ import org.kodein.di.bindProvider
 import org.kodein.di.bindSingleton
 import org.kodein.di.compose.withDI
 import org.kodein.di.instance
-import streetlight.app.data.AreaDao
-import streetlight.app.data.LocationDao
-import streetlight.app.data.ApiClient
-import streetlight.app.data.EventDao
-import streetlight.app.ui.area.AreaListModel
-import streetlight.app.ui.area.AreaCreatorModel
-import streetlight.app.ui.event.EventCreatorModel
-import streetlight.app.ui.event.EventListModel
-import streetlight.app.ui.location.LocationCreatorModel
-import streetlight.app.ui.location.LocationListModel
+import streetlight.app.io.AreaDao
+import streetlight.app.io.LocationDao
+import streetlight.app.io.ApiClient
+import streetlight.app.io.EventDao
+import streetlight.app.ui.data.AreaListModel
+import streetlight.app.ui.data.AreaCreatorModel
+import streetlight.app.ui.data.EventCreatorModel
+import streetlight.app.ui.data.EventListModel
+import streetlight.app.ui.data.LocationCreatorModel
+import streetlight.app.ui.data.LocationListModel
+import streetlight.app.ui.data.UserCreatorModel
 import streetlight.app.ui.login.LoginModel
 
 val di = DI {
@@ -43,7 +44,7 @@ val di = DI {
     bindProvider { LocationCreatorModel(instance(), instance()) }
     bindProvider { AreaListModel(instance()) }
     bindProvider { AreaCreatorModel(instance()) }
-    bindProvider { UserCreateModel(instance()) }
+    bindProvider { UserCreatorModel(instance()) }
     bindProvider { EventCreatorModel(instance(), instance()) }
     bindProvider { EventListModel(instance()) }
     bindProvider { FoodModel(instance()) }

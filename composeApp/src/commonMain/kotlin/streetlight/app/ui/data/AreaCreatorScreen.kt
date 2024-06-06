@@ -1,4 +1,4 @@
-package streetlight.app.ui.area
+package streetlight.app.ui.data
 
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
@@ -10,7 +10,7 @@ import cafe.adriel.voyager.kodein.rememberScreenModel
 import cafe.adriel.voyager.navigator.LocalNavigator
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
-import streetlight.app.data.AreaDao
+import streetlight.app.io.AreaDao
 import streetlight.app.ui.core.DataCreator
 import streetlight.app.ui.core.UiModel
 import streetlight.app.ui.core.UiState

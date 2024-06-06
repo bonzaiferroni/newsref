@@ -1,4 +1,4 @@
-package streetlight.app.ui
+package streetlight.app.ui.data
 
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -13,11 +13,11 @@ import cafe.adriel.voyager.kodein.rememberScreenModel
 import cafe.adriel.voyager.navigator.LocalNavigator
 import streetlight.app.chopui.Scaffold
 
-class CreateUserScreen : Screen {
+class UserCreatorScreen : Screen {
     @Composable
     override fun Content() {
         val navigator = LocalNavigator.current
-        val screenModel = rememberScreenModel<UserCreateModel>()
+        val screenModel = rememberScreenModel<UserCreatorModel>()
         val state by screenModel.state
         Scaffold("Add User", navigator) {
             Box(

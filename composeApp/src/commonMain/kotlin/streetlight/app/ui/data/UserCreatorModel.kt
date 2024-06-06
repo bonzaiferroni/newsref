@@ -1,13 +1,13 @@
-package streetlight.app.ui
+package streetlight.app.ui.data
 
 import cafe.adriel.voyager.core.model.screenModelScope
 import kotlinx.coroutines.launch
-import streetlight.app.data.UserDao
+import streetlight.app.io.UserDao
 import streetlight.app.ui.core.UiModel
 import streetlight.app.ui.core.UiState
 import streetlight.model.User
 
-class UserCreateModel(
+class UserCreatorModel(
     private val userDao: UserDao
 ) : UiModel<CreateUserState>(CreateUserState()) {
 

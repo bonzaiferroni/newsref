@@ -1,4 +1,4 @@
-package streetlight.app.data
+package streetlight.app.io
 
 import io.ktor.client.HttpClient
 import io.ktor.client.call.body
