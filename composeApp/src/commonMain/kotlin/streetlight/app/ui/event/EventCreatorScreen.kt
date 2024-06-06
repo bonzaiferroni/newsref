@@ -29,56 +29,47 @@ import kotlinx.datetime.LocalDateTime
 import streetlight.app.chopui.Scaffold
 import streetlight.app.chopui.dialogs.DatePickerDialog
 import streetlight.app.chopui.dialogs.TimePickerDialog
-import streetlight.app.ui.location.LocationCreateScreen
+import streetlight.app.ui.core.DataCreator
+import streetlight.app.ui.location.LocationCreatorScreen
 import streetlight.model.Event
 import streetlight.model.Location
 import streetlight.utils.toLocalDateTime
 import streetlight.utils.toFormatString
 
-class CreateEventScreen(
-    private val onComplete: ((id: Int) -> Unit)? = null
+class EventCreatorScreen(
+    private val onComplete: ((item: Event) -> Unit)? = null
 ) : Screen {
     @Composable
     override fun Content() {
         val navigator = LocalNavigator.current
-        val screenModel = rememberScreenModel<EventCreateModel>()
+        val screenModel = rememberScreenModel<EventCreatorModel>()
         val state by screenModel.state
 
-        LaunchedEffect(state.isFinished) {
-            if (state.isFinished) {
-                navigator?.pop()
-                onComplete?.invoke(state.event.id)
-            }
-        }
-
-        Scaffold("Add Event", navigator) {
-            Box(
-                modifier = Modifier.fillMaxSize(),
-                contentAlignment = Alignment.Center
-            ) {
-                Column {
-                    DateTimeRow(
-                        dateTime = state.event.timeStart.toLocalDateTime(),
-                        updateTime = screenModel::updateStartTime
-                    )
-                    DurationChooser(state.duration, screenModel::updateDuration)
-                    TextField(
-                        value = state.search,
-                        onValueChange = screenModel::updateSearch,
-                        label = { Text("Search") }
-                    )
-                    LocationChooser(
-                        navigator,
-                        state.event,
-                        state.locations,
-                        screenModel::updateLocation,
-                    )
-                    Button(onClick = screenModel::addEvent) {
-                        Text("Add Event")
-                    }
-                    Text(state.result)
-                }
-            }
+        DataCreator(
+            title = "Add Event",
+            item = state.event,
+            isComplete = state.isComplete,
+            result = state.result,
+            onComplete = onComplete,
+            createData = screenModel::createEvent,
+            navigator = navigator,
+        ) {
+            DateTimeRow(
+                dateTime = state.event.timeStart.toLocalDateTime(),
+                updateTime = screenModel::updateStartTime
+            )
+            DurationChooser(state.duration, screenModel::updateDuration)
+            TextField(
+                value = state.search,
+                onValueChange = screenModel::updateSearch,
+                label = { Text("Search") }
+            )
+            LocationChooser(
+                navigator,
+                state.event,
+                state.locations,
+                screenModel::updateLocation,
+            )
         }
     }
 
@@ -143,7 +134,7 @@ class CreateEventScreen(
                 DropdownMenuItem(
                     onClick = {
                         expanded = false
-                        navigator?.push(LocationCreateScreen() {
+                        navigator?.push(LocationCreatorScreen() {
                             // updateLocation(it)
                         })
                     },

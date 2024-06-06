@@ -26,7 +26,7 @@ class AreaListScreen : Screen {
             title = "Areas",
             navigator = navigator,
             floatingAction = { navigator?.push(AreaCreatorScreen() {
-                // screenModel.updateHighlight(it)
+                screenModel.updateHighlight(it.id)
                 screenModel.fetchAreas()
             })}
         ) {

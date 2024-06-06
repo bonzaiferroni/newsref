@@ -19,9 +19,9 @@ import streetlight.app.data.ApiClient
 import streetlight.app.data.EventDao
 import streetlight.app.ui.area.AreaListModel
 import streetlight.app.ui.area.AreaCreatorModel
-import streetlight.app.ui.event.EventCreateModel
+import streetlight.app.ui.event.EventCreatorModel
 import streetlight.app.ui.event.EventListModel
-import streetlight.app.ui.location.LocationCreateModel
+import streetlight.app.ui.location.LocationCreatorModel
 import streetlight.app.ui.location.LocationListModel
 import streetlight.app.ui.login.LoginModel
 
@@ -40,11 +40,11 @@ val di = DI {
     bindProvider { EventDao(instance()) }
     // models
     bindProvider { LocationListModel(instance(), instance()) }
-    bindProvider { LocationCreateModel(instance(), instance()) }
+    bindProvider { LocationCreatorModel(instance(), instance()) }
     bindProvider { AreaListModel(instance()) }
     bindProvider { AreaCreatorModel(instance()) }
     bindProvider { UserCreateModel(instance()) }
-    bindProvider { EventCreateModel(instance(), instance()) }
+    bindProvider { EventCreatorModel(instance(), instance()) }
     bindProvider { EventListModel(instance()) }
     bindProvider { FoodModel(instance()) }
     bindProvider { HomeModel(instance()) }

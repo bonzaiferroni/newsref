@@ -14,7 +14,7 @@ import streetlight.model.Location
 import streetlight.utils.toEpochSeconds
 import streetlight.utils.toLocalEpochSeconds
 
-class EventCreateModel(
+class EventCreatorModel(
     private val eventDao: EventDao,
     private val locationDao: LocationDao,
 ) : UiModel<CreateEventState>(CreateEventState()) {
@@ -45,14 +45,14 @@ class EventCreateModel(
         }
     }
 
-    fun addEvent() {
+    fun createEvent() {
         screenModelScope.launch(Dispatchers.IO) {
             val id = eventDao.create(sv.event)
             val isFinished = id > 0
             sv = sv.copy(
                 result = "result: $id",
                 event = sv.event.copy(id = id),
-                isFinished = isFinished
+                isComplete = isFinished
             )
         }
     }
@@ -73,7 +73,7 @@ data class CreateEventState(
         timeStart = Clock.System.now().toLocalEpochSeconds(),
         hours = 1f,
     ),
-    val isFinished: Boolean = false,
+    val isComplete: Boolean = false,
     val search: String = "",
     val locations: List<Location> = emptyList(),
     val result: String = "",

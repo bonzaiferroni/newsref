@@ -10,7 +10,7 @@ import streetlight.app.ui.core.UiState
 import streetlight.model.Area
 import streetlight.model.Location
 
-class LocationCreateModel(
+class LocationCreatorModel(
     private val areaDao: AreaDao,
     private val locationDao: LocationDao,
 ) : UiModel<CreateLocationState>(CreateLocationState()) {
@@ -50,13 +50,13 @@ class LocationCreateModel(
         sv = sv.copy(location = sv.location.copy(areaId = id))
     }
 
-    fun addLocation() {
+    fun createLocation() {
         screenModelScope.launch(Dispatchers.IO) {
             val id = locationDao.addLocation(sv.location)
             sv = sv.copy(
                 result = "$id",
                 location = sv.location.copy(id = id),
-                isFinished = id > 0
+                isComplete = id > 0
             )
         }
     }
@@ -65,7 +65,7 @@ class LocationCreateModel(
 data class CreateLocationState(
     val location: Location = Location(),
     val areas: List<Area> = emptyList(),
-    val isFinished: Boolean = false,
+    val isComplete: Boolean = false,
     val result: String = "",
     val latitude: String = "",
     val longitude: String = ""

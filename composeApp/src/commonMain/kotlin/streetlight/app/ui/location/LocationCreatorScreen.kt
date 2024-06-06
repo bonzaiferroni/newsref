@@ -27,59 +27,50 @@ import cafe.adriel.voyager.navigator.LocalNavigator
 import cafe.adriel.voyager.navigator.Navigator
 import streetlight.app.chopui.Scaffold
 import streetlight.app.ui.area.AreaCreatorScreen
+import streetlight.app.ui.core.DataCreator
 import streetlight.model.Area
 import streetlight.model.Location
 
-class LocationCreateScreen(
-    private val onComplete: ((newId: Int) -> Unit)?
+class LocationCreatorScreen(
+    private val onComplete: ((Location) -> Unit)?
 ) : Screen {
     @Composable
     override fun Content() {
         val navigator = LocalNavigator.current
-        val screenModel = rememberScreenModel<LocationCreateModel>()
+        val screenModel = rememberScreenModel<LocationCreatorModel>()
         val state by screenModel.state
 
-        LaunchedEffect(state.isFinished) {
-            if (state.isFinished) {
-                navigator?.pop()
-                onComplete?.invoke(state.location.id)
-            }
-        }
-
-        Scaffold("Add Location", navigator) {
-            Box(
-                modifier = Modifier.fillMaxSize(),
-                contentAlignment = Alignment.Center
-            ) {
-                Column {
-                    TextField(
-                        value = state.location.name,
-                        onValueChange = screenModel::updateName,
-                        label = { Text("Name") }
-                    )
-                    TextField(
-                        value = state.latitude,
-                        onValueChange = screenModel::updateLatitude,
-                        label = { Text("Latitude") }
-                    )
-                    TextField(
-                        value = state.longitude,
-                        onValueChange = screenModel::updateLongitude,
-                        label = { Text("Longitude") }
-                    )
-                    AreaChooser(
-                        navigator = navigator,
-                        location = state.location,
-                        areas = state.areas,
-                        updateArea = screenModel::updateArea,
-                        fetchAreas = screenModel::fetchAreas
-                    )
-                    Button(onClick = screenModel::addLocation) {
-                        Text("Add Location")
-                    }
-                    Text(state.result)
-                }
-            }
+        DataCreator(
+            title = "Add Location",
+            item = state.location,
+            isComplete = state.isComplete,
+            result = state.result,
+            onComplete = onComplete,
+            createData = screenModel::createLocation,
+            navigator = navigator,
+        ) {
+            TextField(
+                value = state.location.name,
+                onValueChange = screenModel::updateName,
+                label = { Text("Name") }
+            )
+            TextField(
+                value = state.latitude,
+                onValueChange = screenModel::updateLatitude,
+                label = { Text("Latitude") }
+            )
+            TextField(
+                value = state.longitude,
+                onValueChange = screenModel::updateLongitude,
+                label = { Text("Longitude") }
+            )
+            AreaChooser(
+                navigator = navigator,
+                location = state.location,
+                areas = state.areas,
+                updateArea = screenModel::updateArea,
+                fetchAreas = screenModel::fetchAreas
+            )
         }
     }
 
@@ -113,7 +104,7 @@ class LocationCreateScreen(
                     onClick = {
                         expanded = false
                         navigator?.push(AreaCreatorScreen() {
-                            updateArea(it)
+                            updateArea(it.id)
                             fetchAreas()
                         })
                     },
