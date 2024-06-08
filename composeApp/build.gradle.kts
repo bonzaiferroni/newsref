@@ -46,6 +46,8 @@ kotlin {
             implementation("io.insert-koin:koin-core:3.6.0-alpha3")
             implementation("io.insert-koin:koin-compose:1.2.0-alpha3")
 
+            implementation("org.slf4j:slf4j-simple:1.6.1")
+
             // Screen Model
             // Transitions
             // implementation(libs.kodein.di.framework.compose)

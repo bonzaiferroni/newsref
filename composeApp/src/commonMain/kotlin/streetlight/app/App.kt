@@ -29,7 +29,7 @@ fun App() {
                     // The start destination
                     initialRoute = AppRoutes.default,
                 ) {
-                    appScenes()
+                    appScenes(navigator)
                 }
             }
         }

@@ -16,6 +16,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import moe.tlaster.precompose.koin.koinViewModel
+import moe.tlaster.precompose.navigation.Navigator
 import moe.tlaster.precompose.navigation.rememberNavigator
 import streetlight.app.chopui.Scaffold
 import org.jetbrains.compose.resources.ExperimentalResourceApi
@@ -24,8 +25,7 @@ import streetlight.composeapp.generated.resources.Res
 import streetlight.composeapp.generated.resources.compose_multiplatform
 
 @Composable
-fun HomeScreen() {
-    val navigator = rememberNavigator()
+fun HomeScreen(navigator: Navigator) {
     val screenModel = koinViewModel(HomeModel::class)
     val state by screenModel.state
 
@@ -41,13 +41,13 @@ fun HomeScreen() {
             Button(onClick = { navigator.navigate("/login")}) {
                 Text("Login")
             }
-            Button(onClick = { navigator.navigate("/locations") }) {
+            Button(onClick = { navigator.navigate("/location") }) {
                 Text("Locations")
             }
-            Button(onClick = { navigator.navigate("/areas") }) {
+            Button(onClick = { navigator.navigate("/area") }) {
                 Text("Areas")
             }
-            Button(onClick = { navigator.navigate("/events")}) {
+            Button(onClick = { navigator.navigate("/event")}) {
                 Text("Events")
             }
         }

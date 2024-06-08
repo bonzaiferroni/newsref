@@ -5,6 +5,7 @@ import androidx.compose.runtime.getValue
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import moe.tlaster.precompose.koin.koinViewModel
+import moe.tlaster.precompose.navigation.Navigator
 import moe.tlaster.precompose.navigation.rememberNavigator
 import moe.tlaster.precompose.viewmodel.viewModelScope
 import streetlight.app.io.AreaDao
@@ -16,8 +17,7 @@ import streetlight.model.Area
 import streetlight.model.Location
 
 @Composable
-fun LocationListScreen() {
-    val navigator = rememberNavigator()
+fun LocationListScreen(navigator: Navigator) {
     val viewModel = koinViewModel(LocationListModel::class)
     val state by viewModel.state
 
