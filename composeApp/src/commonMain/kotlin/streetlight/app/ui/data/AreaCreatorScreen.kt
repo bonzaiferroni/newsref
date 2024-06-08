@@ -4,42 +4,36 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
-import cafe.adriel.voyager.core.model.screenModelScope
-import cafe.adriel.voyager.core.screen.Screen
-import cafe.adriel.voyager.kodein.rememberScreenModel
-import cafe.adriel.voyager.navigator.LocalNavigator
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
+import moe.tlaster.precompose.koin.koinViewModel
+import moe.tlaster.precompose.navigation.rememberNavigator
+import moe.tlaster.precompose.viewmodel.viewModelScope
 import streetlight.app.io.AreaDao
 import streetlight.app.ui.core.DataCreator
 import streetlight.app.ui.core.UiModel
 import streetlight.app.ui.core.UiState
 import streetlight.model.Area
 
-class AreaCreatorScreen(
-    private val onComplete: ((item: Area) -> Unit)?
-) : Screen {
-    @Composable
-    override fun Content() {
-        val navigator = LocalNavigator.current
-        val screenModel = rememberScreenModel<AreaCreatorModel>()
-        val state by screenModel.state
+@Composable
+fun AreaCreatorScreen() {
+    val navigator = rememberNavigator()
+    val screenModel = koinViewModel(AreaCreatorModel::class)
+    val state by screenModel.state
 
-        DataCreator(
-            title = "Add Area",
-            item = state.area,
-            result = state.result,
-            isComplete = state.isComplete,
-            onComplete = onComplete,
-            createData = screenModel::createArea,
-            navigator = navigator,
-        ) {
-            TextField(
-                value = state.area.name,
-                onValueChange = screenModel::updateName,
-                label = { Text("Name") }
-            )
-        }
+    DataCreator(
+        title = "Add Area",
+        item = state.area,
+        result = state.result,
+        isComplete = state.isComplete,
+        createData = screenModel::createArea,
+        navigator = navigator,
+    ) {
+        TextField(
+            value = state.area.name,
+            onValueChange = screenModel::updateName,
+            label = { Text("Name") }
+        )
     }
 }
 
@@ -52,7 +46,7 @@ class AreaCreatorModel(
     }
 
     fun createArea() {
-        screenModelScope.launch(Dispatchers.IO) {
+        viewModelScope.launch(Dispatchers.IO) {
             val id = areaDao.create(sv.area)
             val isFinished = id > 0
             sv = sv.copy(

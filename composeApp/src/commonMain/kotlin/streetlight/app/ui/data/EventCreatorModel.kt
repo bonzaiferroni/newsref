@@ -1,10 +1,10 @@
 package streetlight.app.ui.data
 
-import cafe.adriel.voyager.core.model.screenModelScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.datetime.Clock
 import kotlinx.datetime.LocalDateTime
+import moe.tlaster.precompose.viewmodel.viewModelScope
 import streetlight.app.io.EventDao
 import streetlight.app.io.LocationDao
 import streetlight.app.ui.core.UiModel
@@ -34,7 +34,7 @@ class EventCreatorModel(
 
     fun updateSearch(search: String) {
         sv = sv.copy(search = search)
-        screenModelScope.launch(Dispatchers.IO) {
+        viewModelScope.launch(Dispatchers.IO) {
             val locations = locationDao.search(search)
             sv = sv.copy(
                 locations = locations,
@@ -46,7 +46,7 @@ class EventCreatorModel(
     }
 
     fun createEvent() {
-        screenModelScope.launch(Dispatchers.IO) {
+        viewModelScope.launch(Dispatchers.IO) {
             val id = eventDao.create(sv.event)
             val isFinished = id > 0
             sv = sv.copy(

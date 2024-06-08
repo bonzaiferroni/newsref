@@ -2,12 +2,11 @@ package streetlight.app.ui.data
 
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
-import cafe.adriel.voyager.core.model.screenModelScope
-import cafe.adriel.voyager.core.screen.Screen
-import cafe.adriel.voyager.kodein.rememberScreenModel
-import cafe.adriel.voyager.navigator.LocalNavigator
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
+import moe.tlaster.precompose.koin.koinViewModel
+import moe.tlaster.precompose.navigation.rememberNavigator
+import moe.tlaster.precompose.viewmodel.viewModelScope
 import streetlight.app.io.AreaDao
 import streetlight.app.io.LocationDao
 import streetlight.app.ui.core.DataList
@@ -16,24 +15,19 @@ import streetlight.app.ui.core.UiState
 import streetlight.model.Area
 import streetlight.model.Location
 
-class LocationListScreen() : Screen {
-    @Composable
-    override fun Content() {
-        val navigator = LocalNavigator.current
-        val screenModel = rememberScreenModel<LocationListModel>()
-        val state by screenModel.state
+@Composable
+fun LocationListScreen() {
+    val navigator = rememberNavigator()
+    val viewModel = koinViewModel(LocationListModel::class)
+    val state by viewModel.state
 
-        DataList(
-            title = "Locations",
-            items = state.locations,
-            provideName = { "${it.location.name} (${it.area.name})" },
-            floatingAction = { navigator?.push(LocationCreatorScreen() {
-                screenModel.refresh()
-            }) },
-            navigator = navigator,
-        )
-    }
-
+    DataList(
+        title = "Locations",
+        items = state.locations,
+        provideName = { "${it.location.name} (${it.area.name})" },
+        floatingAction = { navigator.navigate("/createLocation") },
+        navigator = navigator,
+    )
 }
 
 class LocationListModel(
@@ -45,7 +39,7 @@ class LocationListModel(
     }
 
     fun refresh() {
-        screenModelScope.launch(Dispatchers.IO) {
+        viewModelScope.launch(Dispatchers.IO) {
             val locations = locationDao.getAll()
             val areas = areaDao.getAll()
             val infos = locations.map { location ->

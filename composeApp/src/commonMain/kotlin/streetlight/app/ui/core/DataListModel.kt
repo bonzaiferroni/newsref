@@ -1,8 +1,8 @@
 package streetlight.app.ui.core
 
-import cafe.adriel.voyager.core.model.screenModelScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
+import moe.tlaster.precompose.viewmodel.viewModelScope
 
 abstract class DataListModel <Data> : UiModel<ListDataState<Data>>(ListDataState()) {
 
@@ -13,7 +13,7 @@ abstract class DataListModel <Data> : UiModel<ListDataState<Data>>(ListDataState
     }
 
     fun refresh(newId: Int = 0) {
-        screenModelScope.launch(Dispatchers.IO) {
+        viewModelScope.launch(Dispatchers.IO) {
             val items = fetchData()
             sv = sv.copy(items = items)
         }

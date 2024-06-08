@@ -11,37 +11,33 @@ import androidx.compose.material3.TextField
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
-import cafe.adriel.voyager.core.screen.Screen
-import cafe.adriel.voyager.kodein.rememberScreenModel
+import moe.tlaster.precompose.koin.koinViewModel
 import streetlight.app.chopui.Scaffold
 import streetlight.app.chopui.addBasePadding
 
-class FoodScreen : Screen {
+@Composable
+fun FoodScreen() {
+    val model = koinViewModel(FoodModel::class)
+    val state by model.state
 
-    @Composable
-    override fun Content() {
-        val model = rememberScreenModel<FoodModel>()
-        val state by model.state
-
-        Scaffold("Food") {
-            Column(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .addBasePadding()
-            ) {
-                Row(modifier = Modifier.fillMaxWidth()) {
-                    TextField(
-                        value = state.newFood.name,
-                        onValueChange = model::onNameChange,
-                    )
-                    Button(onClick = model::onAddFood) {
-                        Text("Add")
-                    }
+    Scaffold("Food") {
+        Column(
+            modifier = Modifier
+                .fillMaxWidth()
+                .addBasePadding()
+        ) {
+            Row(modifier = Modifier.fillMaxWidth()) {
+                TextField(
+                    value = state.newFood.name,
+                    onValueChange = model::onNameChange,
+                )
+                Button(onClick = model::onAddFood) {
+                    Text("Add")
                 }
-                LazyColumn {
-                    items(state.foods) { food ->
-                        Text(food.name)
-                    }
+            }
+            LazyColumn {
+                items(state.foods) { food ->
+                    Text(food.name)
                 }
             }
         }

@@ -6,12 +6,11 @@ import androidx.compose.foundation.layout.ColumnScope
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material3.Button
 import androidx.compose.material3.Text
-import androidx.compose.material3.TextField
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import cafe.adriel.voyager.navigator.Navigator
+import moe.tlaster.precompose.navigation.Navigator
 import streetlight.app.chopui.Scaffold
 
 @Composable
@@ -20,7 +19,6 @@ fun <Data> DataCreator(
     item: Data,
     isComplete: Boolean,
     result: String,
-    onComplete: ((item: Data) -> Unit)?,
     createData: () -> Unit,
     navigator: Navigator?,
     modifier: Modifier = Modifier,
@@ -28,8 +26,8 @@ fun <Data> DataCreator(
 ) {
     LaunchedEffect(isComplete) {
         if (isComplete) {
-            navigator?.pop()
-            onComplete?.invoke(item)
+            navigator?.goBack()
+            // onComplete?.invoke(item)
         }
     }
 

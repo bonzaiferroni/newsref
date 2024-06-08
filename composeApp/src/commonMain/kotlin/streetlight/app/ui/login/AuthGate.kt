@@ -5,7 +5,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
-import cafe.adriel.voyager.navigator.Navigator
+import moe.tlaster.precompose.navigation.Navigator
 
 @Composable
 fun AuthGate(
@@ -17,9 +17,6 @@ fun AuthGate(
     if (isLoggedIn) {
         content()
     } else {
-        navigator?.push(LoginScreen() {
-            isLoggedIn = true
-            navigator.pop()
-        })
+        navigator?.navigate("/login")
     }
 }

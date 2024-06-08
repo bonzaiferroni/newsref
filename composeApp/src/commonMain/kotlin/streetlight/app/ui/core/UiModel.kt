@@ -2,11 +2,11 @@ package streetlight.app.ui.core
 
 import androidx.compose.runtime.State
 import androidx.compose.runtime.mutableStateOf
-import cafe.adriel.voyager.core.model.ScreenModel
+import moe.tlaster.precompose.viewmodel.ViewModel
 
 abstract class UiModel<T: UiState>(
     initialState: T
-) : ScreenModel {
+) : ViewModel() {
     protected val _state = mutableStateOf(initialState)
     protected var sv
         get() = _state.value

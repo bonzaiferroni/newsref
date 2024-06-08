@@ -1,57 +1,47 @@
 package streetlight.app.ui.data
 
-import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
-import androidx.compose.ui.Alignment
-import androidx.compose.ui.Modifier
-import cafe.adriel.voyager.core.model.screenModelScope
-import cafe.adriel.voyager.core.screen.Screen
-import cafe.adriel.voyager.kodein.rememberScreenModel
-import cafe.adriel.voyager.navigator.LocalNavigator
 import kotlinx.coroutines.launch
-import streetlight.app.chopui.Scaffold
+import moe.tlaster.precompose.koin.koinViewModel
+import moe.tlaster.precompose.navigation.rememberNavigator
+import moe.tlaster.precompose.viewmodel.viewModelScope
 import streetlight.app.io.UserDao
 import streetlight.app.ui.core.DataCreator
 import streetlight.app.ui.core.UiModel
 import streetlight.app.ui.core.UiState
 import streetlight.model.User
 
-class UserCreatorScreen : Screen {
-    @Composable
-    override fun Content() {
-        val navigator = LocalNavigator.current
-        val screenModel = rememberScreenModel<UserCreatorModel>()
-        val state by screenModel.state
+@Composable
+fun UserCreatorScreen() {
+    val navigator = rememberNavigator()
+    val viewModel = koinViewModel(UserCreatorModel::class)
+    val state by viewModel.state
 
-        DataCreator(
-            title = "Add User",
-            item = state.user,
-            isComplete = state.isComplete,
-            result = state.result,
-            onComplete = null,
-            createData = screenModel::createUser,
-            navigator = navigator,
-        ) {
-            TextField(
-                value = state.user.name,
-                onValueChange = screenModel::updateName,
-                label = { Text("Name") }
-            )
-            TextField(
-                value = state.user.email,
-                onValueChange = screenModel::updateEmail,
-                label = { Text("Email") }
-            )
-            TextField(
-                value = state.user.password,
-                onValueChange = screenModel::updatePassword,
-                label = { Text("Password") }
-            )
-        }
+    DataCreator(
+        title = "Add User",
+        item = state.user,
+        isComplete = state.isComplete,
+        result = state.result,
+        createData = viewModel::createUser,
+        navigator = navigator,
+    ) {
+        TextField(
+            value = state.user.name,
+            onValueChange = viewModel::updateName,
+            label = { Text("Name") }
+        )
+        TextField(
+            value = state.user.email,
+            onValueChange = viewModel::updateEmail,
+            label = { Text("Email") }
+        )
+        TextField(
+            value = state.user.password,
+            onValueChange = viewModel::updatePassword,
+            label = { Text("Password") }
+        )
     }
 }
 
@@ -72,7 +62,7 @@ class UserCreatorModel(
     }
 
     fun createUser() {
-        screenModelScope.launch {
+        viewModelScope.launch {
             val result = userDao.addUser(sv.user)
             sv = sv.copy(result = "id: $result", user = User())
         }

@@ -1,8 +1,8 @@
 package streetlight.app.ui.data
 
-import cafe.adriel.voyager.core.model.screenModelScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
+import moe.tlaster.precompose.viewmodel.viewModelScope
 import streetlight.app.io.AreaDao
 import streetlight.app.io.LocationDao
 import streetlight.app.ui.core.UiModel
@@ -20,7 +20,7 @@ class LocationCreatorModel(
     }
 
     fun fetchAreas() {
-        screenModelScope.launch(Dispatchers.IO) {
+        viewModelScope.launch(Dispatchers.IO) {
             val areas = areaDao.getAll()
             sv = sv.copy(areas = areas)
         }
@@ -51,7 +51,7 @@ class LocationCreatorModel(
     }
 
     fun createLocation() {
-        screenModelScope.launch(Dispatchers.IO) {
+        viewModelScope.launch(Dispatchers.IO) {
             val id = locationDao.addLocation(sv.location)
             sv = sv.copy(
                 result = "$id",

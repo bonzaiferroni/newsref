@@ -1,9 +1,9 @@
 package streetlight.app.ui.login
 
-import cafe.adriel.voyager.core.model.screenModelScope
 import io.ktor.http.HttpStatusCode
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
+import moe.tlaster.precompose.viewmodel.viewModelScope
 import streetlight.app.io.ApiClient
 import streetlight.app.ui.core.UiModel
 import streetlight.app.ui.core.UiState
@@ -20,7 +20,7 @@ class LoginModel(
     }
 
     fun login() {
-        screenModelScope.launch(Dispatchers.IO) {
+        viewModelScope.launch(Dispatchers.IO) {
             val response = apiClient.login(sv.username, sv.password)
             if (response.status != HttpStatusCode.OK) {
                 return@launch

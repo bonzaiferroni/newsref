@@ -15,67 +15,57 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import cafe.adriel.voyager.core.screen.Screen
-import cafe.adriel.voyager.kodein.rememberScreenModel
-import cafe.adriel.voyager.navigator.LocalNavigator
-import cafe.adriel.voyager.navigator.Navigator
-import cafe.adriel.voyager.navigator.currentOrThrow
+import moe.tlaster.precompose.koin.koinViewModel
+import moe.tlaster.precompose.navigation.rememberNavigator
 import streetlight.app.chopui.Scaffold
 import org.jetbrains.compose.resources.ExperimentalResourceApi
 import org.jetbrains.compose.resources.painterResource
-import streetlight.app.ui.data.AreaListScreen
-import streetlight.app.ui.data.UserCreatorScreen
-import streetlight.app.ui.data.EventListScreen
-import streetlight.app.ui.data.LocationListScreen
-import streetlight.app.ui.login.LoginScreen
 import streetlight.composeapp.generated.resources.Res
 import streetlight.composeapp.generated.resources.compose_multiplatform
 
-class HomeScreen : Screen {
-    @Composable
-    override fun Content() {
-        val navigator = LocalNavigator.currentOrThrow
-        val screenModel = rememberScreenModel<HomeModel>()
-        val state by screenModel.state
+@Composable
+fun HomeScreen() {
+    val navigator = rememberNavigator()
+    val screenModel = koinViewModel(HomeModel::class)
+    val state by screenModel.state
 
-        Scaffold {
-            Column(Modifier.fillMaxWidth(), horizontalAlignment = Alignment.CenterHorizontally) {
-                Text("counter: ${state.counter}")
-                Button(onClick = screenModel::growCounter) {
-                    Text("grow")
-                }
-                Button(onClick = { navigator.push(UserCreatorScreen()) }) {
-                    Text("Create User")
-                }
-                Button(onClick = { navigator.push(LoginScreen())}) {
-                    Text("Login")
-                }
-                Button(onClick = { navigator.push(LocationListScreen()) }) {
-                    Text("Locations")
-                }
-                Button(onClick = { navigator.push(AreaListScreen()) }) {
-                    Text("Areas")
-                }
-                Button(onClick = { navigator.push(EventListScreen())}) {
-                    Text("Events")
-                }
+    Scaffold {
+        Column(Modifier.fillMaxWidth(), horizontalAlignment = Alignment.CenterHorizontally) {
+            Text("counter: ${state.counter}")
+            Button(onClick = screenModel::growCounter) {
+                Text("grow")
+            }
+            Button(onClick = { navigator.navigate("/createUser") }) {
+                Text("Create User")
+            }
+            Button(onClick = { navigator.navigate("/login")}) {
+                Text("Login")
+            }
+            Button(onClick = { navigator.navigate("/locations") }) {
+                Text("Locations")
+            }
+            Button(onClick = { navigator.navigate("/areas") }) {
+                Text("Areas")
+            }
+            Button(onClick = { navigator.navigate("/events")}) {
+                Text("Events")
             }
         }
     }
+}
 
-    @OptIn(ExperimentalResourceApi::class)
-    @Composable
-    fun GreetingContent() {
-        var showContent by remember { mutableStateOf(false) }
-        Button(onClick = { showContent = !showContent }) {
-            Text("Click me!")
-        }
-        AnimatedVisibility(showContent) {
-            val greeting = remember { "yo!" }
-            Column(Modifier.fillMaxWidth(), horizontalAlignment = Alignment.CenterHorizontally) {
-                Image(painterResource(Res.drawable.compose_multiplatform), null)
-                Text("Compose: $greeting")
-            }
+@OptIn(ExperimentalResourceApi::class)
+@Composable
+fun GreetingContent() {
+    var showContent by remember { mutableStateOf(false) }
+    Button(onClick = { showContent = !showContent }) {
+        Text("Click me!")
+    }
+    AnimatedVisibility(showContent) {
+        val greeting = remember { "yo!" }
+        Column(Modifier.fillMaxWidth(), horizontalAlignment = Alignment.CenterHorizontally) {
+            Image(painterResource(Res.drawable.compose_multiplatform), null)
+            Text("Compose: $greeting")
         }
     }
 }

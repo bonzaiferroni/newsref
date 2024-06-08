@@ -38,13 +38,17 @@ kotlin {
             implementation(libs.sqldelight.coroutines)
 
             // Navigator
-            implementation(libs.voyager.navigator)
-            implementation(libs.voyager.screenmodel)
-            implementation(libs.voyager.transitions)
-            implementation(libs.voyager.kodein)
+            val precomposeVersion = "1.6.0"
+            implementation("moe.tlaster:precompose:$precomposeVersion")
+            implementation("moe.tlaster:precompose-viewmodel:$precomposeVersion") // For ViewModel intergration
+            implementation("moe.tlaster:precompose-koin:$precomposeVersion") // For Koin intergration
+            // api("moe.tlaster:precompose-molecule:$precompose_version") // For Molecule intergration
+            implementation("io.insert-koin:koin-core:3.6.0-alpha3")
+            implementation("io.insert-koin:koin-compose:1.2.0-alpha3")
+
             // Screen Model
             // Transitions
-            implementation(libs.kodein.di.framework.compose)
+            // implementation(libs.kodein.di.framework.compose)
             implementation(libs.kotlinx.coroutines.core)
             implementation(libs.kotlinx.datetime)
 
@@ -54,6 +58,7 @@ kotlin {
             implementation(libs.ktor.client.content.negotiation)
             implementation(libs.ktor.client.auth)
             implementation(libs.ktor.serialization.kotlinx.json)
+            // implementation("moe.tlaster:precompose:1.6.0")
 
             implementation(project(":chopui"))
             implementation(project(":model"))

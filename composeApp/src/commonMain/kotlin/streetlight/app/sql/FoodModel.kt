@@ -1,9 +1,9 @@
 package streetlight.app.sql
 
-import cafe.adriel.voyager.core.model.screenModelScope
 import streetlight.app.Food
 import streetlight.app.utils.getBlankFood
 import kotlinx.coroutines.launch
+import moe.tlaster.precompose.viewmodel.viewModelScope
 import streetlight.app.ui.core.UiModel
 import streetlight.app.ui.core.UiState
 
@@ -12,7 +12,7 @@ class FoodModel(
 ) : UiModel<FoodState>(FoodState()) {
 
     init {
-        screenModelScope.launch {
+        viewModelScope.launch {
             foodDao.getAll().collect { foods ->
                 _state.value = _state.value.copy(foods = foods)
             }
@@ -26,7 +26,7 @@ class FoodModel(
     fun onAddFood() {
         val newFood = state.value.newFood
         if (newFood.name.isNotBlank()) {
-            screenModelScope.launch {
+            viewModelScope.launch {
                 foodDao.insert(newFood)
             }
             _state.value = state.value.copy(newFood = getBlankFood())

@@ -16,102 +16,93 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
-import cafe.adriel.voyager.core.screen.Screen
-import cafe.adriel.voyager.kodein.rememberScreenModel
-import cafe.adriel.voyager.navigator.LocalNavigator
-import cafe.adriel.voyager.navigator.Navigator
+import moe.tlaster.precompose.koin.koinViewModel
+import moe.tlaster.precompose.navigation.Navigator
+import moe.tlaster.precompose.navigation.rememberNavigator
 import streetlight.app.ui.core.DataCreator
 import streetlight.model.Area
 import streetlight.model.Location
 
-class LocationCreatorScreen(
-    private val onComplete: ((Location) -> Unit)?
-) : Screen {
-    @Composable
-    override fun Content() {
-        val navigator = LocalNavigator.current
-        val screenModel = rememberScreenModel<LocationCreatorModel>()
-        val state by screenModel.state
+@Composable
+fun LocationCreatorScreen() {
+    val navigator = rememberNavigator()
+    val screenModel = koinViewModel(LocationCreatorModel::class)
+    val state by screenModel.state
 
-        DataCreator(
-            title = "Add Location",
-            item = state.location,
-            isComplete = state.isComplete,
-            result = state.result,
-            onComplete = onComplete,
-            createData = screenModel::createLocation,
-            navigator = navigator,
-        ) {
-            TextField(
-                value = state.location.name,
-                onValueChange = screenModel::updateName,
-                label = { Text("Name") }
-            )
-            TextField(
-                value = state.latitude,
-                onValueChange = screenModel::updateLatitude,
-                label = { Text("Latitude") }
-            )
-            TextField(
-                value = state.longitude,
-                onValueChange = screenModel::updateLongitude,
-                label = { Text("Longitude") }
-            )
-            AreaChooser(
-                navigator = navigator,
-                location = state.location,
-                areas = state.areas,
-                updateArea = screenModel::updateArea,
-                fetchAreas = screenModel::fetchAreas
-            )
-        }
-    }
-
-    @Composable
-    fun AreaChooser(
-        navigator: Navigator?,
-        location: Location,
-        areas: List<Area>,
-        updateArea: (Int) -> Unit,
-        fetchAreas: () -> Unit,
+    DataCreator(
+        title = "Add Location",
+        item = state.location,
+        isComplete = state.isComplete,
+        result = state.result,
+        createData = screenModel::createLocation,
+        navigator = navigator,
     ) {
-        var expanded by remember { mutableStateOf(false) }
-        val area = areas.find { it.id == location.areaId }
+        TextField(
+            value = state.location.name,
+            onValueChange = screenModel::updateName,
+            label = { Text("Name") }
+        )
+        TextField(
+            value = state.latitude,
+            onValueChange = screenModel::updateLatitude,
+            label = { Text("Latitude") }
+        )
+        TextField(
+            value = state.longitude,
+            onValueChange = screenModel::updateLongitude,
+            label = { Text("Longitude") }
+        )
+        AreaChooser(
+            navigator = navigator,
+            location = state.location,
+            areas = state.areas,
+            updateArea = screenModel::updateArea,
+            fetchAreas = screenModel::fetchAreas
+        )
+    }
+}
 
-        Box {
-            Row(
-                verticalAlignment = Alignment.CenterVertically
-            ) {
-                area?.let {
-                    Text(it.name)
-                }
-                IconButton(onClick = { expanded = !expanded }) {
-                    Icon(
-                        imageVector = Icons.Default.MoreVert,
-                        contentDescription = "More"
-                    )
-                }
+@Composable
+fun AreaChooser(
+    navigator: Navigator?,
+    location: Location,
+    areas: List<Area>,
+    updateArea: (Int) -> Unit,
+    fetchAreas: () -> Unit,
+) {
+    var expanded by remember { mutableStateOf(false) }
+    val area = areas.find { it.id == location.areaId }
+
+    Box {
+        Row(
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            area?.let {
+                Text(it.name)
             }
-            DropdownMenu(expanded = expanded, onDismissRequest = { expanded = false }) {
+            IconButton(onClick = { expanded = !expanded }) {
+                Icon(
+                    imageVector = Icons.Default.MoreVert,
+                    contentDescription = "More"
+                )
+            }
+        }
+        DropdownMenu(expanded = expanded, onDismissRequest = { expanded = false }) {
+            DropdownMenuItem(
+                onClick = {
+                    expanded = false
+                    navigator?.navigate("/createArea")
+                },
+                text = { Text("New...") }
+            )
+            areas.forEach { area ->
                 DropdownMenuItem(
                     onClick = {
                         expanded = false
-                        navigator?.push(AreaCreatorScreen() {
-                            updateArea(it.id)
-                            fetchAreas()
-                        })
+                        updateArea(area.id)
                     },
-                    text = { Text("New...") }
+                    text = { Text(area.name) }
                 )
-                areas.forEach { area ->
-                    DropdownMenuItem(
-                        onClick = {
-                            expanded = false
-                            updateArea(area.id)
-                        },
-                        text = { Text(area.name) }
-                    )
-                }
             }
         }
     }

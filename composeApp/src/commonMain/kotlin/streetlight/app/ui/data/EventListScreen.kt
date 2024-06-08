@@ -2,33 +2,29 @@ package streetlight.app.ui.data
 
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
-import cafe.adriel.voyager.core.model.screenModelScope
-import cafe.adriel.voyager.core.screen.Screen
-import cafe.adriel.voyager.kodein.rememberScreenModel
-import cafe.adriel.voyager.navigator.LocalNavigator
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
+import moe.tlaster.precompose.koin.koinViewModel
+import moe.tlaster.precompose.navigation.rememberNavigator
+import moe.tlaster.precompose.viewmodel.viewModelScope
 import streetlight.app.io.EventDao
 import streetlight.app.ui.core.DataList
 import streetlight.app.ui.core.UiModel
 import streetlight.app.ui.core.UiState
 import streetlight.dto.EventInfo
 
-class EventListScreen : Screen {
-
-    @Composable
-    override fun Content() {
-        val navigator = LocalNavigator.current
-        val screenModel = rememberScreenModel<EventListModel>()
-        val state by screenModel.state
-        DataList(
-            title = "Events",
-            items = state.items,
-            provideName = { "${it.locationName} (${it.areaName})" },
-            floatingAction = { navigator?.push(EventCreatorScreen { screenModel.refresh() }) },
-            navigator = navigator,
-        )
-    }
+@Composable
+fun EventListScreen() {
+    val navigator = rememberNavigator()
+    val viewModel = koinViewModel(EventListModel::class)
+    val state by viewModel.state
+    DataList(
+        title = "Events",
+        items = state.items,
+        provideName = { "${it.locationName} (${it.areaName})" },
+        floatingAction = { navigator.navigate("/createEvent") },
+        navigator = navigator,
+    )
 }
 
 class EventListModel(
@@ -39,7 +35,7 @@ class EventListModel(
     }
 
     fun refresh() {
-        screenModelScope.launch(Dispatchers.IO) {
+        viewModelScope.launch(Dispatchers.IO) {
             val items = eventDao.getAllInfo()
             sv = sv.copy(items = items)
         }
