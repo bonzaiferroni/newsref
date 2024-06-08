@@ -45,7 +45,7 @@ fun HomeScreen(navigator: Navigator) {
             Button(onClick = { navigator.navigate("/location") }) {
                 Text("Locations")
             }
-            Button(onClick = { navigator.navigate("/area") }) {
+            Button(onClick = { navigator.navigate("/areas") }) {
                 Text("Areas")
             }
             Button(onClick = { navigator.navigate("/event") }) {

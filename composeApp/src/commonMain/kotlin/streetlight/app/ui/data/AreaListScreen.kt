@@ -28,6 +28,9 @@ fun AreaListScreen(navigator: Navigator?) {
             navigator?.navigate("/createArea")
         },
         navigator = navigator,
+        onClick = {
+            navigator?.navigate("/area/${it.id}")
+        }
     )
 }
 

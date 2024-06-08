@@ -35,7 +35,9 @@ val myModule = module {
     factory { LocationListModel(get(), get(), get()) }
     factory { LocationCreatorModel(get(), get(), get()) }
     factory { AreaListModel(get(), get()) }
-    factory { AreaCreatorModel(get(), get()) }
+    factory { (id: Int?) ->
+        AreaCreatorModel(id, get(), get())
+    }
     factory { UserCreatorModel(get()) }
     factory { EventCreatorModel(get(), get(), get()) }
     factory { EventListModel(get(), get()) }

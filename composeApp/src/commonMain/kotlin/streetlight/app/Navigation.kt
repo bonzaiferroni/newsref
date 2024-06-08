@@ -2,6 +2,7 @@ package streetlight.app
 
 import moe.tlaster.precompose.navigation.Navigator
 import moe.tlaster.precompose.navigation.RouteBuilder
+import moe.tlaster.precompose.navigation.path
 import moe.tlaster.precompose.navigation.transition.NavTransition
 import streetlight.app.ui.HomeScreen
 import streetlight.app.ui.data.AreaCreatorScreen
@@ -29,8 +30,10 @@ fun RouteBuilder.appScenes(navigator: Navigator) {
     scene("/createUser") { UserCreatorScreen(navigator) }
     scene("/location") { LocationListScreen(navigator) }
     scene("/createLocation") { LocationCreatorScreen(navigator) }
-    scene("/area") { AreaListScreen(navigator) }
-    scene("/createArea") { AreaCreatorScreen(navigator) }
+    scene("/areas") { AreaListScreen(navigator) }
+    scene("/area/{id}?") {
+        AreaCreatorScreen(it.path<Int>("id"), navigator)
+    }
     scene("/event") { EventListScreen(navigator) }
     scene("/createEvent") { EventCreatorScreen(navigator) }
 
