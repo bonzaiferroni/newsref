@@ -5,7 +5,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import kotlinx.coroutines.launch
 import moe.tlaster.precompose.koin.koinViewModel
-import moe.tlaster.precompose.navigation.rememberNavigator
+import moe.tlaster.precompose.navigation.Navigator
 import moe.tlaster.precompose.viewmodel.viewModelScope
 import streetlight.app.io.UserDao
 import streetlight.app.ui.core.DataCreator
@@ -14,14 +14,12 @@ import streetlight.app.ui.core.UiState
 import streetlight.model.User
 
 @Composable
-fun UserCreatorScreen() {
-    val navigator = rememberNavigator()
+fun UserCreatorScreen(navigator: Navigator?) {
     val viewModel = koinViewModel(UserCreatorModel::class)
     val state by viewModel.state
 
     DataCreator(
         title = "Add User",
-        item = state.user,
         isComplete = state.isComplete,
         result = state.result,
         createData = viewModel::createUser,

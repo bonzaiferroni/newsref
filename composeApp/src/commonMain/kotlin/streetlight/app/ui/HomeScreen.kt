@@ -16,6 +16,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import moe.tlaster.precompose.koin.koinViewModel
+import moe.tlaster.precompose.navigation.NavOptions
 import moe.tlaster.precompose.navigation.Navigator
 import moe.tlaster.precompose.navigation.rememberNavigator
 import streetlight.app.chopui.Scaffold
@@ -38,7 +39,7 @@ fun HomeScreen(navigator: Navigator) {
             Button(onClick = { navigator.navigate("/createUser") }) {
                 Text("Create User")
             }
-            Button(onClick = { navigator.navigate("/login")}) {
+            Button(onClick = { navigator.navigate("/login") }) {
                 Text("Login")
             }
             Button(onClick = { navigator.navigate("/location") }) {
@@ -47,7 +48,7 @@ fun HomeScreen(navigator: Navigator) {
             Button(onClick = { navigator.navigate("/area") }) {
                 Text("Areas")
             }
-            Button(onClick = { navigator.navigate("/event")}) {
+            Button(onClick = { navigator.navigate("/event") }) {
                 Text("Events")
             }
         }

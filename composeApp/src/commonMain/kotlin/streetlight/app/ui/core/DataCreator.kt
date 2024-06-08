@@ -14,9 +14,8 @@ import moe.tlaster.precompose.navigation.Navigator
 import streetlight.app.chopui.Scaffold
 
 @Composable
-fun <Data> DataCreator(
+fun DataCreator(
     title: String,
-    item: Data,
     isComplete: Boolean,
     result: String,
     createData: () -> Unit,
@@ -27,7 +26,6 @@ fun <Data> DataCreator(
     LaunchedEffect(isComplete) {
         if (isComplete) {
             navigator?.goBack()
-            // onComplete?.invoke(item)
         }
     }
 

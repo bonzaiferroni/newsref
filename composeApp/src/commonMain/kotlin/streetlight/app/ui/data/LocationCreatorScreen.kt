@@ -18,46 +18,43 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import moe.tlaster.precompose.koin.koinViewModel
 import moe.tlaster.precompose.navigation.Navigator
-import moe.tlaster.precompose.navigation.rememberNavigator
 import streetlight.app.ui.core.DataCreator
 import streetlight.model.Area
 import streetlight.model.Location
 
 @Composable
-fun LocationCreatorScreen() {
-    val navigator = rememberNavigator()
-    val screenModel = koinViewModel(LocationCreatorModel::class)
-    val state by screenModel.state
+fun LocationCreatorScreen(navigator: Navigator?) {
+    val viewModel = koinViewModel(LocationCreatorModel::class)
+    val state by viewModel.state
 
     DataCreator(
         title = "Add Location",
-        item = state.location,
         isComplete = state.isComplete,
         result = state.result,
-        createData = screenModel::createLocation,
+        createData = viewModel::createLocation,
         navigator = navigator,
     ) {
         TextField(
             value = state.location.name,
-            onValueChange = screenModel::updateName,
+            onValueChange = viewModel::updateName,
             label = { Text("Name") }
         )
         TextField(
             value = state.latitude,
-            onValueChange = screenModel::updateLatitude,
+            onValueChange = viewModel::updateLatitude,
             label = { Text("Latitude") }
         )
         TextField(
             value = state.longitude,
-            onValueChange = screenModel::updateLongitude,
+            onValueChange = viewModel::updateLongitude,
             label = { Text("Longitude") }
         )
         AreaChooser(
             navigator = navigator,
             location = state.location,
             areas = state.areas,
-            updateArea = screenModel::updateArea,
-            fetchAreas = screenModel::fetchAreas
+            updateArea = viewModel::updateArea,
+            onNewArea = viewModel::onNewArea
         )
     }
 }
@@ -68,7 +65,7 @@ fun AreaChooser(
     location: Location,
     areas: List<Area>,
     updateArea: (Int) -> Unit,
-    fetchAreas: () -> Unit,
+    onNewArea: () -> Unit,
 ) {
     var expanded by remember { mutableStateOf(false) }
     val area = areas.find { it.id == location.areaId }
@@ -91,6 +88,7 @@ fun AreaChooser(
             DropdownMenuItem(
                 onClick = {
                     expanded = false
+                    onNewArea()
                     navigator?.navigate("/createArea")
                 },
                 text = { Text("New...") }

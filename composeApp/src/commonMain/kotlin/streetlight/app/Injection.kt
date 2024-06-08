@@ -6,6 +6,7 @@ import streetlight.app.io.AreaDao
 import streetlight.app.io.EventDao
 import streetlight.app.io.LocationDao
 import streetlight.app.io.UserDao
+import streetlight.app.services.BusService
 import streetlight.app.sql.FoodDao
 import streetlight.app.sql.FoodModel
 import streetlight.app.ui.HomeModel
@@ -27,14 +28,17 @@ val myModule = module {
     single { AreaDao(get()) }
     single { FoodDao(get()) }
     single { EventDao(get()) }
+    // supply
+    single { BusService() }
+    single { BusService() }
     // models
-    factory { LocationListModel(get(), get()) }
-    factory { LocationCreatorModel(get(), get()) }
-    factory { AreaListModel(get()) }
-    factory { AreaCreatorModel(get()) }
+    factory { LocationListModel(get(), get(), get()) }
+    factory { LocationCreatorModel(get(), get(), get()) }
+    factory { AreaListModel(get(), get()) }
+    factory { AreaCreatorModel(get(), get()) }
     factory { UserCreatorModel(get()) }
-    factory { EventCreatorModel(get(), get()) }
-    factory { EventListModel(get()) }
+    factory { EventCreatorModel(get(), get(), get()) }
+    factory { EventListModel(get(), get()) }
     factory { FoodModel(get()) }
     factory { HomeModel(get()) }
     factory { LoginModel(get()) }

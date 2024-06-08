@@ -7,23 +7,22 @@ import androidx.compose.runtime.getValue
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import moe.tlaster.precompose.koin.koinViewModel
-import moe.tlaster.precompose.navigation.rememberNavigator
+import moe.tlaster.precompose.navigation.Navigator
 import moe.tlaster.precompose.viewmodel.viewModelScope
 import streetlight.app.io.AreaDao
+import streetlight.app.services.BusService
 import streetlight.app.ui.core.DataCreator
 import streetlight.app.ui.core.UiModel
 import streetlight.app.ui.core.UiState
 import streetlight.model.Area
 
 @Composable
-fun AreaCreatorScreen() {
-    val navigator = rememberNavigator()
+fun AreaCreatorScreen(navigator: Navigator?) {
     val screenModel = koinViewModel(AreaCreatorModel::class)
     val state by screenModel.state
 
     DataCreator(
         title = "Add Area",
-        item = state.area,
         result = state.result,
         isComplete = state.isComplete,
         createData = screenModel::createArea,
@@ -39,6 +38,7 @@ fun AreaCreatorScreen() {
 
 class AreaCreatorModel(
     private val areaDao: AreaDao,
+    private val bus: BusService
 ) : UiModel<AreaCreatorState>(AreaCreatorState()) {
 
     fun updateName(name: String) {
@@ -54,6 +54,7 @@ class AreaCreatorModel(
                 area = sv.area.copy(id = id),
                 isComplete = isFinished
             )
+            bus.supply(sv.area)
         }
     }
 }

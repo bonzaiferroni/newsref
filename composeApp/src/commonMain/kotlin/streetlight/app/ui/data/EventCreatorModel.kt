@@ -7,6 +7,7 @@ import kotlinx.datetime.LocalDateTime
 import moe.tlaster.precompose.viewmodel.viewModelScope
 import streetlight.app.io.EventDao
 import streetlight.app.io.LocationDao
+import streetlight.app.services.BusService
 import streetlight.app.ui.core.UiModel
 import streetlight.app.ui.core.UiState
 import streetlight.model.Event
@@ -17,7 +18,19 @@ import streetlight.utils.toLocalEpochSeconds
 class EventCreatorModel(
     private val eventDao: EventDao,
     private val locationDao: LocationDao,
+    private val bus: BusService,
 ) : UiModel<CreateEventState>(CreateEventState()) {
+
+    init {
+        refresh()
+    }
+
+    private fun refresh() {
+        viewModelScope.launch(Dispatchers.IO) {
+            val locations = locationDao.getAll()
+            sv = sv.copy(locations = locations)
+        }
+    }
 
     fun updateStartTime(dateTime: LocalDateTime) {
         sv = sv.copy(event = sv.event.copy(timeStart = dateTime.toEpochSeconds()))
@@ -54,6 +67,7 @@ class EventCreatorModel(
                 event = sv.event.copy(id = id),
                 isComplete = isFinished
             )
+            bus.supply(sv.event)
         }
     }
 
@@ -65,6 +79,12 @@ class EventCreatorModel(
             ),
             duration = duration
         )
+    }
+
+    fun onNewLocation() {
+        bus.request<Location> {
+            updateLocation(it)
+        }
     }
 }
 

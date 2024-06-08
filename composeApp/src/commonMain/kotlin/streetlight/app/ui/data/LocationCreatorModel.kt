@@ -5,6 +5,7 @@ import kotlinx.coroutines.launch
 import moe.tlaster.precompose.viewmodel.viewModelScope
 import streetlight.app.io.AreaDao
 import streetlight.app.io.LocationDao
+import streetlight.app.services.BusService
 import streetlight.app.ui.core.UiModel
 import streetlight.app.ui.core.UiState
 import streetlight.model.Area
@@ -13,16 +14,24 @@ import streetlight.model.Location
 class LocationCreatorModel(
     private val areaDao: AreaDao,
     private val locationDao: LocationDao,
+    private val bus: BusService,
 ) : UiModel<CreateLocationState>(CreateLocationState()) {
 
     init {
         fetchAreas()
     }
 
-    fun fetchAreas() {
+    private fun fetchAreas() {
         viewModelScope.launch(Dispatchers.IO) {
             val areas = areaDao.getAll()
             sv = sv.copy(areas = areas)
+        }
+    }
+
+    fun onNewArea() {
+        bus.request<Area> {
+            sv = sv.copy(location = sv.location.copy(areaId = it.id))
+            fetchAreas()
         }
     }
 
@@ -58,6 +67,7 @@ class LocationCreatorModel(
                 location = sv.location.copy(id = id),
                 isComplete = id > 0
             )
+            bus.supply(sv.location)
         }
     }
 }

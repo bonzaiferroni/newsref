@@ -6,10 +6,10 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import moe.tlaster.precompose.koin.koinViewModel
 import moe.tlaster.precompose.navigation.Navigator
-import moe.tlaster.precompose.navigation.rememberNavigator
 import moe.tlaster.precompose.viewmodel.viewModelScope
 import streetlight.app.io.AreaDao
 import streetlight.app.io.LocationDao
+import streetlight.app.services.BusService
 import streetlight.app.ui.core.DataList
 import streetlight.app.ui.core.UiModel
 import streetlight.app.ui.core.UiState
@@ -25,20 +25,24 @@ fun LocationListScreen(navigator: Navigator) {
         title = "Locations",
         items = state.locations,
         provideName = { "${it.location.name} (${it.area.name})" },
-        floatingAction = { navigator.navigate("/createLocation") },
+        floatingAction = {
+            viewModel.onNewLocation()
+            navigator.navigate("/createLocation")
+        },
         navigator = navigator,
     )
 }
 
 class LocationListModel(
     private val locationDao: LocationDao,
-    private val areaDao: AreaDao
+    private val areaDao: AreaDao,
+    private val bus: BusService
 ) : UiModel<LocationListState>(LocationListState()) {
     init {
         refresh()
     }
 
-    fun refresh() {
+    private fun refresh() {
         viewModelScope.launch(Dispatchers.IO) {
             val locations = locationDao.getAll()
             val areas = areaDao.getAll()
@@ -47,6 +51,12 @@ class LocationListModel(
                 LocationInfo(location, area)
             }
             sv = sv.copy(locations = infos)
+        }
+    }
+
+    fun onNewLocation() {
+        bus.request<Location> {
+            refresh()
         }
     }
 }

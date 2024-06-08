@@ -30,14 +30,12 @@ import streetlight.utils.toLocalDateTime
 import streetlight.utils.toFormatString
 
 @Composable
-fun EventCreatorScreen() {
-    val navigator = rememberNavigator()
+fun EventCreatorScreen(navigator: Navigator?) {
     val screenModel = koinViewModel(EventCreatorModel::class)
     val state by screenModel.state
 
     DataCreator(
         title = "Add Event",
-        item = state.event,
         isComplete = state.isComplete,
         result = state.result,
         createData = screenModel::createEvent,
@@ -58,6 +56,7 @@ fun EventCreatorScreen() {
             state.event,
             state.locations,
             screenModel::updateLocation,
+            screenModel::onNewLocation
         )
     }
 }
@@ -101,6 +100,7 @@ fun LocationChooser(
     event: Event,
     locations: List<Location>,
     updateLocation: (Location) -> Unit,
+    onNewLocation: () -> Unit,
 ) {
     var expanded by remember { mutableStateOf(false) }
     val location = locations.find { it.id == event.locationId }
@@ -123,6 +123,7 @@ fun LocationChooser(
             DropdownMenuItem(
                 onClick = {
                     expanded = false
+                    onNewLocation()
                     navigator?.navigate("/createLocation")
                 },
                 text = { Text("New...") }
