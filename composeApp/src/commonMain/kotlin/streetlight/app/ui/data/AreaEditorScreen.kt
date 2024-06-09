@@ -18,11 +18,11 @@ import streetlight.app.ui.core.UiState
 import streetlight.model.Area
 
 @Composable
-fun AreaCreatorScreen(
+fun AreaEditorScreen(
     id: Int?,
     navigator: Navigator?
 ) {
-    val viewModel = koinViewModel<AreaCreatorModel> { parametersOf(id) }
+    val viewModel = koinViewModel<AreaEditorModel> { parametersOf(id) }
     val state by viewModel.state
 
     DataEditor(
@@ -41,11 +41,11 @@ fun AreaCreatorScreen(
     }
 }
 
-class AreaCreatorModel(
+class AreaEditorModel(
     private val id: Int?,
     private val areaDao: AreaDao,
     private val bus: BusService
-) : UiModel<AreaCreatorState>(AreaCreatorState()) {
+) : UiModel<AreaEditorState>(AreaEditorState()) {
 
     init {
         if (id != null) {
@@ -83,7 +83,7 @@ class AreaCreatorModel(
     }
 }
 
-data class AreaCreatorState(
+data class AreaEditorState(
     val area: Area = Area(),
     val isComplete: Boolean = false,
     val result: String = ""

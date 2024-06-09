@@ -30,11 +30,11 @@ import streetlight.utils.toLocalDateTime
 import streetlight.utils.toFormatString
 
 @Composable
-fun EventCreatorScreen(
+fun EventEditorScreen(
     id: Int?,
     navigator: Navigator?
 ) {
-    val screenModel = koinViewModel(EventCreatorModel::class) { parametersOf(id) }
+    val screenModel = koinViewModel(EventEditorModel::class) { parametersOf(id) }
     val state by screenModel.state
 
     DataEditor(

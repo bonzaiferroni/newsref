@@ -14,8 +14,8 @@ import streetlight.app.ui.core.UiState
 import streetlight.model.User
 
 @Composable
-fun UserEditScreen(id: Int?, navigator: Navigator?) {
-    val viewModel = koinViewModel(UserCreatorModel::class)
+fun UserEditorScreen(id: Int?, navigator: Navigator?) {
+    val viewModel = koinViewModel(UserEditorModel::class)
     val state by viewModel.state
 
     DataEditor(
@@ -44,9 +44,9 @@ fun UserEditScreen(id: Int?, navigator: Navigator?) {
     }
 }
 
-class UserCreatorModel(
+class UserEditorModel(
     private val userDao: UserDao
-) : UiModel<CreateUserState>(CreateUserState()) {
+) : UiModel<UserEditorState>(UserEditorState()) {
 
     fun updateName(name: String) {
         sv = sv.copy(user = sv.user.copy(name = name))
@@ -73,7 +73,7 @@ class UserCreatorModel(
     }
 }
 
-data class CreateUserState(
+data class UserEditorState(
     val user: User = User(),
     val isComplete: Boolean = false,
     val result: String = ""

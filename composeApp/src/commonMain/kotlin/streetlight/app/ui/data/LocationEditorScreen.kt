@@ -24,8 +24,8 @@ import streetlight.model.Area
 import streetlight.model.Location
 
 @Composable
-fun LocationEditScreen(id: Int?, navigator: Navigator?) {
-    val viewModel = koinViewModel(LocationCreatorModel::class) { parametersOf(id) }
+fun LocationEditorScreen(id: Int?, navigator: Navigator?) {
+    val viewModel = koinViewModel(LocationEditorModel::class) { parametersOf(id) }
     val state by viewModel.state
 
     DataEditor(

@@ -10,13 +10,13 @@ import streetlight.app.services.BusService
 import streetlight.app.sql.FoodDao
 import streetlight.app.sql.FoodModel
 import streetlight.app.ui.HomeModel
-import streetlight.app.ui.data.AreaCreatorModel
+import streetlight.app.ui.data.AreaEditorModel
 import streetlight.app.ui.data.AreaListModel
-import streetlight.app.ui.data.EventCreatorModel
+import streetlight.app.ui.data.EventEditorModel
 import streetlight.app.ui.data.EventListModel
-import streetlight.app.ui.data.LocationCreatorModel
+import streetlight.app.ui.data.LocationEditorModel
 import streetlight.app.ui.data.LocationListModel
-import streetlight.app.ui.data.UserCreatorModel
+import streetlight.app.ui.data.UserEditorModel
 import streetlight.app.ui.login.LoginModel
 
 val myModule = module {
@@ -33,11 +33,11 @@ val myModule = module {
     single { BusService() }
     // models
     factory { LocationListModel(get(), get(), get()) }
-    factory { (id: Int?) -> LocationCreatorModel(id, get(), get(), get()) }
+    factory { (id: Int?) -> LocationEditorModel(id, get(), get(), get()) }
     factory { AreaListModel(get(), get()) }
-    factory { (id: Int?) -> AreaCreatorModel(id, get(), get()) }
-    factory { UserCreatorModel(get()) }
-    factory { (id: Int?) -> EventCreatorModel(id, get(), get(), get()) }
+    factory { (id: Int?) -> AreaEditorModel(id, get(), get()) }
+    factory { UserEditorModel(get()) }
+    factory { (id: Int?) -> EventEditorModel(id, get(), get(), get()) }
     factory { EventListModel(get(), get()) }
     factory { FoodModel(get()) }
     factory { HomeModel(get()) }

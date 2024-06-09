@@ -15,12 +15,12 @@ import streetlight.model.Location
 import streetlight.utils.toEpochSeconds
 import streetlight.utils.toLocalEpochSeconds
 
-class EventCreatorModel(
+class EventEditorModel(
     private val id: Int?,
     private val eventDao: EventDao,
     private val locationDao: LocationDao,
     private val bus: BusService,
-) : UiModel<CreateEventState>(CreateEventState()) {
+) : UiModel<EventEditorState>(EventEditorState()) {
 
     init {
         refresh()
@@ -104,7 +104,7 @@ class EventCreatorModel(
     }
 }
 
-data class CreateEventState(
+data class EventEditorState(
     val event: Event = Event(
         timeStart = Clock.System.now().toLocalEpochSeconds(),
         hours = 1f,

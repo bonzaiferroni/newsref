@@ -11,12 +11,12 @@ import streetlight.app.ui.core.UiState
 import streetlight.model.Area
 import streetlight.model.Location
 
-class LocationCreatorModel(
+class LocationEditorModel(
     private val id: Int?,
     private val areaDao: AreaDao,
     private val locationDao: LocationDao,
     private val bus: BusService,
-) : UiModel<CreateLocationState>(CreateLocationState()) {
+) : UiModel<LocationEditorState>(LocationEditorState()) {
 
     init {
         if (id != null) {
@@ -92,7 +92,7 @@ class LocationCreatorModel(
     }
 }
 
-data class CreateLocationState(
+data class LocationEditorState(
     val location: Location = Location(),
     val areas: List<Area> = emptyList(),
     val isComplete: Boolean = false,
