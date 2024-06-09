@@ -12,7 +12,7 @@ import moe.tlaster.precompose.viewmodel.viewModelScope
 import org.koin.core.parameter.parametersOf
 import streetlight.app.io.AreaDao
 import streetlight.app.services.BusService
-import streetlight.app.ui.core.DataCreator
+import streetlight.app.ui.core.DataEditor
 import streetlight.app.ui.core.UiModel
 import streetlight.app.ui.core.UiState
 import streetlight.model.Area
@@ -25,10 +25,11 @@ fun AreaCreatorScreen(
     val viewModel = koinViewModel<AreaCreatorModel> { parametersOf(id) }
     val state by viewModel.state
 
-    DataCreator(
+    DataEditor(
         title = "Add Area",
         result = state.result,
         isComplete = state.isComplete,
+        isCreate = id == null,
         createData = viewModel::createArea,
         navigator = navigator,
     ) {

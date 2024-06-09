@@ -26,9 +26,10 @@ fun EventListScreen(navigator: Navigator?) {
         provideName = { "${it.locationName} (${it.areaName})" },
         floatingAction = {
             viewModel.onNewEvent()
-            navigator?.navigate("/createEvent")
+            navigator?.navigate("/event")
         },
         navigator = navigator,
+        onClick = { navigator?.navigate("/event/${it.id}") }
     )
 }
 

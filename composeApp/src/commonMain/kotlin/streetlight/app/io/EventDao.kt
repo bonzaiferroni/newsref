@@ -11,7 +11,7 @@ class EventDao(
     suspend fun get(id: Int): Event? = client.getBody("/events/$id")
     suspend fun search(search: String, count: Int = 10): List<Event> =
         client.getBody("/events?search=$search&count=$count")
-    suspend fun update(id: Int, event: Event): Boolean = client.update("/events", id, event)
+    suspend fun update(event: Event): Boolean = client.update("/events", event.id, event)
     suspend fun delete(id: Int): Boolean = client.delete("/events", id)
     suspend fun getInfo(id: Int): EventInfo? = client.getBody("/event_info/$id")
     suspend fun getAllInfo(): List<EventInfo> = client.getBody("/event_info")

@@ -25,12 +25,10 @@ fun AreaListScreen(navigator: Navigator?) {
         provideName = { it.name },
         floatingAction = {
             screenModel.onNewArea()
-            navigator?.navigate("/createArea")
+            navigator?.navigate("/area")
         },
         navigator = navigator,
-        onClick = {
-            navigator?.navigate("/area/${it.id}")
-        }
+        onClick = { navigator?.navigate("/area/${it.id}") }
     )
 }
 

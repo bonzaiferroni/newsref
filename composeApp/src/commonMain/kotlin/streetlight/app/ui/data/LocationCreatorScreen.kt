@@ -18,20 +18,22 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import moe.tlaster.precompose.koin.koinViewModel
 import moe.tlaster.precompose.navigation.Navigator
-import streetlight.app.ui.core.DataCreator
+import org.koin.core.parameter.parametersOf
+import streetlight.app.ui.core.DataEditor
 import streetlight.model.Area
 import streetlight.model.Location
 
 @Composable
-fun LocationCreatorScreen(navigator: Navigator?) {
-    val viewModel = koinViewModel(LocationCreatorModel::class)
+fun LocationEditScreen(id: Int?, navigator: Navigator?) {
+    val viewModel = koinViewModel(LocationCreatorModel::class) { parametersOf(id) }
     val state by viewModel.state
 
-    DataCreator(
+    DataEditor(
         title = "Add Location",
         isComplete = state.isComplete,
         result = state.result,
         createData = viewModel::createLocation,
+        isCreate = id == null,
         navigator = navigator,
     ) {
         TextField(

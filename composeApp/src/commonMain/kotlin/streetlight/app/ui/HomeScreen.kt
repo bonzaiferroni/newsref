@@ -36,19 +36,19 @@ fun HomeScreen(navigator: Navigator) {
             Button(onClick = screenModel::growCounter) {
                 Text("grow")
             }
-            Button(onClick = { navigator.navigate("/createUser") }) {
+            Button(onClick = { navigator.navigate("/user") }) {
                 Text("Create User")
             }
             Button(onClick = { navigator.navigate("/login") }) {
                 Text("Login")
             }
-            Button(onClick = { navigator.navigate("/location") }) {
+            Button(onClick = { navigator.navigate("/locations") }) {
                 Text("Locations")
             }
             Button(onClick = { navigator.navigate("/areas") }) {
                 Text("Areas")
             }
-            Button(onClick = { navigator.navigate("/event") }) {
+            Button(onClick = { navigator.navigate("/events") }) {
                 Text("Events")
             }
         }

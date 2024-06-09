@@ -12,12 +12,24 @@ import streetlight.model.Area
 import streetlight.model.Location
 
 class LocationCreatorModel(
+    private val id: Int?,
     private val areaDao: AreaDao,
     private val locationDao: LocationDao,
     private val bus: BusService,
 ) : UiModel<CreateLocationState>(CreateLocationState()) {
 
     init {
+        if (id != null) {
+            viewModelScope.launch(Dispatchers.IO) {
+                locationDao.get(id)?.let {
+                    sv = sv.copy(
+                        location = it,
+                        latitude = it.latitude.toString(),
+                        longitude = it.longitude.toString()
+                    )
+                }
+            }
+        }
         fetchAreas()
     }
 
@@ -61,12 +73,20 @@ class LocationCreatorModel(
 
     fun createLocation() {
         viewModelScope.launch(Dispatchers.IO) {
-            val id = locationDao.addLocation(sv.location)
-            sv = sv.copy(
-                result = "$id",
-                location = sv.location.copy(id = id),
-                isComplete = id > 0
-            )
+            if (sv.location.id == 0) {
+                val id = locationDao.create(sv.location)
+                sv = sv.copy(
+                    result = "$id",
+                    location = sv.location.copy(id = id),
+                    isComplete = id > 0
+                )
+            } else {
+                val isComplete = locationDao.update(sv.location)
+                sv = sv.copy(
+                    result = "$isComplete",
+                    isComplete = isComplete
+                )
+            }
             bus.supply(sv.location)
         }
     }
@@ -77,6 +97,6 @@ data class CreateLocationState(
     val areas: List<Area> = emptyList(),
     val isComplete: Boolean = false,
     val result: String = "",
-    val latitude: String = "",
-    val longitude: String = ""
+    val latitude: String = "0",
+    val longitude: String = "0"
 ) : UiState

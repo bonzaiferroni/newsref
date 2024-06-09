@@ -16,6 +16,7 @@ import streetlight.utils.toEpochSeconds
 import streetlight.utils.toLocalEpochSeconds
 
 class EventCreatorModel(
+    private val id: Int?,
     private val eventDao: EventDao,
     private val locationDao: LocationDao,
     private val bus: BusService,
@@ -23,6 +24,13 @@ class EventCreatorModel(
 
     init {
         refresh()
+        if (id != null) {
+            viewModelScope.launch(Dispatchers.IO) {
+                eventDao.get(id)?.let {
+                    sv = sv.copy(event = it)
+                }
+            }
+        }
     }
 
     private fun refresh() {
@@ -60,13 +68,21 @@ class EventCreatorModel(
 
     fun createEvent() {
         viewModelScope.launch(Dispatchers.IO) {
-            val id = eventDao.create(sv.event)
-            val isFinished = id > 0
-            sv = sv.copy(
-                result = "result: $id",
-                event = sv.event.copy(id = id),
-                isComplete = isFinished
-            )
+            if (sv.event.id == 0) {
+                val id = eventDao.create(sv.event)
+                val isFinished = id > 0
+                sv = sv.copy(
+                    result = "result: $id",
+                    event = sv.event.copy(id = id),
+                    isComplete = isFinished
+                )
+            } else {
+                val isComplete = eventDao.update(sv.event)
+                sv = sv.copy(
+                    result = "result: $isComplete",
+                    isComplete = isComplete
+                )
+            }
             bus.supply(sv.event)
         }
     }

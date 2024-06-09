@@ -7,6 +7,7 @@ import kotlinx.coroutines.launch
 import moe.tlaster.precompose.koin.koinViewModel
 import moe.tlaster.precompose.navigation.Navigator
 import moe.tlaster.precompose.viewmodel.viewModelScope
+import org.koin.core.parameter.parametersOf
 import streetlight.app.io.AreaDao
 import streetlight.app.io.LocationDao
 import streetlight.app.services.BusService
@@ -17,7 +18,7 @@ import streetlight.model.Area
 import streetlight.model.Location
 
 @Composable
-fun LocationListScreen(navigator: Navigator) {
+fun LocationListScreen(navigator: Navigator?) {
     val viewModel = koinViewModel(LocationListModel::class)
     val state by viewModel.state
 
@@ -27,9 +28,10 @@ fun LocationListScreen(navigator: Navigator) {
         provideName = { "${it.location.name} (${it.area.name})" },
         floatingAction = {
             viewModel.onNewLocation()
-            navigator.navigate("/createLocation")
+            navigator?.navigate("/location")
         },
         navigator = navigator,
+        onClick = { navigator?.navigate("/location/${it.location.id}") }
     )
 }
 

@@ -8,21 +8,22 @@ import moe.tlaster.precompose.koin.koinViewModel
 import moe.tlaster.precompose.navigation.Navigator
 import moe.tlaster.precompose.viewmodel.viewModelScope
 import streetlight.app.io.UserDao
-import streetlight.app.ui.core.DataCreator
+import streetlight.app.ui.core.DataEditor
 import streetlight.app.ui.core.UiModel
 import streetlight.app.ui.core.UiState
 import streetlight.model.User
 
 @Composable
-fun UserCreatorScreen(navigator: Navigator?) {
+fun UserEditScreen(id: Int?, navigator: Navigator?) {
     val viewModel = koinViewModel(UserCreatorModel::class)
     val state by viewModel.state
 
-    DataCreator(
+    DataEditor(
         title = "Add User",
         isComplete = state.isComplete,
         result = state.result,
         createData = viewModel::createUser,
+        isCreate = id == null,
         navigator = navigator,
     ) {
         TextField(
@@ -61,8 +62,13 @@ class UserCreatorModel(
 
     fun createUser() {
         viewModelScope.launch {
-            val result = userDao.addUser(sv.user)
-            sv = sv.copy(result = "id: $result", user = User())
+            if (sv.user.id == 0) {
+                val result = userDao.addUser(sv.user)
+                sv = sv.copy(result = "id: $result")
+            } else {
+                val result = userDao.update(sv.user)
+                sv = sv.copy(result = "result: $result")
+            }
         }
     }
 }

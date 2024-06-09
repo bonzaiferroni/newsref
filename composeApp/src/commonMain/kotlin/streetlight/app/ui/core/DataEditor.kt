@@ -14,9 +14,10 @@ import moe.tlaster.precompose.navigation.Navigator
 import streetlight.app.chopui.Scaffold
 
 @Composable
-fun DataCreator(
+fun DataEditor(
     title: String,
     isComplete: Boolean,
+    isCreate: Boolean,
     result: String,
     createData: () -> Unit,
     navigator: Navigator?,
@@ -37,7 +38,7 @@ fun DataCreator(
             Column {
                 content()
                 Button(onClick = createData) {
-                    Text("Create")
+                    Text(if (isCreate) "Create" else "Update")
                 }
                 Text(result)
             }

@@ -20,23 +20,27 @@ import androidx.compose.ui.Alignment
 import kotlinx.datetime.LocalDateTime
 import moe.tlaster.precompose.koin.koinViewModel
 import moe.tlaster.precompose.navigation.Navigator
-import moe.tlaster.precompose.navigation.rememberNavigator
+import org.koin.core.parameter.parametersOf
 import streetlight.app.chopui.dialogs.DatePickerDialog
 import streetlight.app.chopui.dialogs.TimePickerDialog
-import streetlight.app.ui.core.DataCreator
+import streetlight.app.ui.core.DataEditor
 import streetlight.model.Event
 import streetlight.model.Location
 import streetlight.utils.toLocalDateTime
 import streetlight.utils.toFormatString
 
 @Composable
-fun EventCreatorScreen(navigator: Navigator?) {
-    val screenModel = koinViewModel(EventCreatorModel::class)
+fun EventCreatorScreen(
+    id: Int?,
+    navigator: Navigator?
+) {
+    val screenModel = koinViewModel(EventCreatorModel::class) { parametersOf(id) }
     val state by screenModel.state
 
-    DataCreator(
+    DataEditor(
         title = "Add Event",
         isComplete = state.isComplete,
+        isCreate = id == null,
         result = state.result,
         createData = screenModel::createEvent,
         navigator = navigator,
