@@ -7,6 +7,7 @@ import kotlinx.coroutines.launch
 import moe.tlaster.precompose.koin.koinViewModel
 import moe.tlaster.precompose.navigation.Navigator
 import moe.tlaster.precompose.viewmodel.viewModelScope
+import org.koin.core.parameter.parametersOf
 import streetlight.app.io.UserDao
 import streetlight.app.ui.core.DataEditor
 import streetlight.app.ui.core.UiModel
@@ -15,7 +16,7 @@ import streetlight.model.User
 
 @Composable
 fun UserEditorScreen(id: Int?, navigator: Navigator?) {
-    val viewModel = koinViewModel(UserEditorModel::class)
+    val viewModel = koinViewModel(UserEditorModel::class) { parametersOf(id) }
     val state by viewModel.state
 
     DataEditor(

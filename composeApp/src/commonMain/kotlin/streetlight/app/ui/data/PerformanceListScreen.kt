@@ -7,55 +7,54 @@ import kotlinx.coroutines.launch
 import moe.tlaster.precompose.koin.koinViewModel
 import moe.tlaster.precompose.navigation.Navigator
 import moe.tlaster.precompose.viewmodel.viewModelScope
-import streetlight.app.io.AreaDao
+import streetlight.app.io.PerformanceDao
 import streetlight.app.services.BusService
 import streetlight.app.ui.core.DataList
 import streetlight.app.ui.core.UiModel
 import streetlight.app.ui.core.UiState
-import streetlight.model.Area
+import streetlight.model.Performance
 
 @Composable
-fun AreaListScreen(navigator: Navigator?) {
-    val screenModel = koinViewModel(AreaListModel::class)
-    val state by screenModel.state
+fun PerformanceListScreen(navigator: Navigator?) {
+    val viewModel = koinViewModel<PerformanceListModel>()
+    val state by viewModel.state
 
     DataList(
-        title = "Areas",
-        items = state.areas,
+        title = "Performances",
+        items = state.performances,
         provideName = { it.name },
         floatingAction = {
-            screenModel.onNewArea()
-            navigator?.navigate("/area")
+            viewModel.onNewPerformance()
+            navigator?.navigate("/performance")
         },
         navigator = navigator,
-        onClick = { navigator?.navigate("/area/${it.id}") }
+        onClick = { navigator?.navigate("/performance/${it.id}") }
     )
 }
 
-class AreaListModel(
-    private val areaDao: AreaDao,
+class PerformanceListModel(
+    private val performanceDao: PerformanceDao,
     private val bus: BusService,
-) : UiModel<AreaListState>(AreaListState()) {
+) : UiModel<PerformanceListState>(PerformanceListState()) {
     init {
         refresh()
     }
 
     private fun refresh() {
         viewModelScope.launch(Dispatchers.IO) {
-            val areas = areaDao.getAll()
-            sv = sv.copy(areas = areas)
+            val performances = performanceDao.getAll()
+            sv = sv.copy(performances = performances)
         }
     }
 
-    fun onNewArea() {
-        bus.request<Area> {
+    fun onNewPerformance() {
+        bus.request<Performance> {
             refresh()
         }
     }
 }
 
-data class AreaListState(
-    val areas: List<Area> = emptyList(),
+data class PerformanceListState(
+    val performances: List<Performance> = emptyList(),
     val result: String = "",
-    val highlightId: Int = -1
 ) : UiState

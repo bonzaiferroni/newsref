@@ -108,6 +108,7 @@ data class EventEditorState(
     val event: Event = Event(
         timeStart = Clock.System.now().toLocalEpochSeconds(),
         hours = 1f,
+        userId = 1
     ),
     val isComplete: Boolean = false,
     val search: String = "",

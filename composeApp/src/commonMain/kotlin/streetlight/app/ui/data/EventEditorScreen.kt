@@ -128,7 +128,7 @@ fun LocationChooser(
                 onClick = {
                     expanded = false
                     onNewLocation()
-                    navigator?.navigate("/createLocation")
+                    navigator?.navigate("/location")
                 },
                 text = { Text("New...") }
             )

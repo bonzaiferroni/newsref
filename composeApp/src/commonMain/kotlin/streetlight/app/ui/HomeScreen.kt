@@ -51,6 +51,9 @@ fun HomeScreen(navigator: Navigator) {
             Button(onClick = { navigator.navigate("/events") }) {
                 Text("Events")
             }
+            Button(onClick = { navigator.navigate("/performances") }) {
+                Text("Performances")
+            }
         }
     }
 }

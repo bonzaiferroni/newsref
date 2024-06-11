@@ -91,7 +91,7 @@ fun AreaChooser(
                 onClick = {
                     expanded = false
                     onNewArea()
-                    navigator?.navigate("/createArea")
+                    navigator?.navigate("/area")
                 },
                 text = { Text("New...") }
             )
