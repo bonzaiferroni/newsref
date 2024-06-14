@@ -6,6 +6,7 @@ import streetlight.app.io.AreaDao
 import streetlight.app.io.EventDao
 import streetlight.app.io.LocationDao
 import streetlight.app.io.PerformanceDao
+import streetlight.app.io.RequestDao
 import streetlight.app.io.UserDao
 import streetlight.app.services.BusService
 import streetlight.app.sql.FoodDao
@@ -32,6 +33,7 @@ val myModule = module {
     single { FoodDao(get()) }
     single { EventDao(get()) }
     single { PerformanceDao(get()) }
+    single { RequestDao(get()) }
     // supply
     single { BusService() }
     single { BusService() }

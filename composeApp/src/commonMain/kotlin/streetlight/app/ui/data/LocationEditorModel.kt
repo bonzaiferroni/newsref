@@ -67,8 +67,8 @@ class LocationEditorModel(
         )
     }
 
-    fun updateArea(id: Int) {
-        sv = sv.copy(location = sv.location.copy(areaId = id))
+    fun updateArea(area: Area) {
+        sv = sv.copy(location = sv.location.copy(areaId = area.id))
     }
 
     fun createLocation() {

@@ -20,6 +20,7 @@ import moe.tlaster.precompose.koin.koinViewModel
 import moe.tlaster.precompose.navigation.Navigator
 import org.koin.core.parameter.parametersOf
 import streetlight.app.ui.core.DataEditor
+import streetlight.app.ui.core.DataMenu
 import streetlight.model.Area
 import streetlight.model.Location
 
@@ -51,59 +52,14 @@ fun LocationEditorScreen(id: Int?, navigator: Navigator?) {
             onValueChange = viewModel::updateLongitude,
             label = { Text("Longitude") }
         )
-        AreaChooser(
+        DataMenu(
             navigator = navigator,
-            location = state.location,
-            areas = state.areas,
-            updateArea = viewModel::updateArea,
-            onNewArea = viewModel::onNewArea
+            item = state.areas.find { it.id == state.location.areaId },
+            items = state.areas,
+            newItemLink = "/area",
+            getName = { it.name },
+            updateLocation = viewModel::updateArea,
+            onNewLocation = viewModel::onNewArea
         )
-    }
-}
-
-@Composable
-fun AreaChooser(
-    navigator: Navigator?,
-    location: Location,
-    areas: List<Area>,
-    updateArea: (Int) -> Unit,
-    onNewArea: () -> Unit,
-) {
-    var expanded by remember { mutableStateOf(false) }
-    val area = areas.find { it.id == location.areaId }
-
-    Box {
-        Row(
-            verticalAlignment = Alignment.CenterVertically
-        ) {
-            area?.let {
-                Text(it.name)
-            }
-            IconButton(onClick = { expanded = !expanded }) {
-                Icon(
-                    imageVector = Icons.Default.MoreVert,
-                    contentDescription = "More"
-                )
-            }
-        }
-        DropdownMenu(expanded = expanded, onDismissRequest = { expanded = false }) {
-            DropdownMenuItem(
-                onClick = {
-                    expanded = false
-                    onNewArea()
-                    navigator?.navigate("/area")
-                },
-                text = { Text("New...") }
-            )
-            areas.forEach { area ->
-                DropdownMenuItem(
-                    onClick = {
-                        expanded = false
-                        updateArea(area.id)
-                    },
-                    text = { Text(area.name) }
-                )
-            }
-        }
     }
 }

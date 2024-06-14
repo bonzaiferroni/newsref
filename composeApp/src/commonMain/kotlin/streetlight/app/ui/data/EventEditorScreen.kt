@@ -24,6 +24,7 @@ import org.koin.core.parameter.parametersOf
 import streetlight.app.chopui.dialogs.DatePickerDialog
 import streetlight.app.chopui.dialogs.TimePickerDialog
 import streetlight.app.ui.core.DataEditor
+import streetlight.app.ui.core.DataMenu
 import streetlight.model.Event
 import streetlight.model.Location
 import streetlight.utils.toLocalDateTime
@@ -55,10 +56,12 @@ fun EventEditorScreen(
             onValueChange = screenModel::updateSearch,
             label = { Text("Search") }
         )
-        LocationChooser(
+        DataMenu(
             navigator,
-            state.event,
+            state.locations.find { it.id == state.event.locationId },
             state.locations,
+            "/location",
+            { it.name },
             screenModel::updateLocation,
             screenModel::onNewLocation
         )
@@ -92,53 +95,6 @@ fun DurationChooser(
                         updateDuration(kvp.key)
                     },
                     text = { Text(kvp.key) }
-                )
-            }
-        }
-    }
-}
-
-@Composable
-fun LocationChooser(
-    navigator: Navigator?,
-    event: Event,
-    locations: List<Location>,
-    updateLocation: (Location) -> Unit,
-    onNewLocation: () -> Unit,
-) {
-    var expanded by remember { mutableStateOf(false) }
-    val location = locations.find { it.id == event.locationId }
-
-    Box {
-        Row(
-            verticalAlignment = Alignment.CenterVertically
-        ) {
-            location?.let {
-                Text(it.name)
-            }
-            IconButton(onClick = { expanded = !expanded }) {
-                Icon(
-                    imageVector = Icons.Default.MoreVert,
-                    contentDescription = "More"
-                )
-            }
-        }
-        DropdownMenu(expanded = expanded, onDismissRequest = { expanded = false }) {
-            DropdownMenuItem(
-                onClick = {
-                    expanded = false
-                    onNewLocation()
-                    navigator?.navigate("/location")
-                },
-                text = { Text("New...") }
-            )
-            locations.forEach { location ->
-                DropdownMenuItem(
-                    onClick = {
-                        expanded = false
-                        updateLocation(location)
-                    },
-                    text = { Text(location.name) }
                 )
             }
         }

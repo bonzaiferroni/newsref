@@ -1,32 +1,32 @@
 ```kt
-// streetlight.model Performance
-@Serializable data class Performance()
+// streetlight.model Request
+@Serializable data class Request()
 
-// streetlight.server.data.performance PerformanceTable
-object PerformanceTable : IntIdTable() { }
-class PerformanceEntity(id: EntityID<Int>) : IntEntity(id) { }
+// streetlight.server.data.Request RequestTable
+object RequestTable : IntIdTable() { }
+class RequestEntity(id: EntityID<Int>) : IntEntity(id) { }
 
-// streetlight.server.data.performance PerformanceService
-class PerformanceService : DataService<Performance, PerformanceEntity>("performances", PerformanceEntity) { }
+// streetlight.server.data.Request RequestService
+class RequestService : DataService<Request, RequestEntity>("Requests", RequestEntity) { }
 
 // streetlight.server.plugins configureApiRoutes()
-applyServiceRouting(PerformanceService())
+applyServiceRouting(RequestService())
 
-// streetlight.app.io PerformanceDao
-class PerformanceDao(private val client: ApiClient, ) { }
+// streetlight.app.io RequestDao
+class RequestDao(private val client: ApiClient, ) { }
 
 // streetlight.app Injection
-single { PerformanceDao(get()) }
+single { RequestDao(get()) }
 
-// streetlight.app.ui.data PerformanceEditorScreen
-@Composable fun PerformanceEditorScreen(id: Int?, navigator: Navigator?) { }
+// streetlight.app.ui.data RequestEditorScreen
+@Composable fun RequestEditorScreen(id: Int?, navigator: Navigator?) { }
 
-// streetlight.app.ui.data PerformanceListScreen
-@Composable fun PerformanceListScreen(navigator: Navigator?) { }
+// streetlight.app.ui.data RequestListScreen
+@Composable fun RequestListScreen(navigator: Navigator?) { }
 
 // streetlight.app Navigation
-scene("/performances") { PerformanceListScreen(navigator) }
-scene("/performance/{id}?") { PerformanceEditorScreen(it.getId(), navigator) }
+scene("/Requests") { RequestListScreen(navigator) }
+scene("/Request/{id}?") { RequestEditorScreen(it.getId(), navigator) }
 
 
 
