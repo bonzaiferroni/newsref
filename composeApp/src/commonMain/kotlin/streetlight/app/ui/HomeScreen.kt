@@ -22,6 +22,7 @@ import moe.tlaster.precompose.navigation.rememberNavigator
 import streetlight.app.chopui.Scaffold
 import org.jetbrains.compose.resources.ExperimentalResourceApi
 import org.jetbrains.compose.resources.painterResource
+import streetlight.app.chopui.BoxScaffold
 import streetlight.composeapp.generated.resources.Res
 import streetlight.composeapp.generated.resources.compose_multiplatform
 
@@ -30,7 +31,7 @@ fun HomeScreen(navigator: Navigator) {
     val screenModel = koinViewModel(HomeModel::class)
     val state by screenModel.state
 
-    Scaffold {
+    BoxScaffold {
         Column(Modifier.fillMaxWidth(), horizontalAlignment = Alignment.CenterHorizontally) {
             Text("counter: ${state.counter}")
             Button(onClick = screenModel::growCounter) {
