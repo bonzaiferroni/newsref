@@ -1,7 +1,5 @@
 package streetlight.app.ui.data
 
-import androidx.compose.material3.Text
-import androidx.compose.material3.TextField
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import kotlinx.coroutines.Dispatchers
@@ -10,11 +8,17 @@ import moe.tlaster.precompose.koin.koinViewModel
 import moe.tlaster.precompose.navigation.Navigator
 import moe.tlaster.precompose.viewmodel.viewModelScope
 import org.koin.core.parameter.parametersOf
+import streetlight.app.io.EventDao
+import streetlight.app.io.PerformanceDao
 import streetlight.app.io.RequestDao
 import streetlight.app.services.BusService
 import streetlight.app.ui.core.DataEditor
+import streetlight.app.ui.core.DataMenu
 import streetlight.app.ui.core.UiModel
 import streetlight.app.ui.core.UiState
+import streetlight.dto.EventInfo
+import streetlight.model.Event
+import streetlight.model.Performance
 import streetlight.model.Request
 
 @Composable
@@ -30,13 +34,32 @@ fun RequestEditorScreen(id: Int?, navigator: Navigator?) {
         createData = viewModel::createRequest,
         navigator = navigator,
     ) {
-
+        DataMenu(
+            navigator = navigator,
+            item = state.events.find { it.id == state.request.eventId },
+            items = state.events,
+            newItemLink = "/event",
+            getName = { it.locationName },
+            updateItem = viewModel::updateEvent,
+            onNewSelect = viewModel::onNewArea
+        )
+        DataMenu(
+            navigator = navigator,
+            item = state.performances.find { it.id == state.request.performanceId },
+            items = state.performances,
+            newItemLink = "/performance",
+            getName = { it.name },
+            updateItem = viewModel::updatePerformance,
+            onNewSelect = viewModel::onNewPerformance
+        )
     }
 }
 
 class RequestEditorModel(
     private val id: Int?,
     private val requestDao: RequestDao,
+    private val eventDao: EventDao,
+    private val performanceDao: PerformanceDao,
     private val bus: BusService
 ) : UiModel<RequestEditorState>(RequestEditorState()) {
 
@@ -45,6 +68,15 @@ class RequestEditorModel(
             viewModelScope.launch(Dispatchers.IO) {
                 requestDao.get(id)?.let { sv = sv.copy(request = it) }
             }
+        }
+        fetchData()
+    }
+
+    private fun fetchData() {
+        viewModelScope.launch(Dispatchers.IO) {
+            val events = eventDao.getAllInfo()
+            val performances = performanceDao.getAll()
+            sv = sv.copy(events = events, performances = performances)
         }
     }
 
@@ -61,10 +93,34 @@ class RequestEditorModel(
             bus.supply(sv.request)
         }
     }
+
+    fun updateEvent(eventInfo: EventInfo) {
+        sv = sv.copy(request = sv.request.copy(eventId = eventInfo.id))
+    }
+
+    fun onNewArea() {
+        bus.request<Event> {
+            sv = sv.copy(request = sv.request.copy(eventId = it.id))
+            fetchData()
+        }
+    }
+
+    fun updatePerformance(performance: Performance) {
+        sv = sv.copy(request = sv.request.copy(performanceId = performance.id))
+    }
+
+    fun onNewPerformance() {
+        bus.request<Performance> {
+            sv = sv.copy(request = sv.request.copy(performanceId = it.id))
+            fetchData()
+        }
+    }
 }
 
 data class RequestEditorState(
     val request: Request = Request(),
     val isComplete: Boolean = false,
+    val events: List<EventInfo> = emptyList(),
+    val performances: List<Performance> = emptyList(),
     val result: String = ""
 ) : UiState

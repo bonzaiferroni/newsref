@@ -24,8 +24,8 @@ fun <Data> DataMenu(
     items: List<Data>,
     newItemLink: String,
     getName: (Data) -> String,
-    updateLocation: (Data) -> Unit,
-    onNewLocation: () -> Unit,
+    updateItem: (Data) -> Unit,
+    onNewSelect: () -> Unit,
 ) {
     var expanded by remember { mutableStateOf(false) }
 
@@ -47,7 +47,7 @@ fun <Data> DataMenu(
             DropdownMenuItem(
                 onClick = {
                     expanded = false
-                    onNewLocation()
+                    onNewSelect()
                     navigator?.navigate(newItemLink)
                 },
                 text = { Text("New...") }
@@ -56,7 +56,7 @@ fun <Data> DataMenu(
                 DropdownMenuItem(
                     onClick = {
                         expanded = false
-                        updateLocation(it)
+                        updateItem(it)
                     },
                     text = { Text(getName(it)) }
                 )

@@ -14,6 +14,8 @@ import streetlight.app.ui.data.LocationEditorScreen
 import streetlight.app.ui.data.LocationListScreen
 import streetlight.app.ui.data.PerformanceEditorScreen
 import streetlight.app.ui.data.PerformanceListScreen
+import streetlight.app.ui.data.RequestEditorScreen
+import streetlight.app.ui.data.RequestListScreen
 import streetlight.app.ui.data.UserEditorScreen
 
 object AppRoutes {
@@ -39,6 +41,8 @@ fun RouteBuilder.appScenes(navigator: Navigator) {
     scene("/event/{id}?") { EventEditorScreen(it.getId(), navigator) }
     scene("/performances") { PerformanceListScreen(navigator) }
     scene("/performance/{id}?") { PerformanceEditorScreen(it.getId(), navigator) }
+    scene("/requests") { RequestListScreen(navigator) }
+    scene("/request/{id}?") { RequestEditorScreen(it.getId(), navigator) }
 }
 
 fun BackStackEntry.getId() = this.path<Int>("id")
