@@ -8,6 +8,7 @@ import moe.tlaster.precompose.koin.koinViewModel
 import moe.tlaster.precompose.navigation.Navigator
 import moe.tlaster.precompose.navigation.rememberNavigator
 import moe.tlaster.precompose.viewmodel.viewModelScope
+import streetlight.app.Scenes
 import streetlight.app.io.EventDao
 import streetlight.app.services.BusService
 import streetlight.app.ui.core.DataList
@@ -26,10 +27,10 @@ fun EventListScreen(navigator: Navigator?) {
         provideName = { "${it.locationName} (${it.areaName})" },
         floatingAction = {
             viewModel.onNewEvent()
-            navigator?.navigate("/event")
+            Scenes.eventList.go(navigator)
         },
         navigator = navigator,
-        onClick = { navigator?.navigate("/event/${it.id}") }
+        onClick = { Scenes.eventEditor.go(navigator, it.id) }
     )
 }
 

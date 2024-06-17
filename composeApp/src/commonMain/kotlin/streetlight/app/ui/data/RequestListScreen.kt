@@ -7,6 +7,7 @@ import kotlinx.coroutines.launch
 import moe.tlaster.precompose.koin.koinViewModel
 import moe.tlaster.precompose.navigation.Navigator
 import moe.tlaster.precompose.viewmodel.viewModelScope
+import streetlight.app.Scenes
 import streetlight.app.io.RequestDao
 import streetlight.app.services.BusService
 import streetlight.app.ui.core.DataList
@@ -26,10 +27,12 @@ fun RequestListScreen(navigator: Navigator?) {
         provideName = { "${it.performanceName} (${it.locationName})" },
         floatingAction = {
             viewModel.onNewRequest()
-            navigator?.navigate("/request")
+            Scenes.requestEditor.go(navigator)
         },
         navigator = navigator,
-        onClick = { navigator?.navigate("/request/${it.id}") }
+        onClick = {
+            Scenes.requestEditor.go(navigator, it.id)
+        }
     )
 }
 

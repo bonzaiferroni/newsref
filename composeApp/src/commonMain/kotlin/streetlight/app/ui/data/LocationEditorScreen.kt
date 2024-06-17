@@ -10,6 +10,7 @@ import moe.tlaster.precompose.koin.koinViewModel
 import moe.tlaster.precompose.navigation.Navigator
 import moe.tlaster.precompose.viewmodel.viewModelScope
 import org.koin.core.parameter.parametersOf
+import streetlight.app.Scenes
 import streetlight.app.io.AreaDao
 import streetlight.app.io.LocationDao
 import streetlight.app.services.BusService
@@ -49,14 +50,14 @@ fun LocationEditorScreen(id: Int?, navigator: Navigator?) {
             label = { Text("Longitude") }
         )
         DataMenu(
-            navigator = navigator,
             item = state.areas.find { it.id == state.location.areaId },
             items = state.areas,
-            newItemLink = "/area",
             getName = { it.name },
-            updateItem = viewModel::updateArea,
-            onNewSelect = viewModel::onNewArea
-        )
+            updateItem = viewModel::updateArea
+        ) {
+            viewModel.requestArea()
+            Scenes.locationList.go(navigator)
+        }
     }
 }
 
@@ -89,7 +90,7 @@ class LocationEditorModel(
         }
     }
 
-    fun onNewArea() {
+    fun requestArea() {
         bus.request<Area> {
             sv = sv.copy(location = sv.location.copy(areaId = it.id))
             fetchAreas()

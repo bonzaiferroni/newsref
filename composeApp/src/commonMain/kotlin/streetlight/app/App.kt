@@ -27,7 +27,7 @@ fun App() {
                     // Navigation transition for the scenes in this NavHost, this is optional
                     navTransition = NavTransition(),
                     // The start destination
-                    initialRoute = AppRoutes.default,
+                    initialRoute = Scenes.default(),
                 ) {
                     appScenes(navigator)
                 }

@@ -97,7 +97,7 @@ class EventEditorModel(
         )
     }
 
-    fun onNewLocation() {
+    fun requestLocation() {
         bus.request<Location> {
             updateLocation(it)
         }

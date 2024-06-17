@@ -8,6 +8,7 @@ import moe.tlaster.precompose.koin.koinViewModel
 import moe.tlaster.precompose.navigation.Navigator
 import moe.tlaster.precompose.viewmodel.viewModelScope
 import org.koin.core.parameter.parametersOf
+import streetlight.app.Scenes
 import streetlight.app.io.EventDao
 import streetlight.app.io.PerformanceDao
 import streetlight.app.io.RequestDao
@@ -35,23 +36,23 @@ fun RequestEditorScreen(id: Int?, navigator: Navigator?) {
         navigator = navigator,
     ) {
         DataMenu(
-            navigator = navigator,
             item = state.events.find { it.id == state.request.eventId },
             items = state.events,
-            newItemLink = "/event",
             getName = { it.locationName },
             updateItem = viewModel::updateEvent,
-            onNewSelect = viewModel::onNewArea
-        )
+        ) {
+            viewModel.requestEvent()
+            Scenes.eventEditor.go(navigator)
+        }
         DataMenu(
-            navigator = navigator,
             item = state.performances.find { it.id == state.request.performanceId },
             items = state.performances,
-            newItemLink = "/performance",
             getName = { it.name },
             updateItem = viewModel::updatePerformance,
-            onNewSelect = viewModel::onNewPerformance
-        )
+        ) {
+            viewModel.requestPerformance()
+            Scenes.performanceEditor.go(navigator)
+        }
     }
 }
 
@@ -98,7 +99,7 @@ class RequestEditorModel(
         sv = sv.copy(request = sv.request.copy(eventId = eventInfo.id))
     }
 
-    fun onNewArea() {
+    fun requestEvent() {
         bus.request<Event> {
             sv = sv.copy(request = sv.request.copy(eventId = it.id))
             fetchData()
@@ -109,7 +110,7 @@ class RequestEditorModel(
         sv = sv.copy(request = sv.request.copy(performanceId = performance.id))
     }
 
-    fun onNewPerformance() {
+    fun requestPerformance() {
         bus.request<Performance> {
             sv = sv.copy(request = sv.request.copy(performanceId = it.id))
             fetchData()

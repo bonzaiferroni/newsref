@@ -7,6 +7,7 @@ import kotlinx.coroutines.launch
 import moe.tlaster.precompose.koin.koinViewModel
 import moe.tlaster.precompose.navigation.Navigator
 import moe.tlaster.precompose.viewmodel.viewModelScope
+import streetlight.app.Scenes
 import streetlight.app.io.PerformanceDao
 import streetlight.app.services.BusService
 import streetlight.app.ui.core.DataList
@@ -25,10 +26,12 @@ fun PerformanceListScreen(navigator: Navigator?) {
         provideName = { it.name },
         floatingAction = {
             viewModel.onNewPerformance()
-            navigator?.navigate("/performance")
+            Scenes.performanceEditor.go(navigator)
         },
         navigator = navigator,
-        onClick = { navigator?.navigate("/performance/${it.id}") }
+        onClick = {
+            Scenes.performanceEditor.go(navigator, it.id)
+        }
     )
 }
 

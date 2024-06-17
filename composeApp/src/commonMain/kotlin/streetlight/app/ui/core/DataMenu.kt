@@ -19,10 +19,8 @@ import moe.tlaster.precompose.navigation.Navigator
 
 @Composable
 fun <Data> DataMenu(
-    navigator: Navigator?,
     item: Data?,
     items: List<Data>,
-    newItemLink: String,
     getName: (Data) -> String,
     updateItem: (Data) -> Unit,
     onNewSelect: () -> Unit,
@@ -48,7 +46,6 @@ fun <Data> DataMenu(
                 onClick = {
                     expanded = false
                     onNewSelect()
-                    navigator?.navigate(newItemLink)
                 },
                 text = { Text("New...") }
             )

@@ -21,12 +21,11 @@ import kotlinx.datetime.LocalDateTime
 import moe.tlaster.precompose.koin.koinViewModel
 import moe.tlaster.precompose.navigation.Navigator
 import org.koin.core.parameter.parametersOf
+import streetlight.app.Scenes
 import streetlight.app.chopui.dialogs.DatePickerDialog
 import streetlight.app.chopui.dialogs.TimePickerDialog
 import streetlight.app.ui.core.DataEditor
 import streetlight.app.ui.core.DataMenu
-import streetlight.model.Event
-import streetlight.model.Location
 import streetlight.utils.toLocalDateTime
 import streetlight.utils.toFormatString
 
@@ -57,14 +56,14 @@ fun EventEditorScreen(
             label = { Text("Search") }
         )
         DataMenu(
-            navigator,
             state.locations.find { it.id == state.event.locationId },
             state.locations,
-            "/location",
             { it.name },
             screenModel::updateLocation,
-            screenModel::onNewLocation
-        )
+        ) {
+            screenModel.requestLocation()
+            Scenes.locationEditor.go(navigator)
+        }
     }
 }
 

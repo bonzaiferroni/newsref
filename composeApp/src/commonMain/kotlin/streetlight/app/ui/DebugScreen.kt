@@ -16,19 +16,20 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import moe.tlaster.precompose.koin.koinViewModel
-import moe.tlaster.precompose.navigation.NavOptions
 import moe.tlaster.precompose.navigation.Navigator
-import moe.tlaster.precompose.navigation.rememberNavigator
-import streetlight.app.chopui.Scaffold
 import org.jetbrains.compose.resources.ExperimentalResourceApi
 import org.jetbrains.compose.resources.painterResource
+import streetlight.app.Scenes
 import streetlight.app.chopui.BoxScaffold
+import streetlight.app.appScenes
 import streetlight.composeapp.generated.resources.Res
 import streetlight.composeapp.generated.resources.compose_multiplatform
 
+
+
 @Composable
-fun HomeScreen(navigator: Navigator) {
-    val screenModel = koinViewModel(HomeModel::class)
+fun DebugScreen(navigator: Navigator) {
+    val screenModel = koinViewModel(DebugModel::class)
     val state by screenModel.state
 
     BoxScaffold {
@@ -37,30 +38,24 @@ fun HomeScreen(navigator: Navigator) {
             Button(onClick = screenModel::growCounter) {
                 Text("grow")
             }
-            Button(onClick = { navigator.navigate("/user") }) {
-                Text("Create User")
-            }
-            Button(onClick = { navigator.navigate("/login") }) {
-                Text("Login")
-            }
-            Button(onClick = { navigator.navigate("/locations") }) {
-                Text("Locations")
-            }
-            Button(onClick = { navigator.navigate("/areas") }) {
-                Text("Areas")
-            }
-            Button(onClick = { navigator.navigate("/events") }) {
-                Text("Events")
-            }
-            Button(onClick = { navigator.navigate("/performances") }) {
-                Text("Performances")
-            }
-            Button(onClick = { navigator.navigate("/requests") }) {
-                Text("Requests")
+
+            // from Navigation.kt
+            rootScenes.forEach {
+                Button(onClick = { navigator.navigate(it.route) }) {
+                    Text(it.name)
+                }
             }
         }
     }
 }
+
+val rootScenes = listOf(
+    Scenes.locationList,
+    Scenes.areaList,
+    Scenes.eventList,
+    Scenes.performanceList,
+    Scenes.requestList
+)
 
 @OptIn(ExperimentalResourceApi::class)
 @Composable

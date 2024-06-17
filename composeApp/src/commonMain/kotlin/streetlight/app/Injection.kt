@@ -11,7 +11,7 @@ import streetlight.app.io.UserDao
 import streetlight.app.services.BusService
 import streetlight.app.sql.FoodDao
 import streetlight.app.sql.FoodModel
-import streetlight.app.ui.HomeModel
+import streetlight.app.ui.DebugModel
 import streetlight.app.ui.data.AreaEditorModel
 import streetlight.app.ui.data.AreaListModel
 import streetlight.app.ui.data.EventEditorModel
@@ -21,7 +21,6 @@ import streetlight.app.ui.data.LocationListModel
 import streetlight.app.ui.data.PerformanceEditorModel
 import streetlight.app.ui.data.PerformanceListModel
 import streetlight.app.ui.data.RequestEditorModel
-import streetlight.app.ui.data.RequestEditorScreen
 import streetlight.app.ui.data.RequestListModel
 import streetlight.app.ui.data.UserEditorModel
 import streetlight.app.ui.login.LoginModel
@@ -53,6 +52,6 @@ val myModule = module {
     factory { (id: Int?) -> RequestEditorModel(id, get(), get(), get(), get()) }
     factory { RequestListModel(get(), get()) }
     factory { FoodModel(get()) }
-    factory { HomeModel(get()) }
+    factory { DebugModel(get()) }
     factory { LoginModel(get()) }
 }

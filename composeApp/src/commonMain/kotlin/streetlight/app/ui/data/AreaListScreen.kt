@@ -7,6 +7,7 @@ import kotlinx.coroutines.launch
 import moe.tlaster.precompose.koin.koinViewModel
 import moe.tlaster.precompose.navigation.Navigator
 import moe.tlaster.precompose.viewmodel.viewModelScope
+import streetlight.app.Scenes
 import streetlight.app.io.AreaDao
 import streetlight.app.services.BusService
 import streetlight.app.ui.core.DataList
@@ -24,11 +25,11 @@ fun AreaListScreen(navigator: Navigator?) {
         items = state.areas,
         provideName = { it.name },
         floatingAction = {
-            screenModel.onNewArea()
-            navigator?.navigate("/area")
+            screenModel.requestArea()
+            Scenes.areaEditor.go(navigator)
         },
         navigator = navigator,
-        onClick = { navigator?.navigate("/area/${it.id}") }
+        onClick = { Scenes.areaEditor.go(navigator, it.id) }
     )
 }
 
@@ -47,7 +48,7 @@ class AreaListModel(
         }
     }
 
-    fun onNewArea() {
+    fun requestArea() {
         bus.request<Area> {
             refresh()
         }
