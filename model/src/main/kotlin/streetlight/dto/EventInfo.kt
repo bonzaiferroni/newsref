@@ -4,13 +4,13 @@ import kotlinx.serialization.Serializable
 
 @Serializable
 data class EventInfo(
-    val id: Int,
-    val locationName: String,
-    val locationId: Int,
-    val timeStart: Long,
-    val hours: Float,
-    val latitude: Double,
-    val longitude: Double,
-    val areaId: Int,
-    val areaName: String,
+    val id: Int = 0,
+    val locationName: String = "",
+    val locationId: Int = 0,
+    val timeStart: Long = 0L,
+    val hours: Float = 0f,
+    val latitude: Double = 0.0,
+    val longitude: Double = 0.0,
+    val areaId: Int = 0,
+    val areaName: String = "",
 )

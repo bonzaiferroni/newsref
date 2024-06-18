@@ -2,21 +2,23 @@ package streetlight.app
 
 import moe.tlaster.precompose.navigation.BackStackEntry
 import moe.tlaster.precompose.navigation.path
-import streetlight.app.ui.DebugScreen
-import streetlight.app.ui.data.AreaEditorScreen
-import streetlight.app.ui.data.AreaListScreen
-import streetlight.app.ui.data.EventEditorScreen
-import streetlight.app.ui.data.EventListScreen
-import streetlight.app.ui.data.LocationEditorScreen
-import streetlight.app.ui.data.LocationListScreen
-import streetlight.app.ui.data.PerformanceEditorScreen
-import streetlight.app.ui.data.PerformanceListScreen
-import streetlight.app.ui.data.RequestEditorScreen
-import streetlight.app.ui.data.RequestListScreen
-import streetlight.app.ui.data.UserEditorScreen
+import streetlight.app.ui.debug.DebugScreen
+import streetlight.app.ui.debug.AreaEditorScreen
+import streetlight.app.ui.debug.AreaListScreen
+import streetlight.app.ui.debug.EventEditorScreen
+import streetlight.app.ui.debug.EventListScreen
+import streetlight.app.ui.debug.LocationEditorScreen
+import streetlight.app.ui.debug.LocationListScreen
+import streetlight.app.ui.debug.PerformanceEditorScreen
+import streetlight.app.ui.debug.PerformanceListScreen
+import streetlight.app.ui.debug.RequestEditorScreen
+import streetlight.app.ui.debug.RequestListScreen
+import streetlight.app.ui.debug.UserEditorScreen
+import streetlight.app.ui.main.EventProfileScreen
+import streetlight.app.ui.main.NowScreen
 
 object Scenes {
-    val default = { debug.route }
+    val default = { now.route }
 
     val debug = AppScene(
         name = "Debug",
@@ -101,6 +103,20 @@ object Scenes {
     ) { bse, navigator ->
         RequestEditorScreen(bse.getId(), navigator)
     }
+
+    val now = AppScene(
+        name = "Now",
+        route = "/now"
+    ) { _, navigator ->
+        NowScreen(navigator)
+    }
+
+    val eventProfile = AppScene(
+        name = "Event Profile",
+        route = "/event/{id}/profile"
+    ) { bse, navigator ->
+        EventProfileScreen(bse.getId()!!, navigator)
+    }
 }
 
 fun BackStackEntry.getId() = this.path<Int>("id")
@@ -117,6 +133,8 @@ val appScenes = listOf(
     Scenes.performanceList,
     Scenes.performanceEditor,
     Scenes.requestList,
-    Scenes.requestEditor
+    Scenes.requestEditor,
+    Scenes.now,
+    Scenes.eventProfile
 )
 

@@ -11,19 +11,21 @@ import streetlight.app.io.UserDao
 import streetlight.app.services.BusService
 import streetlight.app.sql.FoodDao
 import streetlight.app.sql.FoodModel
-import streetlight.app.ui.DebugModel
-import streetlight.app.ui.data.AreaEditorModel
-import streetlight.app.ui.data.AreaListModel
-import streetlight.app.ui.data.EventEditorModel
-import streetlight.app.ui.data.EventListModel
-import streetlight.app.ui.data.LocationEditorModel
-import streetlight.app.ui.data.LocationListModel
-import streetlight.app.ui.data.PerformanceEditorModel
-import streetlight.app.ui.data.PerformanceListModel
-import streetlight.app.ui.data.RequestEditorModel
-import streetlight.app.ui.data.RequestListModel
-import streetlight.app.ui.data.UserEditorModel
+import streetlight.app.ui.main.EventProfileModel
+import streetlight.app.ui.debug.DebugModel
+import streetlight.app.ui.debug.AreaEditorModel
+import streetlight.app.ui.debug.AreaListModel
+import streetlight.app.ui.debug.EventEditorModel
+import streetlight.app.ui.debug.EventListModel
+import streetlight.app.ui.debug.LocationEditorModel
+import streetlight.app.ui.debug.LocationListModel
+import streetlight.app.ui.debug.PerformanceEditorModel
+import streetlight.app.ui.debug.PerformanceListModel
+import streetlight.app.ui.debug.RequestEditorModel
+import streetlight.app.ui.debug.RequestListModel
+import streetlight.app.ui.debug.UserEditorModel
 import streetlight.app.ui.login.LoginModel
+import streetlight.app.ui.main.NowModel
 
 val myModule = module {
     // your dependencies here
@@ -37,7 +39,6 @@ val myModule = module {
     single { PerformanceDao(get()) }
     single { RequestDao(get()) }
     // supply
-    single { BusService() }
     single { BusService() }
     // models
     factory { LocationListModel(get(), get(), get()) }
@@ -54,4 +55,6 @@ val myModule = module {
     factory { FoodModel(get()) }
     factory { DebugModel(get()) }
     factory { LoginModel(get()) }
+    factory { (id: Int?) -> EventProfileModel(id!!, get(), get()) }
+    factory { NowModel(get()) }
 }

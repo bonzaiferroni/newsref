@@ -14,8 +14,11 @@ data class AppScene(
     val content: @Composable (BackStackEntry, Navigator) -> Unit
 ) {
     fun go(navigator: Navigator?) = navigator?.navigate(route)
-    fun go(navigator: Navigator?, id: Int) = navigator?.navigate("$route/$id")
+    fun go(navigator: Navigator?, id: Int) =
+        navigator?.navigate(route.replace(regex, id.toString()))
 }
+
+val regex = """\{id\}\??""".toRegex()
 
 fun RouteBuilder.appScenes(navigator: Navigator) {
     appScenes.forEach { nav ->
