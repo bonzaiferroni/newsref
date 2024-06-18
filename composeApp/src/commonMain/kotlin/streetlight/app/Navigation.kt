@@ -18,7 +18,7 @@ import streetlight.app.ui.main.EventProfileScreen
 import streetlight.app.ui.main.NowScreen
 
 object Scenes {
-    val default = { now.route }
+    val default = { debug.route }
 
     val debug = AppScene(
         name = "Debug",

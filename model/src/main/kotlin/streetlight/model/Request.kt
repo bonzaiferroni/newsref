@@ -11,4 +11,5 @@ data class Request(
     @SerialName("performance_id")
     val performanceId: Int = 0,
     val time: Long = 0L,
+    val performed: Boolean = false,
 )

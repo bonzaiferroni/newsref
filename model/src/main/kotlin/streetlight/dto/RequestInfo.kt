@@ -10,4 +10,5 @@ data class RequestInfo(
     val performanceId: Int,
     val performanceName: String,
     val time: Long = 0L,
+    val performed: Boolean = false,
 )

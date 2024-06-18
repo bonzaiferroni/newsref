@@ -26,7 +26,10 @@ fun NowScreen(navigator: Navigator?) {
     val screenModel = koinViewModel<NowModel>()
     val state by screenModel.state
 
-    BoxScaffold {
+    BoxScaffold(
+        title = "Now",
+        navigator = navigator,
+    ) {
         state.events.forEach { event ->
             EventCard(event = event, onClick = { Scenes.eventProfile.go(navigator, event.id) })
         }
