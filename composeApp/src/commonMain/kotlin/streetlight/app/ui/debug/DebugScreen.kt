@@ -1,6 +1,6 @@
 @file:OptIn(ExperimentalResourceApi::class, ExperimentalResourceApi::class)
 
-package streetlight.app.ui
+package streetlight.app.ui.debug
 
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.foundation.Image
@@ -21,8 +21,6 @@ import org.jetbrains.compose.resources.ExperimentalResourceApi
 import org.jetbrains.compose.resources.painterResource
 import streetlight.app.Scenes
 import streetlight.app.chopui.BoxScaffold
-import streetlight.app.appScenes
-import streetlight.app.chopui.SurfaceScaffold
 import streetlight.composeapp.generated.resources.Res
 import streetlight.composeapp.generated.resources.compose_multiplatform
 

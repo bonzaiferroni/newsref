@@ -1,4 +1,4 @@
-package streetlight.app.ui
+package streetlight.app.ui.debug
 
 import streetlight.app.io.UserDao
 

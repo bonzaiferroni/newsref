@@ -1,4 +1,4 @@
-package streetlight.app.ui.data
+package streetlight.app.ui.debug
 
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable

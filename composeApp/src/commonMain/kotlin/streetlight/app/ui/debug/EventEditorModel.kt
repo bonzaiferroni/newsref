@@ -1,4 +1,4 @@
-package streetlight.app.ui.data
+package streetlight.app.ui.debug
 
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch

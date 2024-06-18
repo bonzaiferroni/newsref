@@ -1,4 +1,4 @@
-package streetlight.app.ui.data
+package streetlight.app.ui.debug
 
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -6,7 +6,6 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import moe.tlaster.precompose.koin.koinViewModel
 import moe.tlaster.precompose.navigation.Navigator
-import moe.tlaster.precompose.navigation.rememberNavigator
 import moe.tlaster.precompose.viewmodel.viewModelScope
 import streetlight.app.Scenes
 import streetlight.app.io.EventDao

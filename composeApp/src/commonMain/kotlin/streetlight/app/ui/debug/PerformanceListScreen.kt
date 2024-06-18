@@ -1,4 +1,4 @@
-package streetlight.app.ui.data
+package streetlight.app.ui.debug
 
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -8,57 +8,56 @@ import moe.tlaster.precompose.koin.koinViewModel
 import moe.tlaster.precompose.navigation.Navigator
 import moe.tlaster.precompose.viewmodel.viewModelScope
 import streetlight.app.Scenes
-import streetlight.app.io.RequestDao
+import streetlight.app.io.PerformanceDao
 import streetlight.app.services.BusService
 import streetlight.app.ui.core.DataList
 import streetlight.app.ui.core.UiModel
 import streetlight.app.ui.core.UiState
-import streetlight.dto.RequestInfo
-import streetlight.model.Request
+import streetlight.model.Performance
 
 @Composable
-fun RequestListScreen(navigator: Navigator?) {
-    val viewModel = koinViewModel<RequestListModel>()
+fun PerformanceListScreen(navigator: Navigator?) {
+    val viewModel = koinViewModel<PerformanceListModel>()
     val state by viewModel.state
 
     DataList(
-        title = "Requests",
-        items = state.requests,
-        provideName = { "${it.performanceName} (${it.locationName})" },
+        title = "Performances",
+        items = state.performances,
+        provideName = { it.name },
         floatingAction = {
-            viewModel.onNewRequest()
-            Scenes.requestEditor.go(navigator)
+            viewModel.onNewPerformance()
+            Scenes.performanceEditor.go(navigator)
         },
         navigator = navigator,
         onClick = {
-            Scenes.requestEditor.go(navigator, it.id)
+            Scenes.performanceEditor.go(navigator, it.id)
         }
     )
 }
 
-class RequestListModel(
-    private val requestDao: RequestDao,
+class PerformanceListModel(
+    private val performanceDao: PerformanceDao,
     private val bus: BusService,
-) : UiModel<RequestListState>(RequestListState()) {
+) : UiModel<PerformanceListState>(PerformanceListState()) {
     init {
         refresh()
     }
 
     private fun refresh() {
         viewModelScope.launch(Dispatchers.IO) {
-            val requests = requestDao.getAllInfo()
-            sv = sv.copy(requests = requests)
+            val performances = performanceDao.getAll()
+            sv = sv.copy(performances = performances)
         }
     }
 
-    fun onNewRequest() {
-        bus.request<Request> {
+    fun onNewPerformance() {
+        bus.request<Performance> {
             refresh()
         }
     }
 }
 
-data class RequestListState(
-    val requests: List<RequestInfo> = emptyList(),
+data class PerformanceListState(
+    val performances: List<Performance> = emptyList(),
     val result: String = "",
 ) : UiState
