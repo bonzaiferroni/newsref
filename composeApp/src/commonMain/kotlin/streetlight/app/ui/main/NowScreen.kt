@@ -1,7 +1,11 @@
 package streetlight.app.ui.main
 
+import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.items
+import androidx.compose.material3.Button
 import androidx.compose.material3.Card
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
@@ -30,8 +34,15 @@ fun NowScreen(navigator: Navigator?) {
         title = "Now",
         navigator = navigator,
     ) {
-        state.events.forEach { event ->
-            EventCard(event = event, onClick = { Scenes.eventProfile.go(navigator, event.id) })
+        Column {
+            Button(onClick = { Scenes.debug.go(navigator) }) {
+                Text("Debug")
+            }
+            LazyColumn {
+                items(state.events) { event ->
+                    EventCard(event = event, onClick = { Scenes.eventProfile.go(navigator, event.id) })
+                }
+            }
         }
     }
 }

@@ -18,7 +18,7 @@ import streetlight.app.ui.main.EventProfileScreen
 import streetlight.app.ui.main.NowScreen
 
 object Scenes {
-    val default = { debug.route }
+    val default = { now.route }
 
     val debug = AppScene(
         name = "Debug",
@@ -76,6 +76,13 @@ object Scenes {
         EventEditorScreen(bse.getId(), navigator)
     }
 
+    val eventProfile = AppScene(
+        name = "Event Profile",
+        route = "/event/{id}/profile"
+    ) { bse, navigator ->
+        EventProfileScreen(bse.getId()!!, navigator)
+    }
+
     val performanceList = AppScene(
         name = "Performances",
         route = "/performances"
@@ -109,13 +116,6 @@ object Scenes {
         route = "/now"
     ) { _, navigator ->
         NowScreen(navigator)
-    }
-
-    val eventProfile = AppScene(
-        name = "Event Profile",
-        route = "/event/{id}/profile"
-    ) { bse, navigator ->
-        EventProfileScreen(bse.getId()!!, navigator)
     }
 }
 

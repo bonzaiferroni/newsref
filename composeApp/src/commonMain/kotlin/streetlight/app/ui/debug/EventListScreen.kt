@@ -26,7 +26,7 @@ fun EventListScreen(navigator: Navigator?) {
         provideName = { "${it.locationName} (${it.areaName})" },
         floatingAction = {
             viewModel.onNewEvent()
-            Scenes.eventList.go(navigator)
+            Scenes.eventEditor.go(navigator)
         },
         navigator = navigator,
         onClick = { Scenes.eventEditor.go(navigator, it.id) }

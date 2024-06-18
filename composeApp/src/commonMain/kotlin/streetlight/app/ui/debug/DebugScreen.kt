@@ -47,6 +47,7 @@ fun DebugScreen(navigator: Navigator) {
 }
 
 val rootScenes = listOf(
+    Scenes.userEditor,
     Scenes.locationList,
     Scenes.areaList,
     Scenes.eventList,

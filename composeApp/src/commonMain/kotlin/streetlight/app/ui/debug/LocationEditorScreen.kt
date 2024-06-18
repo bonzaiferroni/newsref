@@ -56,7 +56,7 @@ fun LocationEditorScreen(id: Int?, navigator: Navigator?) {
             updateItem = viewModel::updateArea
         ) {
             viewModel.requestArea()
-            Scenes.locationList.go(navigator)
+            Scenes.areaEditor.go(navigator)
         }
     }
 }
