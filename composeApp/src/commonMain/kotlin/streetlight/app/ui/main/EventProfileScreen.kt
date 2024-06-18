@@ -8,8 +8,10 @@ import androidx.compose.material3.Switch
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import moe.tlaster.precompose.koin.koinViewModel
 import moe.tlaster.precompose.navigation.Navigator
@@ -35,9 +37,11 @@ fun EventProfileScreen(id: Int, navigator: Navigator?) {
     ) {
         LazyColumn {
             items(state.requests) { request ->
-                Row {
-                    Text(request.performanceName)
-                    Spacer(Modifier.weight(1f))
+                Row(
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+                    Text("${request.performanceName} ")
+                    // Spacer(Modifier.weight(1f))
                     Switch(
                         checked = request.performed,
                         onCheckedChange = { screenModel.updatePerformed(request.id, it) }
@@ -58,9 +62,11 @@ class EventProfileModel(
         viewModelScope.launch(Dispatchers.IO) {
             val event = eventDao.getInfo(id) ?: return@launch
             sv = sv.copy(event = event)
-            refresh()
+            loop()
         }
     }
+
+    private var nextTime: Long = 0
 
     fun updatePerformed(requestId: Int, performed: Boolean) {
         viewModelScope.launch(Dispatchers.IO) {
@@ -74,10 +80,21 @@ class EventProfileModel(
         }
     }
 
+    private suspend fun loop() {
+        while (true) {
+            if (System.currentTimeMillis() > nextTime) {
+                refresh()
+            }
+
+            delay(1000)
+        }
+    }
+
     private suspend fun refresh() {
         viewModelScope.launch(Dispatchers.IO) {
             val requests = requestDao.getAllInfo(id)
             sv = sv.copy(requests = requests)
+            nextTime = System.currentTimeMillis() + 10000
         }
     }
 }
