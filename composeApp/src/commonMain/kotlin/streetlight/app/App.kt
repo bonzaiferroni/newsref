@@ -9,6 +9,7 @@ import moe.tlaster.precompose.navigation.transition.NavTransition
 import org.jetbrains.compose.ui.tooling.preview.Preview
 import org.koin.compose.KoinContext
 import org.koin.core.context.startKoin
+import streetlight.app.ui.theme.AppTheme
 
 
 @Composable
@@ -19,7 +20,9 @@ fun App() {
     }
     PreComposeApp {
         KoinContext {
-            MaterialTheme {
+            AppTheme(
+                darkTheme = false
+            ) {
                 val navigator = rememberNavigator()
                 NavHost(
                     // Assign the navigator to the NavHost
