@@ -1,6 +1,11 @@
 package streetlight.app
 
+import androidx.compose.animation.fadeIn
+import androidx.compose.animation.fadeOut
+import androidx.compose.animation.scaleIn
+import androidx.compose.animation.scaleOut
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Surface
 import androidx.compose.runtime.*
 import moe.tlaster.precompose.PreComposeApp
 import moe.tlaster.precompose.navigation.NavHost
@@ -21,18 +26,26 @@ fun App() {
     PreComposeApp {
         KoinContext {
             AppTheme(
-                darkTheme = false
             ) {
-                val navigator = rememberNavigator()
-                NavHost(
-                    // Assign the navigator to the NavHost
-                    navigator = navigator,
-                    // Navigation transition for the scenes in this NavHost, this is optional
-                    navTransition = NavTransition(),
-                    // The start destination
-                    initialRoute = Scenes.default(),
-                ) {
-                    appScenes(navigator)
+                Surface {
+                    val navigator = rememberNavigator()
+                    NavHost(
+                        // Assign the navigator to the NavHost
+                        navigator = navigator,
+                        // Navigation transition for the scenes in this NavHost, this is optional
+                        navTransition = NavTransition(
+                            createTransition = fadeIn() + scaleIn(initialScale = 0.9f),
+                            destroyTransition = fadeOut() + scaleOut(targetScale = 0.9f),
+                            pauseTransition = fadeOut() + scaleOut(targetScale = 1.1f),
+                            resumeTransition = fadeIn() + scaleIn(initialScale = 1.1f),
+                            enterTargetContentZIndex = 0f,
+                            exitTargetContentZIndex = 0f
+                        ),
+                        // The start destination
+                        initialRoute = Scenes.default(),
+                    ) {
+                        appScenes(navigator)
+                    }
                 }
             }
         }

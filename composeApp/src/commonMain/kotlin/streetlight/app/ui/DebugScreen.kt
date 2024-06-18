@@ -22,10 +22,9 @@ import org.jetbrains.compose.resources.painterResource
 import streetlight.app.Scenes
 import streetlight.app.chopui.BoxScaffold
 import streetlight.app.appScenes
+import streetlight.app.chopui.SurfaceScaffold
 import streetlight.composeapp.generated.resources.Res
 import streetlight.composeapp.generated.resources.compose_multiplatform
-
-
 
 @Composable
 fun DebugScreen(navigator: Navigator) {
