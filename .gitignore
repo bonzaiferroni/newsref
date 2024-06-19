@@ -19,3 +19,4 @@ captures
 /chopui/
 test.mv.db
 trace.mv.db
+backup.json
