@@ -29,7 +29,7 @@ fun PerformanceListScreen(navigator: Navigator?) {
             Scenes.performanceEditor.go(navigator)
         },
         navigator = navigator,
-        onClick = {
+        onEdit = {
             Scenes.performanceEditor.go(navigator, it.id)
         }
     )

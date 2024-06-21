@@ -30,7 +30,7 @@ fun RequestListScreen(navigator: Navigator?) {
             Scenes.requestEditor.go(navigator)
         },
         navigator = navigator,
-        onClick = {
+        onEdit = {
             Scenes.requestEditor.go(navigator, it.id)
         }
     )

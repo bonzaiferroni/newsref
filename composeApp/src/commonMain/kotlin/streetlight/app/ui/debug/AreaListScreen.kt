@@ -29,7 +29,7 @@ fun AreaListScreen(navigator: Navigator?) {
             Scenes.areaEditor.go(navigator)
         },
         navigator = navigator,
-        onClick = { Scenes.areaEditor.go(navigator, it.id) }
+        onEdit = { Scenes.areaEditor.go(navigator, it.id) }
     )
 }
 

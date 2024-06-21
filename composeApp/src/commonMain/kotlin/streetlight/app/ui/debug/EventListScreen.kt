@@ -29,7 +29,7 @@ fun EventListScreen(navigator: Navigator?) {
             Scenes.eventEditor.go(navigator)
         },
         navigator = navigator,
-        onClick = { Scenes.eventEditor.go(navigator, it.id) }
+        onEdit = { Scenes.eventEditor.go(navigator, it.id) }
     )
 }
 

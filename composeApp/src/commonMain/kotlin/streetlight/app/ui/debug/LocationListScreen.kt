@@ -31,7 +31,7 @@ fun LocationListScreen(navigator: Navigator?) {
             Scenes.locationEditor.go(navigator)
         },
         navigator = navigator,
-        onClick = {
+        onEdit = {
             Scenes.locationEditor.go(navigator, it.location.id)
         }
     )
