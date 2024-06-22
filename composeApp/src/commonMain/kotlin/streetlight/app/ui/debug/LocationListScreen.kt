@@ -33,7 +33,8 @@ fun LocationListScreen(navigator: Navigator?) {
         navigator = navigator,
         onEdit = {
             Scenes.locationEditor.go(navigator, it.location.id)
-        }
+        },
+        onDelete = viewModel::deleteLocation,
     )
 }
 
@@ -60,6 +61,13 @@ class LocationListModel(
 
     fun onNewLocation() {
         bus.request<Location> {
+            refresh()
+        }
+    }
+
+    fun deleteLocation(location: LocationInfo) {
+        viewModelScope.launch(Dispatchers.IO) {
+            locationDao.delete(location.location.id)
             refresh()
         }
     }

@@ -29,7 +29,8 @@ fun AreaListScreen(navigator: Navigator?) {
             Scenes.areaEditor.go(navigator)
         },
         navigator = navigator,
-        onEdit = { Scenes.areaEditor.go(navigator, it.id) }
+        onEdit = { Scenes.areaEditor.go(navigator, it.id) },
+        onDelete = screenModel::deleteArea,
     )
 }
 
@@ -50,6 +51,13 @@ class AreaListModel(
 
     fun requestArea() {
         bus.request<Area> {
+            refresh()
+        }
+    }
+
+    fun deleteArea(area: Area) {
+        viewModelScope.launch(Dispatchers.IO) {
+            areaDao.delete(area.id)
             refresh()
         }
     }

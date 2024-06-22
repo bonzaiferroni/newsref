@@ -1,7 +1,9 @@
 package streetlight.app.ui.core
 
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.widthIn
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material.icons.Icons
@@ -13,7 +15,9 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.unit.dp
 import moe.tlaster.precompose.navigation.Navigator
 import org.jetbrains.compose.ui.tooling.preview.Preview
 import streetlight.app.chopui.BoxScaffold
@@ -27,14 +31,16 @@ fun <Data> DataList(
     floatingAction: () -> Unit,
     navigator: Navigator?,
     onEdit: ((Data) -> Unit),
-    onDelete: ((Data) -> Unit) = {},
+    onDelete: ((Data) -> Unit),
 ) {
     BoxScaffold(
         title = title,
         navigator = navigator,
-        floatingAction = floatingAction
+        floatingAction = floatingAction,
     ) {
-        LazyColumn {
+        LazyColumn(
+            modifier = Modifier.widthIn(max = 400.dp)
+        ) {
             items(items) {
                 DataRow(it, provideName, onEdit, onDelete)
             }
@@ -49,13 +55,20 @@ fun <Data> DataRow(
     onClick: ((Data) -> Unit),
     onDelete: ((Data) -> Unit),
 ) {
-    Row {
+    Row(
+        verticalAlignment = Alignment.CenterVertically,
+        horizontalArrangement = Arrangement.spacedBy(8.dp)
+    ){
         Text(provideName(data))
         Spacer(Modifier.weight(1f))
         Button(onClick = { onClick(data) }) {
             Icon(imageVector = Icons.Default.Edit, contentDescription = "Edit")
         }
-        Button(onClick = { onDelete(data) }, colors = ButtonDefaults.buttonColors(MaterialTheme.colorScheme.background) ) {
+        Button(
+            onClick = { onDelete(data) }, colors = ButtonDefaults.buttonColors(
+                containerColor = MaterialTheme.colorScheme.error
+            )
+        ) {
             Icon(imageVector = Icons.Default.Delete, contentDescription = "Delete")
         }
     }

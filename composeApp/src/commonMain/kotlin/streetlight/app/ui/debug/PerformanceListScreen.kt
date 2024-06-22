@@ -29,9 +29,8 @@ fun PerformanceListScreen(navigator: Navigator?) {
             Scenes.performanceEditor.go(navigator)
         },
         navigator = navigator,
-        onEdit = {
-            Scenes.performanceEditor.go(navigator, it.id)
-        }
+        onEdit = { Scenes.performanceEditor.go(navigator, it.id) },
+        onDelete = viewModel::deletePerformance,
     )
 }
 
@@ -52,6 +51,13 @@ class PerformanceListModel(
 
     fun onNewPerformance() {
         bus.request<Performance> {
+            refresh()
+        }
+    }
+
+    fun deletePerformance(performance: Performance) {
+        viewModelScope.launch(Dispatchers.IO) {
+            performanceDao.delete(performance.id)
             refresh()
         }
     }

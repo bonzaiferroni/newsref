@@ -29,7 +29,8 @@ fun EventListScreen(navigator: Navigator?) {
             Scenes.eventEditor.go(navigator)
         },
         navigator = navigator,
-        onEdit = { Scenes.eventEditor.go(navigator, it.id) }
+        onEdit = { Scenes.eventEditor.go(navigator, it.id) },
+        onDelete = viewModel::deleteEvent,
     )
 }
 
@@ -50,6 +51,13 @@ class EventListModel(
 
     fun onNewEvent() {
         bus.request<Event> {
+            refresh()
+        }
+    }
+
+    fun deleteEvent(event: EventInfo) {
+        viewModelScope.launch(Dispatchers.IO) {
+            eventDao.delete(event.id)
             refresh()
         }
     }

@@ -13,4 +13,5 @@ class LocationDao(
     suspend fun getAll(): List<Location> = client.getBody("/locations")
     suspend fun update(location: Location): Boolean = client.update("/events", location.id, location)
     suspend fun get(id: Int): Location? = client.getBody("/locations/$id")
+    suspend fun delete(id: Int): Boolean = client.delete("/locations", id)
 }

@@ -30,9 +30,8 @@ fun RequestListScreen(navigator: Navigator?) {
             Scenes.requestEditor.go(navigator)
         },
         navigator = navigator,
-        onEdit = {
-            Scenes.requestEditor.go(navigator, it.id)
-        }
+        onEdit = { Scenes.requestEditor.go(navigator, it.id) },
+        onDelete = viewModel::deleteRequest,
     )
 }
 
@@ -54,6 +53,12 @@ class RequestListModel(
     fun onNewRequest() {
         bus.request<Request> {
             refresh()
+        }
+    }
+
+    fun deleteRequest(request: RequestInfo) {
+        viewModelScope.launch(Dispatchers.IO) {
+            requestDao.delete(request.id)
         }
     }
 }
