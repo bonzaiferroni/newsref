@@ -4,11 +4,11 @@ plugins {
     alias(libs.plugins.kotlinMultiplatform)
     alias(libs.plugins.androidApplication)
     alias(libs.plugins.jetbrainsCompose)
-    alias(libs.plugins.sqlDelight)
     alias(libs.plugins.serialization)
 }
 
 kotlin {
+
     androidTarget {
         compilations.all {
             kotlinOptions {
@@ -26,7 +26,6 @@ kotlin {
         androidMain.dependencies {
             implementation(libs.compose.ui.tooling.preview)
             implementation(libs.androidx.activity.compose)
-            implementation(libs.sqldelight.android)
         }
         commonMain.dependencies {
             implementation(compose.runtime)
@@ -35,7 +34,6 @@ kotlin {
             implementation(compose.ui)
             implementation(compose.components.resources)
             implementation(compose.components.uiToolingPreview)
-            implementation(libs.sqldelight.coroutines)
 
             // Navigator
             val precomposeVersion = "1.6.0"
@@ -67,16 +65,7 @@ kotlin {
         }
         desktopMain.dependencies {
             implementation(compose.desktop.currentOs)
-            implementation(libs.sqldelight.jvm)
             implementation(libs.kotlinx.coroutines.swing)
-        }
-    }
-
-    sqldelight {
-        databases {
-            create("PantryDb") {
-                packageName = "streetlight.app"
-            }
         }
     }
 }

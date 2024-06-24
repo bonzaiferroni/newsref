@@ -9,8 +9,6 @@ import streetlight.app.io.PerformanceDao
 import streetlight.app.io.RequestDao
 import streetlight.app.io.UserDao
 import streetlight.app.services.BusService
-import streetlight.app.sql.FoodDao
-import streetlight.app.sql.FoodModel
 import streetlight.app.ui.main.EventProfileModel
 import streetlight.app.ui.debug.DebugModel
 import streetlight.app.ui.debug.AreaEditorModel
@@ -29,12 +27,10 @@ import streetlight.app.ui.main.NowModel
 
 val myModule = module {
     // your dependencies here
-    single { PantryDb(driver = DatabaseDriverFactory().create()) }
     single { ApiClient() }
     single { UserDao(get()) }
     single { LocationDao(get()) }
     single { AreaDao(get()) }
-    single { FoodDao(get()) }
     single { EventDao(get()) }
     single { PerformanceDao(get()) }
     single { RequestDao(get()) }
@@ -52,7 +48,6 @@ val myModule = module {
     factory { (id: Int?) -> PerformanceEditorModel(id, get(), get()) }
     factory { (id: Int?) -> RequestEditorModel(id, get(), get(), get(), get()) }
     factory { RequestListModel(get(), get()) }
-    factory { FoodModel(get()) }
     factory { DebugModel(get()) }
     factory { LoginModel(get()) }
     factory { (id: Int?) -> EventProfileModel(id!!, get(), get()) }

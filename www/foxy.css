@@ -1,0 +1,86 @@
+/* CSS for Business Card Themed Website */
+
+body {
+    background-color: #11233d;
+    color: #ffffff;
+    font-family: 'Arial', sans-serif;
+}
+
+h1, h2, h3, h4, h5, h6 {
+    font-family: 'Arial', sans-serif;
+    color: #ffffff;
+}
+
+a {
+    color: #ff3d2e;
+    text-decoration: none;
+}
+
+a:hover {
+    color: #d32f2f;
+}
+
+.header, .footer {
+    background-color: #1b2a47;
+    padding: 20px;
+    text-align: center;
+}
+
+.container {
+    max-width: 800px;
+    margin: 0 auto;
+    padding: 20px;
+}
+
+.card {
+    background-color: #1b2a47;
+    padding: 20px;
+    margin: 20px 0;
+    border-radius: 10px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+.card h2 {
+    color: #ff3d2e;
+    margin-bottom: 10px;
+}
+
+.card p {
+    color: #ffffff;
+}
+
+.contact-info {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    margin-top: 20px;
+}
+
+.contact-info a {
+    margin: 5px 0;
+}
+
+.icon {
+    margin-right: 10px;
+    color: #ff3d2e;
+}
+
+.fox-logo {
+    width: 150px;
+    margin-bottom: 20px;
+}
+
+@media (max-width: 600px) {
+    .contact-info {
+        flex-direction: column;
+    }
+
+    .icon {
+        margin-right: 0;
+    }
+}
+
+.request-list {
+    width: 50%; /* Adjust width as needed */
+    margin: 0 auto;
+}
