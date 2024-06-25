@@ -29,7 +29,7 @@ fun DebugScreen(navigator: Navigator) {
     val screenModel = koinViewModel(DebugModel::class)
     val state by screenModel.state
 
-    BoxScaffold {
+    BoxScaffold(navigator = navigator) {
         Column(Modifier.fillMaxWidth(), horizontalAlignment = Alignment.CenterHorizontally) {
             Text("counter: ${state.counter}")
             Button(onClick = screenModel::growCounter) {

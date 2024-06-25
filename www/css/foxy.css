@@ -1,0 +1,38 @@
+/* CSS for Business Card Themed Website */
+
+body {
+    background-color: #182839;
+    color: #d8d4c7;
+    font-optical-sizing: auto;
+    font-family: "Roboto Condensed", sans-serif;
+}
+
+h1, h2, h3, h4, h5, h6 {
+    font-family: "Teko", sans-serif;
+    font-optical-sizing: auto;
+}
+
+a {
+    color: #ff3d2e;
+    text-decoration: none;
+}
+
+a:hover {
+    color: #d32f2f;
+}
+
+.header, .footer {
+    padding: 20px;
+    text-align: center;
+}
+
+.container {
+    max-width: 800px;
+    margin: 0 auto;
+    padding: 20px;
+}
+
+.request-list {
+    width: 50%; /* Adjust width as needed */
+    margin: 0 auto;
+}

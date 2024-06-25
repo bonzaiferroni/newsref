@@ -21,6 +21,8 @@ function getRequests(eventId) {
 function acceptRequests(requests) {
     // output to console.log
     let requestSpan = document.getElementById('requests');
+    // document.getElementsByClassName('song-button').forEach(x => x.disabled = false);
+    console.log(document.getElementsByClassName('song-button'))
     requests.forEach(x => {
         let button = document.getElementById('song-button-' + x.id);
         if (button) button.disabled = true;
