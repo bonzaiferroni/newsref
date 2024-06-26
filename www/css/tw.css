@@ -1,3 +1,10 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+body {
+    background-color: #182839;
+    color: #d8d4c7;
+    font-optical-sizing: auto;
+    font-family: "Roboto Condensed", sans-serif;
+}
