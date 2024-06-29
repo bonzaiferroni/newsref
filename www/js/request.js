@@ -1,7 +1,7 @@
 function makeRequest(id, eventId) {
     let button = document.getElementById('song-button-' + id);
     button.disabled = true;
-    fetch('http://localhost:8080/api/v1/event_profile/' + eventId + '/' + id, {
+    fetch('https://streetlight.ing/api/v1/event_profile/' + eventId + '/' + id, {
         method: 'POST',
     })
         .then(response => response.json())
@@ -10,7 +10,7 @@ function makeRequest(id, eventId) {
 }
 
 function getRequests(eventId) {
-    fetch('http://localhost:8080/api/v1/event_profile/' + eventId, {
+    fetch('https://streetlight.ing/api/v1/event_profile/' + eventId, {
         method: 'GET',
     })
         .then(response => response.json())
