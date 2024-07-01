@@ -7,13 +7,50 @@
     display: flex;
 }
 
+.gap {
+    gap: var(--gap);
+}
+
 .rows {
     display: flex;
     flex-direction: column;
-    gap: var(--gap);
 }
 
 .row {
     display: flex;
     flex-direction: row;
+}
+
+.request-row {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: center;
+    gap: var(--gap);
+}
+
+.request-row > .name {
+    flex: 1;
+}
+
+.request-row > .artist {
+    flex: 0 0 30%;
+}
+
+.request-row > button {
+    flex: 0 0 25%;
+}
+
+.request-row .property {
+    font-size: 0.75rem; /* Smaller text */
+    color: #666666; /* Medium grey */
+    text-transform: uppercase; /* Uppercase text */
+    text-decoration: underline; /* Underlined text */
+}
+
+.request-row .value {
+}
+
+button.requested {
+
 }
