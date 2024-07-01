@@ -11,7 +11,7 @@ import streetlight.app.Scenes
 import streetlight.app.io.AreaDao
 import streetlight.app.io.LocationDao
 import streetlight.app.services.BusService
-import streetlight.app.ui.core.DataList
+import streetlight.app.ui.debug.controls.DataList
 import streetlight.app.ui.core.UiModel
 import streetlight.app.ui.core.UiState
 import streetlight.model.Area

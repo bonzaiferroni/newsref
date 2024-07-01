@@ -1,8 +1,10 @@
-package streetlight.app.ui.core
+package streetlight.app.ui.debug.controls
 
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import moe.tlaster.precompose.viewmodel.viewModelScope
+import streetlight.app.ui.core.UiModel
+import streetlight.app.ui.core.UiState
 
 abstract class DataListModel <Data> : UiModel<ListDataState<Data>>(ListDataState()) {
 

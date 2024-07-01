@@ -9,7 +9,7 @@ import moe.tlaster.precompose.navigation.Navigator
 import moe.tlaster.precompose.viewmodel.viewModelScope
 import org.koin.core.parameter.parametersOf
 import streetlight.app.io.UserDao
-import streetlight.app.ui.core.DataEditor
+import streetlight.app.ui.debug.controls.DataEditor
 import streetlight.app.ui.core.UiModel
 import streetlight.app.ui.core.UiState
 import streetlight.model.User

@@ -1,7 +1,5 @@
 package streetlight.app.ui.debug
 
-import androidx.compose.material3.Text
-import androidx.compose.material3.TextField
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import kotlinx.coroutines.Dispatchers
@@ -12,9 +10,10 @@ import moe.tlaster.precompose.viewmodel.viewModelScope
 import org.koin.core.parameter.parametersOf
 import streetlight.app.io.PerformanceDao
 import streetlight.app.services.BusService
-import streetlight.app.ui.core.DataEditor
+import streetlight.app.ui.debug.controls.DataEditor
 import streetlight.app.ui.core.UiModel
 import streetlight.app.ui.core.UiState
+import streetlight.app.ui.debug.controls.StringField
 import streetlight.model.Performance
 
 @Composable
@@ -30,10 +29,15 @@ fun PerformanceEditorScreen(id: Int?, navigator: Navigator?) {
         createData = viewModel::createPerformance,
         navigator = navigator,
     ) {
-        TextField(
+        StringField(
+            label = "Name",
             value = state.performance.name,
-            onValueChange = viewModel::updateName,
-            label = { Text("Name") }
+            onValueChange = viewModel::updateName
+        )
+        StringField(
+            label = "Artist",
+            value = state.performance.artist ?: "",
+            onValueChange = viewModel::updateArtist
         )
     }
 }
@@ -68,6 +72,10 @@ class PerformanceEditorModel(
             }
             bus.supply(sv.performance)
         }
+    }
+
+    fun updateArtist(value: String) {
+        sv = sv.copy(performance = sv.performance.copy(artist = value))
     }
 }
 

@@ -13,10 +13,11 @@ import streetlight.app.io.EventDao
 import streetlight.app.io.PerformanceDao
 import streetlight.app.io.RequestDao
 import streetlight.app.services.BusService
-import streetlight.app.ui.core.DataEditor
-import streetlight.app.ui.core.DataMenu
+import streetlight.app.ui.debug.controls.DataEditor
+import streetlight.app.ui.debug.controls.DataMenu
 import streetlight.app.ui.core.UiModel
 import streetlight.app.ui.core.UiState
+import streetlight.app.ui.debug.controls.StringField
 import streetlight.dto.EventInfo
 import streetlight.model.Event
 import streetlight.model.Performance
@@ -53,6 +54,11 @@ fun RequestEditorScreen(id: Int?, navigator: Navigator?) {
             viewModel.requestPerformance()
             Scenes.performanceEditor.go(navigator)
         }
+        StringField(
+            label = "Notes",
+            value = state.request.notes,
+            onValueChange = viewModel::updateNotes
+        )
     }
 }
 
@@ -115,6 +121,10 @@ class RequestEditorModel(
             sv = sv.copy(request = sv.request.copy(performanceId = it.id))
             fetchData()
         }
+    }
+
+    fun updateNotes(value: String) {
+        sv = sv.copy(request = sv.request.copy(notes = value))
     }
 }
 

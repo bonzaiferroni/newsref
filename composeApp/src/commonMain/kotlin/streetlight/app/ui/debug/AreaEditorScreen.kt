@@ -1,7 +1,5 @@
 package streetlight.app.ui.debug
 
-import androidx.compose.material3.Text
-import androidx.compose.material3.TextField
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import kotlinx.coroutines.Dispatchers
@@ -12,9 +10,10 @@ import moe.tlaster.precompose.viewmodel.viewModelScope
 import org.koin.core.parameter.parametersOf
 import streetlight.app.io.AreaDao
 import streetlight.app.services.BusService
-import streetlight.app.ui.core.DataEditor
+import streetlight.app.ui.debug.controls.DataEditor
 import streetlight.app.ui.core.UiModel
 import streetlight.app.ui.core.UiState
+import streetlight.app.ui.debug.controls.StringField
 import streetlight.model.Area
 
 @Composable
@@ -33,10 +32,10 @@ fun AreaEditorScreen(
         createData = viewModel::createArea,
         navigator = navigator,
     ) {
-        TextField(
+        StringField(
+            label = "Name",
             value = state.area.name,
-            onValueChange = viewModel::updateName,
-            label = { Text("Name") }
+            onValueChange = viewModel::updateName
         )
     }
 }
