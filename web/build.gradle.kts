@@ -10,12 +10,7 @@ plugins {
 }
 
 version = "1.0.0-SNAPSHOT"
-group = "com.example"
-
-repositories {
-    mavenCentral()
-    mavenLocal()
-}
+group = "streetlight.web"
 
 // Versions
 val kotlinVersion = "1.9.22"
@@ -107,12 +102,15 @@ kotlin {
         }
         val jsMain by getting {
             dependencies {
+                implementation(project(":model"))
                 implementation("io.kvision:kvision:$kvisionVersion")
                 implementation("io.kvision:kvision-state:$kvisionVersion")
+                implementation("io.kvision:kvision-rest:$kvisionVersion")
                 implementation("io.kvision:kvision-bootstrap:$kvisionVersion")
                 implementation("io.kvision:kvision-i18n:$kvisionVersion")
             }
         }
+
         val jsTest by getting {
             dependencies {
                 implementation(kotlin("test-js"))

@@ -12,4 +12,5 @@ data class Request(
     val performanceId: Int = 0,
     val time: Long = 0L,
     val performed: Boolean = false,
+    val notes: String = "",
 )

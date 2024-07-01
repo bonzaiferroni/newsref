@@ -1,4 +1,4 @@
-package com.example
+package streetlight.web
 
 import io.kvision.Application
 import io.kvision.BootstrapCssModule

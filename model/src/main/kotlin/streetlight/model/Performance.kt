@@ -9,4 +9,5 @@ data class Performance(
     @SerialName("user_id")
     val userId: Int = 0,
     val name: String = "",
+    val artist: String? = null,
 )

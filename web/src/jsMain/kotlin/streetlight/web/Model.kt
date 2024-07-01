@@ -1,5 +1,6 @@
-package com.example
+package streetlight.web
 
+import com.example.IPingService
 import io.kvision.remote.getService
 
 object Model {
