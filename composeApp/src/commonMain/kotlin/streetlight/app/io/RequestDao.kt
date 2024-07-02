@@ -1,6 +1,6 @@
 package streetlight.app.io
 
-import streetlight.dto.RequestInfo
+import streetlight.model.dto.RequestInfo
 import streetlight.model.Request
 
 class RequestDao(private val client: ApiClient, ) {

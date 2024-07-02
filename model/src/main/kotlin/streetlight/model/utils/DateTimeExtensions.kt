@@ -1,4 +1,4 @@
-package streetlight.utils
+package streetlight.model.utils
 
 import kotlinx.datetime.Instant
 import kotlinx.datetime.LocalDateTime

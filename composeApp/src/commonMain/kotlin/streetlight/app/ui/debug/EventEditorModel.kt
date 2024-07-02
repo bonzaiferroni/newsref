@@ -12,8 +12,8 @@ import streetlight.app.ui.core.UiModel
 import streetlight.app.ui.core.UiState
 import streetlight.model.Event
 import streetlight.model.Location
-import streetlight.utils.toEpochSeconds
-import streetlight.utils.toLocalEpochSeconds
+import streetlight.model.utils.toEpochSeconds
+import streetlight.model.utils.toLocalEpochSeconds
 
 class EventEditorModel(
     private val id: Int?,

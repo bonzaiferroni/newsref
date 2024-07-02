@@ -26,8 +26,8 @@ import streetlight.app.chopui.dialogs.DatePickerDialog
 import streetlight.app.chopui.dialogs.TimePickerDialog
 import streetlight.app.ui.debug.controls.DataEditor
 import streetlight.app.ui.debug.controls.DataMenu
-import streetlight.utils.toLocalDateTime
-import streetlight.utils.toFormatString
+import streetlight.model.utils.toLocalDateTime
+import streetlight.model.utils.toFormatString
 
 @Composable
 fun EventEditorScreen(

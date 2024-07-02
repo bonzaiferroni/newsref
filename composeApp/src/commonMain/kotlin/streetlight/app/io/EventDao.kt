@@ -1,7 +1,7 @@
 package streetlight.app.io
 
-import streetlight.dto.EventInfo
-import streetlight.dto.RequestInfo
+import streetlight.model.dto.EventInfo
+import streetlight.model.dto.RequestInfo
 import streetlight.model.Event
 
 class EventDao(

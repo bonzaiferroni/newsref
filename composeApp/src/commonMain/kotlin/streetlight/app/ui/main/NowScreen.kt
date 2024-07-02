@@ -23,7 +23,7 @@ import streetlight.app.chopui.BoxScaffold
 import streetlight.app.io.EventDao
 import streetlight.app.ui.core.UiModel
 import streetlight.app.ui.core.UiState
-import streetlight.dto.EventInfo
+import streetlight.model.dto.EventInfo
 
 @Composable
 fun NowScreen(navigator: Navigator?) {

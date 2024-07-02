@@ -18,7 +18,7 @@ import streetlight.app.ui.debug.controls.DataMenu
 import streetlight.app.ui.core.UiModel
 import streetlight.app.ui.core.UiState
 import streetlight.app.ui.debug.controls.StringField
-import streetlight.dto.EventInfo
+import streetlight.model.dto.EventInfo
 import streetlight.model.Event
 import streetlight.model.Performance
 import streetlight.model.Request
