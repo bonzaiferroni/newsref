@@ -1,15 +1,14 @@
 package streetlight.app.ui.main
 
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material3.Switch
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
-import androidx.compose.ui.Modifier
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
@@ -17,6 +16,7 @@ import moe.tlaster.precompose.koin.koinViewModel
 import moe.tlaster.precompose.navigation.Navigator
 import moe.tlaster.precompose.viewmodel.viewModelScope
 import org.koin.core.parameter.parametersOf
+import streetlight.app.Notify
 import streetlight.app.chopui.BoxScaffold
 import streetlight.app.io.EventDao
 import streetlight.app.io.RequestDao
@@ -30,6 +30,8 @@ import streetlight.model.Request
 fun EventProfileScreen(id: Int, navigator: Navigator?) {
     val screenModel = koinViewModel<EventProfileModel> { parametersOf(id) }
     val state by screenModel.state
+
+    Notify(state.notification)
 
     BoxScaffold(
         title = "Event: ${state.event.locationName}",
@@ -93,7 +95,8 @@ class EventProfileModel(
     private suspend fun refresh() {
         viewModelScope.launch(Dispatchers.IO) {
             val requests = requestDao.getAllInfo(id)
-            sv = sv.copy(requests = requests)
+            val newRequest = requests.firstOrNull { r -> !sv.requests.any{it.id == r.id}}
+            sv = sv.copy(requests = requests, notification = newRequest?.performanceName)
             nextTime = System.currentTimeMillis() + 10000
         }
     }
@@ -103,4 +106,5 @@ data class EventProfileState(
     val event: EventInfo = EventInfo(),
     val requests: List<RequestInfo> = emptyList(),
     val result: String = "",
+    val notification: String? = null,
 ) : UiState

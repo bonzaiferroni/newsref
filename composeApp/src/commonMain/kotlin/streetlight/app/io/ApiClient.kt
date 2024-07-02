@@ -25,7 +25,7 @@ class ApiClient {
             json(Json { prettyPrint = true })
         }
     }
-    val address = "http://localhost:8080/api/v1"
+    val address = "http://192.168.1.116:8080/api/v1"
 
     private var token = ""
     private val username = "admin"

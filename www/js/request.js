@@ -23,12 +23,17 @@ function postRequest(id, eventId) {
     let notesValue = checkbox.checked ? "true" : "false";
     let singer = document.getElementById('requester-sings').checked ? "requester"
         : document.getElementById('duet').checked ? "duet" : "luke";
+    let notes = `luke-guitar: ${notesValue}, singer: ${singer}`;
+    let requesterName = document.getElementById('requester-name').value;
+    if (requesterName && requesterName.length > 0) {
+        notes += `, requester-name: ${requesterName}`;
+    }
 
     let requestBody = {
         id: 0,
         event_id: eventId,
         performance_id: id,
-        notes: `luke-guitar: ${notesValue}, singer: ${singer}`
+        notes: notes
     };
 
     button.disabled = true;

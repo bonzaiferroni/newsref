@@ -1,4 +1,4 @@
-package streetlight.app.sqldem
+package streetlight.app
 
 import streetlight.app.App
 import android.content.Context
