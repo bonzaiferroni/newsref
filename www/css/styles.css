@@ -21,6 +21,11 @@
     flex-direction: row;
 }
 
+.columns {
+    display: flex;
+    flex-direction: row;
+}
+
 .request-row {
     display: flex;
     flex-direction: row;
