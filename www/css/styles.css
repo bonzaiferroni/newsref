@@ -1,5 +1,7 @@
 :root {
     --gap: 10px;
+    --color: #d8d4c7;
+    --pico-h1-color: #d8d4c7;
 }
 
 
@@ -58,4 +60,44 @@
 
 button.requested {
 
+}
+
+body {
+    color: var(--pico-color);
+}
+
+.site-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    height: 100px;
+    padding: 0 20px;
+}
+
+.logo {
+    margin-top: 10px;
+    position: absolute;
+    left: 50%;
+    transform: translateX(-50%);
+    display: flex;
+    align-items: center;
+}
+
+.logo img {
+    height: 100px;
+    margin-right: 10px;
+}
+
+.site-title {
+    font-size: 1.5rem;
+    font-weight: bold;
+}
+
+.event-title {
+    text-align: center;
+    margin-top: 20px;
+}
+
+.logo-small {
+    height: 30px;
 }

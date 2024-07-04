@@ -1,7 +1,7 @@
 #!/bin/bash
 
 # Build the project
-./gradlew :server:build
+# ./gradlew :server:build
 
 # Copy the necessary files to the server
 scp -r server/build/libs/server-all.jar starfox@streetlight.ing:/home/starfox/server/
