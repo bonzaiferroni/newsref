@@ -1,6 +1,6 @@
 plugins {
     id("java-library")
-    alias(libs.plugins.jetbrainsKotlinJvm)
+    alias(libs.plugins.kotlinJvm)
     kotlin("plugin.serialization") version "1.9.22"
 }
 
