@@ -3,6 +3,7 @@ package streetlight.app.services
 class BusService {
     val callbacks = mutableMapOf<Class<*>, Any>()
 
+    @Suppress("UNCHECKED_CAST")
     inline fun <reified Data> supply(data: Data) {
         val type = Data::class.java
         val callback = callbacks[type] as? ((Data) -> Unit)

@@ -16,9 +16,7 @@ import org.koin.compose.KoinContext
 import org.koin.core.context.startKoin
 import streetlight.app.ui.theme.AppTheme
 
-
 @Composable
-@Preview
 fun App() {
     startKoin {
         modules(myModule)
@@ -50,4 +48,10 @@ fun App() {
             }
         }
     }
+}
+
+@Composable
+@Preview
+fun AppPreview() {
+    App()
 }
