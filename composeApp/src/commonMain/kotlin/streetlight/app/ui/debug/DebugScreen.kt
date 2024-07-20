@@ -20,7 +20,6 @@ import moe.tlaster.precompose.navigation.Navigator
 import org.jetbrains.compose.resources.ExperimentalResourceApi
 import org.jetbrains.compose.resources.painterResource
 import streetlight.app.Scenes
-import streetlight.app.chopui.BoxScaffold
 import streetlight.app.ui.core.AppScaffold
 import streetlight.composeapp.generated.resources.Res
 import streetlight.composeapp.generated.resources.compose_multiplatform
@@ -52,7 +51,7 @@ val rootScenes = listOf(
     Scenes.locationList,
     Scenes.areaList,
     Scenes.eventList,
-    Scenes.performanceList,
+    Scenes.songList,
     Scenes.requestList
 )
 

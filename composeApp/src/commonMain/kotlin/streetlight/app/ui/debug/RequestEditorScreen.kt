@@ -10,7 +10,7 @@ import moe.tlaster.precompose.viewmodel.viewModelScope
 import org.koin.core.parameter.parametersOf
 import streetlight.app.Scenes
 import streetlight.app.io.EventDao
-import streetlight.app.io.PerformanceDao
+import streetlight.app.io.SongDao
 import streetlight.app.io.RequestDao
 import streetlight.app.services.BusService
 import streetlight.app.ui.debug.controls.DataEditor
@@ -20,7 +20,7 @@ import streetlight.app.ui.core.UiState
 import streetlight.app.ui.debug.controls.StringField
 import streetlight.model.dto.EventInfo
 import streetlight.model.Event
-import streetlight.model.Performance
+import streetlight.model.Song
 import streetlight.model.Request
 
 @Composable
@@ -46,13 +46,13 @@ fun RequestEditorScreen(id: Int?, navigator: Navigator?) {
             Scenes.eventEditor.go(navigator)
         }
         DataMenu(
-            item = state.performances.find { it.id == state.request.performanceId },
-            items = state.performances,
+            item = state.songs.find { it.id == state.request.songId },
+            items = state.songs,
             getName = { it.name },
             updateItem = viewModel::updatePerformance,
         ) {
             viewModel.requestPerformance()
-            Scenes.performanceEditor.go(navigator)
+            Scenes.songEditor.go(navigator)
         }
         StringField(
             label = "Notes",
@@ -66,7 +66,7 @@ class RequestEditorModel(
     private val id: Int?,
     private val requestDao: RequestDao,
     private val eventDao: EventDao,
-    private val performanceDao: PerformanceDao,
+    private val songDao: SongDao,
     private val bus: BusService
 ) : UiModel<RequestEditorState>(RequestEditorState()) {
 
@@ -82,8 +82,8 @@ class RequestEditorModel(
     private fun fetchData() {
         viewModelScope.launch(Dispatchers.IO) {
             val events = eventDao.getAllInfo()
-            val performances = performanceDao.getAll()
-            sv = sv.copy(events = events, performances = performances)
+            val performances = songDao.getAll()
+            sv = sv.copy(events = events, songs = performances)
         }
     }
 
@@ -112,13 +112,13 @@ class RequestEditorModel(
         }
     }
 
-    fun updatePerformance(performance: Performance) {
-        sv = sv.copy(request = sv.request.copy(performanceId = performance.id))
+    fun updatePerformance(song: Song) {
+        sv = sv.copy(request = sv.request.copy(songId = song.id))
     }
 
     fun requestPerformance() {
-        bus.request<Performance> {
-            sv = sv.copy(request = sv.request.copy(performanceId = it.id))
+        bus.request<Song> {
+            sv = sv.copy(request = sv.request.copy(songId = it.id))
             fetchData()
         }
     }
@@ -132,6 +132,6 @@ data class RequestEditorState(
     val request: Request = Request(),
     val isComplete: Boolean = false,
     val events: List<EventInfo> = emptyList(),
-    val performances: List<Performance> = emptyList(),
+    val songs: List<Song> = emptyList(),
     val result: String = ""
 ) : UiState

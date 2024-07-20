@@ -7,6 +7,5 @@ import kotlinx.serialization.Serializable
 data class Area(
     val id: Int = 0,
     val name: String = "",
-    @SerialName("parent_id")
     val parentId: Int? = null,
 )

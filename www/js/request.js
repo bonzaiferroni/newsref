@@ -31,8 +31,8 @@ function postRequest(id, eventId) {
 
     let requestBody = {
         id: 0,
-        event_id: eventId,
-        performance_id: id,
+        eventId: eventId,
+        songId: id,
         notes: notes
     };
 
@@ -66,7 +66,7 @@ function acceptRequests(requests) {
     }
     requests.forEach(x => {
         if (x.performed) return;
-        let button = document.getElementById('song-button-' + x.performance_id);
+        let button = document.getElementById('song-button-' + x.songId);
         if (button) {
             button.disabled = true;
             button.textContent = 'Requested';
@@ -74,5 +74,5 @@ function acceptRequests(requests) {
     });
     requestSpan.innerHTML = requests
         .filter(x => !x.performed)
-        .map(x => x.performance_name).join(', ');
+        .map(x => x.songName).join(', ');
 }

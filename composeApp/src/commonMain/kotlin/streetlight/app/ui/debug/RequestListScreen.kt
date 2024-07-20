@@ -24,7 +24,7 @@ fun RequestListScreen(navigator: Navigator?) {
     DataList(
         title = "Requests",
         items = state.requests,
-        provideName = { "${it.performanceName} (${it.locationName})" },
+        provideName = { "${it.songName} (${it.locationName})" },
         floatingAction = {
             viewModel.onNewRequest()
             Scenes.requestEditor.go(navigator)

@@ -6,7 +6,6 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.material3.Switch
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import kotlinx.coroutines.Dispatchers
@@ -16,8 +15,6 @@ import moe.tlaster.precompose.koin.koinViewModel
 import moe.tlaster.precompose.navigation.Navigator
 import moe.tlaster.precompose.viewmodel.viewModelScope
 import org.koin.core.parameter.parametersOf
-import streetlight.app.Notify
-import streetlight.app.chopui.BoxScaffold
 import streetlight.app.io.EventDao
 import streetlight.app.io.RequestDao
 import streetlight.app.ui.core.AppScaffold
@@ -43,7 +40,7 @@ fun EventProfileScreen(id: Int, navigator: Navigator?) {
                 Row(
                     verticalAlignment = Alignment.CenterVertically
                 ) {
-                    Text("${request.performanceName} ")
+                    Text("${request.songName} ")
                     // Spacer(Modifier.weight(1f))
                     Switch(
                         checked = request.performed,
@@ -75,7 +72,7 @@ class EventProfileModel(
         viewModelScope.launch(Dispatchers.IO) {
             val request = sv.requests
                 .find { it.id == requestId }
-                ?.let { Request(it.id, it.eventId, it.performanceId, it.time, performed) }
+                ?.let { Request(it.id, it.eventId, it.songId, it.time, performed) }
                 ?: return@launch
 
             requestDao.update(request)
@@ -97,7 +94,7 @@ class EventProfileModel(
         viewModelScope.launch(Dispatchers.IO) {
             val requests = requestDao.getAllInfo(id)
             val newRequest = requests.firstOrNull { r -> !sv.requests.any{it.id == r.id}}
-            sv = sv.copy(requests = requests, notification = newRequest?.performanceName)
+            sv = sv.copy(requests = requests, notification = newRequest?.songName)
             nextTime = System.currentTimeMillis() + 10000
         }
     }

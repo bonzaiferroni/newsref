@@ -5,7 +5,7 @@ import streetlight.app.io.ApiClient
 import streetlight.app.io.AreaDao
 import streetlight.app.io.EventDao
 import streetlight.app.io.LocationDao
-import streetlight.app.io.PerformanceDao
+import streetlight.app.io.SongDao
 import streetlight.app.io.RequestDao
 import streetlight.app.io.UserDao
 import streetlight.app.services.BusService
@@ -17,8 +17,8 @@ import streetlight.app.ui.debug.EventEditorModel
 import streetlight.app.ui.debug.EventListModel
 import streetlight.app.ui.debug.LocationEditorModel
 import streetlight.app.ui.debug.LocationListModel
-import streetlight.app.ui.debug.PerformanceEditorModel
-import streetlight.app.ui.debug.PerformanceListModel
+import streetlight.app.ui.debug.SongEditorModel
+import streetlight.app.ui.debug.SongListModel
 import streetlight.app.ui.debug.RequestEditorModel
 import streetlight.app.ui.debug.RequestListModel
 import streetlight.app.ui.debug.UserEditorModel
@@ -32,7 +32,7 @@ val myModule = module {
     single { LocationDao(get()) }
     single { AreaDao(get()) }
     single { EventDao(get()) }
-    single { PerformanceDao(get()) }
+    single { SongDao(get()) }
     single { RequestDao(get()) }
     // supply
     single { BusService() }
@@ -44,8 +44,8 @@ val myModule = module {
     factory { UserEditorModel(get()) }
     factory { (id: Int?) -> EventEditorModel(id, get(), get(), get()) }
     factory { EventListModel(get(), get()) }
-    factory { PerformanceListModel(get(), get()) }
-    factory { (id: Int?) -> PerformanceEditorModel(id, get(), get()) }
+    factory { SongListModel(get(), get()) }
+    factory { (id: Int?) -> SongEditorModel(id, get(), get()) }
     factory { (id: Int?) -> RequestEditorModel(id, get(), get(), get(), get()) }
     factory { RequestListModel(get(), get()) }
     factory { DebugModel(get()) }

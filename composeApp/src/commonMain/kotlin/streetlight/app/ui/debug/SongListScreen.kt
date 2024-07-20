@@ -8,62 +8,62 @@ import moe.tlaster.precompose.koin.koinViewModel
 import moe.tlaster.precompose.navigation.Navigator
 import moe.tlaster.precompose.viewmodel.viewModelScope
 import streetlight.app.Scenes
-import streetlight.app.io.PerformanceDao
+import streetlight.app.io.SongDao
 import streetlight.app.services.BusService
 import streetlight.app.ui.debug.controls.DataList
 import streetlight.app.ui.core.UiModel
 import streetlight.app.ui.core.UiState
-import streetlight.model.Performance
+import streetlight.model.Song
 
 @Composable
-fun PerformanceListScreen(navigator: Navigator?) {
-    val viewModel = koinViewModel<PerformanceListModel>()
+fun SongListScreen(navigator: Navigator?) {
+    val viewModel = koinViewModel<SongListModel>()
     val state by viewModel.state
 
     DataList(
-        title = "Performances",
-        items = state.performances,
+        title = "Songs",
+        items = state.songs,
         provideName = { it.name },
         floatingAction = {
-            viewModel.onNewPerformance()
-            Scenes.performanceEditor.go(navigator)
+            viewModel.onNewSong()
+            Scenes.songEditor.go(navigator)
         },
         navigator = navigator,
-        onEdit = { Scenes.performanceEditor.go(navigator, it.id) },
-        onDelete = viewModel::deletePerformance,
+        onEdit = { Scenes.songEditor.go(navigator, it.id) },
+        onDelete = viewModel::deleteSong,
     )
 }
 
-class PerformanceListModel(
-    private val performanceDao: PerformanceDao,
+class SongListModel(
+    private val songDao: SongDao,
     private val bus: BusService,
-) : UiModel<PerformanceListState>(PerformanceListState()) {
+) : UiModel<SongListState>(SongListState()) {
     init {
         refresh()
     }
 
     private fun refresh() {
         viewModelScope.launch(Dispatchers.IO) {
-            val performances = performanceDao.getAll()
-            sv = sv.copy(performances = performances)
+            val songs = songDao.getAll()
+            sv = sv.copy(songs = songs)
         }
     }
 
-    fun onNewPerformance() {
-        bus.request<Performance> {
+    fun onNewSong() {
+        bus.request<Song> {
             refresh()
         }
     }
 
-    fun deletePerformance(performance: Performance) {
+    fun deleteSong(song: Song) {
         viewModelScope.launch(Dispatchers.IO) {
-            performanceDao.delete(performance.id)
+            songDao.delete(song.id)
             refresh()
         }
     }
 }
 
-data class PerformanceListState(
-    val performances: List<Performance> = emptyList(),
+data class SongListState(
+    val songs: List<Song> = emptyList(),
     val result: String = "",
 ) : UiState

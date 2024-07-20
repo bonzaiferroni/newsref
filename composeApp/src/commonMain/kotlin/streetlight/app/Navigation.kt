@@ -9,8 +9,8 @@ import streetlight.app.ui.debug.EventEditorScreen
 import streetlight.app.ui.debug.EventListScreen
 import streetlight.app.ui.debug.LocationEditorScreen
 import streetlight.app.ui.debug.LocationListScreen
-import streetlight.app.ui.debug.PerformanceEditorScreen
-import streetlight.app.ui.debug.PerformanceListScreen
+import streetlight.app.ui.debug.SongEditorScreen
+import streetlight.app.ui.debug.SongListScreen
 import streetlight.app.ui.debug.RequestEditorScreen
 import streetlight.app.ui.debug.RequestListScreen
 import streetlight.app.ui.debug.UserEditorScreen
@@ -83,18 +83,18 @@ object Scenes {
         EventProfileScreen(bse.getId()!!, navigator)
     }
 
-    val performanceList = AppScene(
-        name = "Performances",
-        route = "/performances"
+    val songList = AppScene(
+        name = "Songs",
+        route = "/songs"
     ) { _, navigator ->
-        PerformanceListScreen(navigator)
+        SongListScreen(navigator)
     }
 
-    val performanceEditor = AppScene(
-        name = "Create Performance",
-        route = "/performance/{id}?"
+    val songEditor = AppScene(
+        name = "Create Song",
+        route = "/song/{id}?"
     ) { bse, navigator ->
-        PerformanceEditorScreen(bse.getId(), navigator)
+        SongEditorScreen(bse.getId(), navigator)
     }
 
     val requestList = AppScene(
@@ -130,8 +130,8 @@ val appScenes = listOf(
     Scenes.areaEditor,
     Scenes.eventList,
     Scenes.eventEditor,
-    Scenes.performanceList,
-    Scenes.performanceEditor,
+    Scenes.songList,
+    Scenes.songEditor,
     Scenes.requestList,
     Scenes.requestEditor,
     Scenes.now,
