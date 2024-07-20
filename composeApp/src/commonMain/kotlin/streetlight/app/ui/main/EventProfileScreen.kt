@@ -20,6 +20,7 @@ import streetlight.app.Notify
 import streetlight.app.chopui.BoxScaffold
 import streetlight.app.io.EventDao
 import streetlight.app.io.RequestDao
+import streetlight.app.ui.core.AppScaffold
 import streetlight.app.ui.core.UiModel
 import streetlight.app.ui.core.UiState
 import streetlight.model.dto.EventInfo
@@ -31,9 +32,9 @@ fun EventProfileScreen(id: Int, navigator: Navigator?) {
     val screenModel = koinViewModel<EventProfileModel> { parametersOf(id) }
     val state by screenModel.state
 
-    Notify(state.notification)
+    // Notify(state.notification)
 
-    BoxScaffold(
+    AppScaffold(
         title = "Event: ${state.event.locationName}",
         navigator = navigator,
     ) {

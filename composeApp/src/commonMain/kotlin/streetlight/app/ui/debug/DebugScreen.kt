@@ -21,6 +21,7 @@ import org.jetbrains.compose.resources.ExperimentalResourceApi
 import org.jetbrains.compose.resources.painterResource
 import streetlight.app.Scenes
 import streetlight.app.chopui.BoxScaffold
+import streetlight.app.ui.core.AppScaffold
 import streetlight.composeapp.generated.resources.Res
 import streetlight.composeapp.generated.resources.compose_multiplatform
 
@@ -29,7 +30,7 @@ fun DebugScreen(navigator: Navigator) {
     val screenModel = koinViewModel(DebugModel::class)
     val state by screenModel.state
 
-    BoxScaffold(navigator = navigator) {
+    AppScaffold("Debug", navigator = navigator) {
         Column(Modifier.fillMaxWidth(), horizontalAlignment = Alignment.CenterHorizontally) {
             Text("counter: ${state.counter}")
             Button(onClick = screenModel::growCounter) {

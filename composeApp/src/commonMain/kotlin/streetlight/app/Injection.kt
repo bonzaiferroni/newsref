@@ -51,5 +51,5 @@ val myModule = module {
     factory { DebugModel(get()) }
     factory { LoginModel(get()) }
     factory { (id: Int?) -> EventProfileModel(id!!, get(), get()) }
-    factory { NowModel(get()) }
+    factory { NowModel(get(), get()) }
 }

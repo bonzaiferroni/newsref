@@ -1,13 +1,25 @@
 package streetlight.app.ui.debug.controls
 
+import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.IntrinsicSize
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.ArrowDropDown
 import androidx.compose.material.icons.filled.MoreVert
+import androidx.compose.material3.Button
+import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -15,6 +27,9 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.unit.dp
+import streetlight.app.chopui.ChopMenu
 
 @Composable
 fun <Data> DataMenu(
@@ -22,41 +37,13 @@ fun <Data> DataMenu(
     items: List<Data>,
     getName: (Data) -> String,
     updateItem: (Data) -> Unit,
-    onNewSelect: () -> Unit,
+    onNewSelect: (() -> Unit)? = null,
 ) {
-    var expanded by remember { mutableStateOf(false) }
-
-    Box {
-        Row(
-            verticalAlignment = Alignment.CenterVertically
-        ) {
-            item?.let {
-                Text(getName(it))
-            }
-            IconButton(onClick = { expanded = !expanded }) {
-                Icon(
-                    imageVector = Icons.Default.MoreVert,
-                    contentDescription = "More"
-                )
-            }
-        }
-        DropdownMenu(expanded = expanded, onDismissRequest = { expanded = false }) {
-            DropdownMenuItem(
-                onClick = {
-                    expanded = false
-                    onNewSelect()
-                },
-                text = { Text("New...") }
-            )
-            items.forEach { it ->
-                DropdownMenuItem(
-                    onClick = {
-                        expanded = false
-                        updateItem(it)
-                    },
-                    text = { Text(getName(it)) }
-                )
-            }
-        }
-    }
+    ChopMenu(
+        item = item,
+        items = items,
+        getName = getName,
+        updateItem = updateItem,
+        onNewSelect = onNewSelect
+    )
 }

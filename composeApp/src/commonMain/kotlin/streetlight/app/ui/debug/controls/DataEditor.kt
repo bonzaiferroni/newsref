@@ -11,7 +11,7 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import moe.tlaster.precompose.navigation.Navigator
-import streetlight.app.chopui.Scaffold
+import streetlight.app.ui.core.AppScaffold
 
 @Composable
 fun DataEditor(
@@ -30,7 +30,7 @@ fun DataEditor(
         }
     }
 
-    Scaffold(title, navigator) {
+    AppScaffold(title, navigator) {
         Box(
             modifier = modifier.fillMaxSize(),
             contentAlignment = Alignment.Center

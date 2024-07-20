@@ -1,46 +1,64 @@
 package streetlight.app.ui.main
 
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
-import androidx.compose.material3.Button
 import androidx.compose.material3.Card
 import androidx.compose.material3.Text
-import androidx.compose.material3.TextField
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.launch
 import moe.tlaster.precompose.koin.koinViewModel
 import moe.tlaster.precompose.navigation.Navigator
-import moe.tlaster.precompose.viewmodel.viewModelScope
 import streetlight.app.Scenes
-import streetlight.app.chopui.BoxScaffold
-import streetlight.app.io.EventDao
-import streetlight.app.ui.core.UiModel
-import streetlight.app.ui.core.UiState
+import streetlight.app.chopui.Constants.BASE_PADDING
+import streetlight.app.chopui.FabConfig
+import streetlight.app.chopui.addBasePadding
+import streetlight.app.chopui.dialogs.OkDialog
+import streetlight.app.ui.core.AppScaffold
+import streetlight.app.ui.debug.controls.DataMenu
 import streetlight.model.dto.EventInfo
 
 @Composable
 fun NowScreen(navigator: Navigator?) {
-    val screenModel = koinViewModel<NowModel>()
-    val state by screenModel.state
+    val model = koinViewModel<NowModel>()
+    val state by model.state
 
-    BoxScaffold(
+    OkDialog(
+        title = "Add Event",
+        showDialog = state.addingEvent,
+        onCancel = model::toggleNewEvent,
+        onConfirm = model::addEvent
+    ) {
+        DataMenu(
+            state.chosenLocation, state.locations, { it.name}, model::chooseLocation
+        )
+    }
+
+    AppScaffold(
         title = "Now",
         navigator = navigator,
+        fabConfig = FabConfig(
+            action = model::toggleNewEvent,
+        )
     ) {
-        Column {
-            Button(onClick = { Scenes.debug.go(navigator) }) {
-                Text("Debug")
-            }
-            LazyColumn {
+        Column(
+            modifier = Modifier
+                .addBasePadding()
+                .fillMaxWidth(),
+        ) {
+            LazyColumn(
+                verticalArrangement = Arrangement.spacedBy(BASE_PADDING)
+            ) {
                 items(state.events) { event ->
-                    EventCard(event = event, onClick = { Scenes.eventProfile.go(navigator, event.id) })
+                    EventCard(
+                        event = event,
+                        onClick = { Scenes.eventProfile.go(navigator, event.id) })
                 }
             }
         }
@@ -49,7 +67,10 @@ fun NowScreen(navigator: Navigator?) {
 
 @Composable
 fun EventCard(event: EventInfo, onClick: () -> Unit) {
-    Card(onClick = onClick) {
+    Card(
+        onClick = onClick,
+        modifier = Modifier.fillMaxWidth()
+    ) {
         Row(
             modifier = Modifier.padding(16.dp),
         ) {
@@ -57,18 +78,3 @@ fun EventCard(event: EventInfo, onClick: () -> Unit) {
         }
     }
 }
-
-class NowModel(
-    private val eventDao: EventDao,
-) : UiModel<NowState>(NowState()) {
-    init {
-        viewModelScope.launch(Dispatchers.IO) {
-            val events = eventDao.getAllInfo()
-            sv = sv.copy(events = events)
-        }
-    }
-}
-
-data class NowState(
-    val events: List<EventInfo> = emptyList(),
-) : UiState
