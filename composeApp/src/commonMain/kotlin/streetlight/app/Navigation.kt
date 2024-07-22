@@ -16,6 +16,8 @@ import streetlight.app.ui.debug.RequestListScreen
 import streetlight.app.ui.debug.UserEditorScreen
 import streetlight.app.ui.main.EventProfileScreen
 import streetlight.app.ui.main.NowScreen
+import streetlight.app.ui.main.SongProfileScreen
+import streetlight.app.ui.main.SongsScreen
 
 object Scenes {
     val default = { now.route }
@@ -85,7 +87,7 @@ object Scenes {
 
     val songList = AppScene(
         name = "Songs",
-        route = "/songs"
+        route = "/songsList"
     ) { _, navigator ->
         SongListScreen(navigator)
     }
@@ -117,6 +119,20 @@ object Scenes {
     ) { _, navigator ->
         NowScreen(navigator)
     }
+
+    val songProfile = AppScene(
+        name = "Song Profile",
+        route = "/song/{id}/profile"
+    ) { bse, navigator ->
+        SongProfileScreen(bse.getId()!!, navigator)
+    }
+
+    val songs = AppScene(
+        name = "Songs",
+        route = "/songs"
+    ) { _, navigator ->
+        SongsScreen(navigator)
+    }
 }
 
 fun BackStackEntry.getId() = this.path<Int>("id")
@@ -135,6 +151,8 @@ val appScenes = listOf(
     Scenes.requestList,
     Scenes.requestEditor,
     Scenes.now,
-    Scenes.eventProfile
+    Scenes.eventProfile,
+    Scenes.songProfile,
+    Scenes.songs,
 )
 

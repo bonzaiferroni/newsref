@@ -24,6 +24,8 @@ import streetlight.app.ui.debug.RequestListModel
 import streetlight.app.ui.debug.UserEditorModel
 import streetlight.app.ui.login.LoginModel
 import streetlight.app.ui.main.NowModel
+import streetlight.app.ui.main.SongProfileModel
+import streetlight.app.ui.main.SongsModel
 
 val myModule = module {
     // your dependencies here
@@ -52,4 +54,6 @@ val myModule = module {
     factory { LoginModel(get()) }
     factory { (id: Int?) -> EventProfileModel(id!!, get(), get()) }
     factory { NowModel(get(), get()) }
+    factory { (id: Int?) -> SongProfileModel(id!!, get()) }
+    factory { SongsModel(get()) }
 }

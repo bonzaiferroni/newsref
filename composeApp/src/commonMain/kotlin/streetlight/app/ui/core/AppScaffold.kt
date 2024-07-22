@@ -16,7 +16,11 @@ fun AppScaffold(
     ChopScaffold(
         title = title,
         navigator = navigator,
-        routes = listOf(Scenes.now.route, Scenes.debug.route),
+        routes = listOf(
+            Scenes.now.route,
+            Scenes.debug.route,
+            Scenes.songs.route
+        ),
         fabConfig = fabConfig,
     ) {
         content()
