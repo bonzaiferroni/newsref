@@ -46,12 +46,24 @@ kotlin {
             implementation("io.insert-koin:koin-compose:1.2.0-alpha3")
 
             implementation("org.slf4j:slf4j-simple:1.6.1")
+            val coilVersion = "3.0.0-alpha06"
+            implementation("io.coil-kt.coil3:coil:$coilVersion")
+            implementation("io.coil-kt.coil3:coil-compose:$coilVersion")
+            implementation("io.coil-kt.coil3:coil-network-ktor:$coilVersion")
+
+            // Enables FileKit without Compose dependencies
+            implementation("io.github.vinceglb:filekit-core:0.7.0")
+
+            // Enables FileKit with Composable utilities
+            implementation("io.github.vinceglb:filekit-compose:0.7.0")
 
             // Screen Model
             // Transitions
             // implementation(libs.kodein.di.framework.compose)
             implementation(libs.kotlinx.coroutines.core)
             implementation(libs.kotlinx.datetime)
+            implementation("org.jetbrains.kotlinx:kotlinx-serialization-core:1.6.3") // Check for latest version
+
 
             implementation(libs.ktor.client.core)
             implementation(libs.ktor.client.cio)

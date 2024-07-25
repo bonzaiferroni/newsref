@@ -25,8 +25,14 @@ class ApiClient {
             json(Json { prettyPrint = true })
         }
     }
-//    val address = "http://streetlight.ing/api/v1"
-    val address = "http://localhost:8080/api/v1"
+
+    companion object{
+        val baseAddress = "http://192.168.1.118:8080"
+        //    val address = "https://streetlight.ing"
+        val apiAddress
+            get() = "$baseAddress/api/v1"
+    }
+
 
     private var token = ""
     private val username = "admin"
@@ -51,8 +57,13 @@ class ApiClient {
         return response.status == HttpStatusCode.OK
     }
 
+    suspend fun post(endpoint: String, data: Any): Boolean {
+        val response = authRequest(endpoint, HttpMethod.Post, data)
+        return response.status == HttpStatusCode.OK
+    }
+
     suspend fun request(endpoint: String, requestMethod: HttpMethod, data: Any?): HttpResponse {
-        return web.request("$address$endpoint") {
+        return web.request("$apiAddress$endpoint") {
             method = requestMethod
             contentType(ContentType.Application.Json)
             setBody(data)
@@ -72,12 +83,12 @@ class ApiClient {
     }
 
     suspend inline fun <reified T> getBody(endpoint: String): T {
-        val response = web.get("$address$endpoint")
+        val response = web.get("$apiAddress$endpoint")
         return response.body()
     }
 
     suspend fun get(endpoint: String): HttpResponse {
-        return web.get("$address$endpoint")
+        return web.get("$apiAddress$endpoint")
     }
 
     suspend fun login(username: String, password: String): HttpResponse {

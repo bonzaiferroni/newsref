@@ -14,4 +14,5 @@ data class EventInfo(
     val longitude: Double = 0.0,
     val areaId: Int = 0,
     val areaName: String = "",
+    val url: String? = null,
 )

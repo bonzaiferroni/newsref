@@ -20,3 +20,4 @@ captures
 test.mv.db
 trace.mv.db
 backup.json
+/www/uploads

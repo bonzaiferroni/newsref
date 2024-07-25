@@ -22,9 +22,7 @@ import streetlight.app.chopui.Constants.BASE_PADDING
 import streetlight.app.chopui.FabConfig
 import streetlight.app.chopui.addBasePadding
 import streetlight.app.ui.core.AppScaffold
-import streetlight.app.ui.core.monoFamily
 import streetlight.app.ui.core.monoStyle
-import streetlight.composeapp.generated.resources.Res
 
 @OptIn(ExperimentalResourceApi::class)
 @Composable
