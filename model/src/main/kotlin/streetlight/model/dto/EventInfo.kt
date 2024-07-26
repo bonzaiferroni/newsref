@@ -2,17 +2,17 @@ package streetlight.model.dto
 
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
+import streetlight.model.Area
+import streetlight.model.Event
+import streetlight.model.Location
+import streetlight.model.Song
+import streetlight.model.User
 
 @Serializable
 data class EventInfo(
-    val id: Int = 0,
-    val locationName: String = "",
-    val locationId: Int = 0,
-    val timeStart: Long = 0L,
-    val hours: Float = 0f,
-    val latitude: Double = 0.0,
-    val longitude: Double = 0.0,
-    val areaId: Int = 0,
-    val areaName: String = "",
-    val url: String? = null,
+    val event: Event = Event(),
+    val location: Location = Location(),
+    val area: Area = Area(),
+    val user: User = User(),
+    val currentSong: Song? = null,
 )

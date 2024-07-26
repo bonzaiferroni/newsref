@@ -23,13 +23,13 @@ fun EventListScreen(navigator: Navigator?) {
     DataList(
         title = "Events",
         items = state.items,
-        provideName = { "${it.locationName} (${it.areaName})" },
+        provideName = { "${it.location.name} (${it.area.name})" },
         floatingAction = {
             viewModel.onNewEvent()
             Scenes.eventEditor.go(navigator)
         },
         navigator = navigator,
-        onEdit = { Scenes.eventEditor.go(navigator, it.id) },
+        onEdit = { Scenes.eventEditor.go(navigator, it.event.id) },
         onDelete = viewModel::deleteEvent,
     )
 }
@@ -55,9 +55,9 @@ class EventListModel(
         }
     }
 
-    fun deleteEvent(event: EventInfo) {
+    fun deleteEvent(info: EventInfo) {
         viewModelScope.launch(Dispatchers.IO) {
-            eventDao.delete(event.id)
+            eventDao.delete(info.event.id)
             refresh()
         }
     }

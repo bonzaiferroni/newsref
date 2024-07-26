@@ -18,7 +18,7 @@ class NowModel(
     init {
         viewModelScope.launch(Dispatchers.IO) {
             val events = eventDao.getAllInfo()
-            sv = sv.copy(events = events)
+            sv = sv.copy(infos = events)
         }
     }
 
@@ -50,13 +50,13 @@ class NowModel(
             )
             eventDao.create(event)
             val events = eventDao.getAllInfo()
-            sv = sv.copy(events = events, addingEvent = false)
+            sv = sv.copy(infos = events, addingEvent = false)
         }
     }
 }
 
 data class NowState(
-    val events: List<EventInfo> = emptyList(),
+    val infos: List<EventInfo> = emptyList(),
     val locations: List<Location> = emptyList(),
     val addingEvent: Boolean = false,
     val chosenLocation: Location? = null,

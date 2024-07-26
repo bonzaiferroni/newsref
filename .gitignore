@@ -18,6 +18,6 @@ captures
 
 /chopui/
 test.mv.db
-trace.mv.db
+test.trace.db
 backup.json
 /www/uploads

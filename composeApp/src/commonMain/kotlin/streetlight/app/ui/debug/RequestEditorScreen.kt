@@ -37,9 +37,9 @@ fun RequestEditorScreen(id: Int?, navigator: Navigator?) {
         navigator = navigator,
     ) {
         DataMenu(
-            item = state.events.find { it.id == state.request.eventId },
-            items = state.events,
-            getName = { it.locationName },
+            item = state.infos.find { it.event.id == state.request.eventId },
+            items = state.infos,
+            getName = { it.location.name },
             updateItem = viewModel::updateEvent,
         ) {
             viewModel.requestEvent()
@@ -83,7 +83,7 @@ class RequestEditorModel(
         viewModelScope.launch(Dispatchers.IO) {
             val events = eventDao.getAllInfo()
             val performances = songDao.getAll()
-            sv = sv.copy(events = events, songs = performances)
+            sv = sv.copy(infos = events, songs = performances)
         }
     }
 
@@ -101,8 +101,8 @@ class RequestEditorModel(
         }
     }
 
-    fun updateEvent(eventInfo: EventInfo) {
-        sv = sv.copy(request = sv.request.copy(eventId = eventInfo.id))
+    fun updateEvent(info: EventInfo) {
+        sv = sv.copy(request = sv.request.copy(eventId = info.event.id))
     }
 
     fun requestEvent() {
@@ -131,7 +131,7 @@ class RequestEditorModel(
 data class RequestEditorState(
     val request: Request = Request(),
     val isComplete: Boolean = false,
-    val events: List<EventInfo> = emptyList(),
+    val infos: List<EventInfo> = emptyList(),
     val songs: List<Song> = emptyList(),
     val result: String = ""
 ) : UiState

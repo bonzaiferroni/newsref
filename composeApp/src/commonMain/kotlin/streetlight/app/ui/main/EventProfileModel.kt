@@ -11,11 +11,11 @@ import streetlight.app.io.EventDao
 import streetlight.app.io.RequestDao
 import streetlight.app.ui.core.UiModel
 import streetlight.app.ui.core.UiState
+import streetlight.model.EventStatus
 import streetlight.model.Request
 import streetlight.model.dto.EventInfo
 import streetlight.model.dto.ImageUploadRequest
 import streetlight.model.dto.RequestInfo
-import java.io.File
 import kotlin.io.encoding.Base64
 import kotlin.io.encoding.ExperimentalEncodingApi
 
@@ -54,8 +54,8 @@ class EventProfileModel(
 
     private fun startEvent() {
         viewModelScope.launch(Dispatchers.IO) {
-            sv = sv.copy(event = sv.event.copy(timeStart = System.currentTimeMillis()))
-            val success = eventDao.update(sv.event)
+            sv = sv.copy(info = sv.info.copy(event = sv.info.event.copy(timeStart = System.currentTimeMillis())))
+            val success = eventDao.update(sv.info)
             if (success) {
                 sv = sv.copy(status = EventStatus.Started)
                 loop()
@@ -65,9 +65,9 @@ class EventProfileModel(
 
     private fun finishEvent() {
         viewModelScope.launch(Dispatchers.IO) {
-            val hours = (System.currentTimeMillis() - sv.event.timeStart) / 1000 / 60f / 60f
-            sv = sv.copy(event = sv.event.copy(hours = hours))
-            val success = eventDao.update(sv.event)
+            val hours = (System.currentTimeMillis() - sv.info.event.timeStart) / 1000 / 60f / 60f
+            sv = sv.copy(info = sv.info.copy(event = sv.info.event.copy(hours = hours)))
+            val success = eventDao.update(sv.info)
             if (success) {
                 sv = sv.copy(status = EventStatus.Finished)
             }
@@ -91,7 +91,7 @@ class EventProfileModel(
     private fun refreshEvent() {
         viewModelScope.launch(Dispatchers.IO) {
             val event = eventDao.getInfo(id)
-            sv = sv.copy(event = event ?: EventInfo())
+            sv = sv.copy(info = event ?: EventInfo())
         }
     }
 
@@ -105,7 +105,8 @@ class EventProfileModel(
     }
 
     fun updateUrl(url: String) {
-        sv = sv.copy(event = sv.event.copy(url = url))
+        sv = sv.copy(info = sv.info.copy(event = sv.info.event.copy(url = url))
+        )
     }
 
     @OptIn(ExperimentalEncodingApi::class)
@@ -121,7 +122,7 @@ class EventProfileModel(
 
             val result = eventDao.postImage(
                 ImageUploadRequest(
-                    eventId = sv.event.id,
+                    eventId = sv.info.event.id,
                     filename = file.name,
                     image = Base64.encode(file.readBytes())
                 )
@@ -134,14 +135,8 @@ class EventProfileModel(
 }
 
 data class EventProfileState(
-    val event: EventInfo = EventInfo(),
+    val info: EventInfo = EventInfo(),
     val requests: List<RequestInfo> = emptyList(),
     val status: EventStatus = EventStatus.Pending,
     val notification: String? = null,
 ) : UiState
-
-enum class EventStatus {
-    Pending,
-    Started,
-    Finished,
-}

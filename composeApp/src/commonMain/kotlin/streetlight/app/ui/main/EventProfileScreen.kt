@@ -1,6 +1,5 @@
 package streetlight.app.ui.main
 
-import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -21,10 +20,6 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import coil3.compose.AsyncImage
-import io.github.vinceglb.filekit.compose.rememberFilePickerLauncher
-import io.github.vinceglb.filekit.core.FileKit
-import io.github.vinceglb.filekit.core.PickerMode
-import io.github.vinceglb.filekit.core.PickerType
 import moe.tlaster.precompose.koin.koinViewModel
 import moe.tlaster.precompose.navigation.Navigator
 import org.koin.core.parameter.parametersOf
@@ -33,9 +28,8 @@ import streetlight.app.chopui.Constants.BASE_PADDING
 import streetlight.app.chopui.addBasePadding
 import streetlight.app.io.ApiClient
 import streetlight.app.ui.core.AppScaffold
+import streetlight.model.EventStatus
 import streetlight.model.dto.RequestInfo
-import java.io.File
-import javax.swing.JFileChooser
 
 @Composable
 fun EventProfileScreen(id: Int, navigator: Navigator?) {
@@ -45,7 +39,7 @@ fun EventProfileScreen(id: Int, navigator: Navigator?) {
     // Notify(state.notification)
 
     AppScaffold(
-        title = "Event: ${state.event.locationName}",
+        title = "Event: ${state.info.location.name}",
         navigator = navigator,
     ) {
         Column(
@@ -53,7 +47,7 @@ fun EventProfileScreen(id: Int, navigator: Navigator?) {
                 .fillMaxWidth()
                 .addBasePadding()
         ) {
-            var url = state.event.url
+            var url = state.info.event.url
             if (url != null && !url.startsWith("http")) {
                 url = "${ApiClient.baseAddress}/$url"
             }
@@ -85,16 +79,6 @@ fun EventImage(
         }
         TextField(value = url ?: "", onValueChange = updateUrl)
         AsyncImage(model = url, contentDescription = "Event Image",)
-    }
-}
-
-fun pickFile(): File? {
-    val fileChooser = JFileChooser()
-    val result = fileChooser.showOpenDialog(null)
-    return if (result == JFileChooser.APPROVE_OPTION) {
-        fileChooser.selectedFile
-    } else {
-        null
     }
 }
 

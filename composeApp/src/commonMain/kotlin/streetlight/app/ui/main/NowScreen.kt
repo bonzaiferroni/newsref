@@ -55,10 +55,10 @@ fun NowScreen(navigator: Navigator?) {
             LazyColumn(
                 verticalArrangement = Arrangement.spacedBy(BASE_PADDING)
             ) {
-                items(state.events) { event ->
+                items(state.infos) { info ->
                     EventCard(
-                        event = event,
-                        onClick = { Scenes.eventProfile.go(navigator, event.id) })
+                        event = info,
+                        onClick = { Scenes.eventProfile.go(navigator, info.event.id) })
                 }
             }
         }
@@ -74,7 +74,7 @@ fun EventCard(event: EventInfo, onClick: () -> Unit) {
         Row(
             modifier = Modifier.padding(16.dp),
         ) {
-            Text(event.locationName)
+            Text(event.location.name)
         }
     }
 }
