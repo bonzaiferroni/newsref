@@ -29,7 +29,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
-import streetlight.app.chopui.ChopMenu
+import chopui.ChopMenu
 
 @Composable
 fun <Data> DataMenu(

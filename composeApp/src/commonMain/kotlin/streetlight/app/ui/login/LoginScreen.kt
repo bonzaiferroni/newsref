@@ -9,7 +9,7 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import moe.tlaster.precompose.koin.koinViewModel
 import moe.tlaster.precompose.navigation.rememberNavigator
-import streetlight.app.chopui.BoxScaffold
+import chopui.BoxScaffold
 
 @Composable
 fun LoginScreen() {

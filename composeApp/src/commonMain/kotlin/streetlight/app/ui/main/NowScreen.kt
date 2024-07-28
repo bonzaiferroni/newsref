@@ -16,10 +16,10 @@ import androidx.compose.ui.unit.dp
 import moe.tlaster.precompose.koin.koinViewModel
 import moe.tlaster.precompose.navigation.Navigator
 import streetlight.app.Scenes
-import streetlight.app.chopui.Constants.BASE_PADDING
-import streetlight.app.chopui.FabConfig
-import streetlight.app.chopui.addBasePadding
-import streetlight.app.chopui.dialogs.OkDialog
+import chopui.Constants.BASE_PADDING
+import chopui.FabConfig
+import chopui.addBasePadding
+import chopui.dialogs.OkDialog
 import streetlight.app.ui.core.AppScaffold
 import streetlight.app.ui.debug.controls.DataMenu
 import streetlight.model.dto.EventInfo

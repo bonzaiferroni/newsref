@@ -20,7 +20,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import moe.tlaster.precompose.navigation.Navigator
 import org.jetbrains.compose.ui.tooling.preview.Preview
-import streetlight.app.chopui.BoxScaffold
+import chopui.BoxScaffold
 import streetlight.app.ui.theme.AppTheme
 
 @Composable

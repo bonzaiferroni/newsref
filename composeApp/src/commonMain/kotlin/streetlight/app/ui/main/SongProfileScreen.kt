@@ -18,9 +18,9 @@ import moe.tlaster.precompose.koin.koinViewModel
 import moe.tlaster.precompose.navigation.Navigator
 import org.jetbrains.compose.resources.ExperimentalResourceApi
 import org.koin.core.parameter.parametersOf
-import streetlight.app.chopui.Constants.BASE_PADDING
-import streetlight.app.chopui.FabConfig
-import streetlight.app.chopui.addBasePadding
+import chopui.Constants.BASE_PADDING
+import chopui.FabConfig
+import chopui.addBasePadding
 import streetlight.app.ui.core.AppScaffold
 import streetlight.app.ui.core.monoStyle
 
