@@ -6,7 +6,6 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material.icons.Icons
@@ -30,7 +29,6 @@ import org.koin.core.parameter.parametersOf
 import streetlight.app.Scenes
 import chopui.Constants.BASE_PADDING
 import chopui.addBasePadding
-import streetlight.app.io.ApiClient
 import streetlight.app.ui.core.AppScaffold
 import streetlight.model.EventStatus
 import streetlight.model.dto.RequestInfo
@@ -39,8 +37,6 @@ import streetlight.model.dto.RequestInfo
 fun EventProfileScreen(id: Int, navigator: Navigator?) {
     val model = koinViewModel<EventProfileModel> { parametersOf(id) }
     val state by model.state
-
-    // Notify(state.notification)
 
     AppScaffold(
         title = "Event: ${state.info.location.name}",
@@ -56,6 +52,9 @@ fun EventProfileScreen(id: Int, navigator: Navigator?) {
             )
             EventControls(
                 progressEvent = model::progressEvent, status = state.info.event.status
+            )
+            SongsCard(
+                current = state.current, requests = state.requests
             )
             SongList(
                 requests = state.requests, updatePerformed = model::updatePerformed,
@@ -104,6 +103,23 @@ fun EventControls(
         ) {
             Button(onClick = progressEvent) { Text(status.getButtonText()) }
             Text("Status: $status")
+        }
+    }
+}
+
+@Composable
+fun SongsCard(
+    current: RequestInfo?,
+    requests: List<RequestInfo>
+) {
+    Card {
+        Column(
+            modifier = Modifier.addBasePadding(),
+            verticalArrangement = Arrangement.spacedBy(BASE_PADDING)
+        ) {
+            Text("Current: ${current?.songName}")
+            val upcoming = requests.filter{ it != current }.joinToString(", ") { it.songName }
+            Text("Upcoming: $upcoming")
         }
     }
 }

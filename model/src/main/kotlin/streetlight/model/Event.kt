@@ -8,7 +8,7 @@ data class Event(
     val locationId: Int = 0,
     val userId: Int = 0,
     val timeStart: Long = 0L,
-    val hours: Float = 0f,
+    val hours: Float? = null,
     val url: String? = null,
     val imageUrl: String? = null,
     val streamUrl: String? = null,

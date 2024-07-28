@@ -1,7 +1,5 @@
 package streetlight.app.ui.main
 
-import androidx.compose.material3.Button
-import androidx.compose.material3.Text
 import io.github.vinceglb.filekit.core.FileKit
 import io.github.vinceglb.filekit.core.PickerMode
 import io.github.vinceglb.filekit.core.PickerType
@@ -14,6 +12,7 @@ import streetlight.app.io.EventDao
 import streetlight.app.io.RequestDao
 import streetlight.app.ui.core.UiModel
 import streetlight.app.ui.core.UiState
+import streetlight.model.Event
 import streetlight.model.EventStatus
 import streetlight.model.Request
 import streetlight.model.dto.EventInfo
@@ -36,6 +35,12 @@ class EventProfileModel(
 
     private var nextTime: Long = 0
 
+    private var event: Event
+        get() = sv.info.event
+        set(value) {
+            sv = sv.copy(info = sv.info.copy(event = value))
+        }
+
     fun updatePerformed(requestId: Int, performed: Boolean) {
         viewModelScope.launch(Dispatchers.IO) {
             val request = sv.requests
@@ -49,49 +54,31 @@ class EventProfileModel(
     }
 
     fun progressEvent() {
-        when (sv.info.event.status) {
-            EventStatus.Pending -> startEvent()
-            EventStatus.Started -> finishEvent()
-            EventStatus.Finished -> resumeEvent()
+        when (event.status) {
+            EventStatus.Pending -> {
+                updateStatus(EventStatus.Started, System.currentTimeMillis(), null)
+            }
+
+            EventStatus.Started -> {
+                val hours =
+                    (System.currentTimeMillis() - event.timeStart) / 1000 / 60f / 60f
+                updateStatus(EventStatus.Finished, event.timeStart, hours)
+            }
+
+            EventStatus.Finished -> {
+                updateStatus(EventStatus.Started, event.timeStart, event.hours)
+            }
         }
     }
 
-    private fun startEvent() {
+    private fun updateStatus(status: EventStatus, timeStart: Long, hours: Float?) {
         viewModelScope.launch(Dispatchers.IO) {
-            sv = sv.copy(
-                info = sv.info.copy(
-                    event = sv.info.event.copy(
-                        timeStart = System.currentTimeMillis(),
-                        status = EventStatus.Started
-                    )
-                )
+            event = event.copy(
+                status = status,
+                timeStart = timeStart,
+                hours = hours
             )
-            eventDao.update(sv.info.event)
-        }
-    }
-
-    private fun finishEvent() {
-        viewModelScope.launch(Dispatchers.IO) {
-            val hours = (System.currentTimeMillis() - sv.info.event.timeStart) / 1000 / 60f / 60f
-            sv = sv.copy(
-                info = sv.info.copy(
-                    event = sv.info.event.copy(
-                        hours = hours,
-                        status = EventStatus.Finished
-                    )
-                )
-            )
-            eventDao.update(sv.info.event)
-        }
-    }
-
-    private fun resumeEvent() {
-        viewModelScope.launch(Dispatchers.IO) {
-            sv =
-                sv.copy(
-                    info = sv.info.copy(event = sv.info.event.copy(status = EventStatus.Started))
-                )
-            eventDao.update(sv.info.event)
+            eventDao.update(event)
         }
     }
 
@@ -119,16 +106,16 @@ class EventProfileModel(
 
     private suspend fun refreshSongs() {
         viewModelScope.launch(Dispatchers.IO) {
-            val requests = requestDao.getAllInfo(id)
+            val requests = requestDao.getQueue(id)
             val newRequest = requests.firstOrNull { r -> !sv.requests.any { it.id == r.id } }
-            sv = sv.copy(requests = requests, notification = newRequest?.songName)
+            sv = sv.copy(requests = requests, current = newRequest)
             nextTime = System.currentTimeMillis() + 10000
         }
     }
 
     fun updateUrl(url: String) {
         sv = sv.copy(
-            info = sv.info.copy(event = sv.info.event.copy(url = url)),
+            info = sv.info.copy(event = event.copy(url = url)),
             imageUrl = url.toImageUrl()
         )
     }
@@ -149,7 +136,7 @@ class EventProfileModel(
 
             val result = eventDao.postImage(
                 ImageUploadRequest(
-                    eventId = sv.info.event.id,
+                    eventId = event.id,
                     filename = file.name,
                     image = Base64.encode(file.readBytes())
                 )
@@ -163,9 +150,9 @@ class EventProfileModel(
 
 data class EventProfileState(
     val info: EventInfo = EventInfo(),
-    val requests: List<RequestInfo> = emptyList(),
-    val notification: String? = null,
     val imageUrl: String? = null,
+    val requests: List<RequestInfo> = emptyList(),
+    val current: RequestInfo? = null,
 ) : UiState
 
 fun EventStatus.getButtonText() = when (this) {

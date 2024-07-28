@@ -13,4 +13,6 @@ class RequestDao(private val client: ApiClient, ) {
     suspend fun getAllInfo(): List<RequestInfo> = client.getBody("/request_info")
     suspend fun getAllInfo(eventId: Int): List<RequestInfo> =
         client.getBody("/request_info/event/$eventId")
+    suspend fun getQueue(eventId: Int): List<RequestInfo> = client.getBody("/request_info/$eventId/queue")
+
 }
