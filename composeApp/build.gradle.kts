@@ -45,7 +45,7 @@ kotlin {
             implementation("io.insert-koin:koin-core:3.6.0-alpha3")
             implementation("io.insert-koin:koin-compose:1.2.0-alpha3")
 
-            implementation("org.slf4j:slf4j-simple:1.6.1")
+            implementation("org.slf4j:slf4j-simple:2.0.13")
             val coilVersion = "3.0.0-alpha06"
             implementation("io.coil-kt.coil3:coil:$coilVersion")
             implementation("io.coil-kt.coil3:coil-compose:$coilVersion")
