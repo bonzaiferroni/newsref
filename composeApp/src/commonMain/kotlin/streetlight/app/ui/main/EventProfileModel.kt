@@ -107,7 +107,7 @@ class EventProfileModel(
     private suspend fun refreshSongs() {
         viewModelScope.launch(Dispatchers.IO) {
             val requests = requestDao.getQueue(id)
-            val newRequest = requests.firstOrNull { r -> !sv.requests.any { it.id == r.id } }
+            val newRequest = requests.firstOrNull()
             sv = sv.copy(requests = requests, current = newRequest)
             nextTime = System.currentTimeMillis() + 10000
         }
