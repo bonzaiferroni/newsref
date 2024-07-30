@@ -35,6 +35,10 @@ fun SongsScreen(
             value = state.songName ?: "",
             onValueChange = model::updateSongName
         )
+        TextField(
+            value = state.artistName ?: "",
+            onValueChange = model::updateArtistName
+        )
     }
 
     AppScaffold(

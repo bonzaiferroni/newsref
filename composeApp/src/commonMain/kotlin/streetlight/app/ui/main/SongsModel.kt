@@ -20,9 +20,9 @@ class SongsModel(
 
     fun toggleAddSong() {
         if (sv.songName == null) {
-            sv = sv.copy(songName = "")
+            sv = sv.copy(songName = "", artistName = "")
         } else {
-            sv = sv.copy(songName = null)
+            sv = sv.copy(songName = null, artistName = null)
         }
     }
 
@@ -30,10 +30,14 @@ class SongsModel(
         sv = sv.copy(songName = name)
     }
 
+    fun updateArtistName(name: String) {
+        sv = sv.copy(artistName = name)
+    }
+
     fun addSong(callback: (Int) -> Unit) {
         viewModelScope.launch(Dispatchers.IO) {
             val songName = sv.songName ?: return@launch
-            val id = songDao.create(Song(userId = 1, name = songName))
+            val id = songDao.create(Song(userId = 1, name = songName, artist = sv.artistName))
             if (id > 0) {
                 callback(id)
             }
@@ -44,6 +48,7 @@ class SongsModel(
 data class SongsState(
     val songs: List<Song> = emptyList(),
     val songName: String? = null,
+    val artistName: String? = null
 ) : UiState {
     val addingSong: Boolean
         get() = songName != null
