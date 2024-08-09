@@ -17,6 +17,7 @@ class EventDao(
     suspend fun delete(id: Int): Boolean = client.delete("/events", id)
     suspend fun getInfo(id: Int): EventInfo? = client.getBody("/event_info/$id")
     suspend fun getAllInfo(): List<EventInfo> = client.getBody("/event_info")
+    suspend fun getAllCurrentInfos(): List<EventInfo> = client.getBody("/event_info/current")
     suspend fun getProfile(id: Int): List<RequestInfo> = client.getBody("/event_profile/$id")
     suspend fun postImage(request: ImageUploadRequest): Boolean = client.post("/events/upload", request)
 }

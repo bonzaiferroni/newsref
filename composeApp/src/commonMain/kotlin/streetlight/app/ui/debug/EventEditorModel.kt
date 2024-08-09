@@ -27,7 +27,12 @@ class EventEditorModel(
         if (id != null) {
             viewModelScope.launch(Dispatchers.IO) {
                 eventDao.get(id)?.let {
-                    sv = sv.copy(event = it)
+                    val event = if (it.timeStart == 0L) {
+                        it.copy(timeStart = Clock.System.now().toLocalEpochSeconds())
+                    } else {
+                        it
+                    }
+                    sv = sv.copy(event = event)
                 }
             }
         }

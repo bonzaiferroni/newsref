@@ -17,7 +17,7 @@ class NowModel(
 ) : UiModel<NowState>(NowState()) {
     init {
         viewModelScope.launch(Dispatchers.IO) {
-            val events = eventDao.getAllInfo()
+            val events = eventDao.getAllCurrentInfos()
             sv = sv.copy(infos = events)
         }
     }

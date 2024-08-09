@@ -12,8 +12,8 @@ data class Event(
     val url: String? = null,
     val imageUrl: String? = null,
     val streamUrl: String? = null,
-    val name: String? = null,
-    val description: String? = null,
+    val name: String? = null, //
+    val description: String? = null, //
     val status: EventStatus = EventStatus.Pending,
     val currentSongId: Int? = null,
     val cashTips: Float? = null,

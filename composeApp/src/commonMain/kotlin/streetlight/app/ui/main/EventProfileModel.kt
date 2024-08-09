@@ -6,6 +6,7 @@ import io.github.vinceglb.filekit.core.PickerType
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
+import kotlinx.datetime.Clock
 import moe.tlaster.precompose.viewmodel.viewModelScope
 import streetlight.app.io.ApiClient
 import streetlight.app.io.EventDao
@@ -18,6 +19,8 @@ import streetlight.model.Request
 import streetlight.model.dto.EventInfo
 import streetlight.model.dto.ImageUploadRequest
 import streetlight.model.dto.RequestInfo
+import streetlight.model.utils.toFormatString
+import streetlight.model.utils.toLocalDateTime
 import kotlin.io.encoding.Base64
 import kotlin.io.encoding.ExperimentalEncodingApi
 
@@ -60,8 +63,7 @@ class EventProfileModel(
             }
 
             EventStatus.Started -> {
-                val hours =
-                    (System.currentTimeMillis() - event.timeStart) / 1000 / 60f / 60f
+                val hours = (System.currentTimeMillis() - event.timeStart) / 1000 / 60f / 60f
                 updateStatus(EventStatus.Finished, event.timeStart, hours)
             }
 
@@ -120,6 +122,10 @@ class EventProfileModel(
         )
     }
 
+    fun updateStreamUrl(url: String) {
+        event = event.copy(streamUrl = url)
+    }
+
     private fun String.toImageUrl() =
         this.takeIf { it.startsWith("http") } ?: "${ApiClient.baseAddress}/$this"
 
@@ -134,15 +140,31 @@ class EventProfileModel(
                 // initialDirectory = "/custom/initial/path"
             ) ?: return@launch
 
-            val result = eventDao.postImage(
+            val isSuccess = eventDao.postImage(
                 ImageUploadRequest(
                     eventId = event.id,
                     filename = file.name,
                     image = Base64.encode(file.readBytes())
                 )
             )
-            if (result) {
+            if (isSuccess) {
+                sv = sv.copy(updateStatus = "Uploaded image.")
                 refreshEvent()
+            } else {
+                sv = sv.copy(updateStatus = "Failed to upload image.")
+            }
+        }
+    }
+
+    fun updateEvent() {
+        viewModelScope.launch(Dispatchers.IO) {
+            val isSuccess = eventDao.update(event)
+            if (isSuccess) {
+                val time = Clock.System.now().toLocalDateTime().toFormatString("HH:mm")
+                sv = sv.copy(updateStatus = "Success: ${time}")
+                refreshEvent()
+            } else {
+                sv = sv.copy(updateStatus = "Failed")
             }
         }
     }
@@ -153,6 +175,7 @@ data class EventProfileState(
     val imageUrl: String? = null,
     val requests: List<RequestInfo> = emptyList(),
     val current: RequestInfo? = null,
+    val updateStatus: String = "",
 ) : UiState
 
 fun EventStatus.getButtonText() = when (this) {

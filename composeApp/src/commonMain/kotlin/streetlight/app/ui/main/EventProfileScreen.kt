@@ -46,12 +46,12 @@ fun EventProfileScreen(id: Int, navigator: Navigator?) {
             modifier = Modifier.fillMaxWidth().addBasePadding(),
             verticalArrangement = Arrangement.spacedBy(BASE_PADDING)
         ) {
-            EventImage(
+            EventControls(
+                progressEvent = model::progressEvent, status = state.info.event.status,
+                updateStatus = state.updateStatus, streamUrl = state.info.event.streamUrl,
+                updateStreamUrl = model::updateStreamUrl, updateEvent = model::updateEvent,
                 url = state.info.event.url, imageUrl = state.imageUrl,
                 updateUrl = model::updateUrl, saveImage = model::saveImage
-            )
-            EventControls(
-                progressEvent = model::progressEvent, status = state.info.event.status
             )
             SongsCard(
                 current = state.current, requests = state.requests
@@ -65,44 +65,59 @@ fun EventProfileScreen(id: Int, navigator: Navigator?) {
 }
 
 @Composable
-fun EventImage(
+fun EventControls(
+    streamUrl: String?,
+    updateStatus: String,
+    progressEvent: () -> Unit,
+    updateStreamUrl: (String) -> Unit,
+    status: EventStatus,
+    updateEvent: () -> Unit,
     url: String?,
     imageUrl: String?,
     updateUrl: (String) -> Unit,
-    saveImage: () -> Unit
-) {
-    Card {
-        Row(
-            modifier = Modifier.addBasePadding(),
-            verticalAlignment = Alignment.CenterVertically,
-            horizontalArrangement = Arrangement.spacedBy(BASE_PADDING)
-        ) {
-            Button(onClick = saveImage) { Text("Open File") }
-            TextField(
-                value = url ?: "", onValueChange = updateUrl,
-                modifier = Modifier.weight(1f)
-            )
-            AsyncImage(
-                model = imageUrl, contentDescription = "Event Image",
-                modifier = Modifier.height(60.dp)
-            )
-        }
-    }
-}
+    saveImage: () -> Unit,
 
-@Composable
-fun EventControls(
-    progressEvent: () -> Unit,
-    status: EventStatus
 ) {
     Card {
-        Row(
+        Column(
+            verticalArrangement = Arrangement.spacedBy(BASE_PADDING),
             modifier = Modifier.addBasePadding(),
-            verticalAlignment = Alignment.CenterVertically,
-            horizontalArrangement = Arrangement.spacedBy(BASE_PADDING)
         ) {
-            Button(onClick = progressEvent) { Text(status.getButtonText()) }
-            Text("Status: $status")
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+            ) {
+                // event image
+                Button(onClick = saveImage) { Text("Open File") }
+                TextField(
+                    value = url ?: "", onValueChange = updateUrl, label = { Text("Image URL") }
+                )
+                AsyncImage(
+                    model = imageUrl, contentDescription = "Event Image",
+                    modifier = Modifier.height(60.dp)
+                )
+            }
+
+            // progress event
+            Row(
+                verticalAlignment = Alignment.CenterVertically,
+                horizontalArrangement = Arrangement.spacedBy(BASE_PADDING)
+            ) {
+                Button(onClick = progressEvent) { Text(status.getButtonText()) }
+                Text("Status: $status")
+            }
+            // stream url
+            TextField(
+                value = streamUrl ?: "", onValueChange = updateStreamUrl,
+                modifier = Modifier.fillMaxWidth(), label = { Text("Stream URL") }
+            )
+            // update event
+            Row(
+                verticalAlignment = Alignment.CenterVertically,
+                horizontalArrangement = Arrangement.spacedBy(BASE_PADDING)
+            ) {
+                Button(onClick = updateEvent) { Text("Update Event") }
+                Text(updateStatus)
+            }
         }
     }
 }
@@ -118,7 +133,7 @@ fun SongsCard(
             verticalArrangement = Arrangement.spacedBy(BASE_PADDING)
         ) {
             Text("Current: ${current?.songName}")
-            val upcoming = requests.filter{ it != current }.joinToString(", ") { it.songName }
+            val upcoming = requests.filter { it != current }.joinToString(", ") { it.songName }
             Text("Upcoming: $upcoming")
         }
     }
@@ -142,7 +157,7 @@ fun SongList(
                     checked = request.performed,
                     onCheckedChange = { updatePerformed(request.id, it) }
                 )
-                Text("${request.songName} ")
+                Text("${request.songName}: ${request.notes}")
                 Spacer(modifier = Modifier.weight(1f))
                 IconButton(
                     onClick = { Scenes.songProfile.go(navigator, request.songId) }
