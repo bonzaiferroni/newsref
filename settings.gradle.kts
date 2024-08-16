@@ -19,7 +19,6 @@ dependencyResolutionManagement {
 }
 
 include(":composeApp")
-include(":chopui")
 include(":model")
 include(":server")
 // include(":web")

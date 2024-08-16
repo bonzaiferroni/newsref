@@ -72,9 +72,7 @@ kotlin {
             implementation(libs.ktor.client.content.negotiation)
             implementation(libs.ktor.client.auth)
             implementation(libs.ktor.serialization.kotlinx.json)
-            // implementation("moe.tlaster:precompose:1.6.0")
 
-            implementation(project(":chopui"))
             implementation(project(":model"))
         }
         desktopMain.dependencies {

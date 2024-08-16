@@ -13,16 +13,14 @@ import androidx.compose.material3.TextField
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.text.TextStyle
 import moe.tlaster.precompose.koin.koinViewModel
 import moe.tlaster.precompose.navigation.Navigator
 import org.jetbrains.compose.resources.ExperimentalResourceApi
 import org.koin.core.parameter.parametersOf
-import chopui.Constants.BASE_PADDING
-import chopui.FabConfig
-import chopui.addBasePadding
+import streetlight.app.chop.Constants.BASE_PADDING
+import streetlight.app.chop.FabConfig
+import streetlight.app.chop.addBasePadding
 import streetlight.app.ui.core.AppScaffold
-import streetlight.app.ui.core.monoStyle
 
 @OptIn(ExperimentalResourceApi::class)
 @Composable
@@ -74,7 +72,8 @@ fun SongProfileScreen(
                 label = { Text("Music") },
                 readOnly = !state.editing,
                 modifier = Modifier.fillMaxSize(),
-                textStyle = monoStyle
+                // textStyle = monoStyle
+                // TODO: reimplment monoStyle
             )
         }
     }

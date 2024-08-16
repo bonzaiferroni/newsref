@@ -3,8 +3,8 @@ package streetlight.app.ui.core
 import androidx.compose.runtime.Composable
 import moe.tlaster.precompose.navigation.Navigator
 import streetlight.app.Scenes
-import chopui.ChopScaffold
-import chopui.FabConfig
+import streetlight.app.chop.ChopScaffold
+import streetlight.app.chop.FabConfig
 
 @Composable
 fun AppScaffold(

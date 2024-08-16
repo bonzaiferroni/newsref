@@ -22,8 +22,8 @@ import moe.tlaster.precompose.koin.koinViewModel
 import moe.tlaster.precompose.navigation.Navigator
 import org.koin.core.parameter.parametersOf
 import streetlight.app.Scenes
-import chopui.dialogs.DatePickerDialog
-import chopui.dialogs.TimePickerDialog
+import streetlight.app.chop.DatePickerDialog
+import streetlight.app.chop.TimePickerDialog
 import streetlight.app.ui.debug.controls.DataEditor
 import streetlight.app.ui.debug.controls.DataMenu
 import streetlight.model.utils.toLocalDateTime

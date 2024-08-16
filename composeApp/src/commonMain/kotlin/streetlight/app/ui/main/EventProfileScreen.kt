@@ -27,8 +27,8 @@ import moe.tlaster.precompose.koin.koinViewModel
 import moe.tlaster.precompose.navigation.Navigator
 import org.koin.core.parameter.parametersOf
 import streetlight.app.Scenes
-import chopui.Constants.BASE_PADDING
-import chopui.addBasePadding
+import streetlight.app.chop.Constants.BASE_PADDING
+import streetlight.app.chop.addBasePadding
 import streetlight.app.ui.core.AppScaffold
 import streetlight.model.EventStatus
 import streetlight.model.dto.RequestInfo
