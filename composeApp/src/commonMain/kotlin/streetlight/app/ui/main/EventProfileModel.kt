@@ -108,10 +108,14 @@ class EventProfileModel(
 
     private suspend fun refreshSongs() {
         viewModelScope.launch(Dispatchers.IO) {
-            val requests = requestDao.getQueue(id)
-            val newRequest = requests.firstOrNull()
-            sv = sv.copy(requests = requests, current = newRequest)
-            nextTime = System.currentTimeMillis() + 10000
+            try {
+                val requests = requestDao.getQueue(id)
+                val newRequest = requests.firstOrNull()
+                sv = sv.copy(requests = requests, current = newRequest)
+                nextTime = System.currentTimeMillis() + 10000
+            } catch (e: Exception) {
+                sv = sv.copy(updateStatus = "Failed to refresh songs.")
+            }
         }
     }
 
