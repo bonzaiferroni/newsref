@@ -144,6 +144,8 @@ class EventProfileModel(
                 // initialDirectory = "/custom/initial/path"
             ) ?: return@launch
 
+            sv = sv.copy(updateStatus = "Uploading image.")
+
             val isSuccess = eventDao.postImage(
                 ImageUploadRequest(
                     eventId = event.id,
@@ -158,6 +160,20 @@ class EventProfileModel(
                 sv = sv.copy(updateStatus = "Failed to upload image.")
             }
         }
+    }
+
+    fun updateName(name: String) {
+        event = event.copy(name = name)
+    }
+
+    fun updateCashTips(cashTips: String) {
+        sv = sv.copy(cashTips = cashTips)
+        event = event.copy(cashTips = cashTips.toFloatOrNull())
+    }
+
+    fun updateCardTips(cardTips: String) {
+        sv = sv.copy(cardTips = cardTips)
+        event = event.copy(cardTips = cardTips.toFloatOrNull())
     }
 
     fun updateEvent() {
@@ -180,6 +196,8 @@ data class EventProfileState(
     val requests: List<RequestInfo> = emptyList(),
     val current: RequestInfo? = null,
     val updateStatus: String = "",
+    val cashTips: String = "",
+    val cardTips: String = "",
 ) : UiState
 
 fun EventStatus.getButtonText() = when (this) {

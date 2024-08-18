@@ -51,7 +51,10 @@ fun EventProfileScreen(id: Int, navigator: Navigator?) {
                 updateStatus = state.updateStatus, streamUrl = state.info.event.streamUrl,
                 updateStreamUrl = model::updateStreamUrl, updateEvent = model::updateEvent,
                 url = state.info.event.url, imageUrl = state.imageUrl,
-                updateUrl = model::updateUrl, saveImage = model::saveImage
+                updateUrl = model::updateUrl, saveImage = model::saveImage,
+                name = state.info.event.name, updateName = model::updateName,
+                cashTips = state.cashTips, updateCashTips = model::updateCashTips,
+                cardTips = state.cardTips, updateCardTips = model::updateCardTips
             )
             SongsCard(
                 current = state.current, requests = state.requests
@@ -76,7 +79,12 @@ fun EventControls(
     imageUrl: String?,
     updateUrl: (String) -> Unit,
     saveImage: () -> Unit,
-
+    name: String?,
+    updateName: (String) -> Unit,
+    cashTips: String,
+    updateCashTips: (String) -> Unit,
+    cardTips: String,
+    updateCardTips: (String) -> Unit,
 ) {
     Card {
         Column(
@@ -96,20 +104,41 @@ fun EventControls(
                     modifier = Modifier.height(60.dp)
                 )
             }
-
             // progress event
             Row(
                 verticalAlignment = Alignment.CenterVertically,
-                horizontalArrangement = Arrangement.spacedBy(BASE_PADDING)
+                horizontalArrangement = Arrangement.spacedBy(BASE_PADDING),
             ) {
                 Button(onClick = progressEvent) { Text(status.getButtonText()) }
                 Text("Status: $status")
             }
             // stream url
-            TextField(
-                value = streamUrl ?: "", onValueChange = updateStreamUrl,
-                modifier = Modifier.fillMaxWidth(), label = { Text("Stream URL") }
-            )
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.spacedBy(BASE_PADDING),
+            ) {
+                TextField(
+                    value = name ?: "", onValueChange = updateName,
+                    label = { Text("Event Name") }
+                )
+                TextField(
+                    value = streamUrl ?: "", onValueChange = updateStreamUrl,
+                    label = { Text("Stream URL") }
+                )
+            }
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.spacedBy(BASE_PADDING),
+            ) {
+                TextField(
+                    value = cashTips?.toString() ?: "", onValueChange = updateCashTips,
+                    label = { Text("Cash Tips") }
+                )
+                TextField(
+                    value = cardTips?.toString() ?: "", onValueChange = updateCardTips,
+                    label = { Text("Card Tips") }
+                )
+            }
             // update event
             Row(
                 verticalAlignment = Alignment.CenterVertically,
