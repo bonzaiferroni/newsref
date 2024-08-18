@@ -131,11 +131,11 @@ fun EventControls(
                 horizontalArrangement = Arrangement.spacedBy(BASE_PADDING),
             ) {
                 TextField(
-                    value = cashTips?.toString() ?: "", onValueChange = updateCashTips,
+                    value = cashTips, onValueChange = updateCashTips,
                     label = { Text("Cash Tips") }
                 )
                 TextField(
-                    value = cardTips?.toString() ?: "", onValueChange = updateCardTips,
+                    value = cardTips, onValueChange = updateCardTips,
                     label = { Text("Card Tips") }
                 )
             }
