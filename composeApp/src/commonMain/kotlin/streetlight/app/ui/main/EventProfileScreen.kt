@@ -9,12 +9,15 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material.icons.filled.Info
+import androidx.compose.material.icons.filled.ThumbUp
 import androidx.compose.material3.Button
 import androidx.compose.material3.Card
+import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
-import androidx.compose.material3.Switch
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
 import androidx.compose.runtime.Composable
@@ -29,8 +32,10 @@ import org.koin.core.parameter.parametersOf
 import streetlight.app.Scenes
 import streetlight.app.chop.Constants.BASE_PADDING
 import streetlight.app.chop.addBasePadding
+import streetlight.app.chop.addGap
 import streetlight.app.ui.core.AppScaffold
 import streetlight.model.EventStatus
+import streetlight.model.Song
 import streetlight.model.dto.RequestInfo
 
 @Composable
@@ -56,11 +61,12 @@ fun EventProfileScreen(id: Int, navigator: Navigator?) {
                 cashTips = state.cashTips, updateCashTips = model::updateCashTips,
                 cardTips = state.cardTips, updateCardTips = model::updateCardTips
             )
-            SongsCard(
-                current = state.current, requests = state.requests
+            NowPlaying(
+                current = state.info.currentSong, requests = state.info.requests,
+                clearNowPlaying = model::clearNowPlaying
             )
             SongList(
-                requests = state.requests, updatePerformed = model::updatePerformed,
+                requests = state.info.requests, updatePerformed = model::updatePerformed,
                 navigator = navigator
             )
         }
@@ -95,13 +101,19 @@ fun EventControls(
                 modifier = Modifier.fillMaxWidth(),
             ) {
                 // event image
-                Button(onClick = saveImage) { Text("Open File") }
+                Button(
+                    onClick = saveImage,
+                    modifier = Modifier.weight(.5f)
+                ) { Text("Open File") }
                 TextField(
-                    value = url ?: "", onValueChange = updateUrl, label = { Text("Image URL") }
+                    value = url ?: "", onValueChange = updateUrl, label = { Text("Image URL") },
+                    singleLine = true,
+                    modifier = Modifier.weight(1f)
                 )
                 AsyncImage(
                     model = imageUrl, contentDescription = "Event Image",
                     modifier = Modifier.height(60.dp)
+                        .weight(.5f)
                 )
             }
             // progress event
@@ -115,28 +127,34 @@ fun EventControls(
             // stream url
             Row(
                 modifier = Modifier.fillMaxWidth(),
+                verticalAlignment = Alignment.CenterVertically,
                 horizontalArrangement = Arrangement.spacedBy(BASE_PADDING),
             ) {
                 TextField(
                     value = name ?: "", onValueChange = updateName,
-                    label = { Text("Event Name") }
+                    label = { Text("Event Name") },
+                    modifier = Modifier.weight(1f)
                 )
                 TextField(
                     value = streamUrl ?: "", onValueChange = updateStreamUrl,
-                    label = { Text("Stream URL") }
+                    label = { Text("Stream URL") },
+                    modifier = Modifier.weight(1f)
                 )
             }
             Row(
                 modifier = Modifier.fillMaxWidth(),
+                verticalAlignment = Alignment.CenterVertically,
                 horizontalArrangement = Arrangement.spacedBy(BASE_PADDING),
             ) {
                 TextField(
                     value = cashTips, onValueChange = updateCashTips,
-                    label = { Text("Cash Tips") }
+                    label = { Text("Cash Tips") },
+                    modifier = Modifier.weight(1f)
                 )
                 TextField(
                     value = cardTips, onValueChange = updateCardTips,
-                    label = { Text("Card Tips") }
+                    label = { Text("Card Tips") },
+                    modifier = Modifier.weight(1f)
                 )
             }
             // update event
@@ -152,19 +170,31 @@ fun EventControls(
 }
 
 @Composable
-fun SongsCard(
-    current: RequestInfo?,
-    requests: List<RequestInfo>
+fun NowPlaying(
+    current: Song?,
+    requests: List<RequestInfo>,
+    clearNowPlaying: () -> Unit,
 ) {
-    Card {
-        Column(
-            modifier = Modifier.addBasePadding(),
-            verticalArrangement = Arrangement.spacedBy(BASE_PADDING)
+    Row(
+        horizontalArrangement = Arrangement.addGap(),
+        verticalAlignment = Alignment.CenterVertically
+    ) {
+        Card(
+            modifier = Modifier.weight(1f),
+            colors = CardDefaults.cardColors().copy(
+                containerColor = MaterialTheme.colorScheme.surfaceContainerLow
+            )
         ) {
-            Text("Current: ${current?.songName}")
-            val upcoming = requests.filter { it != current }.joinToString(", ") { it.songName }
-            Text("Upcoming: $upcoming")
+            Column(
+                modifier = Modifier.addBasePadding(),
+                verticalArrangement = Arrangement.addGap()
+            ) {
+                Text("Now playing: ${current?.name ?: ""}")
+                val upcoming = requests.joinToString(", ") { it.songName }
+                Text("Up next: $upcoming")
+            }
         }
+        Button(onClick = clearNowPlaying) { Text("Clear") }
     }
 }
 
@@ -175,23 +205,48 @@ fun SongList(
     navigator: Navigator?
 ) {
     LazyColumn(
-        modifier = Modifier.fillMaxWidth()
+        modifier = Modifier.fillMaxWidth(),
+        verticalArrangement = Arrangement.spacedBy(BASE_PADDING)
     ) {
         items(requests) { request ->
-            Row(
-                verticalAlignment = Alignment.CenterVertically,
-                horizontalArrangement = Arrangement.spacedBy(BASE_PADDING)
-            ) {
-                Switch(
-                    checked = request.performed,
-                    onCheckedChange = { updatePerformed(request.id, it) }
-                )
-                Text("${request.songName}: ${request.notes}")
-                Spacer(modifier = Modifier.weight(1f))
-                IconButton(
-                    onClick = { Scenes.songProfile.go(navigator, request.songId) }
-                ) {
-                    Icon(Icons.Default.Info, contentDescription = "Delete")
+            Card {
+                Column(
+                    verticalArrangement = Arrangement.spacedBy(BASE_PADDING),
+                    modifier = Modifier.addBasePadding(),
+                ){
+                    Row(
+                        verticalAlignment = Alignment.CenterVertically,
+                        horizontalArrangement = Arrangement.spacedBy(BASE_PADDING)
+                    ) {
+                        Text(request.songName)
+                        Spacer(modifier = Modifier.weight(1f))
+                        IconButton(
+                            onClick = { Scenes.songProfile.go(navigator, request.songId) }
+                        ) {
+                            Icon(Icons.Default.Info, contentDescription = "Info")
+                        }
+                        IconButton(
+                            onClick = { updatePerformed(request.id, false) }
+                        ) {
+                            Icon(
+                                Icons.Default.Delete,
+                                contentDescription = "Delete",
+                                tint = MaterialTheme.colorScheme.error
+                            )
+                        }
+                        IconButton(
+                            onClick = { updatePerformed(request.id, true) }
+                        ) {
+                            Icon(
+                                Icons.Default.ThumbUp,
+                                contentDescription = "Accept",
+                                tint = MaterialTheme.colorScheme.primary
+                            )
+                        }
+                    }
+                    if (request.notes.isNotBlank()) {
+                        Text(request.notes)
+                    }
                 }
             }
         }

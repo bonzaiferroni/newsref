@@ -44,15 +44,24 @@ class EventProfileModel(
             sv = sv.copy(info = sv.info.copy(event = value))
         }
 
-    fun updatePerformed(requestId: Int, performed: Boolean) {
+    fun updatePerformed(requestId: Int, accepted: Boolean) {
         viewModelScope.launch(Dispatchers.IO) {
-            val request = sv.requests
-                .find { it.id == requestId }
-                ?.let { Request(it.id, it.eventId, it.songId, it.time, performed) }
-                ?: return@launch
+            if (accepted) {
+                val request = sv.info.requests
+                    .find { it.id == requestId }
+                    ?.let { Request(it.id, it.eventId, it.songId, it.time, true) }
+                    ?: return@launch
+                event = event.copy(currentSongId = request.songId)
 
-            requestDao.update(request)
-            refreshSongs()
+                requestDao.update(request)
+                eventDao.update(event)
+                if (sv.info.requests.count() <= 1) {
+                    requestDao.getRandomRequest(event.id)
+                }
+            } else {
+                requestDao.delete(requestId)
+            }
+            refreshProfile()
         }
     }
 
@@ -88,7 +97,7 @@ class EventProfileModel(
         viewModelScope.launch(Dispatchers.IO) {
             while (true) {
                 if (System.currentTimeMillis() > nextTime) {
-                    refreshSongs()
+                    refreshProfile()
                 }
 
                 delay(10000)
@@ -106,13 +115,12 @@ class EventProfileModel(
         }
     }
 
-    private suspend fun refreshSongs() {
+    private suspend fun refreshProfile() {
         viewModelScope.launch(Dispatchers.IO) {
             try {
-                val requests = requestDao.getQueue(id)
-                val newRequest = requests.firstOrNull()
-                sv = sv.copy(requests = requests, current = newRequest)
                 nextTime = System.currentTimeMillis() + 10000
+                val info = eventDao.getInfo(id) ?: return@launch
+                sv = sv.copy(info = info)
             } catch (e: Exception) {
                 sv = sv.copy(updateStatus = "Failed to refresh songs.")
             }
@@ -188,13 +196,22 @@ class EventProfileModel(
             }
         }
     }
+
+    fun clearNowPlaying() {
+        viewModelScope.launch(Dispatchers.IO) {
+            event = event.copy(currentSongId = null)
+            eventDao.update(event)
+            if (sv.info.requests.isEmpty()) {
+                requestDao.getRandomRequest(event.id)
+            }
+            refreshEvent()
+        }
+    }
 }
 
 data class EventProfileState(
     val info: EventInfo = EventInfo(),
     val imageUrl: String? = null,
-    val requests: List<RequestInfo> = emptyList(),
-    val current: RequestInfo? = null,
     val updateStatus: String = "",
     val cashTips: String = "",
     val cardTips: String = "",

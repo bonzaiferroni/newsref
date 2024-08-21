@@ -15,4 +15,5 @@ data class EventInfo(
     val area: Area = Area(),
     val user: User = User(),
     val currentSong: Song? = null,
+    val requests: List<RequestInfo> = emptyList(),
 )

@@ -2,8 +2,8 @@ var host = 'http://localhost:8080';
 
 function init(h, eventId) {
     host = h;
-    getRequests(eventId);
-    setInterval(() => getRequests(eventId), 30000);
+    refreshEvent(eventId);
+    setInterval(() => refreshEvent(eventId), 30000);
 }
 
 function makeRequest(id, eventId) {
@@ -13,27 +13,27 @@ function makeRequest(id, eventId) {
         method: 'POST',
     })
         .then(response => response.json())
-        .then(data => getRequests(eventId))
+        .then(data => refreshEvent(eventId))
         .catch(error => console.error('Error:', error));
 }
 
 function postRequest(id, eventId) {
     let button = document.getElementById('song-button-' + id);
-    let checkbox = document.getElementById('luke-guitar');
-    let notesValue = checkbox.checked ? "true" : "false";
     let singer = document.getElementById('requester-sings').checked ? "requester"
         : document.getElementById('duet').checked ? "duet" : "luke";
-    let notes = `luke-guitar: ${notesValue}, singer: ${singer}`;
+    let notes = `singer: ${singer}`;
     let requesterName = document.getElementById('requester-name').value;
-    if (requesterName && requesterName.length > 0) {
-        notes += `, requester-name: ${requesterName}`;
+    let otherNotes = document.getElementById('other-notes').value;
+    if (otherNotes && otherNotes.length > 0) {
+        notes += `\nnotes: ${otherNotes}`;
     }
 
     let requestBody = {
         id: 0,
         eventId: eventId,
         songId: id,
-        notes: notes
+        notes: notes,
+        requesterName: requesterName,
     };
 
     button.disabled = true;
@@ -43,13 +43,13 @@ function postRequest(id, eventId) {
         body: JSON.stringify(requestBody)
     })
         .then(response => response.json())
-        .then(data => getRequests(eventId))
+        .then(data => refreshEvent(eventId))
         .catch(error => console.error('Error:', error));
 }
 
-function getRequests(eventId) {
-    console.log('getting requests');
-    fetch(host + '/api/v1/event_profile/' + eventId, {
+function refreshEvent(eventId) {
+    console.log('refreshing event');
+    fetch(host + '/api/v1/event_info/' + eventId, {
         method: 'GET',
     })
         .then(response => response.json())
@@ -57,7 +57,12 @@ function getRequests(eventId) {
         .catch(error => console.error('Error:', error));
 }
 
-function acceptRequests(requests) {
+function acceptRequests(eventInfo) {
+    setRequests(eventInfo.requests);
+    document.getElementById('now-playing').innerHTML = eventInfo.currentSong?.name || '';
+}
+
+function setRequests(requests) {
     let requestSpan = document.getElementById('requests');
     let buttons = document.getElementsByClassName('song-button');
     for (let i = 0; i < buttons.length; i++) {

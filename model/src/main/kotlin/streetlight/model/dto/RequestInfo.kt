@@ -11,6 +11,7 @@ data class RequestInfo(
     val songName: String,
     val artist: String?,
     val notes: String,
+    val requesterName: String? = null,
     val time: Long = 0L,
     val performed: Boolean = false,
 )

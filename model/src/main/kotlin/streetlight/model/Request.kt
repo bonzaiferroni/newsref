@@ -10,4 +10,5 @@ data class Request(
     val time: Long = 0L,
     val performed: Boolean = false,
     val notes: String = "",
+    val requesterName: String? = null,
 )
