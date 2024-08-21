@@ -51,7 +51,7 @@
 
 .request-row .property {
     font-size: 0.75rem; /* Smaller text */
-    color: #666666; /* Medium grey */
+    color: var(--pico-muted-color);
     text-transform: uppercase; /* Uppercase text */
     text-decoration: underline; /* Underlined text */
 }
@@ -123,4 +123,8 @@ body {
 
 .venmo {
     text-align: center;
+}
+
+.label-text {
+    color: var(--pico-muted-color);
 }
