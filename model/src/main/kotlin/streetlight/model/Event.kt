@@ -15,7 +15,7 @@ data class Event(
     val name: String? = null, //
     val description: String? = null, //
     val status: EventStatus = EventStatus.Pending,
-    val currentSongId: Int? = null,
+    val currentRequestId: Int? = null,
     val cashTips: Float? = null,
     val cardTips: Float? = null,
 )

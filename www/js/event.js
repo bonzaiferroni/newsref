@@ -59,7 +59,11 @@ function refreshEvent(eventId) {
 
 function acceptRequests(eventInfo) {
     setRequests(eventInfo.requests);
-    document.getElementById('now-playing').innerHTML = eventInfo.currentSong?.name || '';
+    let nowPlaying = '';
+    if (eventInfo.currentRequest) {
+        nowPlaying = printRequest(eventInfo.currentRequest);
+    }
+    document.getElementById('now-playing').innerHTML = nowPlaying;
 }
 
 function setRequests(requests) {
@@ -79,5 +83,13 @@ function setRequests(requests) {
     });
     requestSpan.innerHTML = requests
         .filter(x => !x.performed)
-        .map(x => x.songName).join(', ');
+        .map(printRequest).join(', ');
+}
+
+function printRequest(request) {
+    let str = request.songName;
+    if (request.requesterName) {
+        str += ` (requested by ${request.requesterName})`;
+    }
+    return str;
 }

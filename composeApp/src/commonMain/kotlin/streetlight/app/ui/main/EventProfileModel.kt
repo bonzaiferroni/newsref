@@ -18,7 +18,6 @@ import streetlight.model.EventStatus
 import streetlight.model.Request
 import streetlight.model.dto.EventInfo
 import streetlight.model.dto.ImageUploadRequest
-import streetlight.model.dto.RequestInfo
 import streetlight.model.utils.toFormatString
 import streetlight.model.utils.toLocalDateTime
 import kotlin.io.encoding.Base64
@@ -49,12 +48,12 @@ class EventProfileModel(
             if (accepted) {
                 val request = sv.info.requests
                     .find { it.id == requestId }
-                    ?.let { Request(it.id, it.eventId, it.songId, it.time, true) }
+                    ?.let { Request(it.id, it.eventId, it.songId, it.time, true, it.notes, it.requesterName) }
                     ?: return@launch
-                event = event.copy(currentSongId = request.songId)
-
                 requestDao.update(request)
+                event = event.copy(currentRequestId = requestId)
                 eventDao.update(event)
+
                 if (sv.info.requests.count() <= 1) {
                     requestDao.getRandomRequest(event.id)
                 }
@@ -199,7 +198,7 @@ class EventProfileModel(
 
     fun clearNowPlaying() {
         viewModelScope.launch(Dispatchers.IO) {
-            event = event.copy(currentSongId = null)
+            event = event.copy(currentRequestId = null)
             eventDao.update(event)
             if (sv.info.requests.isEmpty()) {
                 requestDao.getRandomRequest(event.id)

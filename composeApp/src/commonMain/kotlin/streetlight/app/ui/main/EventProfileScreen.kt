@@ -35,7 +35,6 @@ import streetlight.app.chop.addBasePadding
 import streetlight.app.chop.addGap
 import streetlight.app.ui.core.AppScaffold
 import streetlight.model.EventStatus
-import streetlight.model.Song
 import streetlight.model.dto.RequestInfo
 
 @Composable
@@ -62,7 +61,7 @@ fun EventProfileScreen(id: Int, navigator: Navigator?) {
                 cardTips = state.cardTips, updateCardTips = model::updateCardTips
             )
             NowPlaying(
-                current = state.info.currentSong, requests = state.info.requests,
+                current = state.info.currentRequest, requests = state.info.requests,
                 clearNowPlaying = model::clearNowPlaying
             )
             SongList(
@@ -171,7 +170,7 @@ fun EventControls(
 
 @Composable
 fun NowPlaying(
-    current: Song?,
+    current: RequestInfo?,
     requests: List<RequestInfo>,
     clearNowPlaying: () -> Unit,
 ) {
@@ -189,7 +188,9 @@ fun NowPlaying(
                 modifier = Modifier.addBasePadding(),
                 verticalArrangement = Arrangement.addGap()
             ) {
-                Text("Now playing: ${current?.name ?: ""}")
+                if (current != null) {
+                    Text("Now playing: ${current.songName} ${current.requesterName?.let { "($it)" } ?: ""}")
+                }
                 val upcoming = requests.joinToString(", ") { it.songName }
                 Text("Up next: $upcoming")
             }
@@ -243,6 +244,9 @@ fun SongList(
                                 tint = MaterialTheme.colorScheme.primary
                             )
                         }
+                    }
+                    if (!request.requesterName.isNullOrBlank()) {
+                        Text("Requested by ${request.requesterName}")
                     }
                     if (request.notes.isNotBlank()) {
                         Text(request.notes)
