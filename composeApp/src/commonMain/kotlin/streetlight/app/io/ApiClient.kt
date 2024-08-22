@@ -27,8 +27,8 @@ class ApiClient {
     }
 
     companion object{
-        val baseAddress = "http://192.168.1.122:8080"
-//            val baseAddress = "https://streetlight.ing"
+//        val baseAddress = "http://192.168.1.122:8080"
+            val baseAddress = "https://streetlight.ing"
         val apiAddress
             get() = "$baseAddress/api/v1"
     }
