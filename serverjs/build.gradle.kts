@@ -10,9 +10,9 @@ kotlin {
     js(IR) {
         useCommonJs()
         browser {
-            @OptIn(ExperimentalDistributionDsl::class)
-            distribution {
-                outputDirectory.set(projectDir.resolve("output"))
+            webpackTask {
+                mainOutputFileName = "main.bundle.js"
+                outputDirectory = File(projectDir.resolve("../www/js").path)
             }
         }
         binaries.executable()

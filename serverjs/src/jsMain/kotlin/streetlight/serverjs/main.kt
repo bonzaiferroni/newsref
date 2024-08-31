@@ -1,11 +1,9 @@
 package streetlight.serverjs
 
-import kotlinx.browser.document
-
 var host = "http://localhost:8080"
 
 fun init(h: String, eventId:Int) {
-    host = h;
+    host = h
     refreshEvent(eventId)
 }
 
