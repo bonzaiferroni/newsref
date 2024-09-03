@@ -8,9 +8,9 @@ import kotlin.js.Promise
 class AreaStore(
     private val client: StoreClient = StoreClient(),
 ) {
-    suspend fun create(area: Area): Int? = client.authRequest(HttpMethod.POST, "/areas", area)
+    suspend fun create(area: Area): Int? = client.create("/areas", area)
     fun getAll(): Promise<List<Area>> = client.get("/areas")
     fun get(id: Int): Promise<Area?> = client.get("/areas/$id")
-    fun update(area: Area): Promise<Boolean> = client.put("/areas", area)
-    fun delete(id: Int): Promise<Boolean> = client.delete("/areas", id)
+    suspend fun update(area: Area): Boolean = client.update("/areas", area.id, area)
+    suspend fun delete(id: Int): Boolean = client.delete("/areas/", id)
 }
