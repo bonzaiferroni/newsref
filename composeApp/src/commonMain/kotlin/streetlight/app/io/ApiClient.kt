@@ -15,9 +15,9 @@ import io.ktor.http.HttpMethod
 import io.ktor.http.HttpStatusCode
 import io.ktor.http.contentType
 import io.ktor.serialization.kotlinx.json.json
-import kotlinx.serialization.Serializable
 import kotlinx.serialization.json.Json
 import streetlight.model.User
+import streetlight.model.dto.AuthInfo
 
 class ApiClient {
     val web = HttpClient(CIO) {
@@ -97,13 +97,8 @@ class ApiClient {
             User(name = username, password = password)
         )
         if (response.status == HttpStatusCode.OK) {
-            token = response.body<TokenBox>().token
+            token = response.body<AuthInfo>().token
         }
         return response
     }
 }
-
-@Serializable
-data class TokenBox(
-    val token: String,
-)

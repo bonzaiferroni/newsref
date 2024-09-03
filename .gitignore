@@ -23,3 +23,5 @@ backup.json
 /www/uploads
 
 **/.kotlin-js-store/
+
+/.kotlin/

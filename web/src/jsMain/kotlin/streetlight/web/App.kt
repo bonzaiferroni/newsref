@@ -1,37 +1,50 @@
 package streetlight.web
 
 import io.kvision.*
-import io.kvision.html.*
-import io.kvision.navbar.navbar
-import io.kvision.panel.dockPanel
-import io.kvision.panel.hPanel
-import io.kvision.panel.root
-import io.kvision.panel.vPanel
-import io.kvision.table.TableType
-import io.kvision.table.cell
-import io.kvision.table.row
-import io.kvision.table.table
+import io.kvision.core.*
+import io.kvision.html.div
+import io.kvision.panel.*
+import io.kvision.routing.Routing
 import io.kvision.theme.Theme
 import io.kvision.theme.ThemeManager
-import io.kvision.utils.px
+import streetlight.web.content.aboutPage
+import streetlight.web.content.homePage
+import streetlight.web.nav.PageConfig
+import streetlight.web.nav.portal
 
 class App : Application() {
     init {
         require("./css/kvapp.css")
         ThemeManager.init(initialTheme = Theme.DARK, remember = false)
+        Routing.init()
     }
 
     override fun start() {
         root("kvapp") {
-            navbar("NavBar") {
-                nav {
-                    link("Home", "./", icon = "fas fa-home")
-                    link("About", "./", icon = "fas fa-info")
-                    link("Contact", "./", icon = "fas fa-envelope")
+            portal(
+                PageConfig("Home", "/", "fas fa-home") {
+                    homePage()
+                },
+                PageConfig("About", "/about", "fas fa-info") {
+                    aboutPage()
+                },
+                PageConfig("Contact", "/contact", "fas fa-envelope") {
+                    div("Contact page")
                 }
-            }
-            penguin()
+            )
         }
+//        root("kvapp") {
+//            vPanel {
+//                tabPanel(scrollableTabs = true) {
+//                    tab("HTML", "fas fa-bars", route = "/basic") {
+//                        div("Basic tab")
+//                    }
+//                    tab("Forms", "fas fa-edit", route = "/forms") {
+//                        div("Forms tab")
+//                    }
+//                }
+//            }
+//        }
     }
 }
 
@@ -39,7 +52,7 @@ fun main() {
     startApplication(
         ::App, module.hot,
         BootstrapModule,
-        BootstrapCssModule,
+        // BootstrapCssModule,
         CoreModule,
         FontAwesomeModule
     )

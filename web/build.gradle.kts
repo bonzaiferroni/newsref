@@ -34,6 +34,11 @@ kotlin {
         implementation("io.kvision:kvision-i18n:$kvisionVersion")
         implementation("io.kvision:kvision-imask:$kvisionVersion")
         implementation("io.kvision:kvision-fontawesome:$kvisionVersion")
+        implementation("io.kvision:kvision-routing-navigo:$kvisionVersion")
+        implementation("io.kvision:kvision-state:$kvisionVersion")
+        implementation("io.kvision:kvision-rest:$kvisionVersion")
+
+        implementation(project(":model"))
     }
     sourceSets["jsTest"].dependencies {
         implementation(kotlin("test-js"))

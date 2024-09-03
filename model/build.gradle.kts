@@ -1,15 +1,17 @@
 plugins {
-    id("java-library")
-    alias(libs.plugins.kotlinJvm)
+    alias(libs.plugins.kotlinMultiplatform)
     alias(libs.plugins.serialization)
 }
 
-java {
-    sourceCompatibility = JavaVersion.VERSION_17
-    targetCompatibility = JavaVersion.VERSION_17
-}
-
-dependencies {
-    implementation(libs.kotlinx.serialization.json)
-    implementation(libs.kotlinx.datetime)
+kotlin {
+    js().browser()
+    jvm()
+    sourceSets {
+        val commonMain by getting {
+            dependencies {
+                implementation(libs.kotlinx.serialization.json)
+                implementation(libs.kotlinx.datetime)
+            }
+        }
+    }
 }
