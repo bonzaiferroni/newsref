@@ -8,4 +8,5 @@ class EventStore(
 ) {
     suspend fun create(event: Event): Int? = client.create("/events", event)
     suspend fun getInfo(id: Int): EventInfo = client.get("/event_info/$id")
+    suspend fun getInfos(): List<EventInfo> = client.get("/event_info")
 }

@@ -13,9 +13,11 @@ import io.kvision.navbar.navLink
 import io.kvision.navbar.navbar
 import io.kvision.routing.Routing
 import io.kvision.utils.perc
+import io.kvision.utils.plus
 import io.kvision.utils.px
 import kotlinx.browser.window
-import streetlight.web.utils.getIdFromUrl
+import streetlight.web.Constants
+import streetlight.web.getIdFromUrl
 
 fun Container.portal(
     routing: Routing,
@@ -47,7 +49,7 @@ fun Container.portal(
 
         pages.forEach { page ->
             val div = div {
-                padding = 20.px
+                padding = Constants.defaultPad
                 transition = Transition("all", duration, "ease-in-out")
                 position = Position.ABSOLUTE
                 width = 100.perc
@@ -84,7 +86,11 @@ fun Container.portal(
                 current = PageCache(page.route, div)
                 div.updateVisibility(true)
             }
+            div.updateVisibility(false)
             routing.on(page.route, { loadPage() })
+            if (routing.current?.firstOrNull()?.route?.name == page.route) {
+                loadPage()
+            }
         }
     }
     routing.resolve()
@@ -94,10 +100,10 @@ fun Div.updateVisibility(visible: Boolean) {
     if (visible) {
         this.opacity = 1.0
         zIndex = 1
-        paddingTop = 20.px
+        paddingTop = Constants.defaultPad
     } else {
         this.opacity = 0.0
         zIndex = 0
-        paddingTop = 30.px
+        paddingTop = Constants.defaultPad + 10
     }
 }

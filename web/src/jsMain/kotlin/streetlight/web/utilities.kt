@@ -1,7 +1,8 @@
-package streetlight.web.utils
+package streetlight.web
 
 import io.kvision.core.Container
-import io.kvision.html.Div
+import io.kvision.core.CssSize
+import io.kvision.core.UNIT
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch

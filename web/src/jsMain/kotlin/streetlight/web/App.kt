@@ -1,13 +1,13 @@
 package streetlight.web
 
 import io.kvision.*
-import io.kvision.html.div
 import io.kvision.panel.*
 import io.kvision.routing.Routing
 import io.kvision.theme.Theme
 import io.kvision.theme.ThemeManager
 import streetlight.web.content.aboutPage
 import streetlight.web.content.eventPage
+import streetlight.web.content.eventProfile
 import streetlight.web.content.homePage
 import streetlight.web.nav.BasicPageBuilder
 import streetlight.web.nav.IdPageBuilder
@@ -32,8 +32,11 @@ class App : Application() {
                 PageConfig("About", "/about", "fas fa-info", true, BasicPageBuilder {
                     aboutPage()
                 }),
+                PageConfig("Events", "/event", "fas fa-info", true, BasicPageBuilder {
+                    eventPage()
+                }),
                 PageConfig("Event", "/event/:id", "fas fa-envelope", false, IdPageBuilder {
-                    eventPage(it)
+                    eventProfile(it)
                 })
             )
         }

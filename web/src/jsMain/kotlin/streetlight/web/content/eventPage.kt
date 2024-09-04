@@ -1,40 +1,34 @@
 package streetlight.web.content
 
-import io.kvision.core.onChangeLaunch
 import io.kvision.html.Div
 import io.kvision.html.link
 import io.kvision.html.p
 import io.kvision.panel.hPanel
 import io.kvision.panel.vPanel
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.launch
+import streetlight.model.dto.EventInfo
+import streetlight.web.Constants.defaultGap
+import streetlight.web.Constants.spacing
 import streetlight.web.io.EventStore
-import streetlight.web.utils.coScope
-import streetlight.web.utils.launchedEffect
+import streetlight.web.launchedEffect
 
-fun Div.eventPage(id: Int) {
-    val eventStore = EventStore()
-    vPanel(spacing = 10) {
-        hPanel(spacing = 10) {
-            link("back", "#/event/${id - 1}")
-            link("next", "#/event/${id + 1}")
-        }
-        launchedEffect {
-            try {
-                val info = eventStore.getInfo(id)
-                // add elements to the page
-                p(info.location.name)
-            } catch (e: Exception) {
-                p("(nope: $id)")
-                console.log(e)
-            }
+fun Div.eventPage() {
+    val store = EventStore()
+    launchedEffect {
+        try {
+            val infos = store.getInfos()
+            // add elements to the page
+            inflateInfos(store, infos)
+        } catch (e: Exception) {
+            p("(nope: $id)")
+            console.log(e)
         }
     }
 }
 
-//    div("event-image") {
-//        // image(info.event.imageUrl ?: "static/img/bridge.jpg")
-//        p(id.toString())
-//    }
-// }
+suspend fun Div.inflateInfos(store: EventStore, infos: List<EventInfo>) {
+    vPanel(spacing = defaultGap) {
+        infos.forEach { info ->
+            link(info.location.name, "#/event/${info.event.id}")
+        }
+    }
+}

@@ -1,9 +1,13 @@
 package streetlight.web
 
+import io.kvision.core.CssSize
+import io.kvision.core.UNIT
 import io.kvision.utils.px
 
 object Constants {
-    val bodyPadding = 20.px
+    val spacing = 20
+    val defaultPad = CssSize(spacing, UNIT.px)
+    val defaultGap = spacing / 2
 }
 
 const val XHR_ERROR: Short = 0
