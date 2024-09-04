@@ -71,14 +71,11 @@ class StoreClient {
     }
 
     suspend inline fun <reified T: Any> authRequest(
-        requester: () -> Promise<RestResponse<T>>
-    ): RestResponse<T>? {
+        requester: () -> Promise<T>
+    ): T? {
         console.log("requesting")
         try {
-            val result: RestResponse<T> = requester().await()
-            if (result.response.status == HTTP_OK) {
-                return result
-            }
+            return requester().await()
         } catch (e: Unauthorized) {
             console.log("authorizing")
             val authorized = login()
@@ -89,8 +86,8 @@ class StoreClient {
         return null
     }
 
-    inline fun <reified T> get(endpoint: String): Promise<T> {
-        return restClient.call("$apiAddress$endpoint")
+    suspend inline fun <reified T: Any> get(endpoint: String): T {
+        return restClient.call<T>("$apiAddress$endpoint").await()
     }
 
     suspend fun delete(endpoint: String, id: Int): Boolean {

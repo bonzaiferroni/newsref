@@ -7,7 +7,10 @@ import io.kvision.routing.Routing
 import io.kvision.theme.Theme
 import io.kvision.theme.ThemeManager
 import streetlight.web.content.aboutPage
+import streetlight.web.content.eventPage
 import streetlight.web.content.homePage
+import streetlight.web.nav.BasicPageBuilder
+import streetlight.web.nav.IdPageBuilder
 import streetlight.web.nav.PageConfig
 import streetlight.web.nav.portal
 
@@ -23,18 +26,15 @@ class App : Application() {
         root("kvapp") {
             portal(
                 routing,
-                PageConfig("Home", "/", "fas fa-home") {
+                PageConfig("Home", "/", "fas fa-home", true, BasicPageBuilder {
                     homePage()
-                    console.log("home!")
-                },
-                PageConfig("About", "/about", "fas fa-info") {
+                }),
+                PageConfig("About", "/about", "fas fa-info", true, BasicPageBuilder {
                     aboutPage()
-                    console.log("about!")
-                },
-                PageConfig("Contact", "/contact", "fas fa-envelope") {
-                    div("Contact page")
-                    console.log("contact!")
-                }
+                }),
+                PageConfig("Event", "/event/:id", "fas fa-envelope", false, IdPageBuilder {
+                    eventPage(it)
+                })
             )
         }
     }

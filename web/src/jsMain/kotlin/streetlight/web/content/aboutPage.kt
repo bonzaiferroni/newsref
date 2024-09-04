@@ -45,7 +45,7 @@ fun Container.aboutPage() {
 suspend fun Container.refreshAreas(store: AreaStore) {
 
     this.removeAll()
-    val areas = store.getAll().asDeferred().await()
+    val areas = store.getAll()
     suspend fun refresh() { refreshAreas(store) }
     areas.forEach { area ->
         val areaName = ObservableValue(area.name)

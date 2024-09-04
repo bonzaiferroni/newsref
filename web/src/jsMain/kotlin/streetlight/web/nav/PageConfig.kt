@@ -1,13 +1,26 @@
 package streetlight.web.nav
 
-import io.kvision.core.Container
+import io.kvision.html.Div
 
 data class PageConfig(
     val name: String,
     val route: String,
     val icon: String,
-    val content: Container.() -> Unit
+    val navLink: Boolean,
+    val builder: PageBuilder
 ) {
-    val hashRoute: String
-        get() = "#$route"
+    val linkRoute: String
+        get() = "#${route.substringBefore("/:")}"
 }
+
+abstract class PageBuilder {
+
+}
+
+data class BasicPageBuilder(
+    val content: Div.() -> Unit
+) : PageBuilder()
+
+data class IdPageBuilder(
+    val content: Div.(Int) -> Unit
+) : PageBuilder()
