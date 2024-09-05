@@ -1,22 +1,20 @@
 package streetlight.web.core
 
-import io.kvision.core.Container
-import io.kvision.core.Position
-import io.kvision.core.Transition
-import io.kvision.html.Div
-import io.kvision.html.P
-import io.kvision.html.div
-import io.kvision.html.header
+import io.kvision.core.*
+import io.kvision.html.*
 import io.kvision.navbar.NavbarExpand
 import io.kvision.navbar.nav
 import io.kvision.navbar.navLink
 import io.kvision.navbar.navbar
+import io.kvision.panel.hPanel
+import io.kvision.panel.vPanel
 import io.kvision.routing.Routing
 import io.kvision.utils.perc
 import io.kvision.utils.plus
 import io.kvision.utils.px
 import kotlinx.browser.window
 import streetlight.web.Constants
+import streetlight.web.Constants.defaultGap
 import streetlight.web.getIdFromUrl
 
 fun Container.portal(
@@ -25,11 +23,31 @@ fun Container.portal(
 ) {
     // add header and add nav menu
     header {
-        navbar("streetlight", expand = NavbarExpand.ALWAYS) {
-            nav {
+        nav(className = "navbar ${BsBgColor.BODYTERTIARY.className}") {
+            paddingTop = Constants.halfPad
+            paddingBottom = Constants.halfPad
+            paddingLeft = Constants.defaultPad
+            paddingRight = Constants.defaultPad
+            hPanel(spacing = defaultGap, alignItems = AlignItems.CENTER) {
+                image("img/logo-small.png", className = "glow-effect-soft") {
+                    width = 30.px
+                }
+                link(label = "", url = "#/") {
+                    h2 {
+                        color = Color("var(--bs-navbar-brand-color)")
+                        span("streetl")
+                        span("i", className = "glow-effect") {
+                            color = Color("BurlyWood")
+                        }
+                        span("ght")
+                    }
+                }
+            }
+
+            hPanel(spacing = defaultGap) {
                 pages.forEach { page ->
                     if (!page.navLink) return@forEach
-                    navLink(page.name, url = page.linkRoute)
+                    link(className = "navbar-link", label = page.name, url = page.linkRoute)
                 }
             }
         }
@@ -58,7 +76,7 @@ fun Container.portal(
             }
 
             fun loadPage() {
-                //console.log("Route ${page.route} activated")
+                console.log("Route ${page.route} activated")
 
                 when (page.builder) {
                     is BasicPageBuilder -> {
