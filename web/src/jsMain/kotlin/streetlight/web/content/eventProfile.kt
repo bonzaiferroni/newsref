@@ -1,6 +1,7 @@
 package streetlight.web.content
 
 import io.kvision.core.JustifyContent
+import io.kvision.core.onClickLaunch
 import io.kvision.form.check.radio
 import io.kvision.form.check.radioGroup
 import io.kvision.form.form
@@ -11,12 +12,19 @@ import io.kvision.panel.VPanel
 import io.kvision.panel.hPanel
 import io.kvision.panel.vPanel
 import io.kvision.utils.perc
+import streetlight.model.Request
 import streetlight.model.dto.EventInfo
 import streetlight.web.components.card
 import streetlight.web.io.EventStore
+import streetlight.web.io.RequestStore
+import streetlight.web.io.SongStore
+
+val eventStore = EventStore()
+val requestStore = RequestStore()
+val songStore = SongStore()
 
 fun Div.eventProfile(id: Int) {
-    val store = EventStore()
+
     val panel = vPanel(spacing = Constants.defaultGap) {
         hPanel(spacing = Constants.defaultGap) {
             link("back", "#/event/${id - 1}")
@@ -25,9 +33,9 @@ fun Div.eventProfile(id: Int) {
     }
     launchedEffect {
         try {
-            val info = store.getInfo(id)
+            val info = eventStore.getInfo(id)
             // add elements to the page
-            panel.addElements(id, info, store)
+            panel.addElements(id, info)
         } catch (e: Exception) {
             p("(nope: $id)")
             console.log(e)
@@ -35,7 +43,7 @@ fun Div.eventProfile(id: Int) {
     }
 }
 
-suspend fun VPanel.addElements(id: Int, info: EventInfo, store: EventStore) {
+suspend fun VPanel.addElements(id: Int, info: EventInfo) {
     image("img/bridge.jpg") {
         width = 100.perc
     }
@@ -73,5 +81,24 @@ suspend fun VPanel.addElements(id: Int, info: EventInfo, store: EventStore) {
             }
         }
     }
-
+    val songs = songStore.getAll()
+    songs.forEach { song ->
+        val requested = info.requests.any { it.songId == song.id }
+        card {
+            hPanel(justify = JustifyContent.SPACEBETWEEN) {
+                vPanel {
+                    p(song.name)
+                    p(song.artist)
+                }
+                button(if (requested) "requested" else "request") {
+                    disabled = requested
+                    onClickLaunch {
+                        val request = Request(eventId = info.event.id, songId = song.id)
+                        val result = requestStore.create(request)
+                        console.log(result)
+                    }
+                }
+            }
+        }
+    }
 }

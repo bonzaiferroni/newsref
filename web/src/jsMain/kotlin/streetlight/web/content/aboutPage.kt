@@ -28,7 +28,7 @@ fun Container.aboutPage() {
         }
         hPanel(justify = JustifyContent.CENTER, spacing = 10) {
             text() {
-                placeholder = "Area name"
+                placeholder = "area"
             }.bindTo(areaName)
             val createButton = button("create")
             createButton.onClickLaunch {
