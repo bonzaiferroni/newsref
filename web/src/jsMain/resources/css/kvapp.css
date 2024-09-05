@@ -1,0 +1,44 @@
+/* Reset margins, paddings, and borders */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+/* Set base font size and family */
+html, body {
+    height: 100%;
+    font-size: 100%;
+    font-family: sans-serif;
+    line-height: 1.5;
+}
+
+/* Remove list styles */
+ul, ol {
+    list-style: none;
+}
+
+/* Remove default link styles */
+a {
+    text-decoration: none;
+    color: inherit;
+}
+
+/* Reset heading and paragraph margins */
+h1, h2, h3, h4, h5, h6, p {
+    margin: 0;
+    font-weight: normal;
+}
+
+/* Make images scale responsively */
+img {
+    max-width: 100%;
+    height: auto;
+    display: block;
+}
+
+/* Ensure tables collapse borders */
+table {
+    border-collapse: collapse;
+    border-spacing: 0;
+}

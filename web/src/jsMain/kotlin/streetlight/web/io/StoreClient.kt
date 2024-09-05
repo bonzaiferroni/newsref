@@ -11,6 +11,7 @@ import streetlight.model.Area
 import streetlight.model.User
 import streetlight.model.dto.AuthInfo
 import streetlight.web.HTTP_OK
+import streetlight.web.baseAddress
 import kotlin.js.Promise
 
 class StoreClient {
@@ -20,9 +21,6 @@ class StoreClient {
     private val username = "admin"
     private val password = "admin"
 
-    private val baseAddress = "http://192.168.1.122:8080"
-
-    // val baseAddress = "https://streetlight.ing"
     val apiAddress
         get() = "$baseAddress/api/v1"
 
