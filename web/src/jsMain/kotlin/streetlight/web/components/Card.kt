@@ -5,11 +5,7 @@ import io.kvision.core.ClassSetBuilder
 import io.kvision.core.Container
 import io.kvision.html.Div
 import io.kvision.html.div
-import io.kvision.navbar.Navbar
-import io.kvision.navbar.NavbarColor
 import io.kvision.panel.SimplePanel
-import streetlight.web.Constants.defaultGap
-import streetlight.web.Constants.defaultPad
 import streetlight.web.Constants.halfPad
 
 class Card(

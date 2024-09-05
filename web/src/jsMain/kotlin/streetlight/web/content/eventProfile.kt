@@ -1,5 +1,10 @@
 package streetlight.web.content
 
+import io.kvision.core.JustifyContent
+import io.kvision.form.check.radio
+import io.kvision.form.check.radioGroup
+import io.kvision.form.form
+import io.kvision.form.text.text
 import streetlight.web.*
 import io.kvision.html.*
 import io.kvision.panel.VPanel
@@ -31,12 +36,42 @@ fun Div.eventProfile(id: Int) {
 }
 
 suspend fun VPanel.addElements(id: Int, info: EventInfo, store: EventStore) {
-    h1(info.location.name)
     image("img/bridge.jpg") {
         width = 100.perc
     }
+    h1(info.user.name + " @ " + info.location.name)
     p(info.event.description ?: description)
     card {
-        p("this is a card")
+        p {
+            span("now playing: ")
+            span(info.currentRequest?.songName)
+        }
+        p {
+            span("next up: ")
+            span(info.requests.joinToString(", ") { it.songName })
+        }
     }
+    h2("Request a song")
+    form {
+        hPanel(spacing = Constants.defaultGap, justify = JustifyContent.SPACEEVENLY) {
+            vPanel(spacing = Constants.defaultGap) {
+                width = 50.perc
+                radioGroup(label = "Options") {
+                    radio(true, label = "Luke sings")
+                    radio(false, label = "Duet")
+                    radio(false, label = "I'll sing solo")
+                }
+            }
+            vPanel(spacing = Constants.defaultGap) {
+                width = 50.perc
+                text() {
+                    placeholder = "Your name (optional)"
+                }
+                text() {
+                    placeholder = "Other notes (optional)"
+                }
+            }
+        }
+    }
+
 }
