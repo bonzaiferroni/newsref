@@ -15,6 +15,7 @@ import io.kvision.utils.px
 import kotlinx.browser.window
 import streetlight.web.Constants
 import streetlight.web.Constants.defaultGap
+import streetlight.web.Constants.spacing
 import streetlight.web.getIdFromUrl
 
 fun Container.portal(
@@ -27,7 +28,7 @@ fun Container.portal(
             paddingTop = Constants.halfPad
             paddingBottom = Constants.halfPad
             paddingLeft = Constants.defaultPad
-            paddingRight = Constants.defaultPad
+            paddingRight = Constants.halfPad
             hPanel(spacing = defaultGap, alignItems = AlignItems.CENTER) {
                 image("img/logo-small.png", className = "glow-effect-soft") {
                     width = 30.px
@@ -44,10 +45,12 @@ fun Container.portal(
                 }
             }
 
-            hPanel(spacing = defaultGap) {
+            hPanel(justify = JustifyContent.FLEXEND) {
                 pages.forEach { page ->
                     if (!page.navLink) return@forEach
-                    link(className = "navbar-link", label = page.name, url = page.linkRoute)
+                    link(className = "navbar-link", label = page.name, url = page.linkRoute) {
+                        padding = Constants.halfPad
+                    }
                 }
             }
         }
