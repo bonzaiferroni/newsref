@@ -37,6 +37,7 @@ kotlin {
         implementation("io.kvision:kvision-routing-navigo-ng:$kvisionVersion")
         implementation("io.kvision:kvision-state:$kvisionVersion")
         implementation("io.kvision:kvision-rest:$kvisionVersion")
+        implementation("io.kvision:kvision-state-flow:$kvisionVersion")
 
         implementation(project(":model"))
     }

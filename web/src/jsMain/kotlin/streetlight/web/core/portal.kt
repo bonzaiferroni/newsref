@@ -1,4 +1,4 @@
-package streetlight.web.nav
+package streetlight.web.core
 
 import io.kvision.core.Container
 import io.kvision.core.Position
@@ -39,7 +39,7 @@ fun Container.portal(
 
     val loaded: MutableSet<String> = mutableSetOf()
     var current: PageCache? = null
-    val duration = 0.2
+    val duration = 0.3
 
     // add body
     div {
@@ -50,7 +50,7 @@ fun Container.portal(
         pages.forEach { page ->
             val div = div {
                 padding = Constants.defaultPad
-                transition = Transition("all", duration, "ease-in-out")
+                transition = Transition("all", duration, "ease-out")
                 position = Position.ABSOLUTE
                 width = 100.perc
                 left = 0.px

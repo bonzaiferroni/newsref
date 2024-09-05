@@ -9,10 +9,10 @@ import streetlight.web.content.aboutPage
 import streetlight.web.content.eventPage
 import streetlight.web.content.eventProfile
 import streetlight.web.content.homePage
-import streetlight.web.nav.BasicPageBuilder
-import streetlight.web.nav.IdPageBuilder
-import streetlight.web.nav.PageConfig
-import streetlight.web.nav.portal
+import streetlight.web.core.BasicPageBuilder
+import streetlight.web.core.IdPageBuilder
+import streetlight.web.core.PageConfig
+import streetlight.web.core.portal
 
 class App : Application() {
 

@@ -1,4 +1,4 @@
-package streetlight.web.nav
+package streetlight.web.core
 
 import io.kvision.html.Div
 
