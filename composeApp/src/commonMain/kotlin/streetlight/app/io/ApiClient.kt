@@ -94,10 +94,10 @@ class ApiClient {
     suspend fun login(username: String, password: String): HttpResponse {
         val response = request(
             "/login", HttpMethod.Post,
-            User(name = username, password = password)
+            User(name = username, hashedPassword = password)
         )
         if (response.status == HttpStatusCode.OK) {
-            token = response.body<AuthInfo>().token
+            token = response.body<AuthInfo>().token ?: throw Exception("not implemented session tokens")
         }
         return response
     }

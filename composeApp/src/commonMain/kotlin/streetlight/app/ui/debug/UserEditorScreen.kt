@@ -38,7 +38,7 @@ fun UserEditorScreen(id: Int?, navigator: Navigator?) {
             label = { Text("Email") }
         )
         TextField(
-            value = state.user.password,
+            value = state.user.hashedPassword,
             onValueChange = viewModel::updatePassword,
             label = { Text("Password") }
         )
@@ -58,7 +58,7 @@ class UserEditorModel(
     }
 
     fun updatePassword(password: String) {
-        sv = sv.copy(user = sv.user.copy(password = password))
+        sv = sv.copy(user = sv.user.copy(hashedPassword = password))
     }
 
     fun createUser() {

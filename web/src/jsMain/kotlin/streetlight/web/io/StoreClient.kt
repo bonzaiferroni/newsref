@@ -1,13 +1,7 @@
 package streetlight.web.io
 
-import io.kvision.html.InputType
 import io.kvision.rest.*
 import kotlinx.coroutines.await
-import kotlinx.serialization.KSerializer
-import kotlinx.serialization.SerializationStrategy
-import kotlinx.serialization.Serializer
-import org.w3c.fetch.ResponseType
-import streetlight.model.Area
 import streetlight.model.User
 import streetlight.model.dto.AuthInfo
 import streetlight.web.HTTP_OK
@@ -58,11 +52,12 @@ class StoreClient {
     suspend fun login(): Boolean {
         val response: RestResponse<AuthInfo> = restClient.request<AuthInfo>("$apiAddress/login") {
             this.method = HttpMethod.POST
-            this.data = User(name = username, password = password)
+            this.data = User(name = username, hashedPassword = password)
             this.serializer = User.serializer()
         }.await()
         if (response.response.status == HTTP_OK) {
-            token = response.data.token
+            // TODO: handle session token
+            token = response.data.token ?: "not implemented"
             return true
         }
         return false
