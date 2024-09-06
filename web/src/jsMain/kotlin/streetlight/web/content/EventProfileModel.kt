@@ -8,10 +8,9 @@ import streetlight.model.Request
 import streetlight.model.Song
 import streetlight.model.dto.EventInfo
 import streetlight.web.core.ViewModel
-import streetlight.web.io.EventStore
-import streetlight.web.io.RequestStore
-import streetlight.web.io.SongStore
-import kotlin.js.Date
+import streetlight.web.io.stores.EventStore
+import streetlight.web.io.stores.RequestStore
+import streetlight.web.io.stores.SongStore
 
 class EventProfileModel(
     private val eventId: Int,

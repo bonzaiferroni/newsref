@@ -7,15 +7,13 @@ import io.kvision.core.onClickLaunch
 import io.kvision.form.text.text
 import io.kvision.html.ButtonStyle
 import io.kvision.html.button
-import io.kvision.html.p
 import io.kvision.panel.VPanel
 import io.kvision.panel.hPanel
 import io.kvision.panel.vPanel
 import io.kvision.state.ObservableValue
 import io.kvision.state.bindTo
-import kotlinx.coroutines.asDeferred
 import streetlight.model.Area
-import streetlight.web.io.AreaStore
+import streetlight.web.io.stores.AreaStore
 
 fun Container.aboutPage() {
     val store = AreaStore()

@@ -1,7 +1,8 @@
-package streetlight.web.io
+package streetlight.web.io.stores
 
 import streetlight.model.Event
 import streetlight.model.dto.EventInfo
+import streetlight.web.io.StoreClient
 
 class EventStore(
     private val client: StoreClient = StoreClient(),

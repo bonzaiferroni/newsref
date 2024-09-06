@@ -3,12 +3,10 @@ package streetlight.web.content
 import io.kvision.html.Div
 import io.kvision.html.link
 import io.kvision.html.p
-import io.kvision.panel.hPanel
 import io.kvision.panel.vPanel
 import streetlight.model.dto.EventInfo
 import streetlight.web.Constants.defaultGap
-import streetlight.web.Constants.spacing
-import streetlight.web.io.EventStore
+import streetlight.web.io.stores.EventStore
 import streetlight.web.launchedEffect
 
 fun Div.eventPage() {

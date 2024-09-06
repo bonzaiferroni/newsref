@@ -1,6 +1,7 @@
-package streetlight.web.io
+package streetlight.web.io.stores
 
 import streetlight.model.Song
+import streetlight.web.io.StoreClient
 
 class SongStore(
     private val client: StoreClient = StoreClient(),

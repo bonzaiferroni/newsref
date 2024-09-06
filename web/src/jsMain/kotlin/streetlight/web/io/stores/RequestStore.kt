@@ -1,7 +1,8 @@
-package streetlight.web.io
+package streetlight.web.io.stores
 
 import streetlight.model.Request
 import streetlight.model.dto.RequestInfo
+import streetlight.web.io.StoreClient
 
 class RequestStore(
     private val client: StoreClient = StoreClient(),

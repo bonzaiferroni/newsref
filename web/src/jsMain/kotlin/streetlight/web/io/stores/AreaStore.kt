@@ -1,9 +1,7 @@
-package streetlight.web.io
+package streetlight.web.io.stores
 
-import io.kvision.html.P
-import io.kvision.rest.HttpMethod
 import streetlight.model.Area
-import kotlin.js.Promise
+import streetlight.web.io.StoreClient
 
 class AreaStore(
     private val client: StoreClient = StoreClient(),
