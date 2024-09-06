@@ -30,7 +30,7 @@ fun Container.portal(
             paddingLeft = Constants.defaultPad
             paddingRight = Constants.halfPad
             hPanel(spacing = defaultGap, alignItems = AlignItems.CENTER) {
-                image("img/logo-small.png", className = "glow-effect-soft") {
+                image("img/logo-small.png", className = "glow-effect-color") {
                     width = 30.px
                 }
                 link(label = "", url = "#/") {
@@ -63,13 +63,13 @@ fun Container.portal(
     val duration = 0.3
 
     // add body
-    div {
+    div() {
         position = Position.RELATIVE
         width = 100.perc
         height = 100.perc
 
         pages.forEach { page ->
-            val div = div {
+            val div = div(className = "content") {
                 padding = Constants.defaultPad
                 transition = Transition("all", duration, "ease-out")
                 position = Position.ABSOLUTE

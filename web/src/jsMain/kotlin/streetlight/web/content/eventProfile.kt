@@ -13,19 +13,20 @@ import io.kvision.panel.vPanel
 import io.kvision.state.bind
 import io.kvision.utils.perc
 import streetlight.web.components.card
+import streetlight.web.components.typography
 
 fun Div.eventProfile(id: Int) {
     val model = EventProfileModel(id)
-    vPanel(spacing = Constants.defaultGap) {
+    typography(spacing = Constants.defaultGap) {
         hPanel(spacing = Constants.defaultGap) {
             link("back", "#/event/${id - 1}")
             link("next", "#/event/${id + 1}")
         }
+        h1(className = "text-center").bind(model.eventStream) {
+            this.content = it.user.name + " @ " + it.location.name
+        }
         image("img/bridge.jpg") {
             width = 100.perc
-        }
-        h1().bind(model.eventStream) {
-            this.content = it.user.name + " @ " + it.location.name
         }
         p().bind(model.eventStream) {
             this.content = it.event.description ?: description

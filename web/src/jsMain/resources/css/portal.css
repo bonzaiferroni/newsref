@@ -1,0 +1,35 @@
+.content {
+    background: #202430 ;
+    background-blend-mode: multiply;
+    width: 100%; /* Full width on small screens */
+    max-width: 1200px; /* Fixed width on larger screens */
+    margin: 0 auto; /* Center the content */
+    padding: 0 20px; /* Some padding for smaller screens */
+    box-sizing: border-box; /* Include padding in the width */
+    box-shadow: 100px 0 1000px rgba(0, 149, 255, 0),
+    -100px 0 1000px rgba(55, 200, 165, 0); /* Soft glow effect */
+    animation: shadow-pulse 10s ease-in-out infinite alternate; /* Slow animation, loopin' forever */
+    border-left: 1px solid #212121;
+    border-right: 1px solid #212121;
+    border-bottom: 1px solid #212121;
+}
+
+body {
+    background: #0f1217 ;
+    background-blend-mode: multiply;
+}
+
+@keyframes shadow-pulse {
+    0% {
+        box-shadow: 100px 0 1000px rgba(0, 149, 255, 0.15),
+        -100px 0 1000px rgba(55, 200, 165, 0.08);
+    }
+    50% {
+        box-shadow: 100px 0 1100px rgba(0, 149, 255, 0.08),
+        -105px 0 1000px rgba(55, 200, 165, 0.15);
+    }
+    100% {
+        box-shadow: 105px 0 1000px rgba(0, 149, 255, 0.10),
+        -100px 0 1100px rgba(55, 200, 165, 0.10);
+    }
+}
