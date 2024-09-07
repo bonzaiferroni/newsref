@@ -17,11 +17,10 @@ class App : Application() {
     }
 
     override fun start() {
-        val routing = Routing.init()
-        val appModel = AppModel()
+        val context = AppContext(AppModel(), Routing.init())
         root("kvapp") {
             portal(
-                routing,
+                context.routing,
                 PageConfig("Home", "/", "fas fa-home", false, CachedPageBuilder {
                     homePage()
                 }),
@@ -35,10 +34,10 @@ class App : Application() {
                     eventProfile(it)
                 }),
                 PageConfig("User", "/user", "fas fa-home", true, TransientPageBuilder {
-                    userPage(appModel, routing)
+                    userPage(context)
                 }),
                 PageConfig("Login", "/login", "fas fa-home", false, CachedPageBuilder {
-                    loginPage(appModel, routing)
+                    loginPage(context)
                 }),
             )
         }

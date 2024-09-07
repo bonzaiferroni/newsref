@@ -13,6 +13,7 @@ import io.kvision.state.bindTo
 import kotlinx.browser.window
 import kotlinx.coroutines.flow.MutableStateFlow
 import streetlight.model.dto.LoginInfo
+import streetlight.web.core.AppContext
 import streetlight.web.core.PortalEvents
 import streetlight.web.core.ViewModel
 import streetlight.web.getQueryParameter
@@ -22,16 +23,16 @@ import streetlight.web.io.stores.LocalStore
 import streetlight.web.launchedEffect
 import streetlight.web.subscribe
 
-fun Container.loginPage(appModel: AppModel, routing: Routing): PortalEvents? {
+fun Container.loginPage(context: AppContext): PortalEvents? {
     console.log("Login page loaded")
     val nextUrl = window.location.href.getQueryParameter("next") ?: "/user"
-    loginWidget(appModel) {
-        routing.navigate(nextUrl)
+    loginWidget {
+        context.routing.navigate(nextUrl)
     }
     return null
 }
 
-fun Container.loginWidget(appModel: AppModel, onSuccess: () -> Unit) {
+fun Container.loginWidget(onSuccess: () -> Unit) {
     val model = LoginWidgetModel()
 
     vPanel(spacing = 10) {
@@ -47,7 +48,6 @@ fun Container.loginWidget(appModel: AppModel, onSuccess: () -> Unit) {
             if (success) {
                 console.log("loginPage success")
                 onSuccess()
-                appModel.requestUser()
             } else {
                 console.log("loginPage failed")
             }
