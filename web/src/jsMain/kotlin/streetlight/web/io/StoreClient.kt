@@ -19,8 +19,11 @@ class StoreClient() {
 
     var loginInfo = LoginInfo(username = localStore.username ?: "", session = localStore.session)
 
-    val apiAddress
-        get() = "$baseAddress/api/v1"
+    val apiAddress = "$baseAddress/api/v1"
+
+    val tokenHeaders = {
+        listOf(Pair("Authorization", "Bearer $jwt") )
+    }
 
     inline fun <reified Returned: Any, reified Sent : Any> requestData(
         method: HttpMethod,
@@ -30,9 +33,7 @@ class StoreClient() {
         return restClient.request("$apiAddress$endpoint") {
             this.method = method
             this.data = data
-            this.headers = {
-                listOf(Pair("Authorization", "Bearer $jwt") )
-            }
+            this.headers = tokenHeaders
             this.serializer = getSerializer<Sent>()
         }
     }
@@ -45,9 +46,7 @@ class StoreClient() {
         return restClient.request("$apiAddress$endpoint") {
             this.method = method
             this.data = data
-            this.headers = {
-                listOf(Pair("Authorization", "Bearer $jwt") )
-            }
+            this.headers = tokenHeaders
             this.responseBodyType = ResponseBodyType.TEXT
             this.serializer = getSerializer<Sent>()
         }
@@ -95,6 +94,12 @@ class StoreClient() {
         return restClient.call<T>("$apiAddress$endpoint").await()
     }
 
+    suspend inline fun <reified T: Any> getAuth(endpoint: String): T? = authRequest {
+        restClient.call<T>("$apiAddress$endpoint") {
+            this.headers = tokenHeaders
+        }
+    }
+
     suspend inline fun <reified Received: Any, Sent: Any> post(
         endpoint: String, data: Sent
     ): Received? {
@@ -102,9 +107,7 @@ class StoreClient() {
             restClient.call<Received>("$apiAddress$endpoint") {
                 this.method = HttpMethod.POST
                 this.data = data
-                this.headers = {
-                    listOf(Pair("Authorization", "Bearer $jwt") )
-                }
+                this.headers = tokenHeaders
             }
         }
     }

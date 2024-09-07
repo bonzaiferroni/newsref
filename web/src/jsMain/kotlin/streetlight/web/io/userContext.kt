@@ -20,10 +20,10 @@ fun Container.userContext(content: Container.(UserInfo) -> Unit) {
         try {
             val userInfo = store.getUserInfo()
             if (userInfo != null) {
-                console.log("User info: $userInfo")
+                console.log("retrieved UserInfo")
                 content(this@userContext, userInfo)
             } else {
-
+                div("Error providing user context: null userInfo")
             }
         } catch (e: Exception) {
             console.log()

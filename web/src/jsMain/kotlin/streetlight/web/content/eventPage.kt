@@ -20,7 +20,7 @@ fun Div.eventPage() {
             // add elements to the page
             inflateInfos(store, infos)
         } catch (e: Exception) {
-            p("(nope: $id)")
+            p("(nope: $e)")
             console.log(e)
         }
     }
