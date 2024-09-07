@@ -38,6 +38,9 @@ class App : Application() {
                 PageConfig("User", "/user", "fas fa-home", true, BasicPageBuilder {
                     loginPage()
                 }),
+                PageConfig("Login", "/login", "fas fa-home", false, BasicPageBuilder {
+                    loginPage()
+                }),
             )
         }
     }
