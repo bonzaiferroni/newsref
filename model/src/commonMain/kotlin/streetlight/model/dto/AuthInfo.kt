@@ -4,6 +4,6 @@ import kotlinx.serialization.Serializable
 
 @Serializable
 data class AuthInfo(
-    val token: String? = null,
-    val sessionToken: String? = null,
+    val jwt: String? = null,
+    val session: String? = null,
 )

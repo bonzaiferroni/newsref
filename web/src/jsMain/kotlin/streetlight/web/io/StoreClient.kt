@@ -2,18 +2,22 @@ package streetlight.web.io
 
 import io.kvision.rest.*
 import kotlinx.coroutines.await
-import streetlight.model.User
 import streetlight.model.dto.AuthInfo
+import streetlight.model.dto.LoginInfo
 import streetlight.web.HTTP_OK
 import streetlight.web.baseAddress
+import streetlight.web.io.stores.LocalStore
 import kotlin.js.Promise
 
-class StoreClient {
-    val restClient = RestClient()
+val globalStoreClient = StoreClient()
 
-    var token = ""
-    private val username = "admin"
-    private val password = "admin"
+class StoreClient() {
+    val restClient = RestClient()
+    val localStore = LocalStore()
+
+    var jwt = localStore.jwt
+
+    var loginInfo = LoginInfo(username = localStore.username ?: "", session = localStore.session)
 
     val apiAddress
         get() = "$baseAddress/api/v1"
@@ -23,11 +27,12 @@ class StoreClient {
         endpoint: String,
         data: Sent?,
     ): Promise<RestResponse<Returned>> {
+        console.log("jwt: $jwt")
         return restClient.request("$apiAddress$endpoint") {
             this.method = method
             this.data = data
             this.headers = {
-                listOf(Pair("Authorization", "Bearer $token") )
+                listOf(Pair("Authorization", "Bearer $jwt") )
             }
             this.serializer = getSerializer<Sent>()
         }
@@ -38,11 +43,12 @@ class StoreClient {
         endpoint: String,
         data: Sent?,
     ): Promise<RestResponse<String>> {
+        console.log("jwt: $jwt")
         return restClient.request("$apiAddress$endpoint") {
             this.method = method
             this.data = data
             this.headers = {
-                listOf(Pair("Authorization", "Bearer $token") )
+                listOf(Pair("Authorization", "Bearer $jwt") )
             }
             this.responseBodyType = ResponseBodyType.TEXT
             this.serializer = getSerializer<Sent>()
@@ -52,13 +58,21 @@ class StoreClient {
     suspend fun login(): Boolean {
         val response: RestResponse<AuthInfo> = restClient.request<AuthInfo>("$apiAddress/login") {
             this.method = HttpMethod.POST
-            this.data = User(name = username, hashedPassword = password)
-            this.serializer = User.serializer()
+            this.data = loginInfo
+            this.serializer = LoginInfo.serializer()
         }.await()
         if (response.response.status == HTTP_OK) {
-            // TODO: handle session token
-            token = response.data.token ?: "not implemented"
+            console.log("login success: ${response.data.jwt}")
+            loginInfo = loginInfo.copy(session = response.data.session)
+            if (localStore.save == true) {
+                localStore.username = loginInfo.username
+                localStore.session = loginInfo.session
+                localStore.jwt = response.data.jwt
+            }
+            jwt = response.data.jwt
             return true
+        } else {
+            console.log("login failed: ${response.response.statusText}")
         }
         return false
     }
@@ -99,5 +113,10 @@ class StoreClient {
         val result = authRequest { requestText(HttpMethod.PUT, "$endpoint/$id", data) }
         console.log(result?.response?.status)
         return result?.response?.status == HTTP_OK
+    }
+
+    suspend fun login(loginInfo: LoginInfo): Boolean {
+        this.loginInfo = loginInfo
+        return login()
     }
 }

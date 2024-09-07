@@ -97,7 +97,7 @@ class ApiClient {
             User(name = username, hashedPassword = password)
         )
         if (response.status == HttpStatusCode.OK) {
-            token = response.body<AuthInfo>().token ?: throw Exception("not implemented session tokens")
+            token = response.body<AuthInfo>().jwt ?: throw Exception("not implemented session tokens")
         }
         return response
     }
