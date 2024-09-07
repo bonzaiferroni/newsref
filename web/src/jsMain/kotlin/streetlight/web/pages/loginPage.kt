@@ -1,5 +1,6 @@
 package streetlight.web.pages
 
+import io.kvision.core.AlignItems
 import io.kvision.core.Container
 import io.kvision.core.onClickLaunch
 import io.kvision.form.check.checkBox
@@ -12,14 +13,12 @@ import io.kvision.state.bindTo
 import kotlinx.browser.window
 import kotlinx.coroutines.flow.MutableStateFlow
 import streetlight.model.dto.LoginInfo
+import streetlight.web.*
 import streetlight.web.core.AppContext
 import streetlight.web.core.PortalEvents
 import streetlight.web.core.ViewModel
-import streetlight.web.getQueryParameter
 import streetlight.web.io.globalStoreClient
 import streetlight.web.io.stores.LocalStore
-import streetlight.web.launchedEffect
-import streetlight.web.subscribe
 
 fun Container.loginPage(context: AppContext): PortalEvents? {
     console.log("Login page loaded")
@@ -33,7 +32,8 @@ fun Container.loginPage(context: AppContext): PortalEvents? {
 fun Container.loginWidget(onSuccess: () -> Unit) {
     val model = LoginWidgetModel()
 
-    vPanel(spacing = 10) {
+    vPanel(alignItems = AlignItems.START) {
+        gap = Layout.halfGap
         text {
             placeholder = "Username"
         }.bindTo(model.username)

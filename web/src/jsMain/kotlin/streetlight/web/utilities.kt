@@ -3,6 +3,7 @@ package streetlight.web
 import io.kvision.core.Container
 import io.kvision.core.CssSize
 import io.kvision.core.UNIT
+import io.kvision.panel.FlexPanel
 import io.kvision.routing.Routing
 import io.kvision.state.ObservableState
 import io.kvision.state.ObservableValue
@@ -64,4 +65,10 @@ fun String.getUrlFragment(): String {
 fun Routing.getCurrentRoute(): String? {
     return this.current?.firstOrNull()?.url
 }
+
+var FlexPanel.gap: Int
+    get() = this.getStyle("gap")?.substringBefore("px")?.toIntOrNull() ?: 0
+    set(value) {
+        this.setStyle("gap", "${value}px")
+    }
 

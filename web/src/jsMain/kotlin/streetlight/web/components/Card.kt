@@ -6,7 +6,7 @@ import io.kvision.core.Container
 import io.kvision.html.Div
 import io.kvision.html.div
 import io.kvision.panel.SimplePanel
-import streetlight.web.Constants.halfPad
+import streetlight.web.Layout.halfPad
 
 class Card(
     className: String? = null,

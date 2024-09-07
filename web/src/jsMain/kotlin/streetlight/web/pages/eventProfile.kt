@@ -19,8 +19,10 @@ import streetlight.web.pages.models.EventProfileModel
 
 fun Div.eventProfile(id: Int): PortalEvents? {
     val model = EventProfileModel(id)
-    typography(spacing = Constants.defaultGap) {
-        hPanel(spacing = Constants.defaultGap) {
+    typography() {
+        gap = Layout.defaultGap
+        hPanel() {
+            gap = Layout.defaultGap
             link("back", "#/event/${id - 1}")
             link("next", "#/event/${id + 1}")
         }
@@ -49,8 +51,10 @@ fun Div.eventProfile(id: Int): PortalEvents? {
         }
         h2("Request a song")
         form {
-            hPanel(spacing = Constants.defaultGap, justify = JustifyContent.SPACEEVENLY) {
-                vPanel(spacing = Constants.defaultGap) {
+            hPanel(justify = JustifyContent.SPACEEVENLY) {
+                gap = Layout.defaultGap
+                vPanel() {
+                    gap = Layout.defaultGap
                     width = 50.perc
                     radioGroup(label = "Options") {
                         radio(true, label = "Luke sings")
@@ -58,7 +62,8 @@ fun Div.eventProfile(id: Int): PortalEvents? {
                         radio(false, label = "I'll sing solo")
                     }
                 }
-                vPanel(spacing = Constants.defaultGap) {
+                vPanel() {
+                    gap = Layout.defaultGap
                     width = 50.perc
                     text() {
                         placeholder = "Your name (optional)"

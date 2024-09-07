@@ -8,8 +8,8 @@ import io.kvision.utils.perc
 import io.kvision.utils.plus
 import io.kvision.utils.px
 import kotlinx.browser.window
-import streetlight.web.Constants
-import streetlight.web.Constants.defaultGap
+import streetlight.web.Layout
+import streetlight.web.gap
 import streetlight.web.getIdFromUrl
 
 fun Container.portal(
@@ -19,11 +19,12 @@ fun Container.portal(
     // add header and add nav menu
     header {
         nav(className = "navbar ${BsBgColor.BODYTERTIARY.className}") {
-            paddingTop = Constants.halfPad
-            paddingBottom = Constants.halfPad
-            paddingLeft = Constants.defaultPad
-            paddingRight = Constants.halfPad
-            hPanel(spacing = defaultGap, alignItems = AlignItems.CENTER) {
+            paddingTop = Layout.halfPad
+            paddingBottom = Layout.halfPad
+            paddingLeft = Layout.defaultPad
+            paddingRight = Layout.halfPad
+            hPanel(alignItems = AlignItems.CENTER) {
+                gap = Layout.defaultGap
                 image("img/logo-small.png", className = "glow-effect-color") {
                     width = 30.px
                 }
@@ -44,7 +45,7 @@ fun Container.portal(
                 pages.forEach { page ->
                     if (!page.navLink) return@forEach
                     link(className = "navbar-link", label = page.name, url = page.linkRoute) {
-                        padding = Constants.halfPad
+                        padding = Layout.halfPad
                     }
                 }
             }
@@ -66,7 +67,7 @@ fun Container.portal(
 
         pages.forEach { page ->
             val div = div(className = "content ${page.name}") {
-                padding = Constants.defaultPad
+                padding = Layout.defaultPad
                 transition = Transition("all", duration, "ease-out")
                 position = Position.ABSOLUTE
                 width = 100.perc
@@ -126,10 +127,10 @@ fun Div.updateVisibility(visible: Boolean) {
     if (visible) {
         this.opacity = 1.0
         zIndex = 1
-        paddingTop = Constants.defaultPad
+        paddingTop = Layout.defaultPad
     } else {
         this.opacity = 0.0
         zIndex = 0
-        paddingTop = Constants.defaultPad + 10
+        paddingTop = Layout.defaultPad + 10
     }
 }

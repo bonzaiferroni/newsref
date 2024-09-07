@@ -2,13 +2,13 @@ package streetlight.web
 
 import io.kvision.core.CssSize
 import io.kvision.core.UNIT
-import io.kvision.utils.px
 
-object Constants {
+object Layout {
     val spacing = 20
     val defaultPad = CssSize(spacing, UNIT.px)
-    val defaultGap = spacing / 2
+    val defaultGap = spacing
     val halfPad = CssSize(spacing / 2, UNIT.px)
+    val halfGap = spacing / 2
 }
 
 const val XHR_ERROR: Short = 0
