@@ -14,21 +14,22 @@ import io.kvision.state.ObservableValue
 import io.kvision.state.bindTo
 import streetlight.model.Area
 import streetlight.web.Layout
+import streetlight.web.components.row
+import streetlight.web.components.rows
 import streetlight.web.core.PortalEvents
 import streetlight.web.gap
 import streetlight.web.io.stores.AreaStore
 
 fun Container.aboutPage(): PortalEvents? {
     val store = AreaStore()
-    val panel = VPanel(spacing = 10)
+    lateinit var panel: VPanel
     val areaName = ObservableValue("")
 
-    vPanel(alignItems = AlignItems.START) {
-        gap = Layout.defaultGap
+    rows {
         button("get").onClickLaunch {
             panel.refreshAreas(store)
         }
-        hPanel(justify = JustifyContent.CENTER) {
+        row() {
             gap = Layout.defaultGap
             text() {
                 placeholder = "area"
@@ -40,9 +41,9 @@ fun Container.aboutPage(): PortalEvents? {
                 panel.refreshAreas(store)
             }
         }
+        panel = rows()
     }
 
-    add(panel)
     return null
 }
 
@@ -53,7 +54,7 @@ suspend fun Container.refreshAreas(store: AreaStore) {
     suspend fun refresh() { refreshAreas(store) }
     areas.forEach { area ->
         val areaName = ObservableValue(area.name)
-        hPanel(justify = JustifyContent.SPACEBETWEEN) {
+        row() {
             text().bindTo(areaName)
             button("", icon = "fas fa-trash", style = ButtonStyle.DANGER).onClickLaunch {
                 store.delete(area.id)

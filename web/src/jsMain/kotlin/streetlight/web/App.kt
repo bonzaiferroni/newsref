@@ -39,6 +39,9 @@ class App : Application() {
                 PageConfig("Login", "/login", "fas fa-home", false, CachedPageBuilder {
                     loginPage(context)
                 }),
+                PageConfig("EditUser", "/user/edit", "fas fa-home", false, TransientPageBuilder {
+                    editUserPage(context)
+                }),
             )
         }
     }

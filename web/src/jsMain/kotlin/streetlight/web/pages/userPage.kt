@@ -4,6 +4,7 @@ import io.kvision.core.AlignItems
 import io.kvision.core.Container
 import io.kvision.core.JustifyContent
 import io.kvision.html.button
+import io.kvision.html.h3
 import io.kvision.html.image
 import io.kvision.html.p
 import io.kvision.panel.vPanel
@@ -18,7 +19,7 @@ fun Container.userPage(context: AppContext): PortalEvents? {
     userContext(context) { userInfo ->
         vPanel(alignItems = AlignItems.START) {
             gap = Layout.halfGap
-            p("Hello, ${userInfo.username}!")
+            h3("Hello, ${userInfo.username}!")
             labelInfo("name", userInfo.name)
             labelInfo("email", userInfo.email)
             userInfo.venmo?.let {

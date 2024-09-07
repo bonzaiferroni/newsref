@@ -14,6 +14,7 @@ import kotlinx.browser.window
 import kotlinx.coroutines.flow.MutableStateFlow
 import streetlight.model.dto.LoginInfo
 import streetlight.web.*
+import streetlight.web.components.rows
 import streetlight.web.core.AppContext
 import streetlight.web.core.PortalEvents
 import streetlight.web.core.ViewModel
@@ -32,8 +33,7 @@ fun Container.loginPage(context: AppContext): PortalEvents? {
 fun Container.loginWidget(onSuccess: () -> Unit) {
     val model = LoginWidgetModel()
 
-    vPanel(alignItems = AlignItems.START) {
-        gap = Layout.halfGap
+    rows(spacing = Layout.halfGap) {
         text {
             placeholder = "Username"
         }.bindTo(model.username)
