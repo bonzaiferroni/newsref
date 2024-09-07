@@ -59,7 +59,7 @@ class StoreClient() {
             this.serializer = LoginInfo.serializer()
         }.await()
         if (response.response.status == HTTP_OK) {
-            console.log("login success")
+            console.log("StoreClient.login success")
             loginInfo = loginInfo.copy(session = response.data.session)
             if (localStore.save == true) {
                 localStore.username = loginInfo.username
@@ -69,7 +69,7 @@ class StoreClient() {
             jwt = response.data.jwt
             return true
         } else {
-            console.log("login failed: ${response.response.statusText}")
+            console.log("StoreClient.login failed: ${response.response.statusText}")
         }
         return false
     }

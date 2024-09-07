@@ -2,44 +2,34 @@ package streetlight.web.io
 
 import io.kvision.core.Container
 import io.kvision.html.Div
-import io.kvision.html.P
 import io.kvision.html.div
-import io.kvision.html.p
-import io.kvision.rest.BadRequest
-import io.kvision.rest.Unauthorized
 import io.kvision.routing.Routing
+import kotlinx.browser.window
 import streetlight.model.dto.UserInfo
-import streetlight.web.content.loginPage
-import streetlight.web.io.stores.UserStore
-import streetlight.web.launchedEffect
+import streetlight.web.getCurrentRoute
+import streetlight.web.getUrlFragment
+import streetlight.web.io.stores.AppModel
+import streetlight.web.subscribe
 
-fun Container.userContext(content: Container.(UserInfo) -> Unit) {
-    val store = UserStore()
-    launchedEffect {
-
-        try {
-            val userInfo = store.getUserInfo()
-            if (userInfo != null) {
-                console.log("retrieved UserInfo")
-                content(this@userContext, userInfo)
+fun Container.userContext(appModel: AppModel, routing: Routing, content: Container.(UserInfo) -> Unit) {
+    val route = window.location.href.getUrlFragment()
+    var container: Div? = null
+    appModel.userInfo.subscribe { userInfo ->
+        container?.let {
+            this@userContext.remove(it)
+        }
+        container = null
+        if (userInfo != null) {
+            val div = div(className = "user-context")
+            console.log("retrieved UserInfo")
+            content(div, userInfo)
+            container = div
+        } else {
+            if (window.location.href.contains(route)) {
+                console.log("unauthorized, providing login")
+                routing.navigate("/login?next=${route}")
             } else {
-                div("Error providing user context: null userInfo")
-            }
-        } catch (e: Exception) {
-            console.log()
-            when (e) {
-                is Unauthorized, is BadRequest -> {
-                    console.log("unauthorized, providing login")
-                    val div = Div()
-                    this@userContext.add(div)
-                    div.loginPage() {
-                        this@userContext.remove(div)
-                        this@userContext.userContext(content)
-                    }
-                }
-                else -> {
-                    div("Error providing user context: $e")
-                }
+                console.log("inactive route $route observed null userInfo")
             }
         }
     }

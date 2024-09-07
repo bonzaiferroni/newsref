@@ -10,6 +10,7 @@ import streetlight.web.core.BasicPageBuilder
 import streetlight.web.core.IdPageBuilder
 import streetlight.web.core.PageConfig
 import streetlight.web.core.portal
+import streetlight.web.io.stores.AppModel
 
 class App : Application() {
 
@@ -20,6 +21,7 @@ class App : Application() {
 
     override fun start() {
         val routing = Routing.init()
+        val appModel = AppModel()
         root("kvapp") {
             portal(
                 routing,
@@ -36,10 +38,10 @@ class App : Application() {
                     eventProfile(it)
                 }),
                 PageConfig("User", "/user", "fas fa-home", true, BasicPageBuilder {
-                    userPage()
+                    userPage(appModel, routing)
                 }),
                 PageConfig("Login", "/login", "fas fa-home", false, BasicPageBuilder {
-                    loginPage()
+                    loginPage(appModel, routing)
                 }),
             )
         }

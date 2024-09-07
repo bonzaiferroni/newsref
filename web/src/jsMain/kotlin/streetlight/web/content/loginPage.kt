@@ -8,16 +8,22 @@ import io.kvision.html.InputType
 import io.kvision.html.button
 import io.kvision.html.p
 import io.kvision.panel.vPanel
+import io.kvision.routing.Routing
 import io.kvision.state.bindTo
+import kotlinx.browser.window
 import kotlinx.coroutines.flow.MutableStateFlow
 import streetlight.model.dto.LoginInfo
 import streetlight.web.core.ViewModel
+import streetlight.web.getQueryParameter
 import streetlight.web.io.globalStoreClient
+import streetlight.web.io.stores.AppModel
 import streetlight.web.io.stores.LocalStore
 import streetlight.web.subscribe
 
-fun Container.loginPage(callback: (() -> Unit)? = null) {
+fun Container.loginPage(appModel: AppModel, routing: Routing) {
     val model = LoginPageModel()
+    console.log("Login page")
+    val nextUrl = window.location.href.getQueryParameter("next") ?: "/user"
 
     vPanel(spacing = 10) {
         text {
@@ -30,12 +36,11 @@ fun Container.loginPage(callback: (() -> Unit)? = null) {
         button("Login").onClickLaunch {
             val success = model.login()
             if (success) {
-                console.log("login success")
-                if (callback != null) {
-                    callback()
-                }
+                console.log("loginPage success")
+                appModel.requestUser()
+                routing.navigate(nextUrl)
             } else {
-                console.log("login failed")
+                console.log("loginPage failed")
             }
         }
         checkBox(label = "Store credentials to stay logged in.") {}.bindTo(model.save)
