@@ -13,9 +13,10 @@ import io.kvision.panel.vPanel
 import io.kvision.state.ObservableValue
 import io.kvision.state.bindTo
 import streetlight.model.Area
+import streetlight.web.core.PortalEvents
 import streetlight.web.io.stores.AreaStore
 
-fun Container.aboutPage() {
+fun Container.aboutPage(): PortalEvents? {
     val store = AreaStore()
     val panel = VPanel(spacing = 10)
     val areaName = ObservableValue("")
@@ -38,6 +39,7 @@ fun Container.aboutPage() {
     }
 
     add(panel)
+    return null
 }
 
 suspend fun Container.refreshAreas(store: AreaStore) {

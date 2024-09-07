@@ -13,17 +13,26 @@ import io.kvision.state.bindTo
 import kotlinx.browser.window
 import kotlinx.coroutines.flow.MutableStateFlow
 import streetlight.model.dto.LoginInfo
+import streetlight.web.core.PortalEvents
 import streetlight.web.core.ViewModel
 import streetlight.web.getQueryParameter
 import streetlight.web.io.globalStoreClient
 import streetlight.web.io.stores.AppModel
 import streetlight.web.io.stores.LocalStore
+import streetlight.web.launchedEffect
 import streetlight.web.subscribe
 
-fun Container.loginPage(appModel: AppModel, routing: Routing) {
-    val model = LoginPageModel()
-    console.log("Login page")
+fun Container.loginPage(appModel: AppModel, routing: Routing): PortalEvents? {
+    console.log("Login page loaded")
     val nextUrl = window.location.href.getQueryParameter("next") ?: "/user"
+    loginWidget(appModel) {
+        routing.navigate(nextUrl)
+    }
+    return null
+}
+
+fun Container.loginWidget(appModel: AppModel, onSuccess: () -> Unit) {
+    val model = LoginWidgetModel()
 
     vPanel(spacing = 10) {
         text {
@@ -37,8 +46,8 @@ fun Container.loginPage(appModel: AppModel, routing: Routing) {
             val success = model.login()
             if (success) {
                 console.log("loginPage success")
+                onSuccess()
                 appModel.requestUser()
-                routing.navigate(nextUrl)
             } else {
                 console.log("loginPage failed")
             }
@@ -49,14 +58,22 @@ fun Container.loginPage(appModel: AppModel, routing: Routing) {
             message.content = it
         }
     }
+
+    launchedEffect {
+        model.autoLogin()
+    }
 }
 
-class LoginPageModel() : ViewModel() {
+class LoginWidgetModel() : ViewModel() {
     val localStore = LocalStore()
     val save = MutableStateFlow(localStore.save ?: false)
     val msg = MutableStateFlow("Hello.")
     val username = MutableStateFlow(localStore.username ?: "")
     val password = MutableStateFlow(localStore.session?.let { "hunter2" })
+
+    init {
+        save.subscribe { localStore.save = it }
+    }
 
     suspend fun login(): Boolean {
         val loginInfo = LoginInfo(username = username.value, password = password.value)
@@ -72,6 +89,14 @@ class LoginPageModel() : ViewModel() {
         } else {
             msg.value = "Login failed."
             return false
+        }
+    }
+
+    suspend fun autoLogin() {
+        val go = save.value && localStore.session != null
+        console.log("loginPage.autoLogin: ${go}")
+        if (go) {
+            login()
         }
     }
 }

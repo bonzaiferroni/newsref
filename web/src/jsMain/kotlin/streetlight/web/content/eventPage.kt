@@ -6,10 +6,11 @@ import io.kvision.html.p
 import io.kvision.panel.vPanel
 import streetlight.model.dto.EventInfo
 import streetlight.web.Constants.defaultGap
+import streetlight.web.core.PortalEvents
 import streetlight.web.io.stores.EventStore
 import streetlight.web.launchedEffect
 
-fun Div.eventPage() {
+fun Div.eventPage(): PortalEvents? {
     val store = EventStore()
     launchedEffect {
         try {
@@ -24,6 +25,7 @@ fun Div.eventPage() {
             console.log(e)
         }
     }
+    return null
 }
 
 suspend fun Div.inflateInfos(store: EventStore, infos: List<EventInfo>) {

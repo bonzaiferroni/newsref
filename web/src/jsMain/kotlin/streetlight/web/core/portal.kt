@@ -2,12 +2,7 @@ package streetlight.web.core
 
 import io.kvision.core.*
 import io.kvision.html.*
-import io.kvision.navbar.NavbarExpand
-import io.kvision.navbar.nav
-import io.kvision.navbar.navLink
-import io.kvision.navbar.navbar
 import io.kvision.panel.hPanel
-import io.kvision.panel.vPanel
 import io.kvision.routing.Routing
 import io.kvision.utils.perc
 import io.kvision.utils.plus
@@ -15,7 +10,6 @@ import io.kvision.utils.px
 import kotlinx.browser.window
 import streetlight.web.Constants
 import streetlight.web.Constants.defaultGap
-import streetlight.web.Constants.spacing
 import streetlight.web.getIdFromUrl
 
 fun Container.portal(
@@ -60,6 +54,7 @@ fun Container.portal(
 
     val loaded: MutableSet<String> = mutableSetOf()
     var current: PageCache? = null
+    var events: PortalEvents? = null
     val duration = 0.3
 
     // add body
@@ -79,15 +74,16 @@ fun Container.portal(
             }
 
             fun loadPage() {
-                console.log("Route ${page.route} activated")
+                console.log("Portal.loadPage ${page.route}")
+                events?.let { it.onUnload?.invoke() }
 
                 when (page.builder) {
-                    is BasicPageBuilder -> {
+                    is CachedPageBuilder -> {
                         if (current?.route == page.route) return
                         current?.div?.updateVisibility(false)
                         if (!loaded.contains(page.route)) {
                             // console.log("Loading ${page.route}")
-                            page.builder.content(div)
+                            events = page.builder.content(div)
                             loaded.add(page.route)
                         }
                     }
@@ -98,12 +94,20 @@ fun Container.portal(
                         div.removeAll()
                         val id = window.location.href.getIdFromUrl()
                         if (id == null) {
-                            div.add(P("Invalid URL"))
+                            div.add(P("Portal.loadPage: missing id"))
                         } else {
-                            page.builder.content(div, id)
+                            events = page.builder.content(div, id)
                         }
                     }
+
+                    is TransientPageBuilder -> {
+                        current?.div?.updateVisibility(false)
+                        // console.log("Loading ${page.route}")
+                        div.removeAll()
+                        events = page.builder.content(div)
+                    }
                 }
+                events?.onLoad?.invoke()
                 current = PageCache(page.route, div)
                 div.updateVisibility(true)
             }

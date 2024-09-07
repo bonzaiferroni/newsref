@@ -53,37 +53,43 @@ class StoreClient() {
     }
 
     suspend fun login(): Boolean {
-        val response: RestResponse<AuthInfo> = restClient.request<AuthInfo>("$apiAddress/login") {
-            this.method = HttpMethod.POST
-            this.data = loginInfo
-            this.serializer = LoginInfo.serializer()
-        }.await()
-        if (response.response.status == HTTP_OK) {
-            console.log("StoreClient.login success")
-            loginInfo = loginInfo.copy(session = response.data.session)
-            if (localStore.save == true) {
-                localStore.username = loginInfo.username
-                localStore.session = loginInfo.session
-                localStore.jwt = response.data.jwt
+        try {
+            val response: RestResponse<AuthInfo> = restClient.request<AuthInfo>("$apiAddress/login") {
+                this.method = HttpMethod.POST
+                this.data = loginInfo
+                this.serializer = LoginInfo.serializer()
+            }.await()
+            if (response.response.status == HTTP_OK) {
+                console.log("StoreClient.login success")
+                loginInfo = loginInfo.copy(session = response.data.session)
+                if (localStore.save == true) {
+                    localStore.username = loginInfo.username
+                    localStore.session = loginInfo.session
+                    localStore.jwt = response.data.jwt
+                }
+                jwt = response.data.jwt
+                return true
+            } else {
+                console.log("StoreClient.login: ${response.response.statusText}")
+                return false
             }
-            jwt = response.data.jwt
-            return true
-        } else {
-            console.log("StoreClient.login failed: ${response.response.statusText}")
+        } catch (e: Exception) {
+            console.log("StoreClient.login: exception: $e")
+            return false
         }
-        return false
     }
 
     suspend inline fun <reified T: Any> authRequest(
         requester: () -> Promise<T>
     ): T? {
-        console.log("requesting")
+        console.log("StoreClient.authRequest: requesting")
         try {
             return requester().await()
         } catch (e: Unauthorized) {
-            console.log("authorizing")
+            console.log("StoreClient.authRequest: unauthorized, attempt auth")
             val authorized = login()
             if (authorized) {
+                console.log("StoreClient.authRequest: authorized")
                 return requester().await()
             }
         }

@@ -14,8 +14,9 @@ import io.kvision.state.bind
 import io.kvision.utils.perc
 import streetlight.web.components.card
 import streetlight.web.components.typography
+import streetlight.web.core.PortalEvents
 
-fun Div.eventProfile(id: Int) {
+fun Div.eventProfile(id: Int): PortalEvents? {
     val model = EventProfileModel(id)
     typography(spacing = Constants.defaultGap) {
         hPanel(spacing = Constants.defaultGap) {
@@ -90,5 +91,6 @@ fun Div.eventProfile(id: Int) {
             }
         }
     }
+    return null
 }
 

@@ -6,31 +6,27 @@ import io.kvision.html.div
 import io.kvision.routing.Routing
 import kotlinx.browser.window
 import streetlight.model.dto.UserInfo
+import streetlight.web.core.PortalEvents
 import streetlight.web.getCurrentRoute
 import streetlight.web.getUrlFragment
 import streetlight.web.io.stores.AppModel
+import streetlight.web.launchedEffect
 import streetlight.web.subscribe
 
-fun Container.userContext(appModel: AppModel, routing: Routing, content: Container.(UserInfo) -> Unit) {
+fun Container.userContext(
+    appModel: AppModel,
+    routing: Routing,
+    content: Container.(UserInfo) -> Unit
+) {
     val route = window.location.href.getUrlFragment()
-    var container: Div? = null
-    appModel.userInfo.subscribe { userInfo ->
-        container?.let {
-            this@userContext.remove(it)
-        }
-        container = null
+    launchedEffect {
+        val userInfo = appModel.requestUser()
         if (userInfo != null) {
-            val div = div(className = "user-context")
-            console.log("retrieved UserInfo")
-            content(div, userInfo)
-            container = div
+            console.log("userContext: retrieved UserInfo")
+            content(this@userContext, userInfo)
         } else {
-            if (window.location.href.contains(route)) {
-                console.log("unauthorized, providing login")
-                routing.navigate("/login?next=${route}")
-            } else {
-                console.log("inactive route $route observed null userInfo")
-            }
+            console.log("userContext: unauthorized, providing login")
+            routing.navigate("/login?next=${route}")
         }
     }
 }

@@ -17,10 +17,19 @@ abstract class PageBuilder {
 
 }
 
-data class BasicPageBuilder(
-    val content: Div.() -> Unit
+data class CachedPageBuilder(
+    val content: Div.() -> PortalEvents?
 ) : PageBuilder()
 
 data class IdPageBuilder(
-    val content: Div.(Int) -> Unit
+    val content: Div.(Int) -> PortalEvents?
 ) : PageBuilder()
+
+data class TransientPageBuilder(
+    val content: Div.() -> PortalEvents?
+) : PageBuilder()
+
+data class PortalEvents(
+    val onLoad: (() -> Unit)? = null,
+    val onUnload: (() -> Unit)? = null
+)

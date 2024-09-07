@@ -9,8 +9,9 @@ import io.kvision.panel.vPanel
 import io.kvision.state.ObservableValue
 import io.kvision.state.bind
 import io.kvision.state.bindTo
+import streetlight.web.core.PortalEvents
 
-fun Container.homePage() {
+fun Container.homePage(): PortalEvents? {
     val message = ObservableValue("hello, world!")
 
     vPanel(spacing = 10, alignItems = AlignItems.START) {
@@ -33,4 +34,5 @@ fun Container.homePage() {
             placeholder = "Enter your message"
         }.bindTo(message)
     }
+    return null
 }

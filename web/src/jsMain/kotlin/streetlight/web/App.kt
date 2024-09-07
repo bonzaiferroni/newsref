@@ -6,10 +6,7 @@ import io.kvision.routing.Routing
 import io.kvision.theme.Theme
 import io.kvision.theme.ThemeManager
 import streetlight.web.content.*
-import streetlight.web.core.BasicPageBuilder
-import streetlight.web.core.IdPageBuilder
-import streetlight.web.core.PageConfig
-import streetlight.web.core.portal
+import streetlight.web.core.*
 import streetlight.web.io.stores.AppModel
 
 class App : Application() {
@@ -25,22 +22,22 @@ class App : Application() {
         root("kvapp") {
             portal(
                 routing,
-                PageConfig("Home", "/", "fas fa-home", false, BasicPageBuilder {
+                PageConfig("Home", "/", "fas fa-home", false, CachedPageBuilder {
                     homePage()
                 }),
-                PageConfig("About", "/about", "fas fa-info", true, BasicPageBuilder {
+                PageConfig("About", "/about", "fas fa-info", true, CachedPageBuilder {
                     aboutPage()
                 }),
-                PageConfig("Events", "/event", "fas fa-info", true, BasicPageBuilder {
+                PageConfig("Events", "/event", "fas fa-info", true, CachedPageBuilder {
                     eventPage()
                 }),
                 PageConfig("Event", "/event/:id", "fas fa-envelope", false, IdPageBuilder {
                     eventProfile(it)
                 }),
-                PageConfig("User", "/user", "fas fa-home", true, BasicPageBuilder {
+                PageConfig("User", "/user", "fas fa-home", true, TransientPageBuilder {
                     userPage(appModel, routing)
                 }),
-                PageConfig("Login", "/login", "fas fa-home", false, BasicPageBuilder {
+                PageConfig("Login", "/login", "fas fa-home", false, CachedPageBuilder {
                     loginPage(appModel, routing)
                 }),
             )
