@@ -1,4 +1,4 @@
-package streetlight.web.content
+package streetlight.web.pages.models
 
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow

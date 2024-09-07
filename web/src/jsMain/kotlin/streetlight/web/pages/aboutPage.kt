@@ -1,4 +1,4 @@
-package streetlight.web.content
+package streetlight.web.pages
 
 import io.kvision.core.AlignItems
 import io.kvision.core.Container

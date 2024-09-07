@@ -32,6 +32,7 @@ fun Container.portal(
                         color = Color("var(--bs-navbar-brand-color)")
                         span("streetl")
                         span("i", className = "glow-effect") {
+                            id = "logo-i"
                             color = Color("BurlyWood")
                         }
                         span("ght")

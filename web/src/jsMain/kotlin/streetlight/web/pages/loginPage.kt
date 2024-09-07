@@ -1,4 +1,4 @@
-package streetlight.web.content
+package streetlight.web.pages
 
 import io.kvision.core.Container
 import io.kvision.core.onClickLaunch
@@ -8,7 +8,6 @@ import io.kvision.html.InputType
 import io.kvision.html.button
 import io.kvision.html.p
 import io.kvision.panel.vPanel
-import io.kvision.routing.Routing
 import io.kvision.state.bindTo
 import kotlinx.browser.window
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -18,7 +17,6 @@ import streetlight.web.core.PortalEvents
 import streetlight.web.core.ViewModel
 import streetlight.web.getQueryParameter
 import streetlight.web.io.globalStoreClient
-import streetlight.web.io.stores.AppModel
 import streetlight.web.io.stores.LocalStore
 import streetlight.web.launchedEffect
 import streetlight.web.subscribe

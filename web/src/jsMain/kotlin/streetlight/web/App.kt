@@ -5,7 +5,7 @@ import io.kvision.panel.*
 import io.kvision.routing.Routing
 import io.kvision.theme.Theme
 import io.kvision.theme.ThemeManager
-import streetlight.web.content.*
+import streetlight.web.pages.*
 import streetlight.web.core.*
 import streetlight.web.io.stores.AppModel
 
