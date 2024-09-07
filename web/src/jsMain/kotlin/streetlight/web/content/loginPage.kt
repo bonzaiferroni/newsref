@@ -16,7 +16,7 @@ import streetlight.web.io.globalStoreClient
 import streetlight.web.io.stores.LocalStore
 import streetlight.web.subscribe
 
-fun Container.loginPage() {
+fun Container.loginPage(callback: (() -> Unit)? = null) {
     val model = LoginPageModel()
 
     vPanel(spacing = 10) {
@@ -28,7 +28,15 @@ fun Container.loginPage() {
             type = InputType.PASSWORD
         }.bindTo(model.password)
         button("Login").onClickLaunch {
-            model.login()
+            val success = model.login()
+            if (success) {
+                console.log("login success")
+                if (callback != null) {
+                    callback()
+                }
+            } else {
+                console.log("login failed")
+            }
         }
         checkBox(label = "Store credentials to stay logged in.") {}.bindTo(model.save)
         val message = p()
@@ -45,7 +53,7 @@ class LoginPageModel() : ViewModel() {
     val username = MutableStateFlow(localStore.username ?: "")
     val password = MutableStateFlow(localStore.session?.let { "hunter2" })
 
-    suspend fun login() {
+    suspend fun login(): Boolean {
         val loginInfo = LoginInfo(username = username.value, password = password.value)
         localStore.save = save.value
         if (save.value) {
@@ -55,8 +63,10 @@ class LoginPageModel() : ViewModel() {
         val result = globalStoreClient.login(loginInfo)
         if (result) {
             msg.value = "Login successful."
+            return true
         } else {
             msg.value = "Login failed."
+            return false
         }
     }
 }

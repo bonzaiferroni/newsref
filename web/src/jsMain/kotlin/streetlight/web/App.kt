@@ -36,7 +36,7 @@ class App : Application() {
                     eventProfile(it)
                 }),
                 PageConfig("User", "/user", "fas fa-home", true, BasicPageBuilder {
-                    loginPage()
+                    userPage()
                 }),
                 PageConfig("Login", "/login", "fas fa-home", false, BasicPageBuilder {
                     loginPage()

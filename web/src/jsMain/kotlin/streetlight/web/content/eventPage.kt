@@ -14,6 +14,9 @@ fun Div.eventPage() {
     launchedEffect {
         try {
             val infos = store.getInfos()
+            if (infos.isEmpty()) {
+                p("No events found.")
+            }
             // add elements to the page
             inflateInfos(store, infos)
         } catch (e: Exception) {

@@ -27,7 +27,6 @@ class StoreClient() {
         endpoint: String,
         data: Sent?,
     ): Promise<RestResponse<Returned>> {
-        console.log("jwt: $jwt")
         return restClient.request("$apiAddress$endpoint") {
             this.method = method
             this.data = data
@@ -43,7 +42,6 @@ class StoreClient() {
         endpoint: String,
         data: Sent?,
     ): Promise<RestResponse<String>> {
-        console.log("jwt: $jwt")
         return restClient.request("$apiAddress$endpoint") {
             this.method = method
             this.data = data
@@ -62,7 +60,7 @@ class StoreClient() {
             this.serializer = LoginInfo.serializer()
         }.await()
         if (response.response.status == HTTP_OK) {
-            console.log("login success: ${response.data.jwt}")
+            console.log("login success")
             loginInfo = loginInfo.copy(session = response.data.session)
             if (localStore.save == true) {
                 localStore.username = loginInfo.username
@@ -95,6 +93,20 @@ class StoreClient() {
 
     suspend inline fun <reified T: Any> get(endpoint: String): T {
         return restClient.call<T>("$apiAddress$endpoint").await()
+    }
+
+    suspend inline fun <reified Received: Any, Sent: Any> post(
+        endpoint: String, data: Sent
+    ): Received? {
+        return authRequest {
+            restClient.call<Received>("$apiAddress$endpoint") {
+                this.method = HttpMethod.POST
+                this.data = data
+                this.headers = {
+                    listOf(Pair("Authorization", "Bearer $jwt") )
+                }
+            }
+        }
     }
 
     suspend fun delete(endpoint: String, id: Int): Boolean {

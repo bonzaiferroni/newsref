@@ -69,7 +69,7 @@ fun Container.portal(
         height = 100.perc
 
         pages.forEach { page ->
-            val div = div(className = "content") {
+            val div = div(className = "content ${page.name}") {
                 padding = Constants.defaultPad
                 transition = Transition("all", duration, "ease-out")
                 position = Position.ABSOLUTE
