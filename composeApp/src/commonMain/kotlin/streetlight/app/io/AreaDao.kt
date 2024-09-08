@@ -1,6 +1,6 @@
 package streetlight.app.io
 
-import streetlight.model.Area
+import streetlight.model.core.Area
 
 class AreaDao(
     private val client: ApiClient,

@@ -2,15 +2,16 @@ package streetlight.web.pages
 
 import io.kvision.core.Container
 import io.kvision.html.h3
-import io.kvision.html.link
+import io.kvision.html.p
 import streetlight.web.components.rows
 import streetlight.web.core.PortalEvents
 
-fun Container.aboutPage(): PortalEvents? {
+fun Container.privacyPage(): PortalEvents? {
     rows {
-        h3("About Streetlight")
-        link("Privacy Policy", "#/privacy")
+        h3("Privacy Policy")
+        p {
+            +"This is the privacy policy."
+        }
     }
     return null
 }
-

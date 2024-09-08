@@ -13,7 +13,7 @@ import streetlight.app.services.BusService
 import streetlight.app.ui.debug.controls.DataList
 import streetlight.app.ui.core.UiModel
 import streetlight.app.ui.core.UiState
-import streetlight.model.Area
+import streetlight.model.core.Area
 
 @Composable
 fun AreaListScreen(navigator: Navigator?) {

@@ -9,13 +9,14 @@ import streetlight.web.io.globalApiClient
 
 class AppModel (
     private val client: ApiClient = globalApiClient,
+    private val userStore: UserStore = UserStore(client),
 ): ViewModel() {
 
     private val _userInfo: MutableStateFlow<UserInfo?> = MutableStateFlow(null)
-    val userInfo = _userInfo.asStateFlow()
+    val userFlow = _userInfo.asStateFlow()
 
     suspend fun requestUser(): UserInfo? {
-        _userInfo.value = client.getAuth("/user")
+        _userInfo.value = userStore.getUser()
         return _userInfo.value
     }
 

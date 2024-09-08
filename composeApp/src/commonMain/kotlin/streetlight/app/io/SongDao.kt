@@ -1,6 +1,6 @@
 package streetlight.app.io
 
-import streetlight.model.Song
+import streetlight.model.core.Song
 
 class SongDao(private val client: ApiClient, ) {
     suspend fun create(song: Song): Int = client.create("/songs", song)

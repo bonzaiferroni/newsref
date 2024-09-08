@@ -4,8 +4,8 @@ import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
-import streetlight.model.Request
-import streetlight.model.Song
+import streetlight.model.core.Request
+import streetlight.model.core.Song
 import streetlight.model.dto.EventInfo
 import streetlight.web.core.ViewModel
 import streetlight.web.io.stores.EventStore

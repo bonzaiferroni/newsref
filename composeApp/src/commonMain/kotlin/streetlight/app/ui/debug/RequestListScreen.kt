@@ -14,7 +14,7 @@ import streetlight.app.ui.debug.controls.DataList
 import streetlight.app.ui.core.UiModel
 import streetlight.app.ui.core.UiState
 import streetlight.model.dto.RequestInfo
-import streetlight.model.Request
+import streetlight.model.core.Request
 
 @Composable
 fun RequestListScreen(navigator: Navigator?) {

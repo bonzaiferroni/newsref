@@ -1,6 +1,6 @@
 package streetlight.web.io.stores
 
-import streetlight.model.Request
+import streetlight.model.core.Request
 import streetlight.model.dto.RequestInfo
 import streetlight.web.io.ApiClient
 import streetlight.web.io.globalApiClient

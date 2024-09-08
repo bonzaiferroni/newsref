@@ -21,7 +21,6 @@ ul, ol {
 /* Remove default link styles */
 a {
     text-decoration: none !important;
-    color: inherit;
 }
 
 /* Reset heading and paragraph margins */

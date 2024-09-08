@@ -1,6 +1,6 @@
 package streetlight.app.io
 
-import streetlight.model.User
+import streetlight.model.core.User
 
 class UserDao(
     private val client: ApiClient,

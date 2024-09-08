@@ -12,12 +12,12 @@ class PortalBuilder(
 ) {
     private var pages: MutableList<PageConfig> = mutableListOf()
 
-    fun addPage(page: PageConfig): PortalBuilder {
-        pages.add(page)
+    fun addPage(vararg pages: PageConfig): PortalBuilder {
+        this.pages.addAll(pages)
         return this
     }
 
-    fun addPages(vararg pages: PageConfig): PortalBuilder {
+    fun addPages(pages: List<PageConfig>): PortalBuilder {
         this.pages.addAll(pages)
         return this
     }

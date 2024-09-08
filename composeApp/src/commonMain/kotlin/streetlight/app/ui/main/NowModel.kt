@@ -7,8 +7,8 @@ import streetlight.app.io.EventDao
 import streetlight.app.io.LocationDao
 import streetlight.app.ui.core.UiModel
 import streetlight.app.ui.core.UiState
-import streetlight.model.Event
-import streetlight.model.Location
+import streetlight.model.core.Event
+import streetlight.model.core.Location
 import streetlight.model.dto.EventInfo
 
 class NowModel(

@@ -14,7 +14,7 @@ import streetlight.app.ui.debug.controls.DataEditor
 import streetlight.app.ui.core.UiModel
 import streetlight.app.ui.core.UiState
 import streetlight.app.ui.debug.controls.StringField
-import streetlight.model.Area
+import streetlight.model.core.Area
 
 @Composable
 fun AreaEditorScreen(

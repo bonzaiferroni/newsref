@@ -18,8 +18,8 @@ import streetlight.app.ui.debug.controls.DataEditor
 import streetlight.app.ui.debug.controls.DataMenu
 import streetlight.app.ui.core.UiModel
 import streetlight.app.ui.core.UiState
-import streetlight.model.Area
-import streetlight.model.Location
+import streetlight.model.core.Area
+import streetlight.model.core.Location
 
 @Composable
 fun LocationEditorScreen(id: Int?, navigator: Navigator?) {

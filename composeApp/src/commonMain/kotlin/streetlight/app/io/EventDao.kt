@@ -2,7 +2,7 @@ package streetlight.app.io
 
 import streetlight.model.dto.EventInfo
 import streetlight.model.dto.RequestInfo
-import streetlight.model.Event
+import streetlight.model.core.Event
 import streetlight.model.dto.ImageUploadRequest
 
 class EventDao(

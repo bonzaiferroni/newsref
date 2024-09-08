@@ -1,6 +1,6 @@
 package streetlight.web.io.stores
 
-import streetlight.model.Area
+import streetlight.model.core.Area
 import streetlight.web.io.ApiClient
 import streetlight.web.io.globalApiClient
 

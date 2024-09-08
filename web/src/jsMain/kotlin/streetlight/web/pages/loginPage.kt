@@ -4,14 +4,14 @@ import io.kvision.core.Container
 import io.kvision.core.onClickLaunch
 import io.kvision.form.check.checkBox
 import io.kvision.form.text.text
-import io.kvision.html.InputType
-import io.kvision.html.button
-import io.kvision.html.p
+import io.kvision.html.*
 import io.kvision.state.bindTo
 import kotlinx.browser.window
 import kotlinx.coroutines.flow.MutableStateFlow
 import streetlight.model.dto.LoginInfo
 import streetlight.web.*
+import streetlight.web.components.bindTo
+import streetlight.web.components.row
 import streetlight.web.components.rows
 import streetlight.web.core.AppContext
 import streetlight.web.core.PortalEvents
@@ -22,16 +22,16 @@ import streetlight.web.io.stores.LocalStore
 fun Container.loginPage(context: AppContext): PortalEvents? {
     console.log("Login page loaded")
     val nextUrl = window.location.href.getQueryParameter("next") ?: "/user"
-    loginWidget {
+    loginWidget(context) {
         context.routing.navigate(nextUrl)
     }
     return null
 }
 
-fun Container.loginWidget(onSuccess: () -> Unit) {
+fun Container.loginWidget(context: AppContext, onSuccess: () -> Unit) {
     val model = LoginWidgetModel()
 
-    rows(spacing = Layout.halfGap) {
+    rows(group = true) {
         text {
             placeholder = "Username"
         }.bindTo(model.username)
@@ -39,13 +39,20 @@ fun Container.loginWidget(onSuccess: () -> Unit) {
             placeholder = "Password"
             type = InputType.PASSWORD
         }.bindTo(model.password)
-        button("Login").onClickLaunch {
-            val success = model.login()
-            if (success) {
-                console.log("loginPage success")
-                onSuccess()
-            } else {
-                console.log("loginPage failed")
+        row(group = true) {
+            button("Login").onClickLaunch {
+                val success = model.login()
+                if (success) {
+                    console.log("loginPage success")
+                    onSuccess()
+                } else {
+                    console.log("loginPage failed")
+                }
+            }
+            button("Create User", style = ButtonStyle.SECONDARY) {
+                onClick {
+                    context.routing.navigate("/user/create")
+                }
             }
         }
         checkBox(label = "Store credentials to stay logged in.", value = model.save.value)
@@ -66,7 +73,7 @@ class LoginWidgetModel() : ViewModel() {
     val save = MutableStateFlow(localStore.save ?: false)
     val msg = MutableStateFlow("Hello.")
     val username = MutableStateFlow(localStore.username ?: "")
-    val password = MutableStateFlow(localStore.session?.let { "hunter2" })
+    val password = MutableStateFlow("")
 
     init {
         save.subscribe { localStore.save = it }

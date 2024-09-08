@@ -19,9 +19,9 @@ import streetlight.app.ui.core.UiModel
 import streetlight.app.ui.core.UiState
 import streetlight.app.ui.debug.controls.StringField
 import streetlight.model.dto.EventInfo
-import streetlight.model.Event
-import streetlight.model.Song
-import streetlight.model.Request
+import streetlight.model.core.Event
+import streetlight.model.core.Song
+import streetlight.model.core.Request
 
 @Composable
 fun RequestEditorScreen(id: Int?, navigator: Navigator?) {

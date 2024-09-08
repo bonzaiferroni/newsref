@@ -20,32 +20,8 @@ class App : Application() {
         val context = AppContext(AppModel(), Routing.init())
         root("kvapp") {
             buildPortal(context)
-                .addPages(
-                    PageConfig("Home", "/", "fas fa-home", false, CachedPageBuilder {
-                        homePage()
-                    }),
-                    PageConfig("About", "/about", "fas fa-info", true, CachedPageBuilder {
-                        aboutPage()
-                    }),
-                    PageConfig("Events", "/event", "fas fa-info", true, CachedPageBuilder {
-                        eventPage()
-                    }),
-                    PageConfig("Event", "/event/:id", "fas fa-envelope", false, IdPageBuilder {
-                        eventProfile(it)
-                    }),
-                    PageConfig("User", "/user", "fas fa-home", true, TransientPageBuilder {
-                        userPage(context)
-                    }),
-                    PageConfig("Login", "/login", "fas fa-home", false, CachedPageBuilder {
-                        loginPage(context)
-                    }),
-                    PageConfig("EditUser", "/user/edit", "fas fa-home", false, TransientPageBuilder {
-                        editUserPage(context)
-                    }),
-                    PageConfig("Admin", "/admin", "fas fa-home", false, TransientPageBuilder {
-                        adminPage(context)
-                    })
-                )
+                .addPages(basePages)
+                .addPages(userPages)
                 .build()
         }
     }

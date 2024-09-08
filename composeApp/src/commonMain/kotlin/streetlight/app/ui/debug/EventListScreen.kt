@@ -14,7 +14,7 @@ import streetlight.app.ui.debug.controls.DataList
 import streetlight.app.ui.core.UiModel
 import streetlight.app.ui.core.UiState
 import streetlight.model.dto.EventInfo
-import streetlight.model.Event
+import streetlight.model.core.Event
 
 @Composable
 fun EventListScreen(navigator: Navigator?) {

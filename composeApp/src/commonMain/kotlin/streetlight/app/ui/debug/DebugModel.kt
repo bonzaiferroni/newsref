@@ -4,7 +4,7 @@ import streetlight.app.io.UserDao
 
 import streetlight.app.ui.core.UiModel
 import streetlight.app.ui.core.UiState
-import streetlight.model.User
+import streetlight.model.core.User
 
 class DebugModel(private val userDao: UserDao) : UiModel<DebugState>(DebugState()) {
 

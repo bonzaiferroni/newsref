@@ -34,7 +34,7 @@ import streetlight.app.chop.Constants.BASE_PADDING
 import streetlight.app.chop.addBasePadding
 import streetlight.app.chop.addGap
 import streetlight.app.ui.core.AppScaffold
-import streetlight.model.EventStatus
+import streetlight.model.core.EventStatus
 import streetlight.model.dto.RequestInfo
 
 @Composable

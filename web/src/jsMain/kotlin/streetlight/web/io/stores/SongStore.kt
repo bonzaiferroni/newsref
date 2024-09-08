@@ -1,6 +1,6 @@
 package streetlight.web.io.stores
 
-import streetlight.model.Song
+import streetlight.model.core.Song
 import streetlight.web.io.ApiClient
 import streetlight.web.io.globalApiClient
 

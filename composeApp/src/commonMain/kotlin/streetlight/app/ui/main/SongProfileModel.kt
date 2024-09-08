@@ -6,7 +6,7 @@ import moe.tlaster.precompose.viewmodel.viewModelScope
 import streetlight.app.io.SongDao
 import streetlight.app.ui.core.UiModel
 import streetlight.app.ui.core.UiState
-import streetlight.model.Song
+import streetlight.model.core.Song
 
 class SongProfileModel(
     private val id: Int,

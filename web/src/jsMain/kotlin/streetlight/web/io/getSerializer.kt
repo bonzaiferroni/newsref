@@ -1,7 +1,7 @@
 package streetlight.web.io
 
 import kotlinx.serialization.SerializationStrategy
-import streetlight.model.*
+import streetlight.model.core.*
 import streetlight.model.dto.*
 
 inline fun <reified T> getSerializer(): SerializationStrategy<T> {

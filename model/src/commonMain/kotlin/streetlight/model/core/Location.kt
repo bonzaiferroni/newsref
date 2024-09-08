@@ -1,6 +1,5 @@
-package streetlight.model
+package streetlight.model.core
 
-import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 
 @Serializable

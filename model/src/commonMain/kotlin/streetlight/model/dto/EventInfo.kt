@@ -1,10 +1,10 @@
 package streetlight.model.dto
 
 import kotlinx.serialization.Serializable
-import streetlight.model.Area
-import streetlight.model.Event
-import streetlight.model.Location
-import streetlight.model.User
+import streetlight.model.core.Area
+import streetlight.model.core.Event
+import streetlight.model.core.Location
+import streetlight.model.core.User
 
 @Serializable
 data class EventInfo(

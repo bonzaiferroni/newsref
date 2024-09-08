@@ -16,7 +16,7 @@ import io.ktor.http.HttpStatusCode
 import io.ktor.http.contentType
 import io.ktor.serialization.kotlinx.json.json
 import kotlinx.serialization.json.Json
-import streetlight.model.User
+import streetlight.model.core.User
 import streetlight.model.dto.AuthInfo
 
 class ApiClient {

@@ -1,6 +1,6 @@
 package streetlight.web.io.stores
 
-import streetlight.model.Event
+import streetlight.model.core.Event
 import streetlight.model.dto.EventInfo
 import streetlight.web.io.ApiClient
 import streetlight.web.io.globalApiClient

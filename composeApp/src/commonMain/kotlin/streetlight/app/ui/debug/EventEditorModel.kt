@@ -10,8 +10,8 @@ import streetlight.app.io.LocationDao
 import streetlight.app.services.BusService
 import streetlight.app.ui.core.UiModel
 import streetlight.app.ui.core.UiState
-import streetlight.model.Event
-import streetlight.model.Location
+import streetlight.model.core.Event
+import streetlight.model.core.Location
 import streetlight.model.utils.toEpochSeconds
 import streetlight.model.utils.toLocalEpochSeconds
 

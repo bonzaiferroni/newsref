@@ -1,8 +1,6 @@
 package streetlight.app.io
 
-import streetlight.model.Area
-import streetlight.model.Event
-import streetlight.model.Location
+import streetlight.model.core.Location
 
 class LocationDao(
     private val client: ApiClient,

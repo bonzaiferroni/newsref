@@ -14,7 +14,7 @@ import streetlight.app.ui.debug.controls.DataEditor
 import streetlight.app.ui.core.UiModel
 import streetlight.app.ui.core.UiState
 import streetlight.app.ui.debug.controls.StringField
-import streetlight.model.Song
+import streetlight.model.core.Song
 
 @Composable
 fun SongEditorScreen(id: Int?, navigator: Navigator?) {

@@ -86,7 +86,7 @@ fun Container.portal(
                         current?.div?.updateVisibility(false)
                         if (!loaded.contains(page.route)) {
                             // console.log("Loading ${page.route}")
-                            events = page.builder.content(div)
+                            events = page.builder.content(div, context)
                             loaded.add(page.route)
                         }
                     }
@@ -99,7 +99,7 @@ fun Container.portal(
                         if (id == null) {
                             div.add(P("Portal.loadPage: missing id"))
                         } else {
-                            events = page.builder.content(div, id)
+                            events = page.builder.content(div, context, id)
                         }
                     }
 
@@ -107,7 +107,7 @@ fun Container.portal(
                         current?.div?.updateVisibility(false)
                         // console.log("Loading ${page.route}")
                         div.removeAll()
-                        events = page.builder.content(div)
+                        events = page.builder.content(div, context)
                     }
                 }
                 events?.onLoad?.invoke()

@@ -18,14 +18,10 @@ fun Container.userPage(context: AppContext): PortalEvents? {
         vPanel(alignItems = AlignItems.START) {
             gap = Layout.halfGap
             h3("Hello, ${userInfo.username}!")
-            labelInfo("name", userInfo.name)
-            labelInfo("email", userInfo.email)
-            userInfo.venmo?.let {
-                labelInfo("venmo", it)
-            }
-            userInfo.avatarUrl?.let {
-                image(it)
-            }
+            userInfo.name?.let { labelInfo("name", it) }
+            userInfo.email?.let { labelInfo("email", it) }
+            userInfo.venmo?.let { labelInfo("venmo", it) }
+            userInfo.avatarUrl?.let { image(it) }
             row {
                 button("Edit") {
                     onClick {

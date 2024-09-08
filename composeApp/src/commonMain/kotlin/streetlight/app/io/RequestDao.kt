@@ -1,7 +1,7 @@
 package streetlight.app.io
 
 import streetlight.model.dto.RequestInfo
-import streetlight.model.Request
+import streetlight.model.core.Request
 
 class RequestDao(private val client: ApiClient, ) {
     suspend fun create(request: Request): Int = client.create("/requests", request)

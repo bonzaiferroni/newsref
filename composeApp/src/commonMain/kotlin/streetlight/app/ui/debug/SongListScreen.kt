@@ -13,7 +13,7 @@ import streetlight.app.services.BusService
 import streetlight.app.ui.debug.controls.DataList
 import streetlight.app.ui.core.UiModel
 import streetlight.app.ui.core.UiState
-import streetlight.model.Song
+import streetlight.model.core.Song
 
 @Composable
 fun SongListScreen(navigator: Navigator?) {
