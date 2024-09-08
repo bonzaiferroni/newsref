@@ -1,16 +1,14 @@
 package streetlight.web.io.stores
 
-import io.kvision.routing.Routing
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
-import kotlinx.coroutines.launch
 import streetlight.model.dto.UserInfo
 import streetlight.web.core.ViewModel
-import streetlight.web.io.StoreClient
-import streetlight.web.io.globalStoreClient
+import streetlight.web.io.ApiClient
+import streetlight.web.io.globalApiClient
 
 class AppModel (
-    private val client: StoreClient = globalStoreClient,
+    private val client: ApiClient = globalApiClient,
 ): ViewModel() {
 
     private val _userInfo: MutableStateFlow<UserInfo?> = MutableStateFlow(null)

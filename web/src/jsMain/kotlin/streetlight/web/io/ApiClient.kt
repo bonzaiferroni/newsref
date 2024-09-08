@@ -9,9 +9,9 @@ import streetlight.web.baseAddress
 import streetlight.web.io.stores.LocalStore
 import kotlin.js.Promise
 
-val globalStoreClient = StoreClient()
+val globalApiClient = ApiClient()
 
-class StoreClient() {
+class ApiClient() {
     val restClient = RestClient()
     val localStore = LocalStore()
 
@@ -118,11 +118,13 @@ class StoreClient() {
         }
     }
 
-    suspend fun delete(endpoint: String, id: Int): Boolean {
-        val result: RestResponse<String>? = authRequest {
-            requestText(HttpMethod.DELETE, "$endpoint$id", null)
+    suspend fun delete(endpoint: String, id: Int): Boolean? {
+        return authRequest {
+            return restClient.requestOnly("$apiAddress$endpoint$id") {
+                this.method = HttpMethod.DELETE
+                this.headers = tokenHeaders
+            }
         }
-        return result?.response?.status == HTTP_OK
     }
 
     suspend inline fun <reified T: Any, reified V: Any> create(endpoint: String, data: V?): T? {
@@ -139,5 +141,21 @@ class StoreClient() {
     suspend fun login(loginInfo: LoginInfo): Boolean {
         this.loginInfo = loginInfo
         return login()
+    }
+}
+
+suspend inline fun RestClient.requestOnly(
+    url: String,
+    crossinline block:  RestRequestConfig<String, dynamic>.() -> Unit = {}
+): Boolean {
+    try {
+        val result = this.request<String>(url, block).await()
+        return result.response.status == HTTP_OK
+    } catch (e: Exception) {
+        when (e) {
+            is XHRError -> return true
+        }
+        console.log("StoreClient.requestOnly: exception: $e")
+        throw e
     }
 }
