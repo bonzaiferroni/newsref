@@ -13,9 +13,10 @@ import streetlight.web.gap
 import streetlight.web.getIdFromUrl
 
 fun Container.portal(
-    routing: Routing,
-    vararg pages: PageConfig
+    context: AppContext,
+    pages: List<PageConfig>
 ) {
+    val (model, routing) = context
     // add header and add nav menu
     header {
         nav(className = "navbar ${BsBgColor.BODYTERTIARY.className}") {
