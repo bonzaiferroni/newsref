@@ -61,10 +61,16 @@ class ApiClient() {
             }.await()
             if (response.response.status == HTTP_OK) {
                 console.log("StoreClient.login success")
-                loginInfo = loginInfo.copy(session = response.data.session)
+                response.data.session?.let {
+                    console.log("StoreClient.login: received session token")
+                    loginInfo = loginInfo.copy(session = it)
+                    if (localStore.save == true) {
+                        localStore.session = loginInfo.session
+                        localStore.username = loginInfo.username
+                    }
+                }
+                loginInfo = loginInfo.copy(password = null)
                 if (localStore.save == true) {
-                    localStore.username = loginInfo.username
-                    localStore.session = loginInfo.session
                     localStore.jwt = response.data.jwt
                 }
                 jwt = response.data.jwt

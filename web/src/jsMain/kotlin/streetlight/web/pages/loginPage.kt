@@ -48,7 +48,8 @@ fun Container.loginWidget(onSuccess: () -> Unit) {
                 console.log("loginPage failed")
             }
         }
-        checkBox(label = "Store credentials to stay logged in.") {}.bindTo(model.save)
+        checkBox(label = "Store credentials to stay logged in.", value = model.save.value)
+            .bindTo(model.save)
         val message = p()
         model.msg.subscribe {
             message.content = it
@@ -89,6 +90,7 @@ class LoginWidgetModel() : ViewModel() {
     }
 
     suspend fun autoLogin() {
+        console.log("loginPage.autoLogin: session token: ${localStore.session?.substring(0..10)}")
         val go = save.value && localStore.session != null
         console.log("loginPage.autoLogin: ${go}")
         if (go) {
