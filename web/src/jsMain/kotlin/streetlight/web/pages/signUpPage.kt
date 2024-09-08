@@ -2,19 +2,12 @@ package streetlight.web.pages
 
 import io.kvision.core.AlignItems
 import io.kvision.core.Container
-import io.kvision.core.JustifyContent
-import io.kvision.core.style
+import io.kvision.core.onClickLaunch
 import io.kvision.form.text.text
 import io.kvision.html.*
-import io.kvision.utils.px
-import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.asStateFlow
-import streetlight.model.dto.SignUpInfo
 import streetlight.web.components.*
 import streetlight.web.core.AppContext
 import streetlight.web.core.PortalEvents
-import streetlight.web.core.ViewModel
-import streetlight.web.io.stores.UserStore
 
 fun Container.signUpPage(context: AppContext): PortalEvents? {
     val model = SignUpModel()
@@ -74,13 +67,11 @@ fun Container.signUpPage(context: AppContext): PortalEvents? {
                 }.bindTo(model::updateName)
             }
             p {
-                +"Email is securely stored and never shared. Read about "
+                +"Your email address is securely stored and never shared. Read about "
                 link("your privacy", "#/privacy")
                 +" on Streetlight."
             }.mute()
         }
-
-
 
         // controls
         row(group = true) {
@@ -89,7 +80,16 @@ fun Container.signUpPage(context: AppContext): PortalEvents? {
                     context.routing.navigate("/login")
                 }
             }
-            button("Create") {}.bindTo(model::signUp)
+            button("Create") {
+                disabled = true
+                onClickLaunch {
+                    if (model.signUp()) {
+                        context.routing.navigate("/user")
+                    }
+                }
+            }.bindWidgetFrom(model.state) {
+                disabled = !it.validSignUp
+            }
             p().bindFrom(model.state) { it.resultMessage }
         }
     }

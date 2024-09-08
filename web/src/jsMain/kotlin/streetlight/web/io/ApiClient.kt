@@ -111,7 +111,7 @@ class ApiClient() {
         }
     }
 
-    suspend inline fun <reified Received: Any, Sent: Any> post(
+    suspend inline fun <reified Received: Any, reified Sent: Any> post(
         endpoint: String, data: Sent
     ): Received? {
         return authRequest {
@@ -119,6 +119,7 @@ class ApiClient() {
                 this.method = HttpMethod.POST
                 this.data = data
                 this.headers = tokenHeaders
+                this.serializer = getSerializer<Sent>()
             }
         }
     }

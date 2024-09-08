@@ -10,25 +10,39 @@ data class SignUpInfo(
     val email: String? = null,
     val name: String? = null
 ) {
-    val validUsernameLength = username.length > 3
-    val validUsernameChars = username.all() { !disallowInUsername.contains(it) }
-    val validUsername = validUsernameLength && validUsernameChars
-    val validEmail = email?.let {
-        email -> email.contains("@") && email.all { it.isLetterOrDigit() || it == '@' || it == '.'}
-    } ?: true // if email is null, it is valid
-    val validPasswordLength = password.length >= 8
+    val validUsernameLength: Boolean
+        get() = username.length in 3..20
+    val validUsernameChars: Boolean
+        get() = username.all() { it.isLetterOrDigit() || it == '_' }
+    val validUsername: Boolean
+        get() = validUsernameLength && validUsernameChars
+    val validEmail: Boolean
+        get() = email?.let { email ->
+            email.contains("@") && email.all { it.isLetterOrDigit() || it == '@' || it == '.' }
+        } ?: true // if email is null, it is valid
+    val validPasswordLength: Boolean
+        get() = password.length >= 8
 
-    val strongPasswordLength = password.length >= 12
-    val bestPasswordLength = password.length >= 16
-    val passwordHasLetter = password.any { it.isLetter() }
+    val strongPasswordLength: Boolean
+        get() = password.length >= 12
+    val bestPasswordLength: Boolean
+        get() = password.length >= 16
+    val passwordHasLetter: Boolean
+        get() = password.any { it.isLetter() }
 
-    val passwordHasDigit = password.any { it.isDigit() }
-    val passwordHasSpecial = password.any { !it.isLetterOrDigit() }
-    val passwordHasUpper = password.any { it.isUpperCase() }
-    val passwordHasLower = password.any { it.isLowerCase() }
-    val validPassword = passwordScore >= 6
+    val passwordHasDigit: Boolean
+        get() = password.any { it.isDigit() }
+    val passwordHasSpecial: Boolean
+        get() = password.any { !it.isLetterOrDigit() }
+    val passwordHasUpper: Boolean
+        get() = password.any { it.isUpperCase() }
+    val passwordHasLower: Boolean
+        get() = password.any { it.isLowerCase() }
+    val validPassword: Boolean
+        get() = passwordScore >= 6
 
-    val validSignUp = validPassword && validUsername && validEmail
+    val validSignUp: Boolean
+        get() = validPassword && validUsername && validEmail
 
     val passwordScore: Int
         get() {

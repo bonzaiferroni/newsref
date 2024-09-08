@@ -16,6 +16,7 @@ import streetlight.web.components.rows
 import streetlight.web.core.AppContext
 import streetlight.web.core.PortalEvents
 import streetlight.web.core.ViewModel
+import streetlight.web.io.ApiClient
 import streetlight.web.io.globalApiClient
 import streetlight.web.io.stores.LocalStore
 
@@ -68,7 +69,9 @@ fun Container.loginWidget(context: AppContext, onSuccess: () -> Unit) {
     }
 }
 
-class LoginWidgetModel() : ViewModel() {
+class LoginWidgetModel(
+    val client: ApiClient = globalApiClient
+) : ViewModel() {
     val localStore = LocalStore()
     val save = MutableStateFlow(localStore.save ?: false)
     val msg = MutableStateFlow("Hello.")
@@ -86,7 +89,7 @@ class LoginWidgetModel() : ViewModel() {
             localStore.username = username.value
         }
 
-        val result = globalApiClient.login(loginInfo)
+        val result = client.login(loginInfo)
         if (result) {
             msg.value = "Login successful."
             return true
