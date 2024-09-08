@@ -19,7 +19,8 @@ class AppModel (
         return _userInfo.value
     }
 
-    fun clearUser() {
+    fun logout() {
+        client.logout()
         _userInfo.value = null
     }
 }

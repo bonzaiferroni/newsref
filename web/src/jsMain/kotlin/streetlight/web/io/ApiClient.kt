@@ -62,7 +62,6 @@ class ApiClient() {
             if (response.response.status == HTTP_OK) {
                 console.log("StoreClient.login success")
                 response.data.session?.let {
-                    console.log("StoreClient.login: received session token")
                     loginInfo = loginInfo.copy(session = it)
                     if (localStore.save == true) {
                         localStore.session = loginInfo.session
@@ -147,6 +146,12 @@ class ApiClient() {
     suspend fun login(loginInfo: LoginInfo): Boolean {
         this.loginInfo = loginInfo
         return login()
+    }
+    fun logout() {
+        jwt = null
+        localStore.jwt = null
+        localStore.session = null
+        loginInfo = loginInfo.copy(session = null)
     }
 }
 

@@ -28,7 +28,7 @@ fun Container.row(
     justify: JustifyContent = JustifyContent.START,
     alignItems: AlignItems = AlignItems.CENTER,
     useWrappers: Boolean = false,
-    spacing: Int = Layout.spacing,
+    spacing: Int = Layout.halfGap,
     init: (HPanel.() -> Unit)? = null,
 ): HPanel {
     return this.hPanel(justify = justify, alignItems = alignItems, useWrappers = useWrappers) {
