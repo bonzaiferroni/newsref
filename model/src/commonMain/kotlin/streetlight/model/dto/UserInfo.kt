@@ -7,6 +7,7 @@ data class UserInfo(
     val name: String = "",
     val username: String = "",
     val email: String = "",
+    val roles: String = "",
     val createdAt: Long = 0,
     val updatedAt: Long = 0,
     val avatarUrl: String? = null,

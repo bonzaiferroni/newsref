@@ -33,6 +33,13 @@ fun Container.userPage(context: AppContext): PortalEvents? {
                     context.routing.navigate("/user/edit")
                 }
             }
+            if (userInfo.roles.contains("admin")) {
+                button("Admin") {
+                    onClick {
+                        context.routing.navigate("/admin")
+                    }
+                }
+            }
         }
     }
     return null

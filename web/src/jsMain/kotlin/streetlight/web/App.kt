@@ -42,6 +42,9 @@ class App : Application() {
                 PageConfig("EditUser", "/user/edit", "fas fa-home", false, TransientPageBuilder {
                     editUserPage(context)
                 }),
+                PageConfig("Admin", "/admin", "fas fa-home", false, TransientPageBuilder {
+                    adminPage(context)
+                })
             )
         }
     }
