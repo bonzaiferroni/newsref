@@ -49,6 +49,18 @@ class ApiClient() {
         }
     }
 
+    inline fun <reified Sent : Any> requestDynamic(
+        method: HttpMethod,
+        endpoint: String,
+        data: Sent,
+        crossinline block: RestRequestConfig<dynamic, Sent>.() -> Unit = {},
+    ): Promise<RestResponse<dynamic>> {
+        return restClient.requestDynamic<Sent>("$apiAddress$endpoint", data) {
+            applyConfig(method)
+            block()
+        }
+    }
+
     inline fun <reified Returned : Any, reified Sent : Any> request(
         method: HttpMethod,
         endpoint: String,
@@ -64,7 +76,7 @@ class ApiClient() {
     inline fun requestDynamic(
         method: HttpMethod,
         endpoint: String,
-        crossinline block: RestRequestConfig<String, dynamic>.() -> Unit = {},
+        crossinline block: RestRequestConfig<dynamic, dynamic>.() -> Unit = {},
     ): Promise<RestResponse<dynamic>> {
         return restClient.requestDynamic("$apiAddress$endpoint") {
             applyConfigNoData(method)
@@ -77,7 +89,7 @@ class ApiClient() {
         endpoint: String,
         data: Sent,
     ): Promise<RestResponse<String>> {
-        return request(method, endpoint, data) {
+        return request<String, Sent>(method, endpoint, data) {
             responseBodyType = ResponseBodyType.TEXT
         }
     }
@@ -186,7 +198,7 @@ class ApiClient() {
     }.data
 
     suspend inline fun <reified T : Any> update(endpoint: String, id: Int, data: T): Boolean =
-        authRequest { requestText(HttpMethod.PUT, "$endpoint/$id", data) }
+        authRequestDynamic { requestDynamic(HttpMethod.PUT, "$endpoint/$id", data) }
             .response.status == HTTP_OK
 
     fun logout() {
