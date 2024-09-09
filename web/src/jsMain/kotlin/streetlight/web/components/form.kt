@@ -10,44 +10,32 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import streetlight.web.Layout
 import streetlight.web.gap
 
-class EzForm<T>(
+class EzForm(
     name: String? = null,
-    onSubmit: (suspend (T) -> Unit)? = null,
-    block: EzForm<T>.() -> Unit,
+    block: EzForm.() -> Unit,
 ) : VPanel(
     justify = JustifyContent.START, alignItems = AlignItems.STRETCH,
 ) {
-    val flow = MutableStateFlow<T?>(null)
-
     init {
         gap = Layout.defaultGap
         if (name != null) {
             h3(name)
         }
-        block?.invoke(this)
-        button("Submit") {
-            onClickLaunch {
-                val value = flow.value ?: return@onClickLaunch
-                onSubmit?.invoke(value)
-            }
-        }
+        block.invoke(this)
     }
 }
 
-fun <T> Container.ezForm(
+fun Container.ezForm(
     name: String? = null,
-    onSubmit: (suspend (T) -> Unit)? = null,
-    block: EzForm<T>.() -> Unit,
-): EzForm<T> {
-    val form = EzForm(name, onSubmit, block)
+    block: EzForm.() -> Unit,
+): EzForm {
+    val form = EzForm(name, block)
     this.add(form)
     return form
 }
 
-fun <T> EzForm<T>.ezText(name: String, bindTo: (String, T?) -> T?, bindFrom: (T?) -> String?): Text {
+fun Container.ezText(name: String): Text {
     return text(label = name) {
         placeholder = name
     }
-        .bindTo { flow.value = bindTo(it, flow.value) }
-        .bindFrom { bindFrom(flow.value) ?: "" }
 }

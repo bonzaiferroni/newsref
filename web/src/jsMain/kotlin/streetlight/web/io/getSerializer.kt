@@ -19,6 +19,7 @@ inline fun <reified T> getSerializer(): SerializationStrategy<T> {
         Song::class -> Song.serializer() as SerializationStrategy<T>
         LoginInfo::class -> LoginInfo.serializer() as SerializationStrategy<T>
         SignUpRequest::class -> SignUpRequest.serializer() as SerializationStrategy<T>
+        EditUserRequest::class -> EditUserRequest.serializer() as SerializationStrategy<T>
         else -> throw IllegalArgumentException("No serializer for ${T::class}")
     }
 }

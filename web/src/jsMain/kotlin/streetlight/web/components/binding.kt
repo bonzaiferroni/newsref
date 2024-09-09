@@ -15,18 +15,28 @@ fun Text.bindTo(block: (String) -> Unit): Text {
     return this
 }
 
+fun Text.bindFrom(block: () -> String): Text {
+    value = block()
+    return this
+}
+
 fun <T> Text.bindTo(flow: MutableStateFlow<T>, block: (String, T) -> T): Text {
     onInput { flow.value = block(value ?: "", flow.value) }
     return this
 }
 
-fun <T> Text.bindFrom(flow: StateFlow<T>, block: (T) -> String): Text {
-    flow.subscribe { value = block(it) }
+fun <T> Text.bindFrom(flow: StateFlow<T>, block: (T) -> String?): Text {
+    flow.subscribe { value = block(it) ?: "" }
     return this
 }
 
-fun Text.bindFrom(block: () -> String): Text {
-    value = block()
+fun Text.bindFrom(flow: StateFlow<String>): Text {
+    flow.subscribe { value = it }
+    return this
+}
+
+fun Text.bindTo(flow: MutableStateFlow<String>): Text {
+    onInput { flow.value = value ?: "" }
     return this
 }
 
