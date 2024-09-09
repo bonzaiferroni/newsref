@@ -1,6 +1,7 @@
 package streetlight.model.core
 
 import kotlinx.serialization.Serializable
+import streetlight.model.dto.PrivateInfo
 
 @Serializable
 data class User(
@@ -18,3 +19,8 @@ data class User(
 )
 
 // TODO: Move to server module
+
+fun User.toPrivateInfo() = PrivateInfo(
+    name = this.name,
+    email = this.email,
+)

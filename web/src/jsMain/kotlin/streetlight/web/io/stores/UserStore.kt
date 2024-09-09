@@ -1,9 +1,6 @@
 package streetlight.web.io.stores
 
-import streetlight.model.dto.EditUserRequest
-import streetlight.model.dto.SignUpRequest
-import streetlight.model.dto.SignUpResult
-import streetlight.model.dto.UserInfo
+import streetlight.model.dto.*
 import streetlight.web.io.ApiClient
 import streetlight.web.io.globalApiClient
 
@@ -14,5 +11,6 @@ class UserStore(
 
     // returns null if successful, otherwise returns an error message
     suspend fun createUser(info: SignUpRequest): SignUpResult = client.post("/user", info)
-    suspend fun updateUser(info: EditUserRequest): Boolean = client.put("/user", info)
+    suspend fun updateUser(info: EditUserRequest): Boolean = client.putRespondBool("/user", info)
+    suspend fun getPrivateInfo(): PrivateInfo = client.get("/user/private")
 }

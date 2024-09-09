@@ -12,8 +12,8 @@ import streetlight.web.Layout.spacing
 import streetlight.web.gap
 
 fun Container.rows(
-    justify: JustifyContent = JustifyContent.SPACEBETWEEN,
-    alignItems: AlignItems = AlignItems.START,
+    justify: JustifyContent = JustifyContent.START,
+    alignItems: AlignItems = AlignItems.STRETCH,
     useWrappers: Boolean = false,
     group: Boolean = false,
     init: (VPanel.() -> Unit)? = null,
@@ -26,8 +26,8 @@ fun Container.rows(
 }
 
 fun Container.row(
-    justify: JustifyContent = JustifyContent.SPACEBETWEEN,
-    alignItems: AlignItems = AlignItems.CENTER,
+    justify: JustifyContent = JustifyContent.SPACEEVENLY,
+    alignItems: AlignItems = AlignItems.START,
     useWrappers: Boolean = false,
     group: Boolean = false,
     init: (HPanel.() -> Unit)? = null,

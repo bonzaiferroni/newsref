@@ -4,12 +4,12 @@ import kotlinx.serialization.Serializable
 
 @Serializable
 data class EditUserRequest(
-    val name: String? = null,
-    val email: String? = null,
-    val avatarUrl: String? = null,
-    val venmo: String? = null,
-    val deleteName: Boolean = false,
+    val name: String = "",
+    val email: String = "",
+    val avatarUrl: String = "",
+    val venmo: String = "",
     val deleteEmail: Boolean = false,
+    val deleteName: Boolean = false,
     val deleteUser: Boolean = false,
 ) {
 }

@@ -148,6 +148,10 @@ class ApiClient() {
         request<Received, Sent>(HttpMethod.PUT, endpoint, data)
     }.data
 
+    suspend inline fun <reified Sent: Any> putRespondBool(endpoint: String, data: Sent): Boolean = authRequest {
+        request<Boolean, Sent>(HttpMethod.PUT, endpoint, data)
+    }.data
+
     suspend fun delete(endpoint: String, id: Int): Boolean = authRequest {
         requestDynamic(HttpMethod.DELETE, "$apiAddress$endpoint$id")
     }.response.status == HTTP_OK

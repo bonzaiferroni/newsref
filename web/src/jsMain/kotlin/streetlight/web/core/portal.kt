@@ -74,6 +74,8 @@ fun Container.portal(
                 width = 100.perc
                 left = 0.px
                 right = 0.px
+                display = Display.FLEX
+                justifyContent = JustifyContent.STRETCH
             }
 
             fun loadPage() {
