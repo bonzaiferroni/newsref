@@ -3,7 +3,7 @@ package streetlight.web.io
 import io.kvision.rest.*
 import kotlinx.coroutines.await
 import streetlight.model.dto.AuthInfo
-import streetlight.model.dto.LoginInfo
+import streetlight.model.dto.LoginRequest
 import streetlight.web.HTTP_OK
 import streetlight.web.baseAddress
 import streetlight.web.io.stores.LocalStore
@@ -17,7 +17,7 @@ class ApiClient() {
 
     var jwt = localStore.jwt
 
-    var loginInfo = LoginInfo(username = localStore.username ?: "", session = localStore.session)
+    var loginRequest = LoginRequest(username = localStore.username ?: "", session = localStore.session)
 
     val apiAddress = "$baseAddress/api/v1"
 
@@ -103,19 +103,28 @@ class ApiClient() {
         }
     }
 
+    suspend fun coldLogin(loginRequest: LoginRequest): Boolean {
+        return try {
+            this.loginRequest = loginRequest
+            login()
+        } catch (e: Unauthorized) {
+            false
+        }
+    }
+
     suspend fun login(): Boolean {
         val response: RestResponse<AuthInfo> =
-            request<AuthInfo, LoginInfo>(HttpMethod.POST, "/login", loginInfo).await()
+            request<AuthInfo, LoginRequest>(HttpMethod.POST, "/login", loginRequest).await()
         if (response.response.status == HTTP_OK) {
             console.log("StoreClient.login success")
             response.data.session?.let {
-                loginInfo = loginInfo.copy(session = it)
+                loginRequest = loginRequest.copy(session = it)
                 if (localStore.save == true) {
-                    localStore.session = loginInfo.session
-                    localStore.username = loginInfo.username
+                    localStore.session = loginRequest.session
+                    localStore.username = loginRequest.username
                 }
             }
-            loginInfo = loginInfo.copy(password = null)
+            loginRequest = loginRequest.copy(password = null)
             if (localStore.save == true) {
                 localStore.jwt = response.data.jwt
             }
@@ -167,16 +176,11 @@ class ApiClient() {
         authRequest { requestText(HttpMethod.PUT, "$endpoint/$id", data) }
             .response.status == HTTP_OK
 
-    suspend fun login(loginInfo: LoginInfo): Boolean {
-        this.loginInfo = loginInfo
-        return login()
-    }
-
     fun logout() {
         jwt = null
         localStore.jwt = null
         localStore.session = null
-        loginInfo = loginInfo.copy(session = null)
+        loginRequest = loginRequest.copy(session = null)
     }
 }
 

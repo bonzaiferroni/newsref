@@ -2,8 +2,9 @@ package streetlight.web.pages
 
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
-import streetlight.model.dto.LoginInfo
+import streetlight.model.dto.LoginRequest
 import streetlight.model.dto.SignUpRequest
+import streetlight.model.obfuscate
 import streetlight.web.core.ViewModel
 import streetlight.web.io.ApiClient
 import streetlight.web.io.globalApiClient
@@ -14,20 +15,23 @@ class SignUpModel(
     private val client: ApiClient = globalApiClient,
 ) : ViewModel() {
     private val _state = MutableStateFlow(SignUpState())
-    private val info: SignUpRequest
+    private var info: SignUpRequest
         get() = _state.value.info
+        set(value) {
+            _state.value = _state.value.copy(info = value)
+        }
     val state = _state.asStateFlow()
 
     fun updateName(name: String) {
-        _state.value = _state.value.copy(info = info.copy(name = name))
+        info = info.copy(name = name)
     }
 
     fun updateUsername(username: String) {
-        _state.value = _state.value.copy(info = info.copy(username = username))
+        info = info.copy(username = username)
     }
 
     fun updatePassword(password: String) {
-        _state.value = _state.value.copy(info = info.copy(password = password))
+        info = info.copy(password = password.obfuscate())
     }
 
     fun updateRepeatPassword(repeatPassword: String) {
@@ -35,15 +39,15 @@ class SignUpModel(
     }
 
     fun updateEmail(email: String) {
-        _state.value = _state.value.copy(info = info.copy(email = email))
+        info = info.copy(email = email)
     }
 
     suspend fun signUp(): Boolean {
         val result = userStore.createUser(info)
-        val resultMessage = result?.message ?: "I am error."
+        val resultMessage = result.message
         _state.value = _state.value.copy(resultMessage = resultMessage)
-        if (result?.success == true) {
-            client.login(LoginInfo(info.username, info.password))
+        if (result.success) {
+            client.coldLogin(LoginRequest(info.username, info.password))
             return true
         } else {
             return false

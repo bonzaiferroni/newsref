@@ -5,24 +5,19 @@ import io.kvision.core.onClickLaunch
 import io.kvision.form.check.checkBox
 import io.kvision.form.text.text
 import io.kvision.html.*
+import io.kvision.state.bind
 import io.kvision.state.bindTo
 import kotlinx.browser.window
-import kotlinx.coroutines.flow.MutableStateFlow
-import streetlight.model.dto.LoginInfo
 import streetlight.web.*
+import streetlight.web.components.bindFrom
 import streetlight.web.components.bindTo
 import streetlight.web.components.row
 import streetlight.web.components.rows
 import streetlight.web.core.AppContext
 import streetlight.web.core.PortalEvents
-import streetlight.web.core.ViewModel
-import streetlight.web.io.ApiClient
-import streetlight.web.io.globalApiClient
-import streetlight.web.io.stores.LocalStore
 
 fun Container.loginPage(context: AppContext): PortalEvents? {
-    console.log("Login page loaded")
-    val nextUrl = window.location.href.getQueryParameter("next") ?: "/user"
+    val nextUrl = window.location.href.getQueryParameter("next").getNextUrlValue()
     loginWidget(context) {
         context.routing.navigate(nextUrl)
     }
@@ -30,16 +25,16 @@ fun Container.loginPage(context: AppContext): PortalEvents? {
 }
 
 fun Container.loginWidget(context: AppContext, onSuccess: () -> Unit) {
-    val model = LoginWidgetModel()
+    val model = LoginModel()
 
     rows(group = true) {
         text {
             placeholder = "Username"
-        }.bindTo(model.username)
+        }.bindTo(model::setUsername)
         text {
             placeholder = "Password"
             type = InputType.PASSWORD
-        }.bindTo(model.password)
+        }.bindTo(model::setPassword)
         row(group = true) {
             button("Login").onClickLaunch {
                 val success = model.login()
@@ -56,55 +51,17 @@ fun Container.loginWidget(context: AppContext, onSuccess: () -> Unit) {
                 }
             }
         }
-        checkBox(label = "Store credentials to stay logged in.", value = model.save.value)
-            .bindTo(model.save)
-        val message = p()
-        model.msg.subscribe {
-            message.content = it
-        }
+        checkBox(label = "Store credentials to stay logged in.", value = model.state.value.save)
+            .bindTo(model::setSave)
+        p().bindFrom(model.state) { it.msg }
     }
 
     launchedEffect {
+        console.log("loginPage launchedEffect ")
         model.autoLogin()
     }
 }
 
-class LoginWidgetModel(
-    val client: ApiClient = globalApiClient
-) : ViewModel() {
-    val localStore = LocalStore()
-    val save = MutableStateFlow(localStore.save ?: false)
-    val msg = MutableStateFlow("Hello.")
-    val username = MutableStateFlow(localStore.username ?: "")
-    val password = MutableStateFlow("")
-
-    init {
-        save.subscribe { localStore.save = it }
-    }
-
-    suspend fun login(): Boolean {
-        val loginInfo = LoginInfo(username = username.value, password = password.value)
-        localStore.save = save.value
-        if (save.value) {
-            localStore.username = username.value
-        }
-
-        val result = client.login(loginInfo)
-        if (result) {
-            msg.value = "Login successful."
-            return true
-        } else {
-            msg.value = "Login failed."
-            return false
-        }
-    }
-
-    suspend fun autoLogin() {
-        console.log("loginPage.autoLogin: session token: ${localStore.session?.substring(0..10)}")
-        val go = save.value && localStore.session != null
-        console.log("loginPage.autoLogin: ${go}")
-        if (go) {
-            login()
-        }
-    }
+fun String?.getNextUrlValue(): String {
+    return if (!this.isNullOrBlank() && !this.contains("login")) this else "/user"
 }

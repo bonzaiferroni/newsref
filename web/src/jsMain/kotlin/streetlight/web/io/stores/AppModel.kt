@@ -1,11 +1,14 @@
 package streetlight.web.io.stores
 
+import io.kvision.rest.Unauthorized
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.serialization.json.JsonNull.content
 import streetlight.model.dto.UserInfo
 import streetlight.web.core.ViewModel
 import streetlight.web.io.ApiClient
 import streetlight.web.io.globalApiClient
+import streetlight.web.io.userContext
 
 class AppModel (
     private val client: ApiClient = globalApiClient,
@@ -16,8 +19,13 @@ class AppModel (
     val userFlow = _userInfo.asStateFlow()
 
     suspend fun requestUser(): UserInfo? {
-        _userInfo.value = userStore.getUser()
-        return _userInfo.value
+        return try {
+            val user = userStore.getUser()
+            console.log("AppModel: userInfo retrieved, propagating")
+            return user
+        } catch (e: Unauthorized) {
+            null
+        }
     }
 
     fun logout() {

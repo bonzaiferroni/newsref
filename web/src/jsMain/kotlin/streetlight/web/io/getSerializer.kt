@@ -17,7 +17,7 @@ inline fun <reified T> getSerializer(): SerializationStrategy<T> {
         Location::class -> Location.serializer() as SerializationStrategy<T>
         Request::class -> Request.serializer() as SerializationStrategy<T>
         Song::class -> Song.serializer() as SerializationStrategy<T>
-        LoginInfo::class -> LoginInfo.serializer() as SerializationStrategy<T>
+        LoginRequest::class -> LoginRequest.serializer() as SerializationStrategy<T>
         SignUpRequest::class -> SignUpRequest.serializer() as SerializationStrategy<T>
         EditUserRequest::class -> EditUserRequest.serializer() as SerializationStrategy<T>
         PrivateInfo::class -> PrivateInfo.serializer() as SerializationStrategy<T>

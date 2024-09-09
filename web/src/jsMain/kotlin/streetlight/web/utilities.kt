@@ -13,6 +13,7 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
+import kotlin.io.encoding.Base64
 
 fun String.getIdFromUrl(): Int? {
     return this.substringAfterLast("/").toIntOrNull()
@@ -71,4 +72,3 @@ var FlexPanel.gap: Int
     set(value) {
         this.setStyle("gap", "${value}px")
     }
-
