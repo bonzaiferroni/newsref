@@ -79,7 +79,7 @@ fun Container.portal(
             }
 
             fun loadPage() {
-                console.log("Portal.loadPage ${page.route}")
+                console.log("Portal.loadPage: loading ${page.route}")
                 events?.let { it.onUnload?.invoke() }
 
                 when (page.builder) {

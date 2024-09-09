@@ -21,13 +21,7 @@ class ApiClient() {
 
     val apiAddress = "$baseAddress/api/v1"
 
-    val tokenHeaders = jwt?.let {
-        if (it.isNotBlank()) {
-            { listOf(Pair("Authorization", "Bearer $jwt")) }
-        } else {
-            null
-        }
-    }
+    val tokenHeaders = { listOf(Pair("Authorization", "Bearer $jwt")) }
 
     inline fun <reified Returned : Any, reified Sent : Any> RestRequestConfig<Returned, Sent>.applyConfig(
         method: HttpMethod,
@@ -116,7 +110,7 @@ class ApiClient() {
         val response: RestResponse<AuthInfo> =
             request<AuthInfo, LoginRequest>(HttpMethod.POST, "/login", loginRequest).await()
         if (response.response.status == HTTP_OK) {
-            console.log("StoreClient.login success")
+            console.log("StoreClient.login: received OK from login")
             response.data.session?.let {
                 loginRequest = loginRequest.copy(session = it)
                 if (localStore.save == true) {
@@ -131,7 +125,7 @@ class ApiClient() {
             jwt = response.data.jwt
             return true
         } else {
-            console.log("StoreClient.login: ${response.response.statusText}")
+            console.log("StoreClient.login: failed: ${response.response.statusText}")
             return false
         }
     }

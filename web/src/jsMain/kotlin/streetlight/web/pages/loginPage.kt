@@ -39,10 +39,10 @@ fun Container.loginWidget(context: AppContext, onSuccess: () -> Unit) {
             button("Login").onClickLaunch {
                 val success = model.login()
                 if (success) {
-                    console.log("loginPage success")
+                    console.log("loginPage: success")
                     onSuccess()
                 } else {
-                    console.log("loginPage failed")
+                    console.log("loginPage: failed")
                 }
             }
             button("Create User", style = ButtonStyle.SECONDARY) {
@@ -57,7 +57,6 @@ fun Container.loginWidget(context: AppContext, onSuccess: () -> Unit) {
     }
 
     launchedEffect {
-        console.log("loginPage launchedEffect ")
         model.autoLogin()
     }
 }

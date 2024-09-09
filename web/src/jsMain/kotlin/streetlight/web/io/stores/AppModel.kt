@@ -20,6 +20,7 @@ class AppModel (
 
     suspend fun requestUser(): UserInfo? {
         return try {
+            console.log("AppModel: requesting userInfo")
             val user = userStore.getUser()
             console.log("AppModel: userInfo retrieved, propagating")
             return user
