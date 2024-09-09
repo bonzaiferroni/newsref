@@ -23,7 +23,7 @@ class ApiClient() {
 
     val tokenHeaders = { listOf(Pair("Authorization", "Bearer $jwt")) }
 
-    inline fun <reified Returned : Any, reified Sent : Any> RestRequestConfig<Returned, Sent>.applyConfig(
+    inline fun <Returned : Any, reified Sent : Any> RestRequestConfig<Returned, Sent>.applyConfig(
         method: HttpMethod,
     ) {
         this.method = method
@@ -31,7 +31,7 @@ class ApiClient() {
         this.serializer = getSerializer<Sent>()
     }
 
-    inline fun <reified Returned : Any> RestRequestConfig<Returned, dynamic>.applyConfigDynamic(
+    fun <Returned : Any> RestRequestConfig<Returned, dynamic>.applyConfigNoData(
         method: HttpMethod,
     ) {
         this.method = method
@@ -44,7 +44,7 @@ class ApiClient() {
         crossinline block: RestRequestConfig<Returned, dynamic>.() -> Unit = {},
     ): Promise<RestResponse<Returned>> {
         return restClient.request("$apiAddress$endpoint") {
-            applyConfigDynamic(method)
+            applyConfigNoData(method)
             block()
         }
     }
@@ -65,14 +65,14 @@ class ApiClient() {
         method: HttpMethod,
         endpoint: String,
         crossinline block: RestRequestConfig<String, dynamic>.() -> Unit = {},
-    ): Promise<RestResponse<String>> {
-        return restClient.request("$apiAddress$endpoint") {
-            applyConfigDynamic(method)
+    ): Promise<RestResponse<dynamic>> {
+        return restClient.requestDynamic("$apiAddress$endpoint") {
+            applyConfigNoData(method)
             block()
         }
     }
 
-    inline fun <reified Sent : Any> requestText(
+    inline fun <reified Sent: Any> requestText(
         method: HttpMethod,
         endpoint: String,
         data: Sent,
@@ -82,7 +82,7 @@ class ApiClient() {
         }
     }
 
-    suspend inline fun <reified Returned : Any> authRequest(
+    suspend fun <Returned> authRequest(
         requester: () -> Promise<RestResponse<Returned>>,
     ): RestResponse<Returned> {
         return try {
@@ -92,8 +92,26 @@ class ApiClient() {
             if (authorized) {
                 requester().await()
             } else {
-                error("Login failed, unable to reauthorize")
+                error("ApiClient: Login failed, unable to reauthorize")
             }
+        }
+    }
+
+    suspend fun authRequestDynamic(
+        requester: () -> Promise<RestResponse<dynamic>>,
+    ): RestResponse<dynamic> {
+        return try {
+            authRequest(requester)
+        } catch (e: XHRError) {
+            val response = e.response ?: throw e
+            if (response.status == HTTP_OK) {
+                return RestResponse(
+                    data = true,
+                    response = response,
+                    textStatus = response.statusText,
+                )
+            }
+            throw e
         }
     }
 
@@ -155,9 +173,10 @@ class ApiClient() {
         request<Boolean, Sent>(HttpMethod.PUT, endpoint, data)
     }.data
 
-    suspend fun delete(endpoint: String, id: Int): Boolean = authRequest {
-        requestDynamic(HttpMethod.DELETE, "$apiAddress$endpoint$id")
-    }.response.status == HTTP_OK
+    suspend fun delete(endpoint: String, id: Int): dynamic = authRequestDynamic {
+        console.log("deleting")
+        requestDynamic(HttpMethod.DELETE, "$endpoint$id")
+    }
 
     suspend inline fun <reified Received : Any, reified Sent : Any> create(
         endpoint: String,
