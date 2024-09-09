@@ -3,7 +3,7 @@ package streetlight.web.pages
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import streetlight.model.dto.LoginInfo
-import streetlight.model.dto.SignUpInfo
+import streetlight.model.dto.SignUpRequest
 import streetlight.web.core.ViewModel
 import streetlight.web.io.ApiClient
 import streetlight.web.io.globalApiClient
@@ -14,7 +14,7 @@ class SignUpModel(
     private val client: ApiClient = globalApiClient,
 ) : ViewModel() {
     private val _state = MutableStateFlow(SignUpState())
-    private val info: SignUpInfo
+    private val info: SignUpRequest
         get() = _state.value.info
     val state = _state.asStateFlow()
 
@@ -52,7 +52,7 @@ class SignUpModel(
 }
 
 data class SignUpState(
-    val info: SignUpInfo = SignUpInfo(),
+    val info: SignUpRequest = SignUpRequest(),
     val repeatPassword: String = "",
     val resultMessage: String = "",
 ) {

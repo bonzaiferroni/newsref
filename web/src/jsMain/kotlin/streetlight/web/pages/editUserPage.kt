@@ -1,35 +1,30 @@
 package streetlight.web.pages
 
-import io.kvision.core.AlignItems
 import io.kvision.core.Container
+import io.kvision.form.text.text
 import io.kvision.html.ButtonStyle
 import io.kvision.html.button
 import io.kvision.html.h3
-import io.kvision.html.p
-import io.kvision.panel.vPanel
-import streetlight.web.Layout
-import streetlight.web.components.row
-import streetlight.web.components.rows
+import streetlight.web.components.*
 import streetlight.web.core.AppContext
 import streetlight.web.core.PortalEvents
-import streetlight.web.gap
 import streetlight.web.io.userContext
 
 fun Container.editUserPage(context: AppContext): PortalEvents? {
+    val model = EditUserModel()
+    suspend fun submit(state: EditUserState) {
+//        val success = model.submit()
+//        if (success) {
+//            context.routing.navigate("/user")
+//        }
+    }
     userContext(context) { userInfo ->
         rows {
-            h3("Edit user")
-            row {
-                button("back", style = ButtonStyle.SECONDARY) {
-                    onClick {
-                        context.routing.navigate("/user")
-                    }
-                }
-                button("save") {
-                    onClick {
-                        context.routing.navigate("/user")
-                    }
-                }
+            ezForm("Edit user", onSubmit = ::submit) {
+                ezText("Name", { value, state -> state?.copy(name = value) }, { it?.name })
+                ezText("Email", { value, state -> state?.copy(email = value) }, { it?.email })
+                ezText("Venmo", { value, state -> state?.copy(venmo = value) }, { it?.venmo })
+                ezText("Avatar", { value, state -> state?.copy(avatarUrl = value) }, { it?.avatarUrl })
             }
         }
     }

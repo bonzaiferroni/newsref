@@ -1,10 +1,9 @@
 package streetlight.model.dto
 
-import disallowInUsername
 import kotlinx.serialization.Serializable
 
 @Serializable
-data class SignUpInfo(
+data class SignUpRequest(
     val username: String = "",
     val password: String = "",
     val email: String? = null,

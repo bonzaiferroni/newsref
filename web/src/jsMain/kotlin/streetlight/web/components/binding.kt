@@ -6,11 +6,22 @@ import io.kvision.core.onInput
 import io.kvision.form.text.Text
 import io.kvision.html.Button
 import io.kvision.html.P
+import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import streetlight.web.subscribe
 
 fun Text.bindTo(block: (String) -> Unit): Text {
     onInput { block(value ?: "") }
+    return this
+}
+
+fun <T> Text.bindTo(flow: MutableStateFlow<T>, block: (String, T) -> T): Text {
+    onInput { flow.value = block(value ?: "", flow.value) }
+    return this
+}
+
+fun <T> Text.bindFrom(flow: StateFlow<T>, block: (T) -> String): Text {
+    flow.subscribe { value = block(it) }
     return this
 }
 
@@ -33,6 +44,7 @@ fun Button.bindTo(block: suspend () -> Unit): Button {
     onClickLaunch { block() }
     return this
 }
+
 
 fun <W: Widget, F> W.bindWidgetFrom(flow: StateFlow<F>, block: W.(F) -> Unit): W {
     flow.subscribe { block(this, it) }
