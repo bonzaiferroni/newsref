@@ -4,15 +4,21 @@ import io.kvision.core.Container
 import io.kvision.core.onClickLaunch
 import io.kvision.form.check.checkBox
 import io.kvision.form.text.text
-import io.kvision.html.*
+import io.kvision.html.ButtonStyle
+import io.kvision.html.InputType
+import io.kvision.html.button
+import io.kvision.html.p
 import kotlinx.browser.window
-import streetlight.web.*
+import streetlight.web.core.AppContext
+import streetlight.web.core.Pages
+import streetlight.web.core.PortalEvents
+import streetlight.web.core.navigate
+import streetlight.web.getQueryParameter
+import streetlight.web.launchedEffect
 import streetlight.web.ui.components.bindFrom
 import streetlight.web.ui.components.bindTo
 import streetlight.web.ui.components.row
 import streetlight.web.ui.components.rows
-import streetlight.web.core.AppContext
-import streetlight.web.core.PortalEvents
 import streetlight.web.ui.models.LoginModel
 
 fun Container.loginPage(context: AppContext): PortalEvents? {
@@ -44,10 +50,8 @@ fun Container.loginWidget(context: AppContext, onSuccess: () -> Unit) {
                     console.log("loginPage: failed")
                 }
             }
-            button("Create User", style = ButtonStyle.SECONDARY) {
-                onClick {
-                    context.routing.navigate("/user/create")
-                }
+            button("Create User", style = ButtonStyle.SECONDARY).onClick {
+                context.navigate(Pages.signUp)
             }
         }
         checkBox(label = "Store credentials to stay logged in.", value = model.state.value.save)

@@ -12,5 +12,8 @@ data class UserInfo(
     val venmo: String? = null,
 )
 
-fun UserInfo.isAdmin(): Boolean = roles.contains("admin")
-fun UserInfo.isUser(): Boolean = roles.contains("user")
+val UserInfo.isAdmin: Boolean
+    get() = roles.contains("admin")
+
+val UserInfo.isUser: Boolean
+    get() = roles.contains("user")

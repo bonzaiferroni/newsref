@@ -7,9 +7,10 @@ import io.kvision.form.check.checkBox
 import io.kvision.html.ButtonStyle
 import io.kvision.html.button
 import io.kvision.html.link
-import streetlight.web.components.*
 import streetlight.web.core.AppContext
+import streetlight.web.core.Pages
 import streetlight.web.core.PortalEvents
+import streetlight.web.core.navigate
 import streetlight.web.launchedEffect
 import streetlight.web.subscribe
 import streetlight.web.ui.components.*
@@ -39,7 +40,7 @@ fun Container.accountPage(context: AppContext): PortalEvents? {
 
                 rows(group = true) {
                     checkBox(label = "delete my data and log out") {
-                        link("Read more", "/privacy/delete") //
+                        link("Read more", Pages.delete.route)
                     }
                         .bindFrom(model.state) { it.request.deleteUser }
                         .bindTo(model::updateDeleteUser)
@@ -54,18 +55,17 @@ fun Container.accountPage(context: AppContext): PortalEvents? {
                 }
 
                 row {
-                    button("Back", style = ButtonStyle.SECONDARY) {
-                        onClickLaunch { context.routing.navigate("/user") }
+                    button("Back", style = ButtonStyle.SECONDARY).onClickLaunch {
+                        context.navigate(Pages.user)
                     }
-                    val button = button("Submit") {
-                        onClickLaunch {
-                            val success = model.submit()
-                            if (success) {
-                                if (model.state.value.request.deleteUser) {
-                                    context.routing.navigate("/login")
-                                } else {
-                                    context.routing.navigate("/user")
-                                }
+                    val button = button("Submit")
+                    button.onClickLaunch {
+                        val success = model.submit()
+                        if (success) {
+                            if (model.state.value.request.deleteUser) {
+                                context.navigate(Pages.login)
+                            } else {
+                                context.navigate(Pages.user)
                             }
                         }
                     }

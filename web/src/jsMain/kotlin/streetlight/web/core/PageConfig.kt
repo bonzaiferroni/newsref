@@ -11,6 +11,8 @@ data class PageConfig(
 ) {
     val linkRoute: String
         get() = "#${route.substringBefore("/:")}"
+
+    fun getIdRoute(id: Int) = route.replace(":id", id.toString())
 }
 
 abstract class PageBuilder {

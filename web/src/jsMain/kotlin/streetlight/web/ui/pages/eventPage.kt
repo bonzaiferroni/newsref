@@ -6,6 +6,7 @@ import io.kvision.html.p
 import io.kvision.panel.vPanel
 import streetlight.model.dto.EventInfo
 import streetlight.web.Layout
+import streetlight.web.core.Pages
 import streetlight.web.core.PortalEvents
 import streetlight.web.gap
 import streetlight.web.io.stores.EventStore
@@ -33,7 +34,7 @@ suspend fun Div.inflateInfos(store: EventStore, infos: List<EventInfo>) {
     vPanel {
         gap = Layout.defaultGap
         infos.forEach { info ->
-            link(info.location.name, "#/event/${info.event.id}")
+            link(info.location.name, Pages.event.getIdRoute(info.event.id))
         }
     }
 }

@@ -5,10 +5,13 @@ import io.kvision.core.Container
 import io.kvision.core.onClickLaunch
 import io.kvision.form.text.text
 import io.kvision.html.*
-import streetlight.model.utils.*
-import streetlight.web.components.*
+import streetlight.model.utils.validPassword
+import streetlight.model.utils.validPasswordLength
+import streetlight.model.utils.validUsername
 import streetlight.web.core.AppContext
+import streetlight.web.core.Pages
 import streetlight.web.core.PortalEvents
+import streetlight.web.core.navigate
 import streetlight.web.ui.components.*
 import streetlight.web.ui.models.SignUpModel
 import streetlight.web.ui.models.SignUpState
@@ -74,11 +77,7 @@ fun Container.signUpPage(context: AppContext): PortalEvents? {
 
         // controls
         row(group = true) {
-            button("Back", style = ButtonStyle.SECONDARY) {
-                onClick {
-                    context.routing.navigate("/login")
-                }
-            }
+            button("Back", style = ButtonStyle.SECONDARY).onClick { context.navigate(Pages.login) }
             button("Create") {
                 disabled = true
                 onClickLaunch {
