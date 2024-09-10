@@ -5,13 +5,13 @@ import io.kvision.core.Container
 import io.kvision.core.onClickLaunch
 import io.kvision.form.text.text
 import io.kvision.html.*
+import streetlight.model.utils.*
 import streetlight.web.components.*
 import streetlight.web.core.AppContext
 import streetlight.web.core.PortalEvents
 
 fun Container.signUpPage(context: AppContext): PortalEvents? {
     val model = SignUpModel()
-    fun emoji(test: Boolean) = if (test) "💪" else "🙅"
 
     rows {
         h3("Sign up to Streetlight")
@@ -23,9 +23,7 @@ fun Container.signUpPage(context: AppContext): PortalEvents? {
                 flexGrow = 1
                 placeholder = "Username"
             }.bindTo(model::updateUsername)
-            p().bindFrom(model.state) {
-                "${emoji(it.info.validUsername)} ${if (it.info.validUsername) "Valid" else "Invalid"} username"
-            }.mute()
+            p().bindFrom(model.state) { state -> state.info.username.usernameError() }.mute()
         }
 
         // password
@@ -42,11 +40,9 @@ fun Container.signUpPage(context: AppContext): PortalEvents? {
                     }.bindTo(model::updateRepeatPassword)
                 }
                 rows(group = true) {
-                    p().bindFrom(model.state) {
-                        "${emoji(it.passwordMatch)} Passwords ${if (!it.info.validUsername) "should" else ""}  match"
-                    }.mute()
-                    p().bindFrom(model.state) { "${emoji(it.info.validPasswordLength)} At least 3 characters" }.mute()
-                    p().bindFrom(model.state) { "${emoji(it.info.validPassword)} Has required characters" }.mute()
+                    p().bindFrom(model.state) { state -> state.passwordMatchError() }.mute()
+                    p().bindFrom(model.state) { state -> state.info.password.passwordLengthError() }.mute()
+                    p().bindFrom(model.state) { state -> state.info.password.passwordCharsError() }.mute()
                 }
             }
             p {
@@ -95,3 +91,13 @@ fun Container.signUpPage(context: AppContext): PortalEvents? {
     }
     return null
 }
+
+fun emoji(test: Boolean) = if (test) "💪" else "🙅"
+fun String.usernameError() =
+    "${emoji(validUsername)} ${if (validUsername) "Valid" else "Invalid"} username"
+fun SignUpState.passwordMatchError() =
+    "${emoji(passwordMatch)} Passwords ${if (!info.username.validUsername) "should" else ""} match"
+fun String.passwordLengthError() =
+    "${emoji(validPasswordLength)} At least 3 characters"
+fun String.passwordCharsError() =
+    "${emoji(validPassword)} Has required characters"
