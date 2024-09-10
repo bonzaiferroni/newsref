@@ -23,7 +23,7 @@ fun Container.signUpPage(context: AppContext): PortalEvents? {
                 flexGrow = 1
                 placeholder = "Username"
             }.bindTo(model::updateUsername)
-            p().bindFrom(model.state) { state -> state.info.username.usernameError() }.mute()
+            p().bindFrom(model.state) { state -> state.request.username.usernameError() }.mute()
         }
 
         // password
@@ -41,8 +41,8 @@ fun Container.signUpPage(context: AppContext): PortalEvents? {
                 }
                 rows(group = true) {
                     p().bindFrom(model.state) { state -> state.passwordMatchError() }.mute()
-                    p().bindFrom(model.state) { state -> state.info.password.passwordLengthError() }.mute()
-                    p().bindFrom(model.state) { state -> state.info.password.passwordCharsError() }.mute()
+                    p().bindFrom(model.state) { state -> state.request.password.passwordLengthError() }.mute()
+                    p().bindFrom(model.state) { state -> state.request.password.passwordCharsError() }.mute()
                 }
             }
             p {
@@ -96,7 +96,7 @@ fun emoji(test: Boolean) = if (test) "💪" else "🙅"
 fun String.usernameError() =
     "${emoji(validUsername)} ${if (validUsername) "Valid" else "Invalid"} username"
 fun SignUpState.passwordMatchError() =
-    "${emoji(passwordMatch)} Passwords ${if (!info.username.validUsername) "should" else ""} match"
+    "${emoji(passwordMatch)} Passwords ${if (!request.username.validUsername) "should" else ""} match"
 fun String.passwordLengthError() =
     "${emoji(validPasswordLength)} At least 3 characters"
 fun String.passwordCharsError() =

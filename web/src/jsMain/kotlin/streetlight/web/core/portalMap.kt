@@ -28,7 +28,7 @@ val userPages = listOf(
         loginPage(it)
     }),
     PageConfig("EditUser", "/user/edit", builder = TransientPageBuilder {
-        editUserPage(it)
+        accountPage(it)
     }),
     PageConfig("Admin", "/admin", builder = TransientPageBuilder {
         adminPage(it)

@@ -5,6 +5,7 @@ import kotlinx.coroutines.flow.asStateFlow
 import streetlight.model.dto.LoginRequest
 import streetlight.model.dto.SignUpRequest
 import streetlight.model.obfuscate
+import streetlight.model.utils.validSignUp
 import streetlight.web.core.ViewModel
 import streetlight.web.io.client.ApiClient
 import streetlight.web.io.client.globalApiClient
@@ -16,9 +17,9 @@ class SignUpModel(
 ) : ViewModel() {
     private val _state = MutableStateFlow(SignUpState())
     private var info: SignUpRequest
-        get() = _state.value.info
+        get() = _state.value.request
         set(value) {
-            _state.value = _state.value.copy(info = value)
+            _state.value = _state.value.copy(request = value)
         }
     val state = _state.asStateFlow()
 
@@ -56,13 +57,13 @@ class SignUpModel(
 }
 
 data class SignUpState(
-    val info: SignUpRequest = SignUpRequest(),
+    val request: SignUpRequest = SignUpRequest(),
     val repeatPassword: String = "",
     val resultMessage: String = "",
 ) {
     val passwordMatch: Boolean
-        get() = info.password == repeatPassword
+        get() = request.password == repeatPassword
 
     val validSignUp: Boolean
-        get() = info.validSignUp && passwordMatch
+        get() = request.validSignUp && passwordMatch
 }

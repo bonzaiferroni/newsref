@@ -13,13 +13,13 @@ import streetlight.web.components.userContext
 import streetlight.web.launchedEffect
 import streetlight.web.subscribe
 
-fun Container.editUserPage(context: AppContext): PortalEvents? {
-    val model = EditUserModel()
+fun Container.accountPage(context: AppContext): PortalEvents? {
+    val model = AccountModel()
     userContext(context) { userInfo ->
         // console.log("editUserPage: userInfo=$userInfo")
         model.updateInfo(userInfo)
         rows() {
-            ezForm("Edit user") {
+            ezForm("Account Settings") {
                 rows(group = true) {
                     ezText("Name").bindFrom(model.state) { it.request.name }.bindTo(model::updateName)
                     checkBox(label = "delete name")

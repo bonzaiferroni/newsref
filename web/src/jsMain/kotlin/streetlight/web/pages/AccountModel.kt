@@ -10,10 +10,10 @@ import streetlight.web.io.client.globalApiClient
 import streetlight.web.io.stores.UserStore
 
 
-class EditUserModel(
+class AccountModel(
     private val store: UserStore = UserStore(globalApiClient),
 ) : ViewModel() {
-    private val _state = MutableStateFlow(EditUserState())
+    private val _state = MutableStateFlow(AccountState())
     val state = _state.asStateFlow()
 
     private var request: EditUserRequest
@@ -37,7 +37,7 @@ class EditUserModel(
     }
 }
 
-data class EditUserState(
+data class AccountState(
     val request: EditUserRequest = EditUserRequest(),
     val message: String = "",
     val deleteConfirm: Boolean = false,

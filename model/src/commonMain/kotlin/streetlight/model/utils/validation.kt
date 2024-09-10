@@ -2,6 +2,9 @@ package streetlight.model.utils
 
 import streetlight.model.dto.SignUpRequest
 
+val SignUpRequest.validSignUp: Boolean
+    get() = password.validPassword && username.validUsername && email.validEmail
+
 val String.validUsernameLength: Boolean
     get() = length in 3..20
 val String.validUsernameChars: Boolean
@@ -32,9 +35,6 @@ val String.passwordHasLower: Boolean
     get() = any { it.isLowerCase() }
 val String.validPassword: Boolean
     get() = passwordScore >= 4
-
-val SignUpRequest.validSignUp: Boolean
-    get() = password.validPassword && username.validUsername && email.validEmail
 
 val String.passwordScore: Int
     get() {
