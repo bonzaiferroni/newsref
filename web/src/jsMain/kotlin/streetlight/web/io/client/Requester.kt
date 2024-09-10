@@ -1,7 +1,7 @@
 package streetlight.web.io.client
 
 import io.kvision.rest.*
-import streetlight.web.apiAddress
+import streetlight.web.apiOrigin
 import kotlin.js.Promise
 
 interface Requester {
@@ -21,7 +21,7 @@ inline fun <reified Returned : Any> Requester.request(
     endpoint: String,
     crossinline block: RestRequestConfig<Returned, dynamic>.() -> Unit = {},
 ): Promise<RestResponse<Returned>> {
-    return restClient.request("$apiAddress$endpoint") {
+    return restClient.request("$apiOrigin$endpoint") {
         applyConfigNoData(method, tokenHeaders)
         block()
     }
@@ -33,7 +33,7 @@ inline fun <reified Returned : Any, reified Sent : Any> Requester.request(
     data: Sent,
     crossinline block: RestRequestConfig<Returned, Sent>.() -> Unit = {},
 ): Promise<RestResponse<Returned>> {
-    return restClient.request("${apiAddress}$endpoint", data) {
+    return restClient.request("${apiOrigin}$endpoint", data) {
         applyConfig(method, tokenHeaders)
         block()
     }
@@ -44,7 +44,7 @@ inline fun Requester.requestDynamic(
     endpoint: String,
     crossinline block: RestRequestConfig<dynamic, dynamic>.() -> Unit = {},
 ): Promise<RestResponse<dynamic>> {
-    return restClient.requestDynamic("$apiAddress$endpoint") {
+    return restClient.requestDynamic("$apiOrigin$endpoint") {
         applyConfigNoData(method, tokenHeaders)
         block()
     }
@@ -56,7 +56,7 @@ inline fun <reified Sent : Any> Requester.requestDynamic(
     data: Sent,
     crossinline block: RestRequestConfig<dynamic, Sent>.() -> Unit = {},
 ): Promise<RestResponse<dynamic>> {
-    return restClient.requestDynamic<Sent>("${apiAddress}$endpoint", data) {
+    return restClient.requestDynamic<Sent>("${apiOrigin}$endpoint", data) {
         applyConfig(method, tokenHeaders)
         block()
     }

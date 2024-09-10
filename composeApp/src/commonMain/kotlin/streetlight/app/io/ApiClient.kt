@@ -1,20 +1,13 @@
 package streetlight.app.io
 
-import io.ktor.client.HttpClient
-import io.ktor.client.call.body
-import io.ktor.client.engine.cio.CIO
-import io.ktor.client.plugins.contentnegotiation.ContentNegotiation
-import io.ktor.client.request.get
-import io.ktor.client.request.header
-import io.ktor.client.request.request
-import io.ktor.client.request.setBody
-import io.ktor.client.statement.HttpResponse
-import io.ktor.http.ContentType
-import io.ktor.http.HttpHeaders
-import io.ktor.http.HttpMethod
-import io.ktor.http.HttpStatusCode
-import io.ktor.http.contentType
-import io.ktor.serialization.kotlinx.json.json
+import io.ktor.client.*
+import io.ktor.client.call.*
+import io.ktor.client.engine.cio.*
+import io.ktor.client.plugins.contentnegotiation.*
+import io.ktor.client.request.*
+import io.ktor.client.statement.*
+import io.ktor.http.*
+import io.ktor.serialization.kotlinx.json.*
 import kotlinx.serialization.json.Json
 import streetlight.model.core.User
 import streetlight.model.dto.AuthInfo
@@ -52,8 +45,8 @@ class ApiClient {
         return response.status == HttpStatusCode.OK
     }
 
-    suspend fun update(endpoint: String, id: Int, data: Any): Boolean {
-        val response = authRequest("$endpoint/$id", HttpMethod.Put, data)
+    suspend fun update(endpoint: String, data: Any): Boolean {
+        val response = authRequest(endpoint, HttpMethod.Put, data)
         return response.status == HttpStatusCode.OK
     }
 

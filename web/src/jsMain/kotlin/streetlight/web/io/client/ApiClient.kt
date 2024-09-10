@@ -1,7 +1,11 @@
 package streetlight.web.io.client
 
-import io.kvision.rest.*
+import io.kvision.rest.HttpMethod
+import io.kvision.rest.RestResponse
+import io.kvision.rest.Unauthorized
 import kotlinx.coroutines.await
+import streetlight.model.Api
+import streetlight.model.Endpoint
 import streetlight.model.dto.AuthInfo
 import streetlight.model.dto.LoginRequest
 import streetlight.web.HTTP_OK
@@ -31,7 +35,7 @@ class ApiClient(
 
     suspend fun login(): Boolean {
         val response: RestResponse<AuthInfo> =
-            request<AuthInfo, LoginRequest>(HttpMethod.POST, "/login", loginRequest).await()
+            request<AuthInfo, LoginRequest>(HttpMethod.POST, Api.login.path, loginRequest).await()
         if (response.response.status == HTTP_OK) {
             console.log("StoreClient.login: received OK from login")
             response.data.session?.let {
@@ -53,45 +57,49 @@ class ApiClient(
         }
     }
 
-    suspend inline fun <reified T : Any> get(endpoint: String): T = authRequest(::login) {
-        request<T>(HttpMethod.GET, endpoint)
+    suspend inline fun <reified T : Any> get(endpoint: Endpoint): T = authRequest(::login) {
+        request<T>(HttpMethod.GET, endpoint.path)
+    }.data
+
+    suspend inline fun <reified T : Any> get(endpoint: Endpoint, id: Int): T = authRequest(::login) {
+        request<T>(HttpMethod.GET, endpoint.replaceClientId(id))
     }.data
 
     suspend inline fun <reified Received : Any, reified Sent : Any> post(
-        endpoint: String,
+        endpoint: Endpoint,
         data: Sent
     ): Received = authRequest(::login) {
-        request<Received, Sent>(HttpMethod.POST, endpoint, data)
+        request<Received, Sent>(HttpMethod.POST, endpoint.path, data)
     }.data
 
-    suspend inline fun <reified Sent : Any> post(endpoint: String): Boolean = authRequest(::login) {
-        request<Sent>(HttpMethod.POST, endpoint)
+    suspend inline fun <reified Sent : Any> post(endpoint: Endpoint): Boolean = authRequest(::login) {
+        request<Sent>(HttpMethod.POST, endpoint.path)
     }.response.status == HTTP_OK
 
     suspend inline fun <reified Received : Any, reified Sent : Any> put(
-        endpoint: String, data: Sent
+        endpoint: Endpoint, data: Sent
     ): Received = authRequest(::login) {
-        request<Received, Sent>(HttpMethod.PUT, endpoint, data)
+        request<Received, Sent>(HttpMethod.PUT, endpoint.path, data)
     }.data
 
-    suspend inline fun <reified Sent : Any> putRespondBool(endpoint: String, data: Sent): Boolean = authRequest(::login) {
-        request<Boolean, Sent>(HttpMethod.PUT, endpoint, data)
+    // TODO consolidate putRespondBool and put
+    suspend inline fun <reified Sent : Any> putRespondBool(endpoint: Endpoint, data: Sent): Boolean = authRequest(::login) {
+        request<Boolean, Sent>(HttpMethod.PUT, endpoint.path, data)
     }.data
 
-    suspend fun delete(endpoint: String, id: Int): dynamic = authRequestDynamic(::login) {
-        console.log("deleting")
-        requestDynamic(HttpMethod.DELETE, "$endpoint$id")
-    }
+    suspend fun delete(endpoint: Endpoint, id: Int): Boolean = authRequest(::login) {
+        request<Boolean>(HttpMethod.DELETE, endpoint.replaceClientId(id))
+    }.data
 
     suspend inline fun <reified Received : Any, reified Sent : Any> create(
-        endpoint: String,
+        endpoint: Endpoint,
         data: Sent
     ): Received = authRequest(::login) {
-        request<Received, Sent>(HttpMethod.POST, endpoint, data)
+        request<Received, Sent>(HttpMethod.POST, endpoint.path, data)
     }.data
 
-    suspend inline fun <reified T : Any> update(endpoint: String, id: Int, data: T): Boolean =
-        authRequestDynamic(::login) { requestDynamic(HttpMethod.PUT, "$endpoint/$id", data) }
+    suspend inline fun <reified T : Any> update(endpoint: Endpoint, data: T): Boolean =
+        authRequestDynamic(::login) { requestDynamic(HttpMethod.PUT, endpoint.path, data) }
             .response.status == HTTP_OK
 
     fun logout() {

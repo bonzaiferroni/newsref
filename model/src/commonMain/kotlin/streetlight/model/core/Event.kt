@@ -4,7 +4,7 @@ import kotlinx.serialization.Serializable
 
 @Serializable
 data class Event(
-    val id: Int = 0,
+    override val id: Int = 0,
     val locationId: Int = 0,
     val userId: Int = 0,
     val timeStart: Long = 0L,
@@ -18,4 +18,4 @@ data class Event(
     val currentRequestId: Int? = null,
     val cashTips: Float? = null,
     val cardTips: Float? = null,
-)
+) : IdModel

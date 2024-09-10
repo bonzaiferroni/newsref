@@ -24,8 +24,7 @@ const val HTTP_NOT_IMPLEMENTED: Short = 501
 const val HTTP_BAD_GATEWAY: Short = 502
 const val HTTP_SERVICE_UNAVAILABLE: Short = 503
 
-const val baseAddress = "http://192.168.1.122:8080"
-val apiAddress = "$baseAddress/api/v1"
+const val apiOrigin = "http://192.168.1.122:8080"
 // const val baseAddress = "https://streetlight.ing"
 
 val description = "Howdy, thanks for stopping by! " +

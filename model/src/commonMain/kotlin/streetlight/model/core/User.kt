@@ -5,7 +5,7 @@ import streetlight.model.dto.PrivateInfo
 
 @Serializable
 data class User(
-    val id: Int = 0,
+    override val id: Int = 0,
     val name: String? = "",
     val username: String = "",
     val hashedPassword: String = "",
@@ -16,7 +16,7 @@ data class User(
     val updatedAt: Long = 0,
     val avatarUrl: String? = null,
     val venmo: String? = null,
-)
+): IdModel
 
 // TODO: Move to server module
 
