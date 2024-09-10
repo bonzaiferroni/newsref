@@ -16,6 +16,23 @@ class RequesterComponent(): Requester {
     override val tokenHeaders = { listOf(Pair("Authorization", "Bearer $jwt")) }
 }
 
+inline fun <Returned : Any, reified Sent : Any> RestRequestConfig<Returned, Sent>.applyConfig(
+    method: HttpMethod,
+    noinline tokenHeaders: () -> List<Pair<String, String>>,
+) {
+    this.method = method
+    this.headers = tokenHeaders
+    this.serializer = getSerializer<Sent>()
+}
+
+fun <Returned : Any> RestRequestConfig<Returned, dynamic>.applyConfigNoData(
+    method: HttpMethod,
+    tokenHeaders: () -> List<Pair<String, String>>,
+) {
+    this.method = method
+    this.headers = tokenHeaders
+}
+
 inline fun <reified Returned : Any> Requester.request(
     method: HttpMethod,
     endpoint: String,
@@ -39,29 +56,6 @@ inline fun <reified Returned : Any, reified Sent : Any> Requester.request(
     }
 }
 
-inline fun Requester.requestDynamic(
-    method: HttpMethod,
-    endpoint: String,
-    crossinline block: RestRequestConfig<dynamic, dynamic>.() -> Unit = {},
-): Promise<RestResponse<dynamic>> {
-    return restClient.requestDynamic("$apiOrigin$endpoint") {
-        applyConfigNoData(method, tokenHeaders)
-        block()
-    }
-}
-
-inline fun <reified Sent : Any> Requester.requestDynamic(
-    method: HttpMethod,
-    endpoint: String,
-    data: Sent,
-    crossinline block: RestRequestConfig<dynamic, Sent>.() -> Unit = {},
-): Promise<RestResponse<dynamic>> {
-    return restClient.requestDynamic<Sent>("${apiOrigin}$endpoint", data) {
-        applyConfig(method, tokenHeaders)
-        block()
-    }
-}
-
 inline fun <reified Sent: Any> Requester.requestText(
     method: HttpMethod,
     endpoint: String,
@@ -70,21 +64,4 @@ inline fun <reified Sent: Any> Requester.requestText(
     return request<String, Sent>(method, endpoint, data) {
         responseBodyType = ResponseBodyType.TEXT
     }
-}
-
-inline fun <Returned : Any, reified Sent : Any> RestRequestConfig<Returned, Sent>.applyConfig(
-    method: HttpMethod,
-    noinline tokenHeaders: () -> List<Pair<String, String>>,
-) {
-    this.method = method
-    this.headers = tokenHeaders
-    this.serializer = getSerializer<Sent>()
-}
-
-fun <Returned : Any> RestRequestConfig<Returned, dynamic>.applyConfigNoData(
-    method: HttpMethod,
-    tokenHeaders: () -> List<Pair<String, String>>,
-) {
-    this.method = method
-    this.headers = tokenHeaders
 }

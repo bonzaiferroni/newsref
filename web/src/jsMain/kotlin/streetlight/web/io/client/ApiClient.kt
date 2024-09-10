@@ -82,11 +82,6 @@ class ApiClient(
         request<Received, Sent>(HttpMethod.PUT, endpoint.path, data)
     }.data
 
-    // TODO consolidate putRespondBool and put
-    suspend inline fun <reified Sent : Any> putRespondBool(endpoint: Endpoint, data: Sent): Boolean = authRequest(::login) {
-        request<Boolean, Sent>(HttpMethod.PUT, endpoint.path, data)
-    }.data
-
     suspend fun delete(endpoint: Endpoint, id: Int): Boolean = authRequest(::login) {
         request<Boolean>(HttpMethod.DELETE, endpoint.replaceClientId(id))
     }.data
@@ -98,9 +93,9 @@ class ApiClient(
         request<Received, Sent>(HttpMethod.POST, endpoint.path, data)
     }.data
 
-    suspend inline fun <reified T : Any> update(endpoint: Endpoint, data: T): Boolean =
-        authRequestDynamic(::login) { requestDynamic(HttpMethod.PUT, endpoint.path, data) }
-            .response.status == HTTP_OK
+    suspend inline fun <reified T : Any> update(endpoint: Endpoint, data: T): Boolean = authRequest(::login) {
+        request<Boolean, T>(HttpMethod.PUT, endpoint.path, data)
+    }.data
 
     fun logout() {
         jwt = null
