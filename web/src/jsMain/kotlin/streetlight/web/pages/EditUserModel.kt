@@ -6,7 +6,7 @@ import streetlight.model.dto.EditUserRequest
 import streetlight.model.dto.PrivateInfo
 import streetlight.model.dto.UserInfo
 import streetlight.web.core.ViewModel
-import streetlight.web.io.globalApiClient
+import streetlight.web.io.client.globalApiClient
 import streetlight.web.io.stores.UserStore
 
 
@@ -27,6 +27,7 @@ class EditUserModel(
     fun updateDeleteName(delete: Boolean) { request = request.copy(deleteName = delete) }
     fun updateDeleteEmail(delete: Boolean) { request = request.copy(deleteEmail = delete) }
     fun updateDeleteUser(delete: Boolean) { request = request.copy(deleteUser = delete) }
+    fun updateDeleteConfirm(confirm: Boolean) { _state.value = state.value.copy(deleteConfirm = confirm) }
 
     suspend fun getPrivateInfo(): PrivateInfo { return store.getPrivateInfo() }
     suspend fun submit(): Boolean { return store.updateUser(request) }

@@ -2,7 +2,6 @@ package streetlight.web.pages
 
 import io.kvision.core.AlignItems
 import io.kvision.core.Container
-import io.kvision.core.JustifyContent
 import io.kvision.html.*
 import io.kvision.panel.vPanel
 import streetlight.web.Layout
@@ -11,7 +10,7 @@ import streetlight.web.components.row
 import streetlight.web.core.AppContext
 import streetlight.web.core.PortalEvents
 import streetlight.web.gap
-import streetlight.web.io.userContext
+import streetlight.web.components.userContext
 
 fun Container.userPage(context: AppContext): PortalEvents? {
     userContext(context) { userInfo ->

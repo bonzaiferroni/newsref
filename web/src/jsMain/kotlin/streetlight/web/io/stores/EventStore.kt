@@ -2,8 +2,8 @@ package streetlight.web.io.stores
 
 import streetlight.model.core.Event
 import streetlight.model.dto.EventInfo
-import streetlight.web.io.ApiClient
-import streetlight.web.io.globalApiClient
+import streetlight.web.io.client.ApiClient
+import streetlight.web.io.client.globalApiClient
 
 class EventStore(
     private val client: ApiClient = globalApiClient,

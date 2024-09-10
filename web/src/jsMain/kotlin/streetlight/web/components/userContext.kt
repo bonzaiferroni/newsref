@@ -1,4 +1,4 @@
-package streetlight.web.io
+package streetlight.web.components
 
 import io.kvision.core.Container
 import kotlinx.browser.window

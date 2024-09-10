@@ -6,8 +6,8 @@ import streetlight.model.dto.LoginRequest
 import streetlight.model.dto.SignUpRequest
 import streetlight.model.obfuscate
 import streetlight.web.core.ViewModel
-import streetlight.web.io.ApiClient
-import streetlight.web.io.globalApiClient
+import streetlight.web.io.client.ApiClient
+import streetlight.web.io.client.globalApiClient
 import streetlight.web.io.stores.UserStore
 
 class SignUpModel(
@@ -31,7 +31,7 @@ class SignUpModel(
     }
 
     fun updatePassword(password: String) {
-        info = info.copy(password = password.obfuscate())
+        info = info.copy(password = password)
     }
 
     fun updateRepeatPassword(repeatPassword: String) {
@@ -43,7 +43,7 @@ class SignUpModel(
     }
 
     suspend fun signUp(): Boolean {
-        val result = userStore.createUser(info)
+        val result = userStore.createUser(info.copy(password = info.password.obfuscate()))
         val resultMessage = result.message
         _state.value = _state.value.copy(resultMessage = resultMessage)
         if (result.success) {

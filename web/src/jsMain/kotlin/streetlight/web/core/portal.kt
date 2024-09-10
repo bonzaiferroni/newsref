@@ -25,14 +25,14 @@ fun Container.portal(
             paddingLeft = Layout.defaultPad
             paddingRight = Layout.halfPad
             hPanel(alignItems = AlignItems.CENTER) {
-                gap = Layout.defaultGap
+                gap = Layout.halfGap
                 image("img/logo-small.png", className = "glow-effect-color") {
                     width = 30.px
                 }
                 link(label = "", url = "#/") {
                     h2 {
                         color = Color("var(--bs-navbar-brand-color)")
-                        span("streetl")
+                        span("Streetl")
                         span("i", className = "glow-effect") {
                             id = "logo-i"
                             color = Color("BurlyWood")

@@ -4,7 +4,7 @@ import io.kvision.core.Container
 import io.kvision.html.p
 import streetlight.web.core.AppContext
 import streetlight.web.core.PortalEvents
-import streetlight.web.io.userContext
+import streetlight.web.components.userContext
 
 fun Container.adminPage(context: AppContext): PortalEvents? {
     userContext(context) { userInfo ->

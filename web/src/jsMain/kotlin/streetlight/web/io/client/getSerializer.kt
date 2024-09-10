@@ -1,4 +1,4 @@
-package streetlight.web.io
+package streetlight.web.io.client
 
 import kotlinx.serialization.SerializationStrategy
 import streetlight.model.core.*

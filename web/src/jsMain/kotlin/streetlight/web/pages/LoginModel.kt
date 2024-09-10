@@ -5,8 +5,8 @@ import kotlinx.coroutines.flow.asStateFlow
 import streetlight.model.dto.LoginRequest
 import streetlight.model.obfuscate
 import streetlight.web.core.ViewModel
-import streetlight.web.io.ApiClient
-import streetlight.web.io.globalApiClient
+import streetlight.web.io.client.ApiClient
+import streetlight.web.io.client.globalApiClient
 import streetlight.web.io.stores.LocalStore
 import streetlight.web.subscribe
 

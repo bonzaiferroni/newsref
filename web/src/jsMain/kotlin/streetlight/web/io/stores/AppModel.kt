@@ -3,12 +3,10 @@ package streetlight.web.io.stores
 import io.kvision.rest.Unauthorized
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
-import kotlinx.serialization.json.JsonNull.content
 import streetlight.model.dto.UserInfo
 import streetlight.web.core.ViewModel
-import streetlight.web.io.ApiClient
-import streetlight.web.io.globalApiClient
-import streetlight.web.io.userContext
+import streetlight.web.io.client.ApiClient
+import streetlight.web.io.client.globalApiClient
 
 class AppModel (
     private val client: ApiClient = globalApiClient,

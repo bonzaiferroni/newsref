@@ -38,7 +38,7 @@ data class SignUpRequest(
     val passwordHasLower: Boolean
         get() = password.any { it.isLowerCase() }
     val validPassword: Boolean
-        get() = passwordScore >= 6
+        get() = passwordScore >= 4
 
     val validSignUp: Boolean
         get() = validPassword && validUsername && validEmail

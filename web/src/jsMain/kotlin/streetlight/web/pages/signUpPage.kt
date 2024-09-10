@@ -11,10 +11,10 @@ import streetlight.web.core.PortalEvents
 
 fun Container.signUpPage(context: AppContext): PortalEvents? {
     val model = SignUpModel()
-    fun emoji(test: Boolean) = if (test) "🙆" else "🙅"
+    fun emoji(test: Boolean) = if (test) "💪" else "🙅"
 
     rows {
-        h3("Create User")
+        h3("Sign up to Streetlight")
 
         // username
         row(group = true, alignItems = AlignItems.END) {
@@ -50,8 +50,8 @@ fun Container.signUpPage(context: AppContext): PortalEvents? {
                 }
             }
             p {
-                +"Password should be at least 8 characters long and "
-                +"contain at least one letter, number, and special character."
+                +"Password should be at least 8 characters long and contain at least one letter, "
+                +"number, a special character, eye of newt, two wishes, and a prayer."
             }.mute()
         }
 

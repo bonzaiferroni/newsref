@@ -1,4 +1,5 @@
 package streetlight.model.utils
 
-class validateInfo {
-}
+val disallowInUsername = setOf(
+    ' ', '<', '>', '\'', '"', ';', '/', '\\', '%', '&', '?', '#', '|', '$', '^', '=', '+', '*', '@'
+)
