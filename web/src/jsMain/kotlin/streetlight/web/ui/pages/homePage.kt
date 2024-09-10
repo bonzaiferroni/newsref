@@ -1,4 +1,4 @@
-package streetlight.web.pages
+package streetlight.web.ui.pages
 
 import io.kvision.core.AlignItems
 import io.kvision.core.Container
@@ -13,8 +13,8 @@ import io.kvision.state.bind
 import io.kvision.state.bindTo
 import streetlight.model.core.Area
 import streetlight.web.Layout
-import streetlight.web.components.row
-import streetlight.web.components.rows
+import streetlight.web.ui.components.row
+import streetlight.web.ui.components.rows
 import streetlight.web.core.PortalEvents
 import streetlight.web.gap
 import streetlight.web.io.stores.AreaStore

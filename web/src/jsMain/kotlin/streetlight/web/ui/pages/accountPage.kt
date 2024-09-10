@@ -1,17 +1,19 @@
-package streetlight.web.pages
+package streetlight.web.ui.pages
 
 import io.kvision.core.Container
 import io.kvision.core.Transition
 import io.kvision.core.onClickLaunch
 import io.kvision.form.check.checkBox
+import io.kvision.html.ButtonStyle
 import io.kvision.html.button
 import io.kvision.html.link
 import streetlight.web.components.*
 import streetlight.web.core.AppContext
 import streetlight.web.core.PortalEvents
-import streetlight.web.components.userContext
 import streetlight.web.launchedEffect
 import streetlight.web.subscribe
+import streetlight.web.ui.components.*
+import streetlight.web.ui.models.AccountModel
 
 fun Container.accountPage(context: AppContext): PortalEvents? {
     val model = AccountModel()
@@ -35,7 +37,7 @@ fun Container.accountPage(context: AppContext): PortalEvents? {
                 ezText("Venmo").bindTo(model::updateVenmo).bindFrom(model.state) { it.request.venmo }
                 ezText("Avatar URL").bindTo(model::updateAvatar).bindFrom(model.state) { it.request.avatarUrl }
 
-                row {
+                rows(group = true) {
                     checkBox(label = "delete my data and log out") {
                         link("Read more", "/privacy/delete") //
                     }
@@ -51,20 +53,25 @@ fun Container.accountPage(context: AppContext): PortalEvents? {
                     }
                 }
 
-                val button = button("Submit") {
-                    onClickLaunch {
-                        val success = model.submit()
-                        if (success) {
-                            if (model.state.value.request.deleteUser) {
-                                context.routing.navigate("/login")
-                            } else {
-                                context.routing.navigate("/user")
+                row {
+                    button("Back", style = ButtonStyle.SECONDARY) {
+                        onClickLaunch { context.routing.navigate("/user") }
+                    }
+                    val button = button("Submit") {
+                        onClickLaunch {
+                            val success = model.submit()
+                            if (success) {
+                                if (model.state.value.request.deleteUser) {
+                                    context.routing.navigate("/login")
+                                } else {
+                                    context.routing.navigate("/user")
+                                }
                             }
                         }
                     }
-                }
-                model.state.subscribe {
-                    button.disabled = it.request.deleteUser && !it.deleteConfirm
+                    model.state.subscribe {
+                        button.disabled = it.request.deleteUser && !it.deleteConfirm
+                    }
                 }
             }
         }

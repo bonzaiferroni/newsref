@@ -34,3 +34,5 @@ data class PortalEvents(
     val onUnload: (() -> Unit)? = null
 )
 
+fun PageConfig.navigate(context: AppContext) = context.routing.navigate(route)
+fun AppContext.navigate(config: PageConfig) = routing.navigate(config.route)

@@ -1,4 +1,4 @@
-package streetlight.web.pages
+package streetlight.web.ui.pages
 
 import io.kvision.core.JustifyContent
 import io.kvision.core.onClickLaunch
@@ -12,10 +12,10 @@ import io.kvision.panel.hPanel
 import io.kvision.panel.vPanel
 import io.kvision.state.bind
 import io.kvision.utils.perc
-import streetlight.web.components.card
-import streetlight.web.components.typography
+import streetlight.web.ui.components.card
+import streetlight.web.ui.components.typography
 import streetlight.web.core.PortalEvents
-import streetlight.web.pages.models.EventProfileModel
+import streetlight.web.ui.models.EventProfileModel
 
 fun Div.eventProfile(id: Int): PortalEvents? {
     val model = EventProfileModel(id)

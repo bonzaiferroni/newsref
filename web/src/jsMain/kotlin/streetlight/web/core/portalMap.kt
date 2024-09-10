@@ -1,39 +1,42 @@
 package streetlight.web.core
 
-import streetlight.web.pages.*
+import streetlight.web.ui.pages.*
 
-val basePages = listOf(
-    PageConfig("Home", "/", builder = CachedPageBuilder {
+object Pages {
+    val home =PageConfig("Home", "/", builder = CachedPageBuilder {
         homePage()
-    }),
-    PageConfig("About", "/about", true, builder = CachedPageBuilder {
+    })
+    val about = PageConfig("About", "/about", true, builder = CachedPageBuilder {
         aboutPage()
-    }),
-    PageConfig("Privacy", "/privacy", builder = CachedPageBuilder {
+    })
+    val privacy = PageConfig("Privacy", "/privacy", builder = CachedPageBuilder {
         privacyPage()
-    }),
-    PageConfig("Events", "/event", true, builder = CachedPageBuilder {
+    })
+    val events = PageConfig("Events", "/event", true, builder = CachedPageBuilder {
         eventPage()
-    }),
-    PageConfig("Event", "/event/:id", builder = IdPageBuilder { _, id ->
+    })
+    val event = PageConfig("Event", "/event/:id", builder = IdPageBuilder { _, id ->
         eventProfile(id)
-    }),
-)
+    })
+    val basePages = listOf(home, about, privacy, events, event,)
 
-val userPages = listOf(
-    PageConfig("User", "/user", true, builder =TransientPageBuilder {
-        userPage(it)
-    }),
-    PageConfig("Login", "/login", builder = CachedPageBuilder {
+    val login = PageConfig("Login", "/login", builder = CachedPageBuilder {
         loginPage(it)
-    }),
-    PageConfig("EditUser", "/user/edit", builder = TransientPageBuilder {
-        accountPage(it)
-    }),
-    PageConfig("Admin", "/admin", builder = TransientPageBuilder {
+    })
+    val admin = PageConfig("Admin", "/admin", builder = TransientPageBuilder {
         adminPage(it)
-    }),
-    PageConfig("CreateUser", "/user/create", builder = TransientPageBuilder {
+    })
+    val signUp = PageConfig("SignUp", "/user/create", builder = TransientPageBuilder {
         signUpPage(it)
-    }),
-)
+    })
+    val account = PageConfig("Account", "/user/account", builder = TransientPageBuilder {
+        accountPage(it)
+    })
+    val user = PageConfig("User", "/user", true, builder =TransientPageBuilder {
+        userPage(it)
+    })
+    val catalog = PageConfig("Catalog", "/user/catalog", builder = TransientPageBuilder {
+        catalogPage(it)
+    })
+    val userPages = listOf(signUp, admin, account, login, user, catalog)
+}

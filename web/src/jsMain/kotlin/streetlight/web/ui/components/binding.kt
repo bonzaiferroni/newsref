@@ -1,4 +1,4 @@
-package streetlight.web.components
+package streetlight.web.ui.components
 
 import io.kvision.core.Widget
 import io.kvision.core.onChange
@@ -43,17 +43,6 @@ fun <T> P.bindFrom(flow: StateFlow<T>, block: (T) -> String): P {
     flow.subscribe { content = block(it) }
     return this
 }
-
-fun Button.bindTo(block: () -> Unit): Button {
-    onClick { block() }
-    return this
-}
-
-fun Button.bindTo(block: suspend () -> Unit): Button {
-    onClickLaunch { block() }
-    return this
-}
-
 
 fun <W: Widget, F> W.bindWidgetFrom(flow: StateFlow<F>, block: W.(F) -> Unit): W {
     flow.subscribe { block(this, it) }

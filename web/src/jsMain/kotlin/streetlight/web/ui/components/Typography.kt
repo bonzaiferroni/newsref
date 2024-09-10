@@ -1,4 +1,4 @@
-package streetlight.web.components
+package streetlight.web.ui.components
 
 import io.kvision.core.AlignItems
 import io.kvision.core.ClassSetBuilder

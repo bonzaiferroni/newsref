@@ -1,4 +1,4 @@
-package streetlight.web.components
+package streetlight.web.ui.components
 
 import io.kvision.core.Container
 import io.kvision.html.div

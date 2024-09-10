@@ -1,11 +1,11 @@
-package streetlight.web.components
+package streetlight.web.ui.components
 
 import io.kvision.core.Container
 import kotlinx.browser.window
 import streetlight.model.dto.UserInfo
 import streetlight.web.*
 import streetlight.web.core.AppContext
-import streetlight.web.pages.getNextUrlValue
+import streetlight.web.ui.pages.getNextUrlValue
 
 fun Container.userContext(
     context: AppContext,

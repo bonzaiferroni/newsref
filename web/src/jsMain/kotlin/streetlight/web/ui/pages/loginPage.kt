@@ -1,20 +1,19 @@
-package streetlight.web.pages
+package streetlight.web.ui.pages
 
 import io.kvision.core.Container
 import io.kvision.core.onClickLaunch
 import io.kvision.form.check.checkBox
 import io.kvision.form.text.text
 import io.kvision.html.*
-import io.kvision.state.bind
-import io.kvision.state.bindTo
 import kotlinx.browser.window
 import streetlight.web.*
-import streetlight.web.components.bindFrom
-import streetlight.web.components.bindTo
-import streetlight.web.components.row
-import streetlight.web.components.rows
+import streetlight.web.ui.components.bindFrom
+import streetlight.web.ui.components.bindTo
+import streetlight.web.ui.components.row
+import streetlight.web.ui.components.rows
 import streetlight.web.core.AppContext
 import streetlight.web.core.PortalEvents
+import streetlight.web.ui.models.LoginModel
 
 fun Container.loginPage(context: AppContext): PortalEvents? {
     val nextUrl = window.location.href.getQueryParameter("next").getNextUrlValue()

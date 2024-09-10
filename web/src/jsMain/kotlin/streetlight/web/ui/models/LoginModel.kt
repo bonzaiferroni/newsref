@@ -1,4 +1,4 @@
-package streetlight.web.pages
+package streetlight.web.ui.models
 
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -14,10 +14,12 @@ class LoginModel(
     private val client: ApiClient = globalApiClient,
     private val localStore: LocalStore = LocalStore()
 ) : ViewModel() {
-    private val _state = MutableStateFlow(LoginState(
+    private val _state = MutableStateFlow(
+        LoginState(
         save = localStore.save ?: false,
         username = localStore.username ?: ""
-    ))
+    )
+    )
     val state = _state.asStateFlow()
 
     init {

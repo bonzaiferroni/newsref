@@ -1,4 +1,4 @@
-package streetlight.web.pages
+package streetlight.web.ui.models
 
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow

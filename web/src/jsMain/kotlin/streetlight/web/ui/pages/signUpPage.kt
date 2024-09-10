@@ -1,4 +1,4 @@
-package streetlight.web.pages
+package streetlight.web.ui.pages
 
 import io.kvision.core.AlignItems
 import io.kvision.core.Container
@@ -9,6 +9,9 @@ import streetlight.model.utils.*
 import streetlight.web.components.*
 import streetlight.web.core.AppContext
 import streetlight.web.core.PortalEvents
+import streetlight.web.ui.components.*
+import streetlight.web.ui.models.SignUpModel
+import streetlight.web.ui.models.SignUpState
 
 fun Container.signUpPage(context: AppContext): PortalEvents? {
     val model = SignUpModel()

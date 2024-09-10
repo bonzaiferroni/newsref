@@ -5,8 +5,8 @@ import io.kvision.panel.*
 import io.kvision.routing.Routing
 import io.kvision.theme.Theme
 import io.kvision.theme.ThemeManager
-import streetlight.web.pages.*
 import streetlight.web.core.*
+import streetlight.web.core.Pages
 import streetlight.web.io.stores.AppModel
 
 class App : Application() {
@@ -17,11 +17,12 @@ class App : Application() {
     }
 
     override fun start() {
-        val context = AppContext(AppModel(), Routing.init())
+        val routing = Routing.init()
+        val context = AppContext(AppModel(), routing)
         root("kvapp") {
             buildPortal(context)
-                .addPages(basePages)
-                .addPages(userPages)
+                .addPages(Pages.basePages)
+                .addPages(Pages.userPages)
                 .build()
         }
     }

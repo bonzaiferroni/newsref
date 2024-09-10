@@ -1,4 +1,4 @@
-package streetlight.web.pages
+package streetlight.web.ui.pages
 
 import io.kvision.html.Div
 import io.kvision.html.link
