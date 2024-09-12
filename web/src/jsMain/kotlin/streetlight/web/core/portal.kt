@@ -1,15 +1,15 @@
 package streetlight.web.core
 
 import io.kvision.core.*
-import io.kvision.html.*
-import io.kvision.panel.hPanel
-import io.kvision.routing.Routing
+import io.kvision.html.Div
+import io.kvision.html.P
+import io.kvision.html.div
+import io.kvision.state.ObservableValue
 import io.kvision.utils.perc
 import io.kvision.utils.plus
 import io.kvision.utils.px
 import kotlinx.browser.window
 import streetlight.web.Layout
-import streetlight.web.gap
 import streetlight.web.getIdFromUrl
 
 fun Container.portal(
@@ -18,7 +18,9 @@ fun Container.portal(
 ) {
     val (model, routing) = context
     // add header and add nav menu
-    portalHeader(pages)
+    val onPageLoad = ObservableValue(Pages.home)
+
+    portalHeader(pages, onPageLoad)
 
     data class PageCache(val route: String, val div: Div)
 
@@ -82,6 +84,7 @@ fun Container.portal(
                 events?.onLoad?.invoke()
                 current = PageCache(page.route, div)
                 div.updateVisibility(true)
+                onPageLoad.value = page
             }
             div.updateVisibility(false)
             routing.on(page.route, { loadPage() })

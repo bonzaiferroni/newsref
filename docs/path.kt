@@ -1,8 +1,4 @@
-
-
-
-
-
+// web catalogPage.kt
 fun Container.catalogPage(context: AppContext): PortalEvents? {
     val catalogModel = CatalogModel()
     return null
@@ -19,7 +15,7 @@ class CatalogState() {
 
 
 
-
+// web Pages
 val catalog = PageConfig("Catalog", "/user/catalog", builder = TransientPageBuilder {
         catalogPage(it)
     })

@@ -46,7 +46,7 @@ class EventProfileModel(
     suspend fun makeRequest(song: Song) {
         val request = Request(eventId = eventId, songId = song.id)
         val result = requestStore.create(request)
-        if (result != null && result > 0) {
+        if (result > 0) {
             refreshEvents()
         }
     }

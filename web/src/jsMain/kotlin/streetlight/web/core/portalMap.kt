@@ -8,8 +8,7 @@ object Pages {
     val privacy = PageConfig("Privacy", "/about/privacy", builder = CachedPageBuilder { privacyPage() })
     val events = PageConfig("Events", "/event", true, builder = CachedPageBuilder { eventPage() })
     val event = PageConfig("Event", "/event/:id", builder = IdPageBuilder { _, id -> eventProfile(id) })
-    val delete = PageConfig("Delete", "/about/privacy/delete", builder = CachedPageBuilder { deletePage(it) })
-    val basePages = listOf(home, about, privacy, events, event, delete)
+    val basePages = listOf(home, about, privacy, events, event)
 
     val login = PageConfig("Login", "/login", builder = CachedPageBuilder { loginPage(it) })
     val admin = PageConfig("Admin", "/admin", builder = TransientPageBuilder { adminPage(it) })

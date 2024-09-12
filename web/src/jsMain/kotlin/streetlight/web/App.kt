@@ -1,12 +1,13 @@
 package streetlight.web
 
-import io.kvision.*
-import io.kvision.panel.*
-import io.kvision.routing.Routing
 import io.kvision.theme.Theme
 import io.kvision.theme.ThemeManager
-import streetlight.web.core.*
+import io.kvision.*
+import io.kvision.panel.root
+import io.kvision.routing.Routing
+import streetlight.web.core.AppContext
 import streetlight.web.core.Pages
+import streetlight.web.core.buildPortal
 import streetlight.web.io.stores.AppModel
 
 class App : Application() {

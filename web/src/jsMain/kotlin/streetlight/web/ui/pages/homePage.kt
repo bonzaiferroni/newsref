@@ -5,19 +5,21 @@ import io.kvision.core.Container
 import io.kvision.core.Transition
 import io.kvision.core.onClickLaunch
 import io.kvision.form.text.text
-import io.kvision.html.*
-import io.kvision.panel.VPanel
+import io.kvision.html.ButtonStyle
+import io.kvision.html.button
+import io.kvision.html.p
+import io.kvision.panel.FlexPanel
 import io.kvision.panel.vPanel
 import io.kvision.state.ObservableValue
 import io.kvision.state.bind
 import io.kvision.state.bindTo
 import streetlight.model.core.Area
 import streetlight.web.Layout
-import streetlight.web.ui.components.row
-import streetlight.web.ui.components.rows
 import streetlight.web.core.PortalEvents
 import streetlight.web.gap
 import streetlight.web.io.stores.AreaStore
+import streetlight.web.ui.components.col
+import streetlight.web.ui.components.row
 
 fun Container.homePage(): PortalEvents? {
     val message = ObservableValue("hello, world!")
@@ -50,14 +52,14 @@ fun Container.homePage(): PortalEvents? {
 
 fun Container.areas() {
     val store = AreaStore()
-    lateinit var panel: VPanel
+    lateinit var panel: FlexPanel
     val areaName = ObservableValue("")
 
-    rows {
+    row {
         button("get").onClickLaunch {
             panel.refreshAreas(store)
         }
-        row() {
+        col() {
             gap = Layout.defaultGap
             text() {
                 placeholder = "area"
@@ -69,7 +71,7 @@ fun Container.areas() {
                 panel.refreshAreas(store)
             }
         }
-        panel = rows()
+        panel = row()
     }
 }
 
@@ -80,7 +82,7 @@ suspend fun Container.refreshAreas(store: AreaStore) {
     suspend fun refresh() { refreshAreas(store) }
     areas.forEach { area ->
         val areaName = ObservableValue(area.name)
-        row() {
+        col() {
             text().bindTo(areaName)
             button("", icon = "fas fa-trash", style = ButtonStyle.DANGER).onClickLaunch {
                 store.delete(area.id)

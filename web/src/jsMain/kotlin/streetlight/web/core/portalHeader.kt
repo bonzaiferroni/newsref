@@ -3,12 +3,14 @@ package streetlight.web.core
 import io.kvision.core.*
 import io.kvision.html.*
 import io.kvision.panel.hPanel
+import io.kvision.state.ObservableValue
 import io.kvision.utils.px
 import streetlight.web.Layout
 import streetlight.web.gap
 
 fun Container.portalHeader(
-    pages: List<PageConfig>
+    pages: List<PageConfig>,
+    onPageLoad: ObservableValue<PageConfig>
 ) {
     header {
         nav(className = "navbar ${BsBgColor.BODYTERTIARY.className}") {
@@ -37,8 +39,15 @@ fun Container.portalHeader(
             hPanel(justify = JustifyContent.FLEXEND) {
                 pages.forEach { page ->
                     if (!page.navLink) return@forEach
-                    link(className = "navbar-link", label = page.name, url = page.linkRoute) {
+                    val link = link(className = "navbar-link", label = page.name, url = page.linkRoute) {
                         padding = Layout.halfPad
+                    }
+                    onPageLoad.subscribe {
+                        if (it.route.contains(page.route)) {
+                            link.addCssClass("active-page")
+                        } else {
+                            link.removeCssClass("active-page")
+                        }
                     }
                 }
             }

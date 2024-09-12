@@ -2,15 +2,12 @@ package streetlight.web.ui.components
 
 import io.kvision.core.Widget
 import io.kvision.core.onChange
-import io.kvision.core.onClickLaunch
 import io.kvision.core.onInput
 import io.kvision.form.check.CheckBox
 import io.kvision.form.text.Text
-import io.kvision.html.Button
 import io.kvision.html.P
-import kotlinx.coroutines.flow.MutableStateFlow
+import io.kvision.state.ObservableState
 import kotlinx.coroutines.flow.StateFlow
-import kotlinx.serialization.json.JsonNull.content
 import streetlight.web.subscribe
 
 fun Text.bindTo(block: (String) -> Unit): Text {
@@ -36,6 +33,11 @@ fun CheckBox.bindTo(block: (Boolean) -> Unit): CheckBox {
 
 fun <T> CheckBox.bindFrom(flow: StateFlow<T>, block: (T) -> Boolean): CheckBox {
     flow.subscribe { value = block(it) }
+    return this
+}
+
+fun P.bindFrom(observable: ObservableState<String>): P {
+    observable.subscribe { content = it }
     return this
 }
 

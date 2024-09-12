@@ -31,3 +31,9 @@ val description = "Howdy, thanks for stopping by! " +
         "You can send a request or sing with me, just look below for my song list. " +
         "100% of your support goes toward the development of the streetlight app and community. " +
         "Let me know if you have any questions or feedback, and thank you for listening!"
+
+object Columns {
+    val half = "col-6"
+    val row = "row"
+    val halfShrink = "col-6 col-sm-4 col-lg-3"
+}

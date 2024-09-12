@@ -30,7 +30,7 @@ kotlin {
     }
     sourceSets["jsMain"].dependencies {
         implementation("io.kvision:kvision:$kvisionVersion")
-        implementation("io.kvision:kvision-bootstrap:$kvisionVersion")
+//        implementation("io.kvision:kvision-bootstrap:$kvisionVersion")
         implementation("io.kvision:kvision-i18n:$kvisionVersion")
         implementation("io.kvision:kvision-imask:$kvisionVersion")
         implementation("io.kvision:kvision-fontawesome:$kvisionVersion")

@@ -7,7 +7,7 @@ import streetlight.web.core.PortalEvents
 import streetlight.web.ui.components.*
 
 fun Container.aboutPage(): PortalEvents? {
-    rows {
+    row {
         h3("About Streetlight")
         link("Privacy Policy", Pages.privacy)
     }

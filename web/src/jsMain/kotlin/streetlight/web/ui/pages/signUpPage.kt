@@ -8,6 +8,7 @@ import io.kvision.html.*
 import streetlight.model.utils.validPassword
 import streetlight.model.utils.validPasswordLength
 import streetlight.model.utils.validUsername
+import streetlight.web.Columns
 import streetlight.web.core.AppContext
 import streetlight.web.core.Pages
 import streetlight.web.core.PortalEvents
@@ -19,23 +20,24 @@ import streetlight.web.ui.models.SignUpState
 fun Container.signUpPage(context: AppContext): PortalEvents? {
     val model = SignUpModel()
 
-    rows {
+    row {
         h3("Sign up to Streetlight")
 
         // username
-        row(group = true, alignItems = AlignItems.END) {
+        col(group = true, alignItems = AlignItems.END) {
             flexGrow = 1
             text(label = "Username") {
                 flexGrow = 1
                 placeholder = "Username"
             }.bindTo(model::updateUsername)
-            p().bindFrom(model.state) { state -> state.request.username.usernameError() }.mute()
+            fun showMsg(state: SignUpState) = state.request.username.isNotBlank()
+            validMsg(model.state, "At least 3 characters", ::showMsg) { it.request.username.validUsername }
         }
 
         // password
-        rows(group = true) {
-            row(group = true, alignItems = AlignItems.END) {
-                rows(group = true) {
+        row(group = true) {
+            col(group = true, alignItems = AlignItems.END) {
+                row(group = true) {
                     text(label = "Password") {
                         placeholder = "Password"
                         type = InputType.PASSWORD
@@ -45,38 +47,36 @@ fun Container.signUpPage(context: AppContext): PortalEvents? {
                         type = InputType.PASSWORD
                     }.bindTo(model::updateRepeatPassword)
                 }
-                rows(group = true) {
-                    p().bindFrom(model.state) { state -> state.passwordMatchError() }.mute()
-                    p().bindFrom(model.state) { state -> state.request.password.passwordLengthError() }.mute()
-                    p().bindFrom(model.state) { state -> state.request.password.passwordCharsError() }.mute()
+                fun showMsg(state: SignUpState) = state.request.password.isNotBlank()
+                row(Columns.half, group = true) {
+                    validMsg(model.state, "At least 3 characters", ::showMsg)
+                    { it.request.password.validPasswordLength }
+                    validMsg(model.state, "Has variety of characters", ::showMsg)
+                    { it.request.password.validPassword }
+                    validMsg(model.state, "Repeat password", ::showMsg) { it.passwordMatch }
                 }
             }
             p {
-                +"Password should be at least 8 characters long and contain at least one letter, "
+                +"Password strength: At least 8 characters long and should have a letter, "
                 +"number, a special character, eye of newt, two wishes, and a prayer."
             }.mute()
         }
 
         // email
-        rows(group = true) {
-            row(group = true) {
-                text(label = "Email") {
-                    placeholder = "Email (optional)"
-                }.bindTo(model::updateEmail)
-                // name
-                text(label = "Name") {
-                    placeholder = "Name (optional)"
-                }.bindTo(model::updateName)
+        row(group = true) {
+            col(group = true) {
+                text(label = "Email") { placeholder = "Email (optional)" }.bindTo(model::updateEmail)
+                text(label = "Name") { placeholder = "Name (optional)" }.bindTo(model::updateName)
             }
             p {
                 +"Your email address is securely stored and never shared. Read about "
-                link("your privacy", "#/privacy")
+                link("your privacy", Pages.privacy)
                 +" on Streetlight."
             }.mute()
         }
 
         // controls
-        row(group = true) {
+        col(group = true) {
             button("Back", style = ButtonStyle.SECONDARY).onClick { context.navigate(Pages.login) }
             button("Create") {
                 disabled = true
@@ -93,13 +93,3 @@ fun Container.signUpPage(context: AppContext): PortalEvents? {
     }
     return null
 }
-
-fun emoji(test: Boolean) = if (test) "💪" else "🙅"
-fun String.usernameError() =
-    "${emoji(validUsername)} ${if (validUsername) "Valid" else "Invalid"} username"
-fun SignUpState.passwordMatchError() =
-    "${emoji(passwordMatch)} Passwords ${if (!request.username.validUsername) "should" else ""} match"
-fun String.passwordLengthError() =
-    "${emoji(validPasswordLength)} At least 3 characters"
-fun String.passwordCharsError() =
-    "${emoji(validPassword)} Has required characters"

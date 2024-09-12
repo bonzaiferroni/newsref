@@ -1,0 +1,116 @@
+:root {
+    --bs-color-primary: #0172ad;
+    --bs-color-secondary: #ae6d39;
+    --bs-border-color: #0172ad;
+    --bs-card-color: #1b212d;
+    --bs-secondary-bg-rgb: 29, 35, 47;
+}
+
+.btn-primary {
+    --bs-btn-color: #fff;
+    --bs-btn-bg: rgba(200, 40, 154, .3);
+    --bs-btn-border-color: #c8289a;
+    --bs-btn-hover-color: #fff;
+    --bs-btn-hover-bg: #c7309c;
+    --bs-btn-hover-border-color: #bb2e93;
+    --bs-btn-focus-shadow-rgb: 237, 87, 195;
+    --bs-btn-active-color: #fff;
+    --bs-btn-active-bg: #bb2e93;
+    --bs-btn-active-border-color: #b02b8a;
+    --bs-btn-active-shadow: inset 0 3px 5px rgba(0, 0, 0, 0.125);
+    --bs-btn-disabled-color: #fff;
+    --bs-btn-disabled-bg: rgba(200, 40, 154, .3);
+    --bs-btn-disabled-border-color: #c8289a;
+    box-shadow:
+            0 0 2px rgba(234, 57, 184, 0.9),
+            0 0 4px rgba(234, 57, 184, 0.4),
+            0 0 1rem rgba(234, 57, 184, 0.3),
+            0 0 4rem rgba(234, 57, 184, 0.1);
+}
+
+.btn-primary:hover {
+    box-shadow:
+            0 0 6px rgba(234, 57, 184, 0.9),
+            0 0 16px rgba(234, 57, 184, 0.4),
+            0 0 3rem rgba(234, 57, 184, 0.3),
+            0 0 6rem rgba(234, 57, 184, 0.1);
+}
+
+.btn-secondary {
+    --bs-btn-color: #fff;
+    --bs-btn-bg: rgba(111, 66, 193, .3);
+    --bs-btn-border-color: #6f42c1;
+    --bs-btn-hover-color: #fff;
+    --bs-btn-hover-bg: #5e38a4;
+    --bs-btn-hover-border-color: #59359a;
+    --bs-btn-focus-shadow-rgb: 133, 94, 202;
+    --bs-btn-active-color: #fff;
+    --bs-btn-active-bg: #59359a;
+    --bs-btn-active-border-color: #533291;
+    --bs-btn-active-shadow: inset 0 3px 5px rgba(0, 0, 0, 0.125);
+    --bs-btn-disabled-color: #fff;
+    --bs-btn-disabled-bg: #6f42c1;
+    --bs-btn-disabled-border-color: #6f42c1;
+    transition: all 0.3s;
+    box-shadow:
+            0 0 2px rgba(111, 66, 193, 0.9),
+            0 0 4px rgba(111, 66, 193, 0.4),
+            0 0 1rem rgba(111, 66, 193, 0.3),
+            0 0 4rem rgba(111, 66, 193, 0.1);
+}
+
+.btn-primary:disabled {
+    border: none;
+    box-shadow: none;
+}
+
+.btn-warning {
+    --bs-btn-bg: rgba(209, 158, 9, .4);
+}
+
+.container-fluid {
+    /*--bs-gutter-x: 0;*/
+    /*--bs-gutter-y: 0;*/
+}
+
+.form-control {
+    background-color: #1c212c;
+    padding: 1rem;
+    border-radius: 0.25rem;
+    border-width: 0.0625rem;
+    border-color: #2a3140;
+}
+
+.form-control:focus {
+    background-color: #252c3a;
+    border-color: #354360;
+    outline: 0;
+    box-shadow: 0 0 0 .25rem rgba(111, 66, 193, .25);
+}
+
+.bg-body-tertiary {
+    background-color: #1b212d !important;
+}
+
+.form-check-input {
+    background-color: #1c212c;
+    border-width: .125rem;
+    border-color: #2a3140;
+}
+
+.form-check-input:checked {
+    background-color: var(--bs-color-primary);
+    border-color: var(--bs-color-primary);
+}
+
+.kv-mb-3 {
+    /*margin-bottom: 0;*/
+}
+
+.form-control, .btn {
+    border-radius: 50rem;
+}
+
+.btn {
+}
+
