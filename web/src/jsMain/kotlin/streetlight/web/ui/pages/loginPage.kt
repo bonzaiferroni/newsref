@@ -1,14 +1,13 @@
 package streetlight.web.ui.pages
 
 import io.kvision.core.Container
+import io.kvision.core.onClick
 import io.kvision.core.onClickLaunch
 import io.kvision.form.text.text
 import io.kvision.html.ButtonStyle
 import io.kvision.html.InputType
 import io.kvision.html.button
-import io.kvision.html.div
 import kotlinx.browser.window
-import streetlight.web.Tailwind
 import streetlight.web.core.AppContext
 import streetlight.web.core.Pages
 import streetlight.web.core.PortalEvents
@@ -16,6 +15,9 @@ import streetlight.web.core.navigate
 import streetlight.web.getQueryParameter
 import streetlight.web.launchedEffect
 import streetlight.web.ui.components.bindTo
+import streetlight.web.ui.components.col
+import streetlight.web.ui.components.flex1
+import streetlight.web.ui.components.row
 import streetlight.web.ui.models.LoginModel
 
 fun Container.loginPage(context: AppContext): PortalEvents? {
@@ -29,7 +31,7 @@ fun Container.loginPage(context: AppContext): PortalEvents? {
 fun Container.loginWidget(context: AppContext, onSuccess: () -> Unit) {
     val model = LoginModel()
 
-    div(className = Tailwind.column) {
+    col {
         text {
             placeholder = "Username"
         }.bindTo(model::setUsername)
@@ -37,8 +39,8 @@ fun Container.loginWidget(context: AppContext, onSuccess: () -> Unit) {
             placeholder = "Password"
             type = InputType.PASSWORD
         }.bindTo(model::setPassword)
-        div(className = Tailwind.row) {
-            button("Login", className = Tailwind.flex1).onClickLaunch {
+        row {
+            button("Login").flex1().onClickLaunch {
                 val success = model.login()
                 if (success) {
                     console.log("loginPage: success")
@@ -48,7 +50,7 @@ fun Container.loginWidget(context: AppContext, onSuccess: () -> Unit) {
                 }
             }
 
-            button("Create User", className = Tailwind.flex1, style = ButtonStyle.SECONDARY).onClick {
+            button("Create User", style = ButtonStyle.SECONDARY).flex1().onClick {
                 context.navigate(Pages.signUp)
             }
         }

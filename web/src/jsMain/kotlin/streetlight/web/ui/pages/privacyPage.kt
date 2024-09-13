@@ -5,11 +5,10 @@ import io.kvision.html.h3
 import io.kvision.html.p
 import streetlight.web.core.PortalEvents
 import streetlight.web.ui.components.col
-import streetlight.web.ui.components.container
 import streetlight.web.ui.components.row
 
 fun Container.privacyPage(): PortalEvents? {
-    container {
+    col {
         row {
             h3("Privacy Policy")
             p {

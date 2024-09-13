@@ -20,7 +20,7 @@ fun Container.accountPage(context: AppContext): PortalEvents? {
     userContext(context) { userInfo ->
         // console.log("editUserPage: userInfo=$userInfo")
         model.updateInfo(userInfo)
-        container {
+        col {
             row() {
                 ezForm("Account Settings") {
                     row(group = true) {
