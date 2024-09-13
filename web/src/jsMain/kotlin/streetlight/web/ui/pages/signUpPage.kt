@@ -8,7 +8,6 @@ import io.kvision.html.*
 import streetlight.model.utils.validPassword
 import streetlight.model.utils.validPasswordLength
 import streetlight.model.utils.validUsername
-import streetlight.web.Tailwind
 import streetlight.web.core.AppContext
 import streetlight.web.core.Pages
 import streetlight.web.core.PortalEvents
@@ -20,12 +19,11 @@ import streetlight.web.ui.models.SignUpState
 fun Container.signUpPage(context: AppContext): PortalEvents? {
     val model = SignUpModel()
 
-    row {
+    col {
         h3("Sign up to Streetlight")
 
         // username
-        col(group = true, alignItems = AlignItems.END) {
-            flexGrow = 1
+        row(alignItems = AlignItems.END) {
             text(label = "Username") {
                 flexGrow = 1
                 placeholder = "Username"
@@ -35,9 +33,9 @@ fun Container.signUpPage(context: AppContext): PortalEvents? {
         }
 
         // password
-        row(group = true) {
-            col(group = true, alignItems = AlignItems.END) {
-                row(group = true) {
+        col {
+            row(alignItems = AlignItems.END) {
+                col {
                     text(label = "Password") {
                         placeholder = "Password"
                         type = InputType.PASSWORD
@@ -48,7 +46,7 @@ fun Container.signUpPage(context: AppContext): PortalEvents? {
                     }.bindTo(model::updateRepeatPassword)
                 }
                 fun showMsg(state: SignUpState) = state.request.password.isNotBlank()
-                row(Tailwind.half, group = true) {
+                col {
                     validMsg(model.state, "At least 3 characters", ::showMsg)
                     { it.request.password.validPasswordLength }
                     validMsg(model.state, "Has variety of characters", ::showMsg)
@@ -63,8 +61,8 @@ fun Container.signUpPage(context: AppContext): PortalEvents? {
         }
 
         // email
-        row(group = true) {
-            col(group = true) {
+        col {
+            row {
                 text(label = "Email") { placeholder = "Email (optional)" }.bindTo(model::updateEmail)
                 text(label = "Name") { placeholder = "Name (optional)" }.bindTo(model::updateName)
             }
@@ -76,7 +74,7 @@ fun Container.signUpPage(context: AppContext): PortalEvents? {
         }
 
         // controls
-        col(group = true) {
+        row {
             button("Back", style = ButtonStyle.SECONDARY).onClick { context.navigate(Pages.login) }
             button("Create") {
                 disabled = true

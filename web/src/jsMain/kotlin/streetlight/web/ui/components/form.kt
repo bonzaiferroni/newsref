@@ -1,20 +1,21 @@
 package streetlight.web.ui.components
 
-import io.kvision.core.*
+import io.kvision.core.AlignItems
+import io.kvision.core.Container
+import io.kvision.core.FlexDirection
+import io.kvision.core.JustifyContent
 import io.kvision.form.text.Text
 import io.kvision.form.text.text
-import io.kvision.html.button
 import io.kvision.html.h3
-import io.kvision.panel.VPanel
-import kotlinx.coroutines.flow.MutableStateFlow
+import io.kvision.panel.FlexPanel
 import streetlight.web.Layout
 import streetlight.web.gap
 
 class EzForm(
     name: String? = null,
     block: EzForm.() -> Unit,
-) : VPanel(
-    justify = JustifyContent.START, alignItems = AlignItems.STRETCH,
+) : FlexPanel(
+    justify = JustifyContent.START, alignItems = AlignItems.STRETCH, direction = FlexDirection.COLUMN
 ) {
     init {
         gap = Layout.defaultGap

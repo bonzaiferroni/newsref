@@ -12,19 +12,19 @@ import streetlight.web.core.Pages
 import streetlight.web.core.PortalEvents
 import streetlight.web.core.navigate
 import streetlight.web.gap
-import streetlight.web.ui.components.labelInfo
 import streetlight.web.ui.components.col
+import streetlight.web.ui.components.labelInfo
 import streetlight.web.ui.components.row
 import streetlight.web.ui.components.userContext
 
 fun Container.userPage(context: AppContext): PortalEvents? {
     userContext(context) { userInfo ->
-        row {
+        col {
             gap = Layout.halfGap
             h3("Hello, ${userInfo.username}!")
             userInfo.venmo?.let { labelInfo("venmo", it) }
             userInfo.avatarUrl?.let { image(it) }
-            col {
+            row {
                 button("Catalog").onClick { context.navigate(Pages.catalog) }
                 button("Account").onClick { context.navigate(Pages.account) }
                 if (userInfo.isAdmin) {

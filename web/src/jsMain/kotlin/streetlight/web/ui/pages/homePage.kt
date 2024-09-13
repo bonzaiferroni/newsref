@@ -9,7 +9,6 @@ import io.kvision.html.ButtonStyle
 import io.kvision.html.button
 import io.kvision.html.p
 import io.kvision.panel.FlexPanel
-import io.kvision.panel.vPanel
 import io.kvision.state.ObservableValue
 import io.kvision.state.bind
 import io.kvision.state.bindTo
@@ -24,7 +23,7 @@ import streetlight.web.ui.components.row
 fun Container.homePage(): PortalEvents? {
     val message = ObservableValue("hello, world!")
 
-    vPanel(spacing = 10, alignItems = AlignItems.START) {
+    col {
         val p = p {
             transition = Transition("all", .3, "ease")
         }
@@ -55,11 +54,11 @@ fun Container.areas() {
     lateinit var panel: FlexPanel
     val areaName = ObservableValue("")
 
-    row {
+    col {
         button("get").onClickLaunch {
             panel.refreshAreas(store)
         }
-        col() {
+        row(alignItems = AlignItems.CENTER) {
             gap = Layout.defaultGap
             text() {
                 placeholder = "area"
@@ -71,7 +70,7 @@ fun Container.areas() {
                 panel.refreshAreas(store)
             }
         }
-        panel = row()
+        panel = col()
     }
 }
 
@@ -82,7 +81,7 @@ suspend fun Container.refreshAreas(store: AreaStore) {
     suspend fun refresh() { refreshAreas(store) }
     areas.forEach { area ->
         val areaName = ObservableValue(area.name)
-        col() {
+        row(alignItems = AlignItems.CENTER) {
             text().bindTo(areaName)
             button("", icon = "fas fa-trash", style = ButtonStyle.DANGER).onClickLaunch {
                 store.delete(area.id)

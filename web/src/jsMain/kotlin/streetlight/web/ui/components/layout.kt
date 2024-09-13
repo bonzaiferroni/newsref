@@ -15,7 +15,7 @@ fun Container.col(
     init: (FlexPanel.() -> Unit)? = null,
 ): FlexPanel {
     return this.flexPanel(
-        className = "${Tailwind.col} ${className ?: ""}",
+        className = "${Tailwind.twCol} ${className ?: ""}",
         justify = justify,
         alignItems = alignItems,
         useWrappers = useWrappers
@@ -27,7 +27,7 @@ fun Container.col(
 
 fun Container.row(
     className: String? = null,
-    justify: JustifyContent = JustifyContent.SPACEBETWEEN,
+    justify: JustifyContent = JustifyContent.FLEXSTART,
     alignItems: AlignItems = AlignItems.START,
     useWrappers: Boolean = false,
     group: Boolean = false,
@@ -35,7 +35,7 @@ fun Container.row(
     init: (FlexPanel.() -> Unit)? = null,
 ): FlexPanel {
     return this.flexPanel(
-        className = "${Tailwind.row} ${className ?: ""}",
+        className = "${Tailwind.twRow} ${className ?: ""}",
         justify = justify,
         alignItems = alignItems,
         useWrappers = useWrappers,
