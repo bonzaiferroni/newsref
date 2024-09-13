@@ -1,23 +1,27 @@
 package streetlight.web.ui.pages
 
+import io.kvision.core.Container
 import io.kvision.core.JustifyContent
 import io.kvision.core.onClickLaunch
 import io.kvision.form.check.radio
 import io.kvision.form.check.radioGroup
 import io.kvision.form.form
 import io.kvision.form.text.text
-import streetlight.web.*
 import io.kvision.html.*
 import io.kvision.panel.hPanel
 import io.kvision.panel.vPanel
 import io.kvision.state.bind
 import io.kvision.utils.perc
+import streetlight.web.Layout
+import streetlight.web.core.PortalEvents
+import streetlight.web.description
+import streetlight.web.gap
+import streetlight.web.subscribe
 import streetlight.web.ui.components.card
 import streetlight.web.ui.components.typography
-import streetlight.web.core.PortalEvents
 import streetlight.web.ui.models.EventProfileModel
 
-fun Div.eventProfile(id: Int): PortalEvents? {
+fun Container.eventProfile(id: Int): PortalEvents? {
     val model = EventProfileModel(id)
     typography() {
         gap = Layout.defaultGap

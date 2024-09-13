@@ -1,6 +1,6 @@
 package streetlight.web.core
 
-import io.kvision.html.Div
+import io.kvision.core.Container
 
 data class PageConfig(
     val name: String,
@@ -20,15 +20,15 @@ abstract class PageBuilder {
 }
 
 data class CachedPageBuilder(
-    val content: Div.(AppContext) -> PortalEvents?
+    val content: Container.(AppContext) -> PortalEvents?
 ) : PageBuilder()
 
 data class IdPageBuilder(
-    val content: Div.(AppContext, Int) -> PortalEvents?
+    val content: Container.(AppContext, Int) -> PortalEvents?
 ) : PageBuilder()
 
 data class TransientPageBuilder(
-    val content: Div.(AppContext) -> PortalEvents?
+    val content: Container.(AppContext) -> PortalEvents?
 ) : PageBuilder()
 
 data class PortalEvents(

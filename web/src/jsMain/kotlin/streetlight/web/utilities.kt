@@ -1,19 +1,13 @@
 package streetlight.web
 
 import io.kvision.core.Container
-import io.kvision.core.CssSize
-import io.kvision.core.UNIT
 import io.kvision.panel.FlexPanel
 import io.kvision.routing.Routing
-import io.kvision.state.ObservableState
-import io.kvision.state.ObservableValue
 import io.kvision.state.observableState
-import io.kvision.window.Window
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
-import kotlin.io.encoding.Base64
 
 fun String.getIdFromUrl(): Int? {
     return this.substringAfterLast("/").toIntOrNull()

@@ -14,8 +14,9 @@ fun Container.col(
     direction: FlexDirection = FlexDirection.COLUMN,
     init: (FlexPanel.() -> Unit)? = null,
 ): FlexPanel {
+    val tw = if (group) Tailwind.colGroup else Tailwind.colDefault
     return this.flexPanel(
-        className = "${Tailwind.twCol} ${className ?: ""}",
+        className = className?.let { "$tw $className" } ?: tw,
         justify = justify,
         alignItems = alignItems,
         useWrappers = useWrappers
@@ -34,8 +35,9 @@ fun Container.row(
     direction: FlexDirection = FlexDirection.ROW,
     init: (FlexPanel.() -> Unit)? = null,
 ): FlexPanel {
+    val tw = if (group) Tailwind.rowGroup else Tailwind.rowDefault
     return this.flexPanel(
-        className = "${Tailwind.twRow} ${className ?: ""}",
+        className = className?.let { "$tw $className" } ?: tw,
         justify = justify,
         alignItems = alignItems,
         useWrappers = useWrappers,

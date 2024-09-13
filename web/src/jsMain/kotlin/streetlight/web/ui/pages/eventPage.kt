@@ -1,6 +1,6 @@
 package streetlight.web.ui.pages
 
-import io.kvision.html.Div
+import io.kvision.core.Container
 import io.kvision.html.link
 import io.kvision.html.p
 import io.kvision.panel.vPanel
@@ -12,7 +12,7 @@ import streetlight.web.gap
 import streetlight.web.io.stores.EventStore
 import streetlight.web.launchedEffect
 
-fun Div.eventPage(): PortalEvents? {
+fun Container.eventPage(): PortalEvents? {
     val store = EventStore()
     launchedEffect {
         try {
@@ -30,7 +30,7 @@ fun Div.eventPage(): PortalEvents? {
     return null
 }
 
-suspend fun Div.inflateInfos(store: EventStore, infos: List<EventInfo>) {
+suspend fun Container.inflateInfos(store: EventStore, infos: List<EventInfo>) {
     vPanel {
         gap = Layout.defaultGap
         infos.forEach { info ->

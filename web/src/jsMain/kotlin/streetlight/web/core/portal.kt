@@ -1,7 +1,9 @@
 package streetlight.web.core
 
-import io.kvision.core.*
-import io.kvision.html.Div
+import io.kvision.core.Container
+import io.kvision.core.Position
+import io.kvision.core.Transition
+import io.kvision.core.Widget
 import io.kvision.html.P
 import io.kvision.html.div
 import io.kvision.state.ObservableValue
@@ -11,6 +13,7 @@ import io.kvision.utils.px
 import kotlinx.browser.window
 import streetlight.web.Layout
 import streetlight.web.getIdFromUrl
+import streetlight.web.ui.components.col
 
 fun Container.portal(
     context: AppContext,
@@ -22,7 +25,7 @@ fun Container.portal(
 
     portalHeader(pages, onPageLoad)
 
-    data class PageCache(val route: String, val div: Div)
+    data class PageCache(val route: String, val widget: Widget)
 
     val loaded: MutableSet<String> = mutableSetOf()
     var current: PageCache? = null
@@ -36,15 +39,12 @@ fun Container.portal(
         height = 100.perc
 
         pages.forEach { page ->
-            val div = div(className = "content ${page.name}") {
-                padding = Layout.defaultPad
+            val div = col(className = "content ${page.name} p-3") {
                 transition = Transition("all", duration, "ease-out")
                 position = Position.ABSOLUTE
                 width = 100.perc
                 left = 0.px
                 right = 0.px
-                display = Display.FLEX
-                justifyContent = JustifyContent.STRETCH
             }
 
             fun loadPage() {
@@ -54,7 +54,7 @@ fun Container.portal(
                 when (page.builder) {
                     is CachedPageBuilder -> {
                         if (current?.route == page.route) return
-                        current?.div?.updateVisibility(false)
+                        current?.widget?.updateVisibility(false)
                         if (!loaded.contains(page.route)) {
                             // console.log("Loading ${page.route}")
                             events = page.builder.content(div, context)
@@ -63,7 +63,7 @@ fun Container.portal(
                     }
 
                     is IdPageBuilder -> {
-                        current?.div?.updateVisibility(false)
+                        current?.widget?.updateVisibility(false)
                         // console.log("Loading ${page.route}")
                         div.removeAll()
                         val id = window.location.href.getIdFromUrl()
@@ -75,7 +75,7 @@ fun Container.portal(
                     }
 
                     is TransientPageBuilder -> {
-                        current?.div?.updateVisibility(false)
+                        current?.widget?.updateVisibility(false)
                         // console.log("Loading ${page.route}")
                         div.removeAll()
                         events = page.builder.content(div, context)
@@ -96,7 +96,7 @@ fun Container.portal(
     routing.resolve()
 }
 
-fun Div.updateVisibility(visible: Boolean) {
+fun Widget.updateVisibility(visible: Boolean) {
     if (visible) {
         this.opacity = 1.0
         zIndex = 1
