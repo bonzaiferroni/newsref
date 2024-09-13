@@ -8,7 +8,7 @@ import io.kvision.html.*
 import streetlight.model.utils.validPassword
 import streetlight.model.utils.validPasswordLength
 import streetlight.model.utils.validUsername
-import streetlight.web.Columns
+import streetlight.web.Tailwind
 import streetlight.web.core.AppContext
 import streetlight.web.core.Pages
 import streetlight.web.core.PortalEvents
@@ -48,7 +48,7 @@ fun Container.signUpPage(context: AppContext): PortalEvents? {
                     }.bindTo(model::updateRepeatPassword)
                 }
                 fun showMsg(state: SignUpState) = state.request.password.isNotBlank()
-                row(Columns.half, group = true) {
+                row(Tailwind.half, group = true) {
                     validMsg(model.state, "At least 3 characters", ::showMsg)
                     { it.request.password.validPasswordLength }
                     validMsg(model.state, "Has variety of characters", ::showMsg)

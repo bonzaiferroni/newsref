@@ -1,7 +1,6 @@
 package streetlight.web.io.stores
 
 import kotlinx.browser.localStorage
-import kotlinx.coroutines.flow.MutableStateFlow
 import kotlin.properties.ReadWriteProperty
 import kotlin.reflect.KProperty
 
@@ -36,6 +35,20 @@ class LocalStorageBoolean(private val key: String) : ReadWriteProperty<Any?, Boo
             localStorage.removeItem(key)
         } else {
             localStorage.setItem(key, value.toString())
+        }
+    }
+}
+
+class LocalStorageJson<T>(private val key: String) : ReadWriteProperty<Any?, T?> {
+    override fun getValue(thisRef: Any?, property: KProperty<*>): T? {
+        return localStorage.getItem(key)?.let { JSON.parse<T>(it) }
+    }
+
+    override fun setValue(thisRef: Any?, property: KProperty<*>, value: T?) {
+        if (value == null) {
+            localStorage.removeItem(key)
+        } else {
+            localStorage.setItem(key, JSON.stringify(value))
         }
     }
 }
