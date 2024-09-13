@@ -1,10 +1,10 @@
 package streetlight.web
 
-import io.kvision.theme.Theme
-import io.kvision.theme.ThemeManager
 import io.kvision.*
 import io.kvision.panel.root
 import io.kvision.routing.Routing
+import io.kvision.theme.Theme
+import io.kvision.theme.ThemeManager
 import streetlight.web.core.AppContext
 import streetlight.web.core.Pages
 import streetlight.web.core.buildPortal
@@ -14,6 +14,7 @@ class App : Application() {
 
     init {
         require("./css/kvapp.css")
+        require("./css/tw.css")
         ThemeManager.init(initialTheme = Theme.DARK, remember = false)
     }
 

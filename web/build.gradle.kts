@@ -42,9 +42,33 @@ kotlin {
         implementation("io.kvision:kvision-state-flow:$kvisionVersion")
 
         implementation(project(":model"))
+
+        implementation(npm("postcss", "8.4.45"))
+        implementation(npm("postcss-loader", "8.1.1")) // 5.0.0 seems not to work
+        implementation(npm("autoprefixer", "10.4.20"))
+        implementation(npm("tailwindcss", "3.4.11"))
     }
     sourceSets["jsTest"].dependencies {
         implementation(kotlin("test-js"))
         implementation("io.kvision:kvision-testutils:$kvisionVersion")
     }
+}
+
+val copyTailwindConfig = tasks.register<Copy>("copyTailwindConfig") {
+    from("./tailwind.config.js")
+    into("../build/js/packages/${rootProject.name}-${project.name}")
+
+    dependsOn(":kotlinNpmInstall")
+}
+
+val copyPostcssConfig = tasks.register<Copy>("copyPostcssConfig") {
+    from("./postcss.config.js")
+    into("../build/js/packages/${rootProject.name}-${project.name}")
+
+    dependsOn(":kotlinNpmInstall")
+}
+
+tasks.named("jsProcessResources") {
+    dependsOn(copyTailwindConfig)
+    dependsOn(copyPostcssConfig)
 }
