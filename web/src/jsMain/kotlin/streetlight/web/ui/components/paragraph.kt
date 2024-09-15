@@ -1,10 +1,10 @@
 package streetlight.web.ui.components
 
-import io.kvision.core.Container
 import io.kvision.html.P
-import io.kvision.html.p
+import streetlight.web.Css
 
 fun P.mute(): P {
-    this.addCssClass("text-muted")
+    this.addCssClass(Css.text_muted)
+    this.addCssClass(Css.text_shadow_none)
     return this
 }

@@ -3,6 +3,7 @@ fix the height of outline buttons, make same
 set LIGHT style to something easier on the eyes
 add content to deletePage
 refactor song request creation
+create textBox()
 
 main:
 front end: catalogPage, portalMap, songStore

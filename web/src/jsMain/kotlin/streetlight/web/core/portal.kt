@@ -1,16 +1,13 @@
 package streetlight.web.core
 
 import io.kvision.core.Container
-import io.kvision.core.Position
-import io.kvision.core.Transition
 import io.kvision.core.Widget
 import io.kvision.html.P
 import io.kvision.html.div
 import io.kvision.state.ObservableValue
-import io.kvision.utils.perc
 import io.kvision.utils.plus
-import io.kvision.utils.px
 import kotlinx.browser.window
+import streetlight.web.Css
 import streetlight.web.Layout
 import streetlight.web.getIdFromUrl
 import streetlight.web.ui.components.col
@@ -23,29 +20,19 @@ fun Container.portal(
     // add header and add nav menu
     val onPageLoad = ObservableValue(Pages.home)
 
-    portalHeader(pages, onPageLoad)
+    portalBar(pages, onPageLoad)
 
     data class PageCache(val route: String, val widget: Widget)
 
     val loaded: MutableSet<String> = mutableSetOf()
     var current: PageCache? = null
     var events: PortalEvents? = null
-    val duration = 0.3
 
     // add body
-    div() {
-        position = Position.RELATIVE
-        width = 100.perc
-        height = 100.perc
+    div(className = Css.content_parent) {
 
         pages.forEach { page ->
-            val div = col(className = "content ${page.name} p-3") {
-                transition = Transition("all", duration, "ease-out")
-                position = Position.ABSOLUTE
-                width = 100.perc
-                left = 0.px
-                right = 0.px
-            }
+            val div = col(className = "${page.name} ${Css.content}")
 
             fun loadPage() {
                 console.log("Portal.loadPage: loading ${page.route}")

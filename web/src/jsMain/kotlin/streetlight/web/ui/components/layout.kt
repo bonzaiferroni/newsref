@@ -3,7 +3,7 @@ package streetlight.web.ui.components
 import io.kvision.core.*
 import io.kvision.panel.FlexPanel
 import io.kvision.panel.flexPanel
-import streetlight.web.Tailwind
+import streetlight.web.Css
 
 fun Container.col(
     className: String? = null,
@@ -14,7 +14,7 @@ fun Container.col(
     direction: FlexDirection = FlexDirection.COLUMN,
     init: (FlexPanel.() -> Unit)? = null,
 ): FlexPanel {
-    val tw = if (group) Tailwind.colGroup else Tailwind.colDefault
+    val tw = if (group) Css.col_group else Css.col_default
     return this.flexPanel(
         className = className?.let { "$tw $className" } ?: tw,
         justify = justify,
@@ -35,7 +35,7 @@ fun Container.row(
     direction: FlexDirection = FlexDirection.ROW,
     init: (FlexPanel.() -> Unit)? = null,
 ): FlexPanel {
-    val tw = if (group) Tailwind.rowGroup else Tailwind.rowDefault
+    val tw = if (group) Css.row_group else Css.row_default
     return this.flexPanel(
         className = className?.let { "$tw $className" } ?: tw,
         justify = justify,
@@ -47,7 +47,12 @@ fun Container.row(
     }
 }
 
-fun Widget.flex1(): Widget {
-    this.addCssClass(Tailwind.flex1)
+fun Widget.grow(): Widget {
+    this.addCssClass(Css.grow)
+    return this
+}
+
+fun Widget.expand(): Widget {
+    this.addCssClass(Css.expand)
     return this
 }

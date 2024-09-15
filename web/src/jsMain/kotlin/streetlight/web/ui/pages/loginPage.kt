@@ -3,6 +3,7 @@ package streetlight.web.ui.pages
 import io.kvision.core.Container
 import io.kvision.core.onClick
 import io.kvision.core.onClickLaunch
+import io.kvision.form.check.checkBox
 import io.kvision.form.text.text
 import io.kvision.html.ButtonStyle
 import io.kvision.html.InputType
@@ -14,10 +15,7 @@ import streetlight.web.core.PortalEvents
 import streetlight.web.core.navigate
 import streetlight.web.getQueryParameter
 import streetlight.web.launchedEffect
-import streetlight.web.ui.components.bindTo
-import streetlight.web.ui.components.col
-import streetlight.web.ui.components.flex1
-import streetlight.web.ui.components.row
+import streetlight.web.ui.components.*
 import streetlight.web.ui.models.LoginModel
 
 fun Container.loginPage(context: AppContext): PortalEvents? {
@@ -34,13 +32,15 @@ fun Container.loginWidget(context: AppContext, onSuccess: () -> Unit) {
     col {
         text {
             placeholder = "Username"
-        }.bindTo(model::setUsername)
+        }.bindTo(model::setUsername).expand()
         text {
             placeholder = "Password"
             type = InputType.PASSWORD
-        }.bindTo(model::setPassword)
+        }.bindTo(model::setPassword).expand()
+        checkBox(label = "Store credentials to stay logged in.", value = model.state.value.save)
+            .bindTo(model::setSave)
         row {
-            button("Login").flex1().onClickLaunch {
+            button("Login").grow().onClickLaunch {
                 val success = model.login()
                 if (success) {
                     console.log("loginPage: success")
@@ -50,7 +50,7 @@ fun Container.loginWidget(context: AppContext, onSuccess: () -> Unit) {
                 }
             }
 
-            button("Create User", style = ButtonStyle.SECONDARY).flex1().onClick {
+            button("Create User", style = ButtonStyle.SECONDARY).grow().onClick {
                 context.navigate(Pages.signUp)
             }
         }

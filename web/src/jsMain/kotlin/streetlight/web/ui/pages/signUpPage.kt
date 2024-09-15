@@ -35,7 +35,7 @@ fun Container.signUpPage(context: AppContext): PortalEvents? {
         // password
         col {
             row(alignItems = AlignItems.END) {
-                col {
+                col(alignItems = AlignItems.STRETCH) {
                     text(label = "Password") {
                         placeholder = "Password"
                         type = InputType.PASSWORD

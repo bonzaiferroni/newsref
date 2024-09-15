@@ -15,6 +15,8 @@ class App : Application() {
     init {
         require("./css/kvapp.css")
         require("./css/tw.css")
+        require("./css/forms.css")
+        require("./css/buttons.css")
         ThemeManager.init(initialTheme = Theme.DARK, remember = false)
     }
 
