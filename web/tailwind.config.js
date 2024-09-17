@@ -18,6 +18,8 @@ module.exports = {
                 content: { DEFAULT: '#202430'},
                 body: { DEFAULT: '#0f1217'},
                 navbar: { DEFAULT: '#1b212d'},
+                input: { DEFAULT: '#1c212c'},
+                border: { DEFAULT: '#2a3140'},
                 // You can add other color categories as needed
             },
             fontFamily: {lato: ['Lato', 'Helvetica Neue', 'Arial', 'sans-serif']},
@@ -28,6 +30,9 @@ module.exports = {
             addUtilities({
                 '.text-shadow-none': {
                     'text-shadow': 'none',
+                },
+                '.box-shadow-none': {
+                    'box-shadow': 'none',
                 }
             })
         })

@@ -12,9 +12,8 @@
 .btn-danger { --btn-bg: 228, 76, 85; }
 
 .btn {
-    @apply text-white font-bold ;
-    padding: 6px 12px;
-    transition: all 0.2s ease-in-out;
+    @apply text-white font-bold rounded-full py-1.5 px-3;
+    transition: opacity 0.2s ease-in-out, box-shadow 0.2s ease-in-out;
     background-color: rgba(var(--btn-bg), 0.3);
     box-shadow: 0 0 2px rgba(var(--btn-bg), 0.9),
     0 0 4px rgba(var(--btn-bg), 0.4),
@@ -31,7 +30,5 @@
 }
 
 .btn:disabled {
-    border: none;
-    box-shadow: none;
-    opacity: .5;
+    @apply border-none box-shadow-none opacity-50;
 }
