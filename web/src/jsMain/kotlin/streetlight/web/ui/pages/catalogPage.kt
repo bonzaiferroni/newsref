@@ -37,10 +37,11 @@ fun Container.catalogWidget(model: CatalogModel) {
         }
 
         h3("Songs")
-        storeView(model.state, {it.songs}) { songs ->
+        renderStore(model.state, {it.songs}) { songs ->
             songs.forEach { song ->
                 row(justify = JustifyContent.SPACEBETWEEN, alignItems = AlignItems.CENTER) {
                     p("${song.name} - ${song.artist}")
+                    // iconButton(Icons.edit, ButtonStyle.PRIMARY)
                     iconButton(Icons.trash, ButtonStyle.DANGER)
                         .onClickLaunch { model.deleteSong(song) }
                 }

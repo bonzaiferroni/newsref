@@ -9,7 +9,6 @@ object Api {
     val event = Endpoint("/data/event")
     val location = Endpoint("/data/location")
     val request = Endpoint("/data/request")
-    val song = Endpoint("/data/song")
 
     // request
     val requestInfoEvent = Endpoint("/request_info/event")
@@ -20,6 +19,7 @@ object Api {
     // user
     val user = Endpoint("/user")
     val privateInfo = Endpoint("/user/private")
+    val song = Endpoint("/user/song")
 
     // event
     val eventInfoCurrent = Endpoint("/event_info/current")

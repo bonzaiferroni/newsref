@@ -5,7 +5,7 @@ import io.kvision.html.div
 import kotlinx.coroutines.flow.StateFlow
 import streetlight.web.subscribe
 
-fun <T> Container.storeView(flow: StateFlow<T>, block: Container.(T) -> Unit) {
+fun <T> Container.renderStore(flow: StateFlow<T>, block: Container.(T) -> Unit) {
     val div = div()
     flow.subscribe {
         div.removeAll()
@@ -13,7 +13,7 @@ fun <T> Container.storeView(flow: StateFlow<T>, block: Container.(T) -> Unit) {
     }
 }
 
-fun <Store, Data> Container.storeView(flow: StateFlow<Store>, map: (Store) -> Data, block: Container.(Data) -> Unit) {
+fun <Store, Data> Container.renderStore(flow: StateFlow<Store>, map: (Store) -> Data, block: Container.(Data) -> Unit) {
     val div = col(className = "w-full")
     var value: Data? = null
     flow.subscribe {
