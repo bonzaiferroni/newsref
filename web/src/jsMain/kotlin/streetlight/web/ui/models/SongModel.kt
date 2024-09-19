@@ -1,21 +1,18 @@
 package streetlight.web.ui.models
 
-import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.asStateFlow
 import streetlight.model.core.Song
-import streetlight.web.core.ViewModel
+import streetlight.web.core.StateModel
 import streetlight.web.io.stores.SongStore
 
 class SongModel(
     private val id: Int,
     private val songStore: SongStore = SongStore(),
-): ViewModel() {
+): StateModel<SongState>(SongState()) {
 
-    private val _state = MutableStateFlow(SongState())
-    val state = _state.asStateFlow()
+    private var song by StateDelegate({ it.song }, { state, value -> state.copy(song = value) })
 
-    suspend fun initialize() {
-        _state.value = _state.value.copy(song = songStore.get(id))
+    suspend fun refresh() {
+        song = songStore.get(id)
     }
 }
 

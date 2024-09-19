@@ -4,12 +4,12 @@ import io.kvision.core.Container
 import io.kvision.core.Widget
 import io.kvision.html.P
 import io.kvision.html.div
+import io.kvision.navigo.Match
 import io.kvision.state.ObservableValue
 import io.kvision.utils.plus
-import kotlinx.browser.window
 import streetlight.web.Css
 import streetlight.web.Layout
-import streetlight.web.getIdFromUrl
+import streetlight.web.getUrlId
 import streetlight.web.ui.components.col
 
 fun Container.portal(
@@ -34,7 +34,7 @@ fun Container.portal(
         pages.forEach { page ->
             val div = col(className = "${page.name} ${Css.content}")
 
-            fun loadPage() {
+            fun loadPage(match: Match? = null) {
                 console.log("Portal.loadPage: loading ${page.route}")
                 events?.let { it.onUnload?.invoke() }
 
@@ -53,7 +53,7 @@ fun Container.portal(
                         current?.widget?.updateVisibility(false)
                         // console.log("Loading ${page.route}")
                         div.removeAll()
-                        val id = window.location.href.getIdFromUrl()
+                        val id = match?.getUrlId()
                         if (id == null) {
                             div.add(P("Portal.loadPage: missing id"))
                         } else {
@@ -74,7 +74,8 @@ fun Container.portal(
                 onPageLoad.value = page
             }
             div.updateVisibility(false)
-            routing.on(page.route, { loadPage() })
+            routing.on(page.route, { it -> loadPage(it) })
+
             if (routing.current?.firstOrNull()?.route?.name == page.route) {
                 loadPage()
             }

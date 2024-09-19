@@ -1,6 +1,7 @@
 package streetlight.web
 
 import io.kvision.core.Container
+import io.kvision.navigo.Match
 import io.kvision.panel.FlexPanel
 import io.kvision.routing.Routing
 import io.kvision.state.observableState
@@ -8,9 +9,6 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
-import streetlight.web.core.StateModel
-import kotlin.properties.ReadWriteProperty
-import kotlin.reflect.KProperty
 
 fun String.getIdFromUrl(): Int? {
     return this.substringAfterLast("/").toIntOrNull()
@@ -70,4 +68,6 @@ var FlexPanel.gap: Int
         this.setStyle("gap", "${value}px")
     }
 
-
+fun Match.getUrlId(): Int? {
+    return (this.data["id"] as? String)?.toIntOrNull()
+}
