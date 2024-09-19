@@ -8,7 +8,9 @@ import io.kvision.form.text.text
 import io.kvision.html.*
 import streetlight.web.Icons
 import streetlight.web.core.AppContext
+import streetlight.web.core.Pages
 import streetlight.web.core.PortalEvents
+import streetlight.web.core.navigate
 import streetlight.web.launchedEffect
 import streetlight.web.ui.components.*
 import streetlight.web.ui.models.CatalogModel
@@ -18,13 +20,13 @@ fun Container.catalogPage(context: AppContext): PortalEvents? {
     userContext(context) {
         launchedEffect {
             model.refresh()
-            catalogWidget(model)
+            catalogWidget(context, model)
         }
     }
     return null
 }
 
-fun Container.catalogWidget(model: CatalogModel) {
+fun Container.catalogWidget(context: AppContext, model: CatalogModel) {
     col {
         h2("Catalog")
 
@@ -41,10 +43,13 @@ fun Container.catalogWidget(model: CatalogModel) {
             songs.forEach { song ->
                 row(justify = JustifyContent.SPACEBETWEEN, alignItems = AlignItems.CENTER) {
                     p("${song.name} - ${song.artist}")
-                    // iconButton(Icons.edit, ButtonStyle.PRIMARY)
-                    iconButton(Icons.trash, ButtonStyle.DANGER)
-                        .onClickLaunch { model.deleteSong(song) }
-                }
+                    row {
+                        iconButton(Icons.trash, ButtonStyle.DANGER)
+                            .onClickLaunch { model.deleteSong(song) }
+                        iconButton(Icons.edit, ButtonStyle.PRIMARY)
+                            .onClick { context.navigate(Pages.song, song.id) }
+                    }
+                }.expand()
             }
         }
     }

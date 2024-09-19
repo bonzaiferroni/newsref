@@ -4,13 +4,28 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import streetlight.web.coScope
+import kotlin.properties.ReadWriteProperty
+import kotlin.reflect.KProperty
 
 abstract class ViewModel {
     protected val viewModelScope: CoroutineScope
         get() = coScope
 }
 
-abstract class StateModel<T>(initialState: T) : ViewModel() {
+abstract class StateModel<State>(initialState: State) : ViewModel() {
     protected val _state = MutableStateFlow(initialState)
     var state = _state.asStateFlow()
+
+    inner class StateDelegate<Model: StateModel<State>, Value>(
+        private val getter: (State) -> Value,
+        private val setter: (State, Value) -> State
+    ): ReadWriteProperty<Model, Value> {
+        override fun getValue(thisRef: Model, property: KProperty<*>): Value {
+            return getter(thisRef.state.value)
+        }
+
+        override fun setValue(thisRef: Model, property: KProperty<*>, value: Value) {
+            thisRef._state.value = setter(thisRef.state.value, value)
+        }
+    }
 }

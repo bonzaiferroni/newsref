@@ -1,20 +1,15 @@
 package streetlight.web.ui.models
 
-import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.asStateFlow
 import streetlight.model.core.Song
-import streetlight.web.EzState
-import streetlight.web.core.ViewModel
+import streetlight.web.core.StateModel
 import streetlight.web.io.stores.SongStore
 
 class CatalogModel(
     private val songStore: SongStore = SongStore(),
-) : ViewModel() {
+) : StateModel<CatalogState>(CatalogState()) {
 
-    private val _state = MutableStateFlow(CatalogState())
-    val state = _state.asStateFlow()
-    private var songs by EzState(this, _state, { it.songs }, { state, songs -> state.copy(songs = songs) })
-    private var newSong by EzState(this, _state, { it.newSong }, { state, newSong -> state.copy(newSong = newSong) })
+    private var songs by StateDelegate({ it.songs }, { state, value -> state.copy(songs = value) })
+    private var newSong by StateDelegate({ it.newSong }, { state, value -> state.copy(newSong = value) })
 
     suspend fun refresh() {
         songs = songStore.getAll()

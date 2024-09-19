@@ -4,7 +4,7 @@ object Css {
     // layout
     val col_default = "flex flex-col space-y-3"
     val col_group = "flex flex-col space-y-1"
-    val row_default = "flex flex-row w-full space-x-3"
+    val row_default = "flex flex-row space-x-3"
     val row_group = "flex flex-row w-full space-x-1"
     val grow = "flex-1"
     val expand = "w-full"

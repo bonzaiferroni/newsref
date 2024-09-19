@@ -38,3 +38,4 @@ data class PortalEvents(
 
 fun PageConfig.navigate(context: AppContext) = context.routing.navigate(route)
 fun AppContext.navigate(config: PageConfig) = routing.navigate(config.route)
+fun AppContext.navigate(config: PageConfig, id: Int) = routing.navigate(config.getIdRoute(id))
