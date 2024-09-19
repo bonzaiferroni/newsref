@@ -23,9 +23,9 @@ class CatalogModel(
     }
 
     suspend fun addSong() {
-        val newSong = _state.value.newSong
-        songStore.create(newSong)
-        _state.value = CatalogState()
+        val song = _state.value.newSong
+        songStore.create(song)
+        newSong = Song()
     }
 
     fun setName(name: String) {

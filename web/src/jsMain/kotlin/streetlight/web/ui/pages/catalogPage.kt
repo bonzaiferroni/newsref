@@ -35,7 +35,7 @@ fun Container.catalogWidget(model: CatalogModel) {
 
         row(alignItems = AlignItems.CENTER) {
             text() { placeholder = "Song name" }.bindTo(model::setName)
-            text() { placeholder = "Artist" }
+            text() { placeholder = "Artist" }.bindTo(model::setArtist)
             button("Add").onClickLaunch {
                 model.addSong()
                 songContainer.removeAll()
