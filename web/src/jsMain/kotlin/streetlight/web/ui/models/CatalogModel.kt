@@ -9,31 +9,30 @@ import streetlight.web.io.stores.SongStore
 class CatalogModel(
     private val songStore: SongStore = SongStore(),
 ) : ViewModel() {
+
     private val _state = MutableStateFlow(CatalogState())
     val state = _state.asStateFlow()
-    var newSong: Song
-        get() = _state.value.newSong
-        set(value) {
-            _state.value = _state.value.copy(newSong = value)
-        }
 
     suspend fun initialize() {
-        val songs = songStore.getAll()
-        _state.value = CatalogState(songs)
+        _state.value = _state.value.copy(songs = songStore.getAll())
     }
 
     suspend fun addSong() {
-        val song = _state.value.newSong
-        songStore.create(song)
-        newSong = Song()
+        songStore.create(state.value.newSong)
+        _state.value = _state.value.copy(newSong = Song(), songs = songStore.getAll())
     }
 
     fun setName(name: String) {
-        newSong = newSong.copy(name = name)
+        _state.value = _state.value.copy(newSong = _state.value.newSong.copy(name = name))
     }
 
     fun setArtist(name: String) {
-        newSong = newSong.copy(artist = name)
+        _state.value = _state.value.copy(newSong = _state.value.newSong.copy(artist = name))
+    }
+
+    suspend fun deleteSong(song: Song) {
+        songStore.delete(song)
+        _state.value = _state.value.copy(songs = songStore.getAll())
     }
 }
 

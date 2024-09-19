@@ -86,6 +86,10 @@ class ApiClient(
         request<Boolean>(HttpMethod.DELETE, endpoint.replaceClientId(id))
     }.data
 
+    suspend inline fun <reified Sent: Any> deleteData(endpoint: Endpoint, data: Sent): Boolean = authRequest(::login) {
+        requestBoolean(HttpMethod.DELETE, endpoint.path, data)
+    }.data
+
     suspend inline fun <reified Received : Any, reified Sent : Any> create(
         endpoint: Endpoint,
         data: Sent

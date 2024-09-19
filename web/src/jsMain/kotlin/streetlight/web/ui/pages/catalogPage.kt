@@ -2,11 +2,10 @@ package streetlight.web.ui.pages
 
 import io.kvision.core.AlignItems
 import io.kvision.core.Container
+import io.kvision.core.JustifyContent
 import io.kvision.core.onClickLaunch
 import io.kvision.form.text.text
-import io.kvision.html.button
-import io.kvision.html.h2
-import io.kvision.html.p
+import io.kvision.html.*
 import streetlight.web.core.AppContext
 import streetlight.web.core.PortalEvents
 import streetlight.web.launchedEffect
@@ -25,31 +24,26 @@ fun Container.catalogPage(context: AppContext): PortalEvents? {
 }
 
 fun Container.catalogWidget(model: CatalogModel) {
-    storeView(model.state) {
-        col {
-            h2("Catalog")
-            val songContainer = col()
-            songContainer.songList(model)
+    col {
+        h2("Catalog")
 
-            row(alignItems = AlignItems.CENTER) {
-                text() { placeholder = "Song name" }.bindTo(model::setName)
-                text() { placeholder = "Artist" }.bindTo(model::setArtist)
-                button("Add").onClickLaunch {
-                    model.addSong()
-                    songContainer.removeAll()
-                    songContainer.songList(model)
-                }
+        row(alignItems = AlignItems.CENTER) {
+            text() { placeholder = "Song" }.bindTo(model::setName)
+            text() { placeholder = "Artist" }.bindTo(model::setArtist)
+            button("Add").onClickLaunch {
+                model.addSong()
             }
         }
-    }
-}
 
-fun Container.songList(model: CatalogModel) {
-    val state = model.state.value
-    state.songs.forEach { song ->
-        row {
-            p(song.name)
-            p(song.artist)
+        h3("Songs")
+        storeView(model.state, {it.songs}) { songs ->
+            songs.forEach { song ->
+                row(justify = JustifyContent.SPACEBETWEEN, alignItems = AlignItems.CENTER) {
+                    p("${song.name} - ${song.artist}")
+                    iconButton("fas fa-trash", ButtonStyle.DANGER)
+                        .onClickLaunch { model.deleteSong(song) }
+                }
+            }
         }
     }
 }

@@ -50,9 +50,19 @@ inline fun <reified Returned : Any, reified Sent : Any> Requester.request(
     data: Sent,
     crossinline block: RestRequestConfig<Returned, Sent>.() -> Unit = {},
 ): Promise<RestResponse<Returned>> {
-    return restClient.request("${apiOrigin}$endpoint", data) {
+    return restClient.request("$apiOrigin$endpoint", data) {
         applyConfig(method, tokenHeaders)
         block()
+    }
+}
+
+inline fun <reified Sent: Any> Requester.requestBoolean(
+    method: HttpMethod,
+    endpoint: String,
+    data: Sent,
+): Promise<RestResponse<Boolean>> {
+    return restClient.request<Boolean, Sent>("$apiOrigin$endpoint", data) {
+        applyConfig(method, tokenHeaders)
     }
 }
 
