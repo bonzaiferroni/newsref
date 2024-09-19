@@ -10,10 +10,7 @@ import io.kvision.html.p
 import streetlight.web.core.AppContext
 import streetlight.web.core.PortalEvents
 import streetlight.web.launchedEffect
-import streetlight.web.ui.components.bindTo
-import streetlight.web.ui.components.col
-import streetlight.web.ui.components.row
-import streetlight.web.ui.components.userContext
+import streetlight.web.ui.components.*
 import streetlight.web.ui.models.CatalogModel
 
 fun Container.catalogPage(context: AppContext): PortalEvents? {
@@ -28,18 +25,20 @@ fun Container.catalogPage(context: AppContext): PortalEvents? {
 }
 
 fun Container.catalogWidget(model: CatalogModel) {
-    col {
-        h2("Catalog")
-        val songContainer = col()
-        songContainer.songList(model)
+    storeView(model.state) {
+        col {
+            h2("Catalog")
+            val songContainer = col()
+            songContainer.songList(model)
 
-        row(alignItems = AlignItems.CENTER) {
-            text() { placeholder = "Song name" }.bindTo(model::setName)
-            text() { placeholder = "Artist" }.bindTo(model::setArtist)
-            button("Add").onClickLaunch {
-                model.addSong()
-                songContainer.removeAll()
-                songContainer.songList(model)
+            row(alignItems = AlignItems.CENTER) {
+                text() { placeholder = "Song name" }.bindTo(model::setName)
+                text() { placeholder = "Artist" }.bindTo(model::setArtist)
+                button("Add").onClickLaunch {
+                    model.addSong()
+                    songContainer.removeAll()
+                    songContainer.songList(model)
+                }
             }
         }
     }
