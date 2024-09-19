@@ -3,6 +3,7 @@ package streetlight.web.ui.models
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import streetlight.model.core.Song
+import streetlight.web.EzState
 import streetlight.web.core.ViewModel
 import streetlight.web.io.stores.SongStore
 
@@ -12,9 +13,11 @@ class CatalogModel(
 
     private val _state = MutableStateFlow(CatalogState())
     val state = _state.asStateFlow()
+    private var songs by EzState(this, _state, { it.songs }, { state, songs -> state.copy(songs = songs) })
+    private var newSong by EzState(this, _state, { it.newSong }, { state, newSong -> state.copy(newSong = newSong) })
 
-    suspend fun initialize() {
-        _state.value = _state.value.copy(songs = songStore.getAll())
+    suspend fun refresh() {
+        songs = songStore.getAll()
     }
 
     suspend fun addSong() {
@@ -23,16 +26,16 @@ class CatalogModel(
     }
 
     fun setName(name: String) {
-        _state.value = _state.value.copy(newSong = _state.value.newSong.copy(name = name))
+        newSong = newSong.copy(name = name)
     }
 
     fun setArtist(name: String) {
-        _state.value = _state.value.copy(newSong = _state.value.newSong.copy(artist = name))
+        newSong = newSong.copy(artist = name)
     }
 
     suspend fun deleteSong(song: Song) {
         songStore.delete(song)
-        _state.value = _state.value.copy(songs = songStore.getAll())
+        refresh()
     }
 }
 

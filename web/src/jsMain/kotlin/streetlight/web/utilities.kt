@@ -6,8 +6,11 @@ import io.kvision.routing.Routing
 import io.kvision.state.observableState
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
+import kotlin.properties.ReadWriteProperty
+import kotlin.reflect.KProperty
 
 fun String.getIdFromUrl(): Int? {
     return this.substringAfterLast("/").toIntOrNull()
@@ -67,3 +70,18 @@ var FlexPanel.gap: Int
         this.setStyle("gap", "${value}px")
     }
 
+class EzState<M, T, V>(
+    private val model: M,
+    private val flow: MutableStateFlow<T>,
+    private val getter: (T) -> V,
+    private val setter: (T, V) -> T
+): ReadWriteProperty<M, V> {
+    override fun getValue(thisRef: M, property: KProperty<*>): V {
+        return getter(flow.value)
+    }
+
+    override fun setValue(thisRef: M, property: KProperty<*>, value: V) {
+        val newValue = setter(flow.value, value)
+        flow.value = newValue
+    }
+}

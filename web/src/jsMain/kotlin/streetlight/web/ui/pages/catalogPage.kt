@@ -17,7 +17,7 @@ fun Container.catalogPage(context: AppContext): PortalEvents? {
     val model = CatalogModel()
     userContext(context) {
         launchedEffect {
-            model.initialize()
+            model.refresh()
             catalogWidget(model)
         }
     }
