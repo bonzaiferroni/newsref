@@ -1,6 +1,7 @@
-package streetlight.model.core
+package streetlight.server.models
 
 import kotlinx.serialization.Serializable
+import streetlight.model.core.IdModel
 import streetlight.model.dto.PrivateInfo
 
 @Serializable

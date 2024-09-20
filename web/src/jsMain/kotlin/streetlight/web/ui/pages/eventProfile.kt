@@ -31,7 +31,7 @@ fun Container.eventProfile(id: Int): PortalEvents? {
             link("next", "#/event/${id + 1}")
         }
         h1(className = "text-center").bind(model.eventStream) {
-            this.content = it.user.name + " @ " + it.location.name
+            this.content = it.user.username + " @ " + it.location.name
         }
         image("img/bridge.jpg") {
             width = 100.perc
