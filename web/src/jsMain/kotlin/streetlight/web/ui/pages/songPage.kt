@@ -12,10 +12,7 @@ import streetlight.web.core.Pages
 import streetlight.web.core.PortalEvents
 import streetlight.web.core.navigate
 import streetlight.web.launchedEffect
-import streetlight.web.ui.components.bindTo
-import streetlight.web.ui.components.renderStore
-import streetlight.web.ui.components.row
-import streetlight.web.ui.components.userContext
+import streetlight.web.ui.components.*
 import streetlight.web.ui.models.SongModel
 
 fun Container.songPage(context: AppContext, id: Int): PortalEvents? {
@@ -41,7 +38,7 @@ fun Container.songWidget(context: AppContext, model: SongModel) {
     }
     row {
         button("Catalog", style = ButtonStyle.SECONDARY).onClick { context.navigate(Pages.catalog) }
-        button("Delete", style = ButtonStyle.DANGER).onClickLaunch {
+        safetyButton("Delete") {
             model.deleteSong()
             context.navigate(Pages.catalog)
         }

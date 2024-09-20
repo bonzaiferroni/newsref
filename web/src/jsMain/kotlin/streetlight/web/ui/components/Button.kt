@@ -22,7 +22,23 @@ fun Container.iconButton(
     style: ButtonStyle = ButtonStyle.PRIMARY,
     block: (Button.() -> Unit)? = null
 ): Button {
-    return button("", icon = icon.value, style = style) {
+    return button("", icon = icon.css, style = style) {
         block?.invoke(this)
     }
+}
+
+fun Container.safetyButton(
+    text: String = "",
+    icon: FaIcon? = null,
+    onClick: suspend () -> Unit
+): Button {
+    val button = button(text, icon = icon?.css, style = ButtonStyle.WARNING)
+    button.onClickLaunch {
+        if (button.style == ButtonStyle.WARNING) {
+            button.style = ButtonStyle.DANGER
+        } else {
+            onClick()
+        }
+    }
+    return button
 }

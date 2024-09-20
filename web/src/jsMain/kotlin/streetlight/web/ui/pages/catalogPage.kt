@@ -44,8 +44,7 @@ fun Container.catalogWidget(context: AppContext, model: CatalogModel) {
                 row(justify = JustifyContent.SPACEBETWEEN, alignItems = AlignItems.CENTER) {
                     p("${song.name} - ${song.artist}")
                     row {
-                        iconButton(Icons.trash, ButtonStyle.DANGER)
-                            .onClickLaunch { model.deleteSong(song) }
+                        safetyButton(icon = Icons.trash) { model.deleteSong(song) }
                         iconButton(Icons.edit, ButtonStyle.PRIMARY)
                             .onClick { context.navigate(Pages.song, song.id) }
                     }

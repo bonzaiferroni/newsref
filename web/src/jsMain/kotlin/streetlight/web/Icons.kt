@@ -1,6 +1,6 @@
 package streetlight.web
 
-data class FaIcon(val value: String)
+data class FaIcon(val css: String)
 
 object Icons {
     val trash = FaIcon("fas fa-trash")
