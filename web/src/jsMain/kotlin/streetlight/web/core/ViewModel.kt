@@ -16,6 +16,8 @@ abstract class StateModel<State>(initialState: State) : ViewModel() {
     protected val _state = MutableStateFlow(initialState)
     var state = _state.asStateFlow()
 
+    protected var sv by StateDelegate({ it }, { _, value -> value })
+
     inner class StateDelegate<Model: StateModel<State>, Value>(
         private val getter: (State) -> Value,
         private val setter: (State, Value) -> State

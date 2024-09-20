@@ -97,8 +97,8 @@ class ApiClient(
         request<Received, Sent>(HttpMethod.POST, endpoint.path, data)
     }.data
 
-    suspend inline fun <reified T : Any> update(endpoint: Endpoint, data: T): Boolean = authRequest(::login) {
-        request<Boolean, T>(HttpMethod.PUT, endpoint.path, data)
+    suspend inline fun <reified T : Any> update(endpoint: Endpoint, data: T): T = authRequest(::login) {
+        request<T, T>(HttpMethod.PUT, endpoint.path, data)
     }.data
 
     fun logout() {

@@ -23,8 +23,16 @@ class SongModel(
         song = song.copy(artist = artist)
     }
 
+    fun setMusic(music: String) {
+        song = song.copy(music = music)
+    }
+
+    fun toggleEditMode() {
+        sv = sv.copy(editMode = !sv.editMode)
+    }
+
     suspend fun updateSong() {
-        songStore.update(song)
+        sv = sv.copy(editMode = false, song = songStore.update(song))
     }
 
     suspend fun deleteSong() {
@@ -33,5 +41,6 @@ class SongModel(
 }
 
 data class SongState(
-    val song: Song = Song()
+    val song: Song = Song(),
+    val editMode: Boolean = true,
 )

@@ -5,7 +5,7 @@
 /* form-control */
 
 .form-control {
-    @apply block p-4 rounded-full border w-full;
+    @apply block p-4 rounded-3xl border w-full;
     background-color: #1c212c;
     border-color: #2a3140;
     transition: border-color 0.15s ease-in-out, box-shadow 0.15s ease-in-out;

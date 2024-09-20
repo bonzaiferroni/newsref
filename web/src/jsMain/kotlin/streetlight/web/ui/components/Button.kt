@@ -12,7 +12,7 @@ fun Button.bindTo(block: () -> Unit): Button {
     return this
 }
 
-fun Button.bindTo(block: suspend () -> Unit): Button {
+fun Button.bindToLaunch(block: suspend () -> Unit): Button {
     onClickLaunch { block() }
     return this
 }

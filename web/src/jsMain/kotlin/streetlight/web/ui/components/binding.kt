@@ -5,6 +5,7 @@ import io.kvision.core.onChange
 import io.kvision.core.onInput
 import io.kvision.form.check.CheckBox
 import io.kvision.form.text.Text
+import io.kvision.form.text.TextArea
 import io.kvision.html.P
 import io.kvision.state.ObservableState
 import kotlinx.coroutines.flow.StateFlow
@@ -18,6 +19,11 @@ fun Text.bindTo(block: (String) -> Unit): Text {
 fun <T> Text.bindFrom(flow: StateFlow<T>, block: (T) -> String?): Text {
     value = block(flow.value) ?: ""
     flow.subscribe { value = block(it) ?: "" }
+    return this
+}
+
+fun TextArea.bindTo(block: (String) -> Unit): TextArea {
+    onInput { block(value ?: "") }
     return this
 }
 

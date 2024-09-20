@@ -39,8 +39,8 @@ fun Container.catalogWidget(context: AppContext, model: CatalogModel) {
         }
 
         h3("Songs")
-        renderStore(model.state, {it.songs}) { songs ->
-            songs.forEach { song ->
+        renderStore(model.state, {it.songs}) { state ->
+            state.songs.forEach { song ->
                 row(justify = JustifyContent.SPACEBETWEEN, alignItems = AlignItems.CENTER) {
                     p("${song.name} - ${song.artist}")
                     row {

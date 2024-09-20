@@ -8,5 +8,5 @@ data class Song(
     val userId: Int = 0,
     val name: String = "",
     val artist: String? = null,
-    val music: String = "",
+    val music: String? = null,
 ) : IdModel
