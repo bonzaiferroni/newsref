@@ -53,7 +53,7 @@ fun Container.loginWidget(context: AppContext, onSuccess: () -> Unit) {
             button("Create User", style = ButtonStyle.SECONDARY).grow().onClick {
                 context.navigate(Pages.signUp)
             }
-        }
+        }.expand()
     }
 
     launchedEffect {

@@ -17,7 +17,7 @@ captures
 **/xcshareddata/WorkspaceSettings.xcsettings
 
 /chopui/
-test.mv.db.backup
+test.mv.db
 test.mv.db.backup
 test.trace.db
 backup.json

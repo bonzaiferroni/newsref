@@ -1,4 +1,4 @@
-package streetlight.model.core
+package streetlight.model.enums
 
 enum class EventStatus {
     Pending,

@@ -26,6 +26,9 @@ fun Container.userPage(context: AppContext): PortalEvents? {
             userInfo.avatarUrl?.let { image(it) }
             row {
                 button("Catalog").onClick { context.navigate(Pages.catalog) }
+                button("My Map")
+            }
+            row {
                 button("Account").onClick { context.navigate(Pages.account) }
                 if (userInfo.isAdmin) {
                     button("Admin").onClick { context.navigate(Pages.admin) }

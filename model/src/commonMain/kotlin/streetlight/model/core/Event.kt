@@ -1,6 +1,7 @@
 package streetlight.model.core
 
 import kotlinx.serialization.Serializable
+import streetlight.model.enums.EventStatus
 
 @Serializable
 data class Event(
