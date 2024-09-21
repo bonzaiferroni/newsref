@@ -30,6 +30,7 @@ fun Container.atlasPage(context: AppContext): PortalEvents? {
 
 fun Container.atlasWidget(context: AppContext, model: AtlasModel, div: Div) {
     val element = div.getElement()
+
     if (element != null) {
         val map = L.map(element).setView(LatLng(51.505, -0.09), 13)
 

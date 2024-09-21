@@ -41,11 +41,12 @@ kotlin {
         implementation("io.kvision:kvision-rest:$kvisionVersion")
         implementation("io.kvision:kvision-state-flow:$kvisionVersion")
         implementation("io.kvision:kvision-maps:$kvisionVersion")
+        implementation("io.kvision:kvision-cordova:$kvisionVersion")
 
         implementation(project(":model"))
 
         implementation(npm("postcss", "8.4.45"))
-        implementation(npm("postcss-loader", "8.1.1")) // 5.0.0 seems not to work
+        implementation(npm("postcss-loader", "8.1.1"))
         implementation(npm("autoprefixer", "10.4.20"))
         implementation(npm("tailwindcss", "3.4.11"))
     }
