@@ -1,13 +1,13 @@
 package streetlight.model.enums
 
-enum class LocationType {
-    Unknown,
-    Streetlighting,
+enum class ResourceType {
     FoodAssistance,
     Shelter,
     Medical,
     Bathroom,
     Water,
-    OpenMic,
-    Dancing,
+    Shower,
+    Laundry,
+    Storage,
+    GoodVibes,
 }

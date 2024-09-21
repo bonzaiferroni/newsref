@@ -20,6 +20,7 @@ object Api {
     val user = Endpoint("/user")
     val privateInfo = Endpoint("/user/private")
     val song = Endpoint("/user/song")
+    val atlas = Endpoint("/user/atlas")
 
     // event
     val eventInfoCurrent = Endpoint("/event_info/current")

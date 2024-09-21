@@ -17,6 +17,6 @@ object Pages {
     val user = PageConfig("User", "/user", true, builder = TransientPageBuilder { userPage(it) })
     val catalog = PageConfig("Catalog", "/user/catalog", builder = TransientPageBuilder { catalogPage(it) })
     val song = PageConfig("Song", "/user/catalog/:id", builder = IdPageBuilder { context, id -> songPage(context, id) })
-    val userMap = PageConfig("Atlas", "/user/atlas", builder = TransientPageBuilder { atlasPage(it) })
+    val atlas = PageConfig("Atlas", "/user/atlas", builder = TransientPageBuilder { atlasPage(it) })
     val userPages = listOf(signUp, admin, account, login, user, catalog, song)
 }

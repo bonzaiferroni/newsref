@@ -1,7 +1,7 @@
 package streetlight.model.core
 
 import kotlinx.serialization.Serializable
-import streetlight.model.enums.LocationType
+import streetlight.model.enums.ResourceType
 
 @Serializable
 data class Location(
@@ -13,7 +13,7 @@ data class Location(
     val address: String? = null,
     val notes: String? = null,
     val geoPoint: GeoPoint = GeoPoint(),
-    val types: List<LocationType> = emptyList(),
+    val types: Set<ResourceType> = emptySet(),
 ) : IdModel
 
 @Serializable
