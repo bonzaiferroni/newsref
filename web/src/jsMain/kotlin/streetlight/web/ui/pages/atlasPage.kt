@@ -2,6 +2,7 @@ package streetlight.web.ui.pages
 
 import io.kvision.core.Container
 import io.kvision.html.Div
+import io.kvision.html.button
 import io.kvision.html.div
 import io.kvision.html.p
 import io.kvision.maps.Maps.Companion.L
@@ -12,6 +13,7 @@ import streetlight.web.launchedEffect
 import streetlight.web.ui.components.col
 import streetlight.web.ui.components.userContext
 import streetlight.web.ui.models.AtlasModel
+import web.navigator.navigator
 
 fun Container.atlasPage(context: AppContext): PortalEvents? {
     val model = AtlasModel()
@@ -21,6 +23,15 @@ fun Container.atlasPage(context: AppContext): PortalEvents? {
             launchedEffect {
                 model.refresh()
                 atlasWidget(context, model, div)
+            }
+        }
+        button("get location") {
+            onClick {
+                navigator.geolocation.getCurrentPosition({
+                    console.log("Success: $it")
+                }, {
+                    console.log("Error: $it")
+                })
             }
         }
     }

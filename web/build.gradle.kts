@@ -45,6 +45,8 @@ kotlin {
 
         implementation(project(":model"))
 
+        implementation(kotlinWrappers.browser)
+
         implementation(npm("postcss", "8.4.45"))
         implementation(npm("postcss-loader", "8.1.1"))
         implementation(npm("autoprefixer", "10.4.20"))

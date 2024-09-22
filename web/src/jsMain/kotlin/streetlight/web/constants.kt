@@ -2,6 +2,7 @@ package streetlight.web
 
 import io.kvision.core.CssSize
 import io.kvision.core.UNIT
+import kotlinx.browser.window
 
 object Layout {
     val spacing = 20
@@ -24,7 +25,12 @@ const val HTTP_NOT_IMPLEMENTED: Short = 501
 const val HTTP_BAD_GATEWAY: Short = 502
 const val HTTP_SERVICE_UNAVAILABLE: Short = 503
 
-const val apiOrigin = "http://192.168.1.122:8080"
+
+val apiOrigin = if (window.location.href.contains("localhost")) {
+    "http://192.168.1.122:8080"
+} else {
+    "https://streetlight.ing"
+}
 // const val baseAddress = "https://streetlight.ing"
 
 val description = "Howdy, thanks for stopping by! " +
