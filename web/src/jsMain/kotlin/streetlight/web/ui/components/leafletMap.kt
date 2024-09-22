@@ -1,6 +1,7 @@
 package streetlight.web.ui.components
 
 import io.kvision.core.Container
+import io.kvision.core.JustifyContent
 import io.kvision.html.button
 import io.kvision.html.div
 import io.kvision.maps.Maps.Companion.L
@@ -21,7 +22,7 @@ suspend fun Container.leafletMap(origin: LatLng = LatLng(39.726, -104.847)): Lea
     val map = L.map(element).setView(origin, 15)
         .setTileLayer(tileLayers[0].url)
 
-    col.row {
+    col.row(justify = JustifyContent.END) {
         button("my location").onClick {
             navigator.geolocation.getCurrentPosition {
                 map.setView(it)
@@ -32,7 +33,7 @@ suspend fun Container.leafletMap(origin: LatLng = LatLng(39.726, -104.847)): Lea
                 map.setTileLayer(it.url)
             } }
         }
-    }
+    }.expand()
     return map
 }
 
@@ -61,7 +62,7 @@ val tileLayers = listOf(
     LayerOption("Satellite", "https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}"),
     LayerOption("Dark", "https://cartodb-basemaps-a.global.ssl.fastly.net/dark_all/{z}/{x}/{y}.png"),
     LayerOption("Light", "https://cartodb-basemaps-a.global.ssl.fastly.net/light_all/{z}/{x}/{y}.png"),
-    LayerOption("?", "https://server.arcgisonline.com/ArcGIS/rest/services/World_Street_Map/MapServer/tile/{z}/{y}/{x}")
+    LayerOption("Services", "https://server.arcgisonline.com/ArcGIS/rest/services/World_Street_Map/MapServer/tile/{z}/{y}/{x}")
 )
 
 data class LayerOption(val name: String, val url: String)

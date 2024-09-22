@@ -31,18 +31,20 @@ class MenuButton(
     val isVisible = ObservableValue(false)
 
     init {
-        val box = div(className = "relative text-left")
+        val box = div(className = "relative")
         init?.invoke(this)
 
         box.add(innerButton)
         innerButton.onClick { isVisible.value = !isVisible.value }
 
-        box.div(className = "origin-top-right absolute right-0 mt-2 w-56 rounded-md shadow-lg bg-white ring-1 ring-black ring-opacity-5") {
+        box.div(className = "origin-top-right absolute right-0 mt-2 rounded-md shadow-lg bg-white") {
             transition = Transition("opacity", 0.3, "ease-in-out")
             div(className = "py-1") {
-                val linkClass = "block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 cursor-pointer"
+                val linkClass = "block px-4 py-2 text-gray-700 hover:bg-gray-200 cursor-pointer"
                 options.forEach { option ->
-                    link(option.text, option.href, className = linkClass).onClick {
+                    link(option.text, option.href, className = linkClass) {
+                        transition = Transition("background-color", 0.3, "ease-in-out")
+                    }.onClick {
                         option.onClick?.invoke()
                         isVisible.value = false
                     }
