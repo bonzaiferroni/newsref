@@ -1,7 +1,7 @@
 #!/bin/bash
 
-# Build the project
-# ./gradlew :server:build
+rm -rf www/kvision/*
+cp -r web/build/dist/js/productionExecutable/* www/kvision/
 
 # Copy the necessary files to the server
 scp -r server/build/libs/server-all.jar starfox@streetlight.ing:/home/starfox/server/
