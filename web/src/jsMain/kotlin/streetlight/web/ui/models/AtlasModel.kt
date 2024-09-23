@@ -14,9 +14,18 @@ class AtlasModel(
     suspend fun refresh() {
         locations = atlasStore.getAll()
     }
+
+    fun setName(name: String) {
+        newLocation = newLocation.copy(name = name)
+    }
+
+    fun setPlace(place: String) {
+        sv = sv.copy(place = place)
+    }
 }
 
 data class AtlasState(
     val locations: List<Location> = emptyList(),
     val newLocation: Location = Location(),
+    val place: String = "",
 )

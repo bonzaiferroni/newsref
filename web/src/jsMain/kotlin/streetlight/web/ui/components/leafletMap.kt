@@ -55,7 +55,7 @@ fun LeafletMap.setTileLayer(url: String): LeafletMap {
 }
 
 val tileLayers = listOf(
-    LayerOption("Humanitarian", "http://{s}.tile.openstreetmap.fr/hot/{z}/{x}/{y}.png"),
+    LayerOption("Humanitarian", "https://{s}.tile.openstreetmap.fr/hot/{z}/{x}/{y}.png"),
     LayerOption("Detailed", "https://tile.openstreetmap.org/{z}/{x}/{y}.png"),
     LayerOption("Cycling", "https://{s}.tile-cyclosm.openstreetmap.fr/cyclosm/{z}/{x}/{y}.png"),
     LayerOption("Watercolor", "https://tiles.stadiamaps.com/tiles/stamen_watercolor/{z}/{x}/{y}.jpg"),
