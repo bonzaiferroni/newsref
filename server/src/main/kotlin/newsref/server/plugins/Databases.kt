@@ -12,7 +12,7 @@ import newsref.server.utilities.DbBackup
 fun Application.configureDatabases() {
     val psqlPass = System.getenv("NEWSREF_PSQL_PW")
     val psqldb = Database.connect(
-        "jdbc:pgsql://localhost:5432/streetlightdb",
+        "jdbc:pgsql://localhost:5432/newsrefdb",
         driver = "com.impossibl.postgres.jdbc.PGDriver",
         user = "newsref",
         password = psqlPass
