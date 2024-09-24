@@ -1,4 +1,4 @@
-rootProject.name = "streetlight"
+rootProject.name = "newsref"
 enableFeaturePreview("TYPESAFE_PROJECT_ACCESSORS")
 
 pluginManagement {
