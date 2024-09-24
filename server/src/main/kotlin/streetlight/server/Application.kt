@@ -16,7 +16,6 @@ fun Application.module() {
     configureDatabases()
     configureSecurity()
     configureApiRoutes()
-    configureHtmlRouting(host)
     configureWebSockets()
     configureLogging()
 }

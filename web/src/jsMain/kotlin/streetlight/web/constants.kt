@@ -29,7 +29,7 @@ const val HTTP_SERVICE_UNAVAILABLE: Short = 503
 val apiOrigin = if (window.location.href.contains("localhost")) {
     "http://192.168.1.122:8080"
 } else {
-    "https://streetlight.ing"
+    "https://newsref.org"
 }
 // const val baseAddress = "https://streetlight.ing"
 

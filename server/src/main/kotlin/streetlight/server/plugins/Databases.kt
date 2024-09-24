@@ -10,21 +10,16 @@ import streetlight.server.db.tables.*
 import streetlight.server.utilities.DbBackup
 
 fun Application.configureDatabases() {
-    val psqlPass = System.getenv("STREETLIGHT_PSQL_PW")
+    val psqlPass = System.getenv("NEWSREF_PSQL_PW")
     val psqldb = Database.connect(
         "jdbc:pgsql://localhost:5432/streetlightdb",
         driver = "com.impossibl.postgres.jdbc.PGDriver",
-        user = "streetlight",
+        user = "newsref",
         password = psqlPass
     )
 
     transaction(psqldb) {
         SchemaUtils.create(UserTable)
-        SchemaUtils.create(LocationTable)
-        SchemaUtils.create(AreaTable)
-        SchemaUtils.create(EventTable)
-        SchemaUtils.create(SongTable)
-        SchemaUtils.create(RequestTable)
         SchemaUtils.create(SessionTokenTable)
     }
 
