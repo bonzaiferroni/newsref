@@ -31,7 +31,6 @@ val apiOrigin = if (window.location.href.contains("localhost")) {
 } else {
     "https://newsref.org"
 }
-// const val baseAddress = "https://streetlight.ing"
 
 val description = "Howdy, thanks for stopping by! " +
         "You can send a request or sing with me, just look below for my song list. " +

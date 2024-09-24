@@ -25,8 +25,8 @@ fun Container.userPage(context: AppContext): PortalEvents? {
             userInfo.venmo?.let { labelInfo("venmo", it) }
             userInfo.avatarUrl?.let { image(it) }
             row {
-                button("Catalog").onClick { context.navigate(Pages.catalog) }
-                button("Atlas").onClick { context.navigate(Pages.atlas) }
+                // button("Catalog").onClick { context.navigate(Pages.catalog) }
+                // button("Atlas").onClick { context.navigate(Pages.atlas) }
             }
             row {
                 button("Account").onClick { context.navigate(Pages.account) }

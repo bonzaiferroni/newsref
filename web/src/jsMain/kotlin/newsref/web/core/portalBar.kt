@@ -20,11 +20,7 @@ fun Container.portalBar(
                 gap = Layout.halfGap
                 image("img/logo-small.png", className = Css.navbar_logo)
                 link(label = "", url = "#/") {
-                    h2 {
-                        span("Streetl")
-                        span("i", className = Css.navbar_logo_i)
-                        span("ght")
-                    }
+                    h2("Newsref")
                 }
             }
 

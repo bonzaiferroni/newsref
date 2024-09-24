@@ -20,7 +20,7 @@ fun Container.signUpPage(context: AppContext): PortalEvents? {
     val model = SignUpModel()
 
     col {
-        h3("Sign up to Streetlight")
+        h3("Sign up to Newsref")
 
         // username
         row(alignItems = AlignItems.END) {
@@ -69,7 +69,7 @@ fun Container.signUpPage(context: AppContext): PortalEvents? {
             p {
                 +"Your email address is securely stored and never shared. Read about "
                 link("your privacy", Pages.privacy)
-                +" on Streetlight."
+                +" on Newsref."
             }.mute()
         }
 
