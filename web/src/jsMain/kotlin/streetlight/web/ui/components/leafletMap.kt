@@ -8,7 +8,6 @@ import io.kvision.html.div
 import io.kvision.maps.Maps.Companion.L
 import io.kvision.maps.externals.leaflet.geo.LatLng
 import io.kvision.maps.externals.leaflet.map.LeafletMap
-import io.kvision.panel.FlexPanel
 import io.kvision.panel.SimplePanel
 import io.kvision.state.ObservableValue
 import kotlinx.coroutines.delay
@@ -24,14 +23,14 @@ class StreetMap(
 ) : SimplePanel(className) {
     private val debugMsg = ObservableValue("")
     private var _map: LeafletMap? = null
-    private val container: FlexPanel = col("w-full")
-    private val mapDiv: Div = container.div(className = "w-full h-96 rounded") {
+    private val mapDiv: Div = div(className = "w-full h-96 rounded mb-2") {
         id = "map"
     }
 
     val map get() = _map
 
     init {
+        this.addCssClass("w-full")
         coScope.launch {
             var element = mapDiv.getElement()
             while (element == null) {
@@ -41,7 +40,7 @@ class StreetMap(
             _map = L.map(element).setView(origin, 15)
                 .setTileLayer(tileLayers[0])
         }
-        container.row(justify = JustifyContent.END) {
+        row(justify = JustifyContent.END) {
             if (debug)
                 button("my location").onClick {
                     navigator.geolocation.getCurrentPosition {
