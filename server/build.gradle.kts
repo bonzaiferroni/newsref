@@ -8,7 +8,7 @@ plugins {
     alias(libs.plugins.serialization)
 }
 
-group = "streetlight.server"
+group = "newsref.server"
 version = "0.0.1"
 
 application {

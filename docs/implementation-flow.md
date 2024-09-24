@@ -1,30 +1,30 @@
 ```kt
-// streetlight.model Request
+// newsref.model Request
 @Serializable data class Request()
 
-// streetlight.server.data.Request RequestTable
+// newsref.server.data.Request RequestTable
 object RequestTable : IntIdTable() { }
 class RequestEntity(id: EntityID<Int>) : IntEntity(id) { }
 
-// streetlight.server.data.Request RequestService
+// newsref.server.data.Request RequestService
 class RequestService : DataService<Request, RequestEntity>("Requests", RequestEntity) { }
 
-// streetlight.server.plugins configureApiRoutes()
+// newsref.server.plugins configureApiRoutes()
 applyServiceRouting(RequestService())
 
-// streetlight.app.io RequestDao
+// newsref.app.io RequestDao
 class RequestDao(private val client: ApiClient, ) { }
 
-// streetlight.app Injection
+// newsref.app Injection
 single { RequestDao(get()) }
 
-// streetlight.app.ui.data RequestEditorScreen
+// newsref.app.ui.data RequestEditorScreen
 @Composable fun RequestEditorScreen(id: Int?, navigator: Navigator?) { }
 
-// streetlight.app.ui.data RequestListScreen
+// newsref.app.ui.data RequestListScreen
 @Composable fun RequestListScreen(navigator: Navigator?) { }
 
-// streetlight.app Navigation
+// newsref.app Navigation
 scene("/Requests") { RequestListScreen(navigator) }
 scene("/Request/{id}?") { RequestEditorScreen(it.getId(), navigator) }
 

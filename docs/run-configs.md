@@ -2,6 +2,6 @@
 desktopRun -DmainClass=MainKt --quiet
 
 ## Kotlin - Server
-main class: streetlight.server.ApplicationKt
+main class: newsref.server.ApplicationKt
 working dir: /home/starfox/projects/vanguard_unicorn
-class path: streetlight.server
+class path: newsref.server

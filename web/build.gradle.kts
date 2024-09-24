@@ -7,7 +7,7 @@ plugins {
 }
 
 version = "1.0.2-SNAPSHOT"
-group = "streetlight.web"
+group = "newsref.web"
 
 // Versions
 val kotlinVersion: String by System.getProperties()
