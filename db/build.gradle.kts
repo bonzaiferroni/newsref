@@ -12,7 +12,6 @@ kotlin {
         val commonMain by getting {
             dependencies {
                 implementation(libs.kotlinx.serialization.json)
-                implementation(libs.kotlinx.datetime)
                 implementation("org.jetbrains.exposed:exposed-core:$exposedVersion")
                 implementation("org.jetbrains.exposed:exposed-crypt:$exposedVersion")
                 implementation("org.jetbrains.exposed:exposed-dao:$exposedVersion")

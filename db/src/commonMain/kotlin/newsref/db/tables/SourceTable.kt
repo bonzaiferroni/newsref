@@ -17,9 +17,9 @@ object SourceTable : LongIdTable("article") {
     val content = text("content").nullable()
     val description = text("description").nullable()
     val imageUrl = text("image_url").nullable()
-    val publishedAt = datetime("published_at")
-    val updatedAt = datetime("updated_at")
     val accessedAt = datetime("accessed_at")
+    val publishedAt = datetime("published_at").nullable()
+    val updatedAt = datetime("updated_at").nullable()
 }
 
 class SourceEntity(id: EntityID<Long>) : LongEntity(id) {
@@ -44,9 +44,9 @@ fun SourceEntity.toData() = Source(
     content = this.content,
     description = this.description,
     imageUrl = this.imageUrl,
-    publishedAt = this.publishedAt.toInstant(UtcOffset.ZERO),
-    updatedAt = this.updatedAt.toInstant(UtcOffset.ZERO),
     accessedAt = this.accessedAt.toInstant(UtcOffset.ZERO),
+    publishedAt = this.publishedAt?.toInstant(UtcOffset.ZERO),
+    updatedAt = this.updatedAt?.toInstant(UtcOffset.ZERO),
 )
 
 fun SourceEntity.fromData(source: Source) {
@@ -55,7 +55,7 @@ fun SourceEntity.fromData(source: Source) {
     content = source.content
     description = source.description
     imageUrl = source.imageUrl
-    publishedAt = source.publishedAt.toLocalDateTime(TimeZone.UTC)
-    updatedAt = source.updatedAt.toLocalDateTime(TimeZone.UTC)
     accessedAt = source.accessedAt.toLocalDateTime(TimeZone.UTC)
+    publishedAt = source.publishedAt?.toLocalDateTime(TimeZone.UTC)
+    updatedAt = source.updatedAt?.toLocalDateTime(TimeZone.UTC)
 }

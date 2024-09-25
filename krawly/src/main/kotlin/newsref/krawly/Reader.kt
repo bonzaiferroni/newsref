@@ -2,6 +2,7 @@ package newsref.krawly
 
 import it.skrape.selects.Doc
 import it.skrape.selects.DocElement
+import kotlinx.datetime.Clock
 import newsref.model.data.Source
 import newsref.model.data.Link
 import newsref.model.dto.ArticleInfo
@@ -38,6 +39,7 @@ fun List<DocElement>.scanElements(url: String, title: String): ArticleInfo {
             title = title,
             url = url,
             content = sb.toString(),
+            accessedAt = Clock.System.now()
         ),
         links = links
     )
