@@ -1,4 +1,4 @@
-# Trump Media shares crash to record low despite better polling | Fortune
+# Trump Media shares crash to record low despite better polling
 
 Trump Media shares crash to record low despite better polling
 

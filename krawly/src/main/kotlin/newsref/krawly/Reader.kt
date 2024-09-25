@@ -2,7 +2,9 @@ package newsref.krawly
 
 import it.skrape.selects.Doc
 import it.skrape.selects.DocElement
+import it.skrape.selects.html5.content
 import kotlinx.datetime.Clock
+import newsref.db.tables.SourceTable.title
 import newsref.model.data.Source
 import newsref.model.data.Link
 import newsref.model.dto.ArticleInfo
@@ -14,18 +16,22 @@ fun read(url: String): ArticleInfo {
 }
 
 fun Doc.readByElements(url: String): ArticleInfo {
-    return allElements.scanElements(url, this.titleText)
+    return this.scanElements(url, allElements)
 }
 
 fun Doc.readyBySelector(url: String): ArticleInfo {
-    return this.findAll("div#article-content").scanElements(url, this.titleText)
+    return this.scanElements(url, this.findAll("div#article-content"))
 }
 
-fun List<DocElement>.scanElements(url: String, title: String): ArticleInfo {
+fun Doc.scanElements(url: String, elements: List<DocElement>): ArticleInfo {
     val sb = StringBuilder()
     val links = mutableListOf<Link>()
-    this.forEach {
+    var title: String? = null
+    elements.forEach {
         if (it.isContent()) {
+            if (title == null && it.tagName == "h1") {
+                title = it.text
+            }
             sb.append(it.text)
             sb.append('\n')
             sb.append('\n')
@@ -36,8 +42,9 @@ fun List<DocElement>.scanElements(url: String, title: String): ArticleInfo {
     }
     return ArticleInfo(
         source = Source(
-            title = title,
+            title = title ?: this.titleText,
             url = url,
+            description = this.readDescription(),
             content = sb.toString(),
             accessedAt = Clock.System.now()
         ),
@@ -51,3 +58,5 @@ fun DocElement.isContent() = (tagName == "p" || tagName in headerTags) && !isLin
 
 fun DocElement.isLinkContent() =
     this.eachLink.keys.firstOrNull()?.let { it == this.text } ?: false
+
+fun Doc.readDescription() = this.findFirst("meta[property=\"og:description\"]").attributes["content"]
