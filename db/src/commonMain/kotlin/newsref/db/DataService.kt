@@ -2,16 +2,13 @@ package newsref.db
 
 import org.jetbrains.exposed.dao.Entity
 import org.jetbrains.exposed.dao.EntityClass
-import org.jetbrains.exposed.dao.IntEntity
-import org.jetbrains.exposed.sql.Op
-import javax.xml.crypto.Data
 
 abstract class DataService<Data, IdType: Comparable<IdType>, DataEntity: Entity<IdType>>(
     private val entity: EntityClass<IdType, DataEntity>,
     private val provideId: (Data) -> IdType,
     private val fromObj: DataEntity.(Data) -> Unit,
     private val toObj: DataEntity.() -> Data,
-): ApiService() {
+): DbService() {
     suspend fun create(data: Data): IdType = dbQuery {
         entity.new { fromObj(data) }.id.value
     }

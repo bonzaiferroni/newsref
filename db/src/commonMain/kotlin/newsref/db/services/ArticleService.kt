@@ -1,14 +1,18 @@
 package newsref.db.services
 
-import newsref.db.DataService
-import newsref.db.tables.*
-import newsref.model.data.Source
+import newsref.db.DbService
+import newsref.db.tables.LinkEntity
+import newsref.db.tables.SourceEntity
+import newsref.db.tables.fromData
+import newsref.model.dto.ArticleInfo
 
-class SourceService : DataService<Source, Long, SourceEntity>(
-    SourceEntity,
-    {source -> source.id},
-    SourceEntity::fromData,
-    SourceEntity::toData
-) {
-
+class ArticleService(
+): DbService() {
+    suspend fun create(article: ArticleInfo) = dbQuery {
+        val source = SourceEntity.new { fromData(article.source) }
+        article.links.forEach { data ->
+            LinkEntity.new { fromData(data, source) }
+        }
+        source.id.value // return
+    }
 }

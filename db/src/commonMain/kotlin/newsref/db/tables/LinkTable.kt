@@ -31,7 +31,11 @@ fun LinkEntity.toData() = Link(
 )
 
 fun LinkEntity.fromData(data: Link) {
-    source = SourceEntity[data.sourceId]
+    fromData(data, SourceEntity[data.sourceId])
+}
+
+fun LinkEntity.fromData(data: Link, source: SourceEntity) {
+    this.source = source
     url = data.url
     urlText = data.urlText
     context = data.context
