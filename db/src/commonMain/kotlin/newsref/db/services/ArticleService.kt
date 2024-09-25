@@ -1,9 +1,14 @@
 package newsref.db.services
 
 import newsref.db.DataService
-import newsref.db.tables.ArticleEntity
-import newsref.db.tables.fromData
-import newsref.db.tables.toData
-import newsref.model.data.Article
+import newsref.db.tables.*
+import newsref.model.data.Source
 
-class ArticleService
+class SourceService : DataService<Source, Long, SourceEntity>(
+    SourceEntity,
+    {source -> source.id},
+    SourceEntity::fromData,
+    SourceEntity::toData
+) {
+
+}

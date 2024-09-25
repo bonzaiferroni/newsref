@@ -16,8 +16,7 @@ fun initDb() {
     transaction(db) {
         // SchemaUtils.create(UserTable)
         // SchemaUtils.create(SessionTokenTable)
-        SchemaUtils.create(ArticleTable)
-        SchemaUtils.create(ArticleSourceTable)
         SchemaUtils.create(SourceTable)
+        SchemaUtils.create(LinkTable)
     }
 }

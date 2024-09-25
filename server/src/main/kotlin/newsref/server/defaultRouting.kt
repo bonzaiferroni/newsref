@@ -7,7 +7,6 @@ import io.ktor.server.response.*
 import io.ktor.server.routing.*
 import org.jetbrains.exposed.dao.IntEntity
 import newsref.model.Endpoint
-import newsref.model.core.IdModel
 import newsref.db.DataService
 import newsref.server.extensions.getIdOrThrow
 import newsref.server.extensions.testRole

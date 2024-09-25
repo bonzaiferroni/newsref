@@ -2,45 +2,44 @@ package newsref.krawly
 
 import it.skrape.selects.Doc
 import it.skrape.selects.DocElement
-import newsref.model.data.Article
 import newsref.model.data.Source
+import newsref.model.data.Link
+import newsref.model.dto.ArticleInfo
 
-fun read(url: String): Article {
+fun read(url: String): ArticleInfo {
     val document = getDocumentByUrl(url)
     // val content = document.html.tryQuery("div#article-content")
     return document.readByElements(url)
 }
 
-fun Doc.readByElements(url: String): Article {
+fun Doc.readByElements(url: String): ArticleInfo {
     return allElements.scanElements(url, this.titleText)
 }
 
-fun Doc.readyBySelector(url: String): Article {
+fun Doc.readyBySelector(url: String): ArticleInfo {
     return this.findAll("div#article-content").scanElements(url, this.titleText)
 }
 
-fun List<DocElement>.scanElements(url: String, title: String): Article {
+fun List<DocElement>.scanElements(url: String, title: String): ArticleInfo {
     val sb = StringBuilder()
-    val links = mutableListOf<Source>()
+    val links = mutableListOf<Link>()
     this.forEach {
         if (it.isContent()) {
             sb.append(it.text)
             sb.append('\n')
             sb.append('\n')
             it.eachLink.forEach { (text, link) ->
-                links.add(Source(it.text, text, link))
+                links.add(Link(url = link, urlText = text, context = it.text))
             }
         }
     }
-    return Article(
-        id = 0,
-        title = title,
-        description = "",
-        url = url,
-        imageUrl = "",
-        publishedAt = "",
-        content = sb.toString(),
-        sources = links
+    return ArticleInfo(
+        source = Source(
+            title = title,
+            url = url,
+            content = sb.toString(),
+        ),
+        links = links
     )
 }
 

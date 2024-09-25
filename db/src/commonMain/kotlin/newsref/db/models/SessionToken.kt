@@ -1,7 +1,5 @@
 package newsref.db.models
 
-import newsref.model.core.IdModel
-
 data class SessionToken(
     override val id: Int = 0,
     val userId: Int = 0,

@@ -2,7 +2,6 @@ package newsref.db.models
 
 import kotlinx.datetime.Instant
 import kotlinx.serialization.Serializable
-import newsref.model.core.IdModel
 import newsref.model.dto.PrivateInfo
 
 @Serializable

@@ -12,7 +12,7 @@ import newsref.model.dto.UserInfo
 import newsref.db.models.User
 import org.jetbrains.exposed.sql.kotlin.datetime.datetime
 
-object UserTable : IntIdTable() {
+object UserTable : IntIdTable("user") {
     val name = text("name").nullable()
     val username = text("username")
     val hashedPassword = text("hashed_password")

@@ -12,6 +12,8 @@ dependencies {
     implementation("io.ktor:ktor-client-okhttp:$ktor_version")
     implementation(project(":model"))
     implementation(project(":db"))
+
+    implementation(libs.kotlinx.datetime)
 }
 
 application {
