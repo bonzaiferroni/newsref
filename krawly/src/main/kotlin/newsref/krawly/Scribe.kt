@@ -1,6 +1,6 @@
 package newsref.krawly
 
-import newsref.model.core.Article
+import newsref.model.data.Article
 
 fun Article.toMarkdown(): String {
     var content = "# ${this.title}\n\n${this.content}"

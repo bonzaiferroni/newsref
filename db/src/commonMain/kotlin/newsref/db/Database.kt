@@ -1,7 +1,6 @@
 package newsref.db
 
-import newsref.db.tables.SessionTokenTable
-import newsref.db.tables.UserTable
+import newsref.db.tables.*
 import org.jetbrains.exposed.sql.Database
 import org.jetbrains.exposed.sql.SchemaUtils
 import org.jetbrains.exposed.sql.transactions.transaction
@@ -15,7 +14,10 @@ fun initDb() {
         password = password
     )
     transaction(db) {
-        SchemaUtils.create(UserTable)
-        SchemaUtils.create(SessionTokenTable)
+        // SchemaUtils.create(UserTable)
+        // SchemaUtils.create(SessionTokenTable)
+        SchemaUtils.create(ArticleTable)
+        SchemaUtils.create(ArticleSourceTable)
+        SchemaUtils.create(SourceTable)
     }
 }

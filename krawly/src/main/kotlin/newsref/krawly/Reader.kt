@@ -2,9 +2,8 @@ package newsref.krawly
 
 import it.skrape.selects.Doc
 import it.skrape.selects.DocElement
-import it.skrape.selects.html5.select
-import newsref.model.core.Article
-import newsref.model.core.InfoSource
+import newsref.model.data.Article
+import newsref.model.data.Source
 
 fun read(url: String): Article {
     val document = getDocumentByUrl(url)
@@ -22,14 +21,14 @@ fun Doc.readyBySelector(url: String): Article {
 
 fun List<DocElement>.scanElements(url: String, title: String): Article {
     val sb = StringBuilder()
-    val links = mutableListOf<InfoSource>()
+    val links = mutableListOf<Source>()
     this.forEach {
         if (it.isContent()) {
             sb.append(it.text)
             sb.append('\n')
             sb.append('\n')
             it.eachLink.forEach { (text, link) ->
-                links.add(InfoSource(it.text, text, link))
+                links.add(Source(it.text, text, link))
             }
         }
     }

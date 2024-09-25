@@ -1,4 +1,4 @@
-package newsref.model
+package newsref.model.utils
 
 fun String.obfuscate(): String {
     return this.map { it.code.xor('s'.code).toChar() }.joinToString("")
