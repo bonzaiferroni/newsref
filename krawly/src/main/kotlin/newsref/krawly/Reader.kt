@@ -2,32 +2,40 @@ package newsref.krawly
 
 import it.skrape.selects.Doc
 import it.skrape.selects.DocElement
+import it.skrape.selects.html5.select
 import newsref.model.core.Article
 import newsref.model.core.InfoSource
 
-fun read(url: String): Article? {
+fun read(url: String): Article {
     val document = getDocumentByUrl(url)
     // val content = document.html.tryQuery("div#article-content")
     return document.readByElements(url)
 }
 
-fun Doc.readByElements(url: String): Article? {
+fun Doc.readByElements(url: String): Article {
+    return allElements.scanElements(url, this.titleText)
+}
+
+fun Doc.readyBySelector(url: String): Article {
+    return this.findAll("div#article-content").scanElements(url, this.titleText)
+}
+
+fun List<DocElement>.scanElements(url: String, title: String): Article {
     val sb = StringBuilder()
     val links = mutableListOf<InfoSource>()
-
-    this.allElements.forEach {
+    this.forEach {
         if (it.isContent()) {
             sb.append(it.text)
             sb.append('\n')
             sb.append('\n')
-            it.eachLink.forEach { (link, text) ->
+            it.eachLink.forEach { (text, link) ->
                 links.add(InfoSource(it.text, text, link))
             }
         }
     }
     return Article(
         id = 0,
-        title = this.titleText,
+        title = title,
         description = "",
         url = url,
         imageUrl = "",
@@ -42,4 +50,4 @@ private val headerTags = setOf("h1", "h2", "h3", "h4", "h5", "h6")
 fun DocElement.isContent() = (tagName == "p" || tagName in headerTags) && !isLinkContent()
 
 fun DocElement.isLinkContent() =
-    this.eachLink.keys.firstOrNull()?.let { it == this.text} ?: false
+    this.eachLink.keys.firstOrNull()?.let { it == this.text } ?: false
