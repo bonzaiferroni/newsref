@@ -5,8 +5,8 @@ import io.ktor.server.response.*
 import io.ktor.server.routing.*
 import newsref.model.Api
 import newsref.model.apiPrefix
-import newsref.server.db.core.authorize
-import newsref.server.db.routes.dataRouting
+import newsref.server.db.authorize
+import newsref.server.routes.dataRouting
 
 fun Application.configureApiRoutes() {
     routing {

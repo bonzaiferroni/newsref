@@ -1,4 +1,4 @@
-package newsref.server.db
+package newsref.server
 
 import io.ktor.http.*
 import io.ktor.server.application.*
@@ -8,9 +8,9 @@ import io.ktor.server.routing.*
 import org.jetbrains.exposed.dao.IntEntity
 import newsref.model.Endpoint
 import newsref.model.core.IdModel
+import newsref.db.DataService
 import newsref.server.extensions.getIdOrThrow
 import newsref.server.extensions.testRole
-import newsref.server.plugins.Log
 import newsref.server.plugins.ROLE_ADMIN
 import newsref.server.plugins.authenticateJwt
 
@@ -31,7 +31,7 @@ inline fun <reified Data : IdModel, DataEntity : IntEntity> Routing.applyGet(
     service: DataService<Data, DataEntity>
 ) {
     get(endpoint.serverIdTemplate) {
-        Log.logDebug("Routing: GET ${endpoint.serverIdTemplate}")
+        serverLog.logDebug("Routing: GET ${endpoint.serverIdTemplate}")
         val id = call.getIdOrThrow()
         val data = service.read(id)
         if (data != null) {
@@ -47,7 +47,7 @@ inline fun <reified Data : IdModel, DataEntity : IntEntity> Routing.applyGetAll(
     service: DataService<Data, DataEntity>
 ) {
     get(endpoint.path) {
-        Log.logDebug("Routing: GET ${endpoint.path}")
+        serverLog.logDebug("Routing: GET ${endpoint.path}")
         val search = call.parameters["search"] ?: ""
         val count = call.parameters["limit"]?.toIntOrNull() ?: 10
         val data = if (search.isBlank()) {
@@ -64,7 +64,7 @@ inline fun <reified Data : IdModel, DataEntity : IntEntity> Route.applyPost(
     service: DataService<Data, DataEntity>
 ) {
     post(endpoint.path) {
-        Log.logDebug("Routing: POST ${endpoint.path}")
+        serverLog.logDebug("Routing: POST ${endpoint.path}")
         if (!call.testRole(ROLE_ADMIN)) {
             call.respond(HttpStatusCode.Forbidden)
             return@post
@@ -72,7 +72,7 @@ inline fun <reified Data : IdModel, DataEntity : IntEntity> Route.applyPost(
         val data = call.receive<Data>()
         val id = service.create(data)
         if (id == -1) {
-            Log.logInfo("Routing: POST unable to create data: ${endpoint.path}")
+            serverLog.logInfo("Routing: POST unable to create data: ${endpoint.path}")
         }
         call.respond(HttpStatusCode.Created, id)
     }
@@ -83,7 +83,7 @@ inline fun <reified Data : IdModel, DataEntity : IntEntity> Route.applyPut(
     service: DataService<Data, DataEntity>
 ) {
     put(endpoint.path) {
-        Log.logDebug("Routing: PUT ${endpoint.path}")
+        serverLog.logDebug("Routing: PUT ${endpoint.path}")
         if (!call.testRole(ROLE_ADMIN)) {
             call.respond(HttpStatusCode.Forbidden)
             return@put
@@ -99,7 +99,7 @@ inline fun <reified Data : IdModel, DataEntity : IntEntity> Route.applyDelete(
     service: DataService<Data, DataEntity>
 ) {
     delete(endpoint.serverIdTemplate) {
-        Log.logDebug("Routing: DELETE ${endpoint.serverIdTemplate}")
+        serverLog.logDebug("Routing: DELETE ${endpoint.serverIdTemplate}")
         if (!call.testRole(ROLE_ADMIN)) {
             call.respond(HttpStatusCode.Forbidden)
             return@delete

@@ -1,4 +1,4 @@
-package newsref.server.db
+package newsref.db
 
 import kotlinx.coroutines.Dispatchers
 import org.jetbrains.exposed.sql.Transaction

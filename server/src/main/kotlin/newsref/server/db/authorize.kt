@@ -1,17 +1,17 @@
-package newsref.server.db.core
+package newsref.server.db
 
 import io.ktor.http.*
 import io.ktor.server.application.*
 import io.ktor.server.request.*
 import io.ktor.server.response.*
-import newsref.server.models.User
+import newsref.db.models.User
 import newsref.model.deobfuscate
 import newsref.model.dto.AuthInfo
 import newsref.model.dto.LoginRequest
-import newsref.server.db.models.SessionToken
+import newsref.db.Log
+import newsref.db.models.SessionToken
 import newsref.server.db.services.SessionTokenService
 import newsref.server.db.services.UserService
-import newsref.server.plugins.Log
 import newsref.server.plugins.createJWT
 import java.security.SecureRandom
 import java.util.*
@@ -78,13 +78,15 @@ suspend fun User.testToken(username: String, sessionToken: String, roles: String
 suspend fun User.createSessionToken(): String {
     val token = UUID.randomUUID().toString()
     val service = SessionTokenService()
-    service.create(SessionToken(
+    service.create(
+        SessionToken(
         userId = this.id,
         token = token,
         createdAt = System.currentTimeMillis(),
         expiresAt = System.currentTimeMillis() + 60000,
         issuer = "http://localhost:8080/"
-    ))
+    )
+    )
     return token
 }
 

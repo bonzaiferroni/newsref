@@ -1,4 +1,4 @@
-package newsref.server.models
+package newsref.db.models
 
 import kotlinx.serialization.Serializable
 import newsref.model.core.IdModel

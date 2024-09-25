@@ -1,4 +1,4 @@
-package newsref.server.db.models
+package newsref.db.models
 
 import newsref.model.core.IdModel
 

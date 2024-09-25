@@ -1,8 +1,8 @@
-package newsref.server.db
+package newsref.db
 
 import org.jetbrains.exposed.sql.Transaction
-import newsref.server.db.tables.UserEntity
-import newsref.server.db.tables.UserTable
+import newsref.db.tables.UserEntity
+import newsref.db.tables.UserTable
 
 fun Transaction.findUser(username: String) = UserEntity.find { UserTable.username eq username }.firstOrNull()
 

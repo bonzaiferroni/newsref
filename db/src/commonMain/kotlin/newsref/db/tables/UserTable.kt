@@ -1,11 +1,11 @@
-package newsref.server.db.tables
+package newsref.db.tables
 
 import org.jetbrains.exposed.dao.EntityClass
 import org.jetbrains.exposed.dao.IntEntity
 import org.jetbrains.exposed.dao.id.EntityID
 import org.jetbrains.exposed.dao.id.IntIdTable
 import newsref.model.dto.UserInfo
-import newsref.server.models.User
+import newsref.db.models.User
 
 object UserTable : IntIdTable() {
     val name = text("name").nullable()

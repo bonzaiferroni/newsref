@@ -2,26 +2,17 @@ package newsref.server.plugins
 
 import io.ktor.server.application.*
 import kotlinx.coroutines.launch
+import newsref.db.initDb
+import newsref.db.tables.SessionTokenTable
+import newsref.db.tables.UserTable
 import org.jetbrains.exposed.sql.Database
 import org.jetbrains.exposed.sql.SchemaUtils
 import org.jetbrains.exposed.sql.transactions.transaction
 import newsref.server.db.services.UserService
-import newsref.server.db.tables.*
 import newsref.server.utilities.DbBackup
 
 fun Application.configureDatabases() {
-    val psqlPass = System.getenv("NEWSREF_PSQL_PW")
-    val psqldb = Database.connect(
-        "jdbc:pgsql://localhost:5432/newsrefdb",
-        driver = "com.impossibl.postgres.jdbc.PGDriver",
-        user = "newsref",
-        password = psqlPass
-    )
-
-    transaction(psqldb) {
-        SchemaUtils.create(UserTable)
-        SchemaUtils.create(SessionTokenTable)
-    }
+    initDb()
 
     environment.monitor.subscribe(ApplicationStarted) {
         launch {

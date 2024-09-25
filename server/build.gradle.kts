@@ -35,7 +35,6 @@ dependencies {
     implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:1.6.3")
 
     implementation("com.h2database:h2:2.1.214")
-    implementation("com.impossibl.pgjdbc-ng", "pgjdbc-ng", "0.8.9")
 
     implementation("io.ktor:ktor-server-auth-jvm")
     implementation("io.ktor:ktor-server-auth-jwt-jvm")
@@ -50,4 +49,5 @@ dependencies {
     testImplementation("org.jetbrains.kotlin:kotlin-test-junit:$kotlin_version")
 
     implementation(project(":model"))
+    implementation(project(":db"))
 }

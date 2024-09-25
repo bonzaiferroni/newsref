@@ -11,6 +11,7 @@ dependencies {
     implementation("com.aallam.openai:openai-client:3.8.2")
     implementation("io.ktor:ktor-client-okhttp:$ktor_version")
     implementation(project(":model"))
+    implementation(project(":db"))
 }
 
 application {

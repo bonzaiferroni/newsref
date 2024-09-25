@@ -1,4 +1,4 @@
-package newsref.server.db
+package newsref.db
 
 import org.jetbrains.exposed.dao.EntityClass
 import org.jetbrains.exposed.dao.IntEntity

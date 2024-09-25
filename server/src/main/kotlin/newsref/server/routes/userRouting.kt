@@ -1,4 +1,4 @@
-package newsref.server.db.routes
+package newsref.server.routes
 
 import io.ktor.http.*
 import io.ktor.server.application.*

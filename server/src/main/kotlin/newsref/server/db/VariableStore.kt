@@ -1,6 +1,6 @@
-package newsref.server.db.core
+package newsref.server.db
 
-import newsref.server.models.User
+import newsref.db.models.User
 
 class VariableStore {
 

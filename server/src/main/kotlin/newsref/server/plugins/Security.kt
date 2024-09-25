@@ -10,7 +10,7 @@ import io.ktor.server.auth.*
 import io.ktor.server.auth.jwt.*
 import io.ktor.server.response.*
 import io.ktor.server.routing.*
-import newsref.server.db.core.VariableStore
+import newsref.server.db.VariableStore
 import java.util.*
 
 fun Application.configureSecurity() {
@@ -46,12 +46,12 @@ fun Application.configureSecurity() {
                         // call.logError("Audience: ${decodedJWT.audience}")
                         // call.logError("Expires At: ${decodedJWT.expiresAt}")
                     } catch (e: JWTVerificationException) {
-                        Log.logError("Security: Invalid JWT format: ${e.message}")
+                        newsref.server.serverLog.logError("Security: Invalid JWT format: ${e.message}")
                     }
                 } else {
-                    Log.logError("Security: No Bearer token found in the request.")
+                    newsref.server.serverLog.logError("Security: No Bearer token found in the request.")
                 }
-                Log.logInfo("Security: JWT authentication failed")
+                newsref.server.serverLog.logInfo("Security: JWT authentication failed")
                 call.respond(HttpStatusCode.Unauthorized)
             }
         }

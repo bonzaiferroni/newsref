@@ -1,11 +1,11 @@
-package newsref.server.db.tables
+package newsref.db.tables
 
 import org.jetbrains.exposed.dao.IntEntity
 import org.jetbrains.exposed.dao.IntEntityClass
 import org.jetbrains.exposed.dao.id.EntityID
 import org.jetbrains.exposed.dao.id.IntIdTable
 import org.jetbrains.exposed.sql.ReferenceOption
-import newsref.server.db.models.SessionToken
+import newsref.db.models.SessionToken
 
 object SessionTokenTable : IntIdTable() {
     val user = reference("user_id", UserTable, onDelete = ReferenceOption.CASCADE)

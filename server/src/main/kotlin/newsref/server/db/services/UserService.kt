@@ -10,14 +10,14 @@ import newsref.model.utils.validEmail
 import newsref.model.utils.validPassword
 import newsref.model.utils.validUsernameChars
 import newsref.model.utils.validUsernameLength
-import newsref.server.db.DataService
-import newsref.server.db.core.generateSalt
-import newsref.server.db.core.hashPassword
-import newsref.server.db.core.toBase64
-import newsref.server.db.tables.*
-import newsref.server.logger
-import newsref.server.models.User
-import newsref.server.models.toPrivateInfo
+import newsref.db.DataService
+import newsref.server.db.generateSalt
+import newsref.server.db.hashPassword
+import newsref.server.db.toBase64
+import newsref.db.logger
+import newsref.db.tables.*
+import newsref.db.models.User
+import newsref.db.models.toPrivateInfo
 import newsref.server.plugins.ROLE_USER
 
 class UserService : DataService<User, UserEntity>(

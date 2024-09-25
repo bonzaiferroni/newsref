@@ -3,9 +3,9 @@ package newsref.server.utilities
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.encodeToString
 import kotlinx.serialization.json.Json
-import newsref.server.db.core.VariableStore
-import newsref.server.db.services.*
-import newsref.server.models.User
+import newsref.server.db.VariableStore
+import newsref.server.db.services.UserService
+import newsref.db.models.User
 import java.io.File
 import kotlin.reflect.KClass
 
