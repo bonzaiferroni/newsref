@@ -11,6 +11,7 @@ data class SourceInfo(
     val outletName: String? = null,
     val contents: List<Content> = emptyList(),
     val links: List<LinkInfo> = emptyList(),
+    val authors: Set<String>? = null,
 )
 
 data class LinkInfo(

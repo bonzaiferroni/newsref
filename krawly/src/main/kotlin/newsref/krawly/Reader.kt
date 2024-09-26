@@ -61,7 +61,8 @@ fun Doc.scanElements(leadUrl: String, elements: List<DocElement>): SourceInfo {
             modifiedAt = this.readModifiedAt() ?: newsArticle?.readModifiedAt()
         ),
         contents = contents,
-        links = links
+        links = links,
+        authors = readAuthor()?.let { setOf(it) }
     )
 }
 

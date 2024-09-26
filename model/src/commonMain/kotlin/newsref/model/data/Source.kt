@@ -7,5 +7,5 @@ data class Source(
     val outletId: Int = 0,
     val url: String = "",
     val type: SourceType = SourceType.UNKNOWN,
-    val attemptedAt: Instant = Instant.DISTANT_PAST
+    val attemptedAt: Instant = Instant.DISTANT_PAST,
 )

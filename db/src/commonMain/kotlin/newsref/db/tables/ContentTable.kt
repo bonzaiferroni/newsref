@@ -16,7 +16,7 @@ class ContentRow(id: EntityID<Long>) : LongEntity(id) {
 
     var text by ContentTable.text
 
-    var sources by SourceRow via SourceContentTable
+    val sources by SourceRow via SourceContentTable
 }
 
 object SourceContentTable : CompositeIdTable("source_content") {

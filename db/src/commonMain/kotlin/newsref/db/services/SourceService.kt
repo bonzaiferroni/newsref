@@ -4,6 +4,7 @@ import kotlinx.datetime.Clock
 import newsref.db.DbService
 import newsref.db.tables.*
 import newsref.db.utils.nowToLocalDateTimeUTC
+import newsref.model.data.Author
 import newsref.model.data.Lead
 import newsref.model.data.Link
 import newsref.model.data.SourceType
@@ -24,6 +25,14 @@ class SourceService(
         val outletRow = OutletRow.find { stringParam(apex) eq anyFrom(OutletTable.domains) }.firstOrNull()
             ?: OutletRow.new { fromData(info.toOutlet()) }
         val urlParams = outletRow.urlParams.toList()
+
+        // create author
+        val authorRows = info.authors?.map { byLine ->
+            val authorRows = AuthorRow.find { (stringParam(byLine) eq anyFrom(AuthorTable.byLines)) }
+            authorRows.firstNotNullOfOrNull {
+                it.outlets.firstOrNull { it.id == outletRow.id }
+            } ?: AuthorRow.new { fromData(Author(byLines = setOf(byLine)), outletRow) }
+        }
 
         // create Content
         val contentRows = info.contents.map { content ->

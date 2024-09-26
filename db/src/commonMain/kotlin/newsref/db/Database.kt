@@ -22,5 +22,8 @@ fun initDb() {
         SchemaUtils.create(DocumentTable)
         SchemaUtils.create(LeadTable)
         SchemaUtils.create(SourceContentTable)
+        SchemaUtils.create(ContentTable)
+        SchemaUtils.create(OutletAuthorTable)
+        SchemaUtils.create(AuthorTable)
     }
 }

@@ -1,10 +1,13 @@
 package newsref.db.tables
 
+import newsref.db.tables.SourceContentTable.contentId
+import newsref.db.tables.SourceContentTable.sourceId
 import newsref.model.data.Outlet
 import newsref.model.dto.SourceInfo
 import newsref.model.utils.getApexDomain
 import org.jetbrains.exposed.dao.EntityClass
 import org.jetbrains.exposed.dao.IntEntity
+import org.jetbrains.exposed.dao.id.CompositeIdTable
 import org.jetbrains.exposed.dao.id.EntityID
 import org.jetbrains.exposed.dao.id.IntIdTable
 
@@ -16,6 +19,8 @@ object OutletTable : IntIdTable("outlet") {
 
 class OutletRow(id: EntityID<Int>): IntEntity(id) {
     companion object : EntityClass<Int, OutletRow>(OutletTable)
+
+    var authors by AuthorRow via OutletAuthorTable
 
     var name by OutletTable.name
     var domains by OutletTable.domains
