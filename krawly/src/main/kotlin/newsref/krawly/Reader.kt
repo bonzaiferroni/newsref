@@ -8,6 +8,7 @@ import kotlinx.serialization.json.Json
 import newsref.db.utils.NewsArticle
 import newsref.model.dto.SourceInfo
 import kotlinx.datetime.Instant
+import newsref.db.utils.tryParse
 import newsref.model.data.*
 import newsref.model.dto.LinkInfo
 
@@ -56,8 +57,8 @@ fun Doc.scanElements(leadUrl: String, elements: List<DocElement>): SourceInfo {
             description = this.readDescription(),
             imageUrl = this.readImageUrl(),
             accessedAt = Clock.System.now(),
-            publishedAt = newsArticle?.readDatePublished(),
-            modifiedAt = newsArticle?.readDateModified()
+            publishedAt = this.readPublishedAt() ?: newsArticle?.readPublishedAt(),
+            modifiedAt = this.readModifiedAt() ?: newsArticle?.readModifiedAt()
         ),
         contents = contents,
         links = links
@@ -93,9 +94,12 @@ fun Doc.readDescription() = this.readMetaContent("description", "og:description"
 fun Doc.readImageUrl() = this.readMetaContent("image", "og:image", "twitter:image")
 fun Doc.readOutletName() = this.readMetaContent("site", "og:site_name", "twitter:site")
 fun Doc.readType() = this.readMetaContent("type", "og:type")?.let { SourceType.fromMeta(it) } ?: SourceType.UNKNOWN
+fun Doc.readAuthor() = this.readMetaContent("author", "og:article:author")
+fun Doc.readPublishedAt() = this.readMetaContent("date", "article:published_time")?.let { Instant.tryParse(it) }
+fun Doc.readModifiedAt() = this.readMetaContent("last-modified", "article:modified_time")?.let { Instant.tryParse(it) }
 
-fun NewsArticle.readDatePublished() = this.datePublished.let { Instant.parse(it) }
-fun NewsArticle.readDateModified() = this.dateModified.let { Instant.parse(it) }
+fun NewsArticle.readPublishedAt() = this.datePublished.let { Instant.tryParse(it) }
+fun NewsArticle.readModifiedAt() = this.dateModified.let { Instant.tryParse(it) }
 
 fun Doc.readNewsArticle() = this.findFirstOrNull("script#json-schema")?.html
     ?.removePrefix("//<![CDATA[")
