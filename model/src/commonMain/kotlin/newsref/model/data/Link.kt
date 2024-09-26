@@ -5,5 +5,4 @@ data class Link(
     val sourceId: Long = 0,
     val url: String,
     val urlText: String,
-    val context: String,
 )

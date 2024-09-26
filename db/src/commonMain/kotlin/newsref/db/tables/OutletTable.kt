@@ -1,46 +1,44 @@
 package newsref.db.tables
 
 import newsref.model.data.Outlet
-import newsref.model.data.Source
-import newsref.model.dto.ArticleInfo
+import newsref.model.dto.SourceInfo
 import newsref.model.utils.getApexDomain
 import org.jetbrains.exposed.dao.EntityClass
 import org.jetbrains.exposed.dao.IntEntity
-import org.jetbrains.exposed.dao.LongEntity
 import org.jetbrains.exposed.dao.id.EntityID
 import org.jetbrains.exposed.dao.id.IntIdTable
 
 object OutletTable : IntIdTable("outlet") {
     val name = text("name").nullable()
-    val apex = text("apex")
     val domains = array<String>("domains")
+    val urlParams = array<String>("url_params")
 }
 
-class OutletEntity(id: EntityID<Int>): IntEntity(id) {
-    companion object : EntityClass<Int, OutletEntity>(OutletTable)
+class OutletRow(id: EntityID<Int>): IntEntity(id) {
+    companion object : EntityClass<Int, OutletRow>(OutletTable)
 
     var name by OutletTable.name
-    var apex by OutletTable.apex
     var domains by OutletTable.domains
+    var urlParams by OutletTable.urlParams
 
-    val sources by SourceEntity referrersOn SourceTable.outletId
+    val sources by SourceRow referrersOn SourceTable.outletId
 }
 
-fun OutletEntity.toData() = Outlet(
+fun OutletRow.toData() = Outlet(
     id = this.id.value,
     name = this.name,
-    apex = this.apex,
-    domains = this.domains.toSet()
+    domains = this.domains.toSet(),
+    urlParams = this.urlParams.toSet(),
 )
 
-fun OutletEntity.fromData(outlet: Outlet) {
+fun OutletRow.fromData(outlet: Outlet) {
     name = outlet.name
-    apex = outlet.apex
     domains = outlet.domains.toList()
+    urlParams = outlet.urlParams.toList()
 }
 
-fun ArticleInfo.toOutlet(): Outlet = Outlet(
+fun SourceInfo.toOutlet(): Outlet = Outlet(
     name = outletName,
-    apex = source.url.getApexDomain(),
-    domains = setOf(source.url.getApexDomain())
+    domains = setOf(source.url.getApexDomain().lowercase()),
+    urlParams = emptySet(),
 )

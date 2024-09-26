@@ -8,4 +8,5 @@ data class Outlet(
     val name: String? = null,
     val apex: String = "",
     val domains: Set<String> = emptySet(),
+    val urlParams: Set<String> = emptySet(),
 )

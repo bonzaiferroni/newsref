@@ -12,6 +12,7 @@ kotlin {
         val commonMain by getting {
             dependencies {
                 implementation(libs.kotlinx.serialization.json)
+                implementation(libs.kotlinx.datetime)
                 implementation("org.jetbrains.exposed:exposed-core:$exposedVersion")
                 implementation("org.jetbrains.exposed:exposed-crypt:$exposedVersion")
                 implementation("org.jetbrains.exposed:exposed-dao:$exposedVersion")
@@ -19,7 +20,7 @@ kotlin {
                 implementation("org.jetbrains.exposed:exposed-kotlin-datetime:$exposedVersion")
                 implementation("org.jetbrains.exposed:exposed-json:$exposedVersion")
 
-                implementation("com.impossibl.pgjdbc-ng:pgjdbc-ng:0.8.9")
+                implementation("org.postgresql:postgresql:42.7.1")
 
                 implementation("ch.qos.logback:logback-classic:$logback_version")
 

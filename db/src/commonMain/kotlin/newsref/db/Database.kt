@@ -8,8 +8,8 @@ import org.jetbrains.exposed.sql.transactions.transaction
 fun initDb() {
     val password = System.getenv("NEWSREF_PSQL_PW")
     val db = Database.connect(
-        "jdbc:pgsql://localhost:5432/newsrefdb",
-        driver = "com.impossibl.postgres.jdbc.PGDriver",
+        "jdbc:postgresql://localhost:5432/newsrefdb",
+        driver = "org.postgresql.Driver",
         user = "newsref",
         password = password
     )
@@ -21,5 +21,6 @@ fun initDb() {
         SchemaUtils.create(OutletTable)
         SchemaUtils.create(DocumentTable)
         SchemaUtils.create(LeadTable)
+        SchemaUtils.create(SourceContentTable)
     }
 }

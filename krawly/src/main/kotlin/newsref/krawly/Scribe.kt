@@ -1,11 +1,12 @@
 package newsref.krawly
 
-import newsref.model.dto.ArticleInfo
+import newsref.model.dto.SourceInfo
 
-fun ArticleInfo.toMarkdown(): String {
-    var content = "# ${this.source.title}\n\n${this.source.content}"
+fun SourceInfo.toMarkdown(): String? {
+    val document = this.document ?: return null
+    val contents = this.contents.joinToString("\n\n") { it.text }
+    var content = "# ${document.title}\n\n${contents}"
     this.links.forEach {
-        println("[${it.urlText}](${it.url})")
         content = content.replace(it.urlText, "[${it.urlText}](${it.url})")
     }
     return content

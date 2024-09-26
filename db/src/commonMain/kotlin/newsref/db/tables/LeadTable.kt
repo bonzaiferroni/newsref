@@ -12,37 +12,33 @@ import org.jetbrains.exposed.dao.id.IntIdTable
 import org.jetbrains.exposed.sql.kotlin.datetime.datetime
 
 object LeadTable: IntIdTable("lead") {
-    val outletId = reference("outlet_id", OutletTable)
-    val sourceId = reference("source_id", SourceTable)
+    val sourceId = reference("source_id", SourceTable).nullable()
     val url = text("url")
     val attemptCount = integer("attempt_count")
-    val attemptedAt = datetime("attempted_at")
+    val attemptedAt = datetime("attempted_at").nullable()
 }
 
-class LeadEntity(id: EntityID<Int>): IntEntity(id) {
-    companion object: EntityClass<Int, LeadEntity>(LeadTable)
+class LeadRow(id: EntityID<Int>): IntEntity(id) {
+    companion object: EntityClass<Int, LeadRow>(LeadTable)
 
-    var outlet by OutletEntity referencedOn LeadTable.outletId
-    var source by SourceEntity referencedOn LeadTable.sourceId
+    var source by SourceRow optionalReferencedOn LeadTable.sourceId
 
     var url by LeadTable.url
     var attemptCount by LeadTable.attemptCount
     var attemptedAt by LeadTable.attemptedAt
 }
 
-fun LeadEntity.toData() = Lead(
+fun LeadRow.toData() = Lead(
     id = this.id.value,
-    outletId = this.outlet.id.value,
-    sourceId = this.source.id.value,
+    sourceId = this.source?.id?.value,
     url = this.url,
     attemptCount = this.attemptCount,
-    attemptedAt = this.attemptedAt.toInstant(UtcOffset.ZERO)
+    attemptedAt = this.attemptedAt?.toInstant(UtcOffset.ZERO)
 )
 
-fun LeadEntity.fromData(lead: Lead, sourceEntity: SourceEntity, outletEntity: OutletEntity) {
-    source = sourceEntity
-    outlet = outletEntity
+fun LeadRow.fromData(lead: Lead, sourceRow: SourceRow? = null) {
+    source = sourceRow
     url = lead.url
     attemptCount = lead.attemptCount
-    attemptedAt = lead.attemptedAt.toLocalDateTime(TimeZone.UTC)
+    attemptedAt = lead.attemptedAt?.toLocalDateTime(TimeZone.UTC)
 }

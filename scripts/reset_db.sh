@@ -2,6 +2,9 @@
 
 echo "Resetting the database..."
 
+# Disconnect all existing connections to the database
+sudo -i -u postgres psql -c "SELECT pg_terminate_backend(pid) FROM pg_stat_activity WHERE datname = 'newsrefdb' AND pid <> pg_backend_pid();"
+
 # Drop the database
 sudo -i -u postgres psql -c "DROP DATABASE IF EXISTS newsrefdb;"
 

@@ -6,68 +6,70 @@ import it.skrape.selects.ElementNotFoundException
 import kotlinx.datetime.Clock
 import kotlinx.serialization.json.Json
 import newsref.db.utils.NewsArticle
-import newsref.model.data.Source
-import newsref.model.data.Link
-import newsref.model.dto.ArticleInfo
-import newsref.model.utils.removeQueryParameters
+import newsref.model.dto.SourceInfo
 import kotlinx.datetime.Instant
-import newsref.model.data.Document
-import newsref.model.data.SourceType
+import newsref.model.data.*
+import newsref.model.dto.LinkInfo
 
-fun read(url: String): ArticleInfo {
-    val document = getDocumentByUrl(url)
-        ?: return ArticleInfo(source = Source(url = url))
-    return document.readByElements(url)
+fun read(leadUrl: String): SourceInfo? {
+    val document = getDocumentByUrl(leadUrl) ?: return null
+    return document.readByElements(leadUrl)
 }
 
-fun Doc.readByElements(url: String): ArticleInfo {
+fun Doc.readByElements(url: String): SourceInfo {
     return this.scanElements(url, allElements)
 }
 
-fun Doc.readyBySelector(url: String): ArticleInfo {
+fun Doc.readyBySelector(url: String): SourceInfo {
     return this.scanElements(url, this.findAll("div#article-content"))
 }
 
-fun Doc.scanElements(url: String, elements: List<DocElement>): ArticleInfo {
-    val sb = StringBuilder()
-    val links = mutableListOf<Link>()
+fun Doc.scanElements(leadUrl: String, elements: List<DocElement>): SourceInfo {
+    val contents = mutableListOf<Content>()
+    val links = mutableListOf<LinkInfo>()
     var h1Title: String? = null
     elements.forEach {
-        if (it.isContent()) {
+        if (it.isLinkContent()) return@forEach
+        if (it.isHeading()) {
             if (h1Title == null && it.tagName == "h1") {
                 h1Title = it.text
             }
-            sb.append(it.text)
-            sb.append('\n')
-            sb.append('\n')
-            it.eachLink.forEach { (text, link) ->
-                links.add(Link(url = link, urlText = text, context = it.text))
+        }
+        if (it.isContent()) {
+            contents.add(Content(tag = it.tagName, text = it.text))
+            it.eachLink.forEach { (text, url) ->
+                links.add(LinkInfo(url = url, urlText = text, context = it.text))
             }
         }
     }
     val newsArticle = this.readNewsArticle()
-    return ArticleInfo(
+    return SourceInfo(
+        leadUrl = leadUrl,
         outletName = this.readOutletName() ?: newsArticle?.publisher?.name,
         source = Source(
-            url = this.readUrl() ?: url.removeQueryParameters(),
-            type = this.readType()
+            url = this.readUrl() ?: leadUrl,
+            type = this.readType(),
+            attemptedAt = Clock.System.now()
         ),
         document = Document(
             title = this.readTitle() ?: h1Title ?: this.titleText,
-            content = sb.toString(),
             description = this.readDescription(),
             imageUrl = this.readImageUrl(),
             accessedAt = Clock.System.now(),
             publishedAt = newsArticle?.readDatePublished(),
             modifiedAt = newsArticle?.readDateModified()
         ),
+        contents = contents,
         links = links
     )
 }
 
-private val headerTags = setOf("h1", "h2", "h3", "h4", "h5", "h6")
+private val headingTags = setOf("h1", "h2", "h3", "h4", "h5", "h6")
+private val contentMarkers = setOf('.', '?', '!', ',')
 
-fun DocElement.isContent() = (tagName == "p" || tagName in headerTags) && !isLinkContent()
+fun DocElement.isHeading() = tagName in headingTags
+
+fun DocElement.isContent() = tagName == "p" && text.any { it in contentMarkers }
 
 fun DocElement.isLinkContent() =
     this.eachLink.keys.firstOrNull()?.let { it == this.text } ?: false
@@ -100,7 +102,6 @@ fun Doc.readNewsArticle() = this.findFirstOrNull("script#json-schema")?.html
     ?.removeSuffix("//]]>")
     ?.let {
         try {
-            println(it)
             json.decodeFromString<NewsArticle>(it)
         } catch (e: Exception) {
             println(e)

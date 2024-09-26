@@ -11,7 +11,6 @@ import org.jetbrains.exposed.sql.kotlin.datetime.datetime
 object DocumentTable: LongIdTable("document") {
     val sourceId = reference("source_id", SourceTable)
     val title = text("title")
-    val content = text("content")
     val description = text("description").nullable()
     val imageUrl = text("image_url").nullable()
     val accessedAt = datetime("accessed_at")
@@ -19,13 +18,12 @@ object DocumentTable: LongIdTable("document") {
     val modifiedAt = datetime("modified_at").nullable()
 }
 
-class DocumentEntity(id: EntityID<Long>) : LongEntity(id) {
-    companion object : EntityClass<Long, DocumentEntity>(DocumentTable)
+class DocumentRow(id: EntityID<Long>) : LongEntity(id) {
+    companion object : EntityClass<Long, DocumentRow>(DocumentTable)
 
-    var source by SourceEntity referencedOn DocumentTable.sourceId
+    var source by SourceRow referencedOn DocumentTable.sourceId
 
     var title by DocumentTable.title
-    var content by DocumentTable.content
     var description by DocumentTable.description
     var imageUrl by DocumentTable.imageUrl
     var accessedAt by DocumentTable.accessedAt
@@ -33,11 +31,10 @@ class DocumentEntity(id: EntityID<Long>) : LongEntity(id) {
     var modifiedAt by DocumentTable.modifiedAt
 }
 
-fun DocumentEntity.toData() = Document(
+fun DocumentRow.toData() = Document(
     id = this.id.value,
     sourceId = this.source.id.value,
     title = this.title,
-    content = this.content,
     description = this.description,
     imageUrl = this.imageUrl,
     accessedAt = this.accessedAt.toInstant(UtcOffset.ZERO),
@@ -45,10 +42,9 @@ fun DocumentEntity.toData() = Document(
     modifiedAt = this.modifiedAt?.toInstant(UtcOffset.ZERO)
 )
 
-fun DocumentEntity.fromData(document: Document, sourceEntity: SourceEntity) {
-    source = sourceEntity
+fun DocumentRow.fromData(document: Document, sourceRow: SourceRow) {
+    source = sourceRow
     title = document.title
-    content = document.content
     description = document.description
     imageUrl = document.imageUrl
     accessedAt = document.accessedAt.toLocalDateTime(TimeZone.UTC)

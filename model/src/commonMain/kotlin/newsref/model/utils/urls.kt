@@ -13,4 +13,15 @@ fun String.getApexDomain() = this
     .takeLast(2)
     .joinToString(".")
 
-fun String.removeQueryParameters() = this.split('?')[0]
+fun String.removeQueryParameters(keepParams: List<String>): String {
+    val parts = this.split('?', limit = 2)
+    if (parts.size == 1) return this // No query params to strip
+
+    val baseUrl = parts[0]
+    val queryParams = parts[1]
+        .split('&')
+        .mapNotNull { param -> param.split('=', limit = 2).takeIf { it[0] in keepParams }?.joinToString("=") }
+        .joinToString("&")
+
+    return if (queryParams.isEmpty()) baseUrl else "$baseUrl?$queryParams"
+}
