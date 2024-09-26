@@ -5,6 +5,7 @@ import kotlinx.datetime.UtcOffset
 import kotlinx.datetime.toInstant
 import kotlinx.datetime.toLocalDateTime
 import newsref.model.data.Source
+import newsref.model.data.SourceType
 import org.jetbrains.exposed.dao.EntityClass
 import org.jetbrains.exposed.dao.LongEntity
 import org.jetbrains.exposed.dao.id.EntityID
@@ -14,13 +15,8 @@ import org.jetbrains.exposed.sql.kotlin.datetime.datetime
 object SourceTable : LongIdTable("article") {
     val outletId = reference("outlet_id", OutletTable)
     val url = text("url")
-    val title = text("title").nullable()
-    val content = text("content").nullable()
-    val description = text("description").nullable()
-    val imageUrl = text("image_url").nullable()
-    val accessedAt = datetime("accessed_at").nullable()
-    val publishedAt = datetime("published_at").nullable()
-    val modifiedAt = datetime("modified_at").nullable()
+    val type = enumerationByName<SourceType>("source_type", 20)
+    val attemptedAt = datetime("attempted_at")
 }
 
 class SourceEntity(id: EntityID<Long>) : LongEntity(id) {
@@ -29,36 +25,23 @@ class SourceEntity(id: EntityID<Long>) : LongEntity(id) {
     var outlet by OutletEntity referencedOn OutletTable.id
 
     var url by SourceTable.url
-    var title by SourceTable.title
-    var content by SourceTable.content
-    var description by SourceTable.description
-    var imageUrl by SourceTable.imageUrl
-    var accessedAt by SourceTable.accessedAt
-    var publishedAt by SourceTable.publishedAt
-    var modifiedAt by SourceTable.modifiedAt
+    var type by SourceTable.type
+    var attemptedAt by SourceTable.attemptedAt
 
     val links by LinkEntity referrersOn LinkTable.sourceId
+    val document by DocumentEntity referrersOn DocumentTable.sourceId
 }
 
 fun SourceEntity.toData() = Source(
     id = this.id.value,
     url = this.url,
-    title = this.title,
-    content = this.content,
-    description = this.description,
-    imageUrl = this.imageUrl,
-    accessedAt = this.accessedAt?.toInstant(UtcOffset.ZERO),
-    publishedAt = this.publishedAt?.toInstant(UtcOffset.ZERO),
-    modifiedAt = this.modifiedAt?.toInstant(UtcOffset.ZERO),
+    type = this.type,
+    attemptedAt = this.attemptedAt.toInstant(UtcOffset.ZERO)
 )
 
-fun SourceEntity.fromData(source: Source) {
+fun SourceEntity.fromData(source: Source, outletEntity: OutletEntity) {
+    outlet = outletEntity
     url = source.url
-    title = source.title
-    content = source.content
-    description = source.description
-    imageUrl = source.imageUrl
-    accessedAt = source.accessedAt?.toLocalDateTime(TimeZone.UTC)
-    publishedAt = source.publishedAt?.toLocalDateTime(TimeZone.UTC)
-    modifiedAt = source.modifiedAt?.toLocalDateTime(TimeZone.UTC)
+    type = source.type
+    attemptedAt = source.attemptedAt.toLocalDateTime(TimeZone.UTC)
 }

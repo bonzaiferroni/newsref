@@ -1,6 +1,5 @@
 package newsref.krawly
 
-import it.skrape.selects.CssSelector
 import it.skrape.selects.Doc
 import it.skrape.selects.DocElement
 import it.skrape.selects.ElementNotFoundException
@@ -12,7 +11,8 @@ import newsref.model.data.Link
 import newsref.model.dto.ArticleInfo
 import newsref.model.utils.removeQueryParameters
 import kotlinx.datetime.Instant
-import org.jsoup.select.Selector
+import newsref.model.data.Document
+import newsref.model.data.SourceType
 
 fun read(url: String): ArticleInfo {
     val document = getDocumentByUrl(url)
@@ -31,11 +31,11 @@ fun Doc.readyBySelector(url: String): ArticleInfo {
 fun Doc.scanElements(url: String, elements: List<DocElement>): ArticleInfo {
     val sb = StringBuilder()
     val links = mutableListOf<Link>()
-    var title: String? = null
+    var h1Title: String? = null
     elements.forEach {
         if (it.isContent()) {
-            if (title == null && it.tagName == "h1") {
-                title = it.text
+            if (h1Title == null && it.tagName == "h1") {
+                h1Title = it.text
             }
             sb.append(it.text)
             sb.append('\n')
@@ -49,11 +49,14 @@ fun Doc.scanElements(url: String, elements: List<DocElement>): ArticleInfo {
     return ArticleInfo(
         outletName = this.readOutletName() ?: newsArticle?.publisher?.name,
         source = Source(
-            title = this.readTitle() ?: title ?: this.titleText,
             url = this.readUrl() ?: url.removeQueryParameters(),
+            type = this.readType()
+        ),
+        document = Document(
+            title = this.readTitle() ?: h1Title ?: this.titleText,
+            content = sb.toString(),
             description = this.readDescription(),
             imageUrl = this.readImageUrl(),
-            content = sb.toString(),
             accessedAt = Clock.System.now(),
             publishedAt = newsArticle?.readDatePublished(),
             modifiedAt = newsArticle?.readDateModified()
@@ -70,7 +73,10 @@ fun DocElement.isLinkContent() =
     this.eachLink.keys.firstOrNull()?.let { it == this.text } ?: false
 
 fun Doc.readMetaContent(vararg propertyValues: String) = propertyValues.firstNotNullOfOrNull {
-    this.findFirstOrNull("meta[property=\"$it\"]")?.attributes?.get("content")
+    var value = this.findFirstOrNull("meta[property=\"$it\"]")?.attributes?.get("content")
+    if (value == null)
+        value = this.findFirstOrNull("meta[name=\"$it\"]")?.attributes?.get("content")
+    value // return
 }
 
 fun Doc.findFirstOrNull(cssSelector: String): DocElement? = try {
@@ -84,6 +90,7 @@ fun Doc.readTitle() = this.readMetaContent("title", "og:title", "twitter:title")
 fun Doc.readDescription() = this.readMetaContent("description", "og:description", "twitter:description")
 fun Doc.readImageUrl() = this.readMetaContent("image", "og:image", "twitter:image")
 fun Doc.readOutletName() = this.readMetaContent("site", "og:site_name", "twitter:site")
+fun Doc.readType() = this.readMetaContent("type", "og:type")?.let { SourceType.fromMeta(it) } ?: SourceType.UNKNOWN
 
 fun NewsArticle.readDatePublished() = this.datePublished.let { Instant.parse(it) }
 fun NewsArticle.readDateModified() = this.dateModified.let { Instant.parse(it) }
