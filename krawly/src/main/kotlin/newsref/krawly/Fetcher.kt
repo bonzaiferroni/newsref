@@ -4,9 +4,11 @@ import it.skrape.core.htmlDocument
 import it.skrape.fetcher.BrowserFetcher
 import it.skrape.fetcher.response
 import it.skrape.fetcher.skrape
+import it.skrape.selects.Doc
 import it.skrape.selects.ElementNotFoundException
+import newsref.model.dto.ArticleInfo
 
-fun getDocumentByUrl(urlToScrape: String) = skrape(BrowserFetcher) { // <--- pass BrowserFetcher to include rendered JS
+fun getDocumentByUrl(urlToScrape: String): Doc? = skrape(BrowserFetcher) { // <--- pass BrowserFetcher to include rendered JS
     request { url = urlToScrape }
     response { htmlDocument { this } }
 }

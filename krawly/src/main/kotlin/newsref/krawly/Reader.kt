@@ -16,7 +16,7 @@ import org.jsoup.select.Selector
 
 fun read(url: String): ArticleInfo {
     val document = getDocumentByUrl(url)
-    // val content = document.html.tryQuery("div#article-content")
+        ?: return ArticleInfo(source = Source(url = url))
     return document.readByElements(url)
 }
 
@@ -47,6 +47,7 @@ fun Doc.scanElements(url: String, elements: List<DocElement>): ArticleInfo {
     }
     val newsArticle = this.readNewsArticle()
     return ArticleInfo(
+        outletName = this.readOutletName() ?: newsArticle?.publisher?.name,
         source = Source(
             title = this.readTitle() ?: title ?: this.titleText,
             url = this.readUrl() ?: url.removeQueryParameters(),
@@ -82,8 +83,11 @@ fun Doc.readUrl() = this.readMetaContent("url", "og:url", "twitter:url")
 fun Doc.readTitle() = this.readMetaContent("title", "og:title", "twitter:title")
 fun Doc.readDescription() = this.readMetaContent("description", "og:description", "twitter:description")
 fun Doc.readImageUrl() = this.readMetaContent("image", "og:image", "twitter:image")
+fun Doc.readOutletName() = this.readMetaContent("site", "og:site_name", "twitter:site")
+
 fun NewsArticle.readDatePublished() = this.datePublished.let { Instant.parse(it) }
 fun NewsArticle.readDateModified() = this.dateModified.let { Instant.parse(it) }
+
 fun Doc.readNewsArticle() = this.findFirstOrNull("script#json-schema")?.html
     ?.removePrefix("//<![CDATA[")
     ?.removeSuffix("//]]>")

@@ -18,5 +18,6 @@ fun initDb() {
         // SchemaUtils.create(SessionTokenTable)
         SchemaUtils.create(SourceTable)
         SchemaUtils.create(LinkTable)
+        SchemaUtils.create(OutletTable)
     }
 }

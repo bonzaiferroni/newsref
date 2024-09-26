@@ -12,18 +12,21 @@ import org.jetbrains.exposed.dao.id.LongIdTable
 import org.jetbrains.exposed.sql.kotlin.datetime.datetime
 
 object SourceTable : LongIdTable("article") {
+    val outletId = reference("outlet_id", OutletTable)
     val url = text("url")
     val title = text("title").nullable()
     val content = text("content").nullable()
     val description = text("description").nullable()
     val imageUrl = text("image_url").nullable()
-    val accessedAt = datetime("accessed_at")
+    val accessedAt = datetime("accessed_at").nullable()
     val publishedAt = datetime("published_at").nullable()
     val modifiedAt = datetime("modified_at").nullable()
 }
 
 class SourceEntity(id: EntityID<Long>) : LongEntity(id) {
     companion object : EntityClass<Long, SourceEntity>(SourceTable)
+
+    var outlet by OutletEntity referencedOn OutletTable.id
 
     var url by SourceTable.url
     var title by SourceTable.title
@@ -44,7 +47,7 @@ fun SourceEntity.toData() = Source(
     content = this.content,
     description = this.description,
     imageUrl = this.imageUrl,
-    accessedAt = this.accessedAt.toInstant(UtcOffset.ZERO),
+    accessedAt = this.accessedAt?.toInstant(UtcOffset.ZERO),
     publishedAt = this.publishedAt?.toInstant(UtcOffset.ZERO),
     modifiedAt = this.modifiedAt?.toInstant(UtcOffset.ZERO),
 )
@@ -55,7 +58,7 @@ fun SourceEntity.fromData(source: Source) {
     content = source.content
     description = source.description
     imageUrl = source.imageUrl
-    accessedAt = source.accessedAt.toLocalDateTime(TimeZone.UTC)
+    accessedAt = source.accessedAt?.toLocalDateTime(TimeZone.UTC)
     publishedAt = source.publishedAt?.toLocalDateTime(TimeZone.UTC)
     modifiedAt = source.modifiedAt?.toLocalDateTime(TimeZone.UTC)
 }

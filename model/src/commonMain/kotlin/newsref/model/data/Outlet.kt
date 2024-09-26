@@ -1,8 +1,11 @@
 package newsref.model.data
 
+import kotlinx.serialization.Serializable
+
+@Serializable
 data class Outlet(
-    val id: Int,
-    val name: String,
-    val apex: String,
-    val domains: Set<String>,
+    val id: Int = 0,
+    val name: String? = null,
+    val apex: String = "",
+    val domains: Set<String> = emptySet(),
 )
