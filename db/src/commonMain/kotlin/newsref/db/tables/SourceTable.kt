@@ -19,7 +19,7 @@ object SourceTable : LongIdTable("article") {
     val imageUrl = text("image_url").nullable()
     val accessedAt = datetime("accessed_at")
     val publishedAt = datetime("published_at").nullable()
-    val updatedAt = datetime("updated_at").nullable()
+    val modifiedAt = datetime("modified_at").nullable()
 }
 
 class SourceEntity(id: EntityID<Long>) : LongEntity(id) {
@@ -30,9 +30,9 @@ class SourceEntity(id: EntityID<Long>) : LongEntity(id) {
     var content by SourceTable.content
     var description by SourceTable.description
     var imageUrl by SourceTable.imageUrl
-    var publishedAt by SourceTable.publishedAt
-    var updatedAt by SourceTable.updatedAt
     var accessedAt by SourceTable.accessedAt
+    var publishedAt by SourceTable.publishedAt
+    var modifiedAt by SourceTable.modifiedAt
 
     val links by LinkEntity referrersOn LinkTable.sourceId
 }
@@ -46,7 +46,7 @@ fun SourceEntity.toData() = Source(
     imageUrl = this.imageUrl,
     accessedAt = this.accessedAt.toInstant(UtcOffset.ZERO),
     publishedAt = this.publishedAt?.toInstant(UtcOffset.ZERO),
-    updatedAt = this.updatedAt?.toInstant(UtcOffset.ZERO),
+    modifiedAt = this.modifiedAt?.toInstant(UtcOffset.ZERO),
 )
 
 fun SourceEntity.fromData(source: Source) {
@@ -57,5 +57,5 @@ fun SourceEntity.fromData(source: Source) {
     imageUrl = source.imageUrl
     accessedAt = source.accessedAt.toLocalDateTime(TimeZone.UTC)
     publishedAt = source.publishedAt?.toLocalDateTime(TimeZone.UTC)
-    updatedAt = source.updatedAt?.toLocalDateTime(TimeZone.UTC)
+    modifiedAt = source.modifiedAt?.toLocalDateTime(TimeZone.UTC)
 }

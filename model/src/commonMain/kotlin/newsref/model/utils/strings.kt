@@ -7,3 +7,4 @@ fun String.obfuscate(): String {
 fun String.deobfuscate(): String {
     return this.map { it.code.xor('s'.code).toChar() }.joinToString("")
 }
+

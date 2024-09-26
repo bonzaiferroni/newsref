@@ -1,13 +1,18 @@
 package newsref.krawly
 
+import it.skrape.selects.CssSelector
 import it.skrape.selects.Doc
 import it.skrape.selects.DocElement
-import it.skrape.selects.html5.content
+import it.skrape.selects.ElementNotFoundException
 import kotlinx.datetime.Clock
-import newsref.db.tables.SourceTable.title
+import kotlinx.serialization.json.Json
+import newsref.db.utils.NewsArticle
 import newsref.model.data.Source
 import newsref.model.data.Link
 import newsref.model.dto.ArticleInfo
+import newsref.model.utils.removeQueryParameters
+import kotlinx.datetime.Instant
+import org.jsoup.select.Selector
 
 fun read(url: String): ArticleInfo {
     val document = getDocumentByUrl(url)
@@ -40,13 +45,17 @@ fun Doc.scanElements(url: String, elements: List<DocElement>): ArticleInfo {
             }
         }
     }
+    val newsArticle = this.readNewsArticle()
     return ArticleInfo(
         source = Source(
-            title = title ?: this.titleText,
-            url = url,
+            title = this.readTitle() ?: title ?: this.titleText,
+            url = this.readUrl() ?: url.removeQueryParameters(),
             description = this.readDescription(),
+            imageUrl = this.readImageUrl(),
             content = sb.toString(),
-            accessedAt = Clock.System.now()
+            accessedAt = Clock.System.now(),
+            publishedAt = newsArticle?.readDatePublished(),
+            modifiedAt = newsArticle?.readDateModified()
         ),
         links = links
     )
@@ -59,4 +68,33 @@ fun DocElement.isContent() = (tagName == "p" || tagName in headerTags) && !isLin
 fun DocElement.isLinkContent() =
     this.eachLink.keys.firstOrNull()?.let { it == this.text } ?: false
 
-fun Doc.readDescription() = this.findFirst("meta[property=\"og:description\"]").attributes["content"]
+fun Doc.readMetaContent(vararg propertyValues: String) = propertyValues.firstNotNullOfOrNull {
+    this.findFirstOrNull("meta[property=\"$it\"]")?.attributes?.get("content")
+}
+
+fun Doc.findFirstOrNull(cssSelector: String): DocElement? = try {
+    this.findFirst(cssSelector)
+} catch (e: ElementNotFoundException) {
+    null
+}
+
+fun Doc.readUrl() = this.readMetaContent("url", "og:url", "twitter:url")
+fun Doc.readTitle() = this.readMetaContent("title", "og:title", "twitter:title")
+fun Doc.readDescription() = this.readMetaContent("description", "og:description", "twitter:description")
+fun Doc.readImageUrl() = this.readMetaContent("image", "og:image", "twitter:image")
+fun NewsArticle.readDatePublished() = this.datePublished.let { Instant.parse(it) }
+fun NewsArticle.readDateModified() = this.dateModified.let { Instant.parse(it) }
+fun Doc.readNewsArticle() = this.findFirstOrNull("script#json-schema")?.html
+    ?.removePrefix("//<![CDATA[")
+    ?.removeSuffix("//]]>")
+    ?.let {
+        try {
+            println(it)
+            json.decodeFromString<NewsArticle>(it)
+        } catch (e: Exception) {
+            println(e)
+            null
+        }
+    }
+
+private val json = Json { ignoreUnknownKeys = true }

@@ -1,6 +1,5 @@
 package newsref.model.data
 
-import kotlinx.datetime.Clock
 import kotlinx.datetime.Instant
 
 data class Source(
@@ -12,5 +11,5 @@ data class Source(
     val imageUrl: String? = null,
     val accessedAt: Instant = Instant.DISTANT_PAST,
     val publishedAt: Instant? = null,
-    val updatedAt: Instant? = null,
+    val modifiedAt: Instant? = null,
 )
