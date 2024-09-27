@@ -1,4 +1,5 @@
 import org.jetbrains.kotlin.gradle.dsl.KotlinJsCompile
+import org.jetbrains.kotlin.gradle.targets.js.webpack.KotlinWebpackConfig
 
 plugins {
     alias(libs.plugins.kotlinMultiplatform)
@@ -10,6 +11,9 @@ kotlin {
         browser {
             commonWebpackConfig {
                 outputFileName = "scoop-main.js"
+                sourceMaps = false
+                mode = KotlinWebpackConfig.Mode.DEVELOPMENT
+                devtool = "source-map"
             }
         }
         binaries.executable()
