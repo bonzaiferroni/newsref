@@ -9,7 +9,7 @@ data class SourceInfo(
     val source: Source,
     val document: Document? = null,
     val outletName: String? = null,
-    val contents: List<Content> = emptyList(),
+    val contents: Set<String> = emptySet(),
     val links: List<LinkInfo> = emptyList(),
     val authors: Set<String>? = null,
 )

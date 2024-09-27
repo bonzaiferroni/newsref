@@ -6,21 +6,21 @@ import kotlinx.serialization.Serializable
 @Serializable
 data class NewsArticle(
     val publisher: Publisher,
-    val stnMeta: StnMeta,
+    // val stnMeta: StnMeta,
     val headline: String,
-    val url: String,
-    val mainEntityOfPage: String,
+    // val url: String,
+    // val mainEntityOfPage: String,
     val dateModified: String,
     val datePublished: String,
-    val identifier: Long,
-    val thumbnailUrl: String,
-    val image: String,
-    val keywords: List<String>,
+    // val identifier: Long,
+    // val thumbnailUrl: String,
+    // val image: String,
+    // val keywords: List<String>,
     val articleSection: String,
     val description: String,
     val author: List<Author>,
-    val isAccessibleForFree: Boolean,
-    val hasPart: HasPart
+    // val isAccessibleForFree: Boolean,
+    // val hasPart: HasPart
 )
 
 @Serializable
@@ -50,8 +50,8 @@ data class StnMeta(
 data class Author(
     val name: String,
     val url: String,
-    val email: String,
-    val image: String
+    val email: String? = null,
+    val image: String? = null
 )
 
 @Serializable

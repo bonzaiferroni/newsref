@@ -4,7 +4,7 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import newsref.model.dto.LoginRequest
 import newsref.model.dto.SignUpRequest
-import newsref.model.obfuscate
+import newsref.model.utils.obfuscate
 import newsref.model.utils.validSignUp
 import newsref.web.core.ViewModel
 import newsref.web.io.client.ApiClient

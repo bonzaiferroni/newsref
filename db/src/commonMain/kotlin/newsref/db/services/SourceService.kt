@@ -20,6 +20,7 @@ import org.jetbrains.exposed.sql.stringParam
 class SourceService(
 ): DbService() {
     suspend fun consume(info: SourceInfo) = dbQuery {
+        println("SourceService: consuming info")
         // create or update Outlet
         val apex = info.source.url.getApexDomain().lowercase()
         val outletRow = OutletRow.find { stringParam(apex) eq anyFrom(OutletTable.domains) }.firstOrNull()
@@ -36,7 +37,7 @@ class SourceService(
 
         // create Content
         val contentRows = info.contents.map { content ->
-            ContentRow.find { ContentTable.text eq content.text }.firstOrNull()
+            ContentRow.find { ContentTable.text eq content }.firstOrNull()
                 ?:ContentRow.new { fromData(content) } // return@map
         }
 

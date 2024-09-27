@@ -8,6 +8,8 @@ plugins {
 
 dependencies {
     implementation("it.skrape:skrapeit:1.2.2")
+
+    implementation("com.microsoft.playwright:playwright:1.41.0")
     implementation("com.aallam.openai:openai-client:3.8.2")
     implementation("io.ktor:ktor-client-okhttp:$ktor_version")
     implementation(project(":model"))

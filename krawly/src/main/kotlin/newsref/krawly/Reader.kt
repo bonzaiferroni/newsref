@@ -12,8 +12,9 @@ import newsref.db.utils.tryParse
 import newsref.model.data.*
 import newsref.model.dto.LinkInfo
 
-fun read(leadUrl: String): SourceInfo? {
-    val document = getDocumentByUrl(leadUrl) ?: return null
+fun read(leadUrl: String): SourceInfo {
+    val document = fetch(leadUrl)
+    println("Reader: reading document")
     return document.readByElements(leadUrl)
 }
 
@@ -26,10 +27,14 @@ fun Doc.readyBySelector(url: String): SourceInfo {
 }
 
 fun Doc.scanElements(leadUrl: String, elements: List<DocElement>): SourceInfo {
-    val contents = mutableListOf<Content>()
+    val contents = mutableSetOf<String>()
     val links = mutableListOf<LinkInfo>()
+    var newsArticle = this.findFirstOrNull("script#json-schema")?.readNewsArticle()
     var h1Title: String? = null
     elements.forEach {
+        if (newsArticle == null && it.tagName == "script" && it.html.contains("NewsArticle")) {
+            newsArticle = it.readNewsArticle()
+        }
         if (it.isLinkContent()) return@forEach
         if (it.isHeading()) {
             if (h1Title == null && it.tagName == "h1") {
@@ -37,13 +42,12 @@ fun Doc.scanElements(leadUrl: String, elements: List<DocElement>): SourceInfo {
             }
         }
         if (it.isContent()) {
-            contents.add(Content(tag = it.tagName, text = it.text))
+            contents.add(it.text)
             it.eachLink.forEach { (text, url) ->
                 links.add(LinkInfo(url = url, urlText = text, context = it.text))
             }
         }
     }
-    val newsArticle = this.readNewsArticle()
     return SourceInfo(
         leadUrl = leadUrl,
         outletName = this.readOutletName() ?: newsArticle?.publisher?.name,
@@ -95,21 +99,23 @@ fun Doc.readDescription() = this.readMetaContent("description", "og:description"
 fun Doc.readImageUrl() = this.readMetaContent("image", "og:image", "twitter:image")
 fun Doc.readOutletName() = this.readMetaContent("site", "og:site_name", "twitter:site")
 fun Doc.readType() = this.readMetaContent("type", "og:type")?.let { SourceType.fromMeta(it) } ?: SourceType.UNKNOWN
-fun Doc.readAuthor() = this.readMetaContent("author", "og:article:author")
+fun Doc.readAuthor() = this.readMetaContent("author", "article:author", "og:article:author")
 fun Doc.readPublishedAt() = this.readMetaContent("date", "article:published_time")?.let { Instant.tryParse(it) }
 fun Doc.readModifiedAt() = this.readMetaContent("last-modified", "article:modified_time")?.let { Instant.tryParse(it) }
 
 fun NewsArticle.readPublishedAt() = this.datePublished.let { Instant.tryParse(it) }
 fun NewsArticle.readModifiedAt() = this.dateModified.let { Instant.tryParse(it) }
 
-fun Doc.readNewsArticle() = this.findFirstOrNull("script#json-schema")?.html
-    ?.removePrefix("//<![CDATA[")
-    ?.removeSuffix("//]]>")
-    ?.let {
+fun DocElement.readNewsArticle() = html
+    .removePrefix("//<![CDATA[")
+    .removeSuffix("//]]>")
+    .trim()
+    .let {
         try {
-            json.decodeFromString<NewsArticle>(it)
+            json.decodeFromString<NewsArticle>(it);
         } catch (e: Exception) {
             println(e)
+            println(it)
             null
         }
     }
