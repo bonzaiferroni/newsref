@@ -5,14 +5,15 @@ import io.ktor.server.application.*
 import io.ktor.server.request.*
 import io.ktor.server.response.*
 import newsref.db.models.User
-import newsref.model.deobfuscate
 import newsref.model.dto.AuthInfo
 import newsref.model.dto.LoginRequest
 import newsref.db.Log
 import newsref.db.models.SessionToken
+import newsref.model.utils.deobfuscate
 import newsref.server.db.services.SessionTokenService
 import newsref.server.db.services.UserService
 import newsref.server.plugins.createJWT
+import newsref.server.serverLog
 import java.security.SecureRandom
 import java.util.*
 import javax.crypto.SecretKeyFactory
@@ -23,7 +24,7 @@ suspend fun ApplicationCall.authorize() {
     val userService = UserService()
     val user = userService.findByUsernameOrEmail(loginRequest.username)
     if (user == null) {
-        Log.logInfo("authorize: Invalid username from ${loginRequest.username}")
+        serverLog.logInfo("authorize: Invalid username from ${loginRequest.username}")
         this.respond(HttpStatusCode.Unauthorized, "Invalid username")
         return
     }
@@ -31,21 +32,21 @@ suspend fun ApplicationCall.authorize() {
         val password = it.deobfuscate()
         val authInfo = user.testPassword(loginRequest.username, password, user.roles)
         if (authInfo == null) {
-            Log.logInfo("authorize: Invalid password attempt from ${loginRequest.username}")
+            serverLog.logInfo("authorize: Invalid password attempt from ${loginRequest.username}")
             return
         }
-        Log.logInfo("authorize: password login by ${loginRequest.username}")
+        serverLog.logInfo("authorize: password login by ${loginRequest.username}")
         this.respond(HttpStatusCode.OK, authInfo)
         return
     }
     loginRequest.session?.let {
         val authInfo = user.testToken(loginRequest.username, it, user.roles)
         if (authInfo == null) {
-            Log.logInfo("authorize: Invalid password attempt from ${loginRequest.username}")
+            serverLog.logInfo("authorize: Invalid password attempt from ${loginRequest.username}")
             this.respond(HttpStatusCode.Unauthorized, "Invalid token")
             return
         }
-        Log.logInfo("authorize: session login by ${loginRequest.username}")
+        serverLog.logInfo("authorize: session login by ${loginRequest.username}")
         this.respond(HttpStatusCode.OK, authInfo)
         return
     }

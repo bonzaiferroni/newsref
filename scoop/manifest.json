@@ -1,21 +1,30 @@
 {
-  "manifest_version": 2,
-  "name": "Borderify",
-  "version": "1.0",
-
-  "description": "Adds a red border to all webpages matching mozilla.org.",
-
-  "icons": {
-    "48": "build/dist/js/productionExecutable/icons/border-48.png"
-  },
-  "content_scripts": [
-    {
-      "matches": [
-        "*://kotlinlang.org/*"
-      ],
-      "js": [
-        "build/dist/js/productionExecutable/scoop-main.js"
-      ]
-    }
-  ]
+    "manifest_version": 2,
+    "name": "Newsref Scoop",
+    "version": "0.1",
+    "description": "Adds a red border to all urls.",
+    "permissions": [
+        "https://newsref.org/*",
+        "webRequest",
+        "webRequestBlocking"
+    ],
+    "icons": {
+        "48": "build/dist/js/productionExecutable/icons/border-48.png"
+    },
+    "browser_action": {
+        "default_icon": {
+            "48": "build/dist/js/productionExecutable/icons/border-48.png"
+        },
+        "default_title": "Newsref Scoop"
+    },
+    "content_scripts": [
+        {
+            "matches": [
+                "<all_urls>"
+            ],
+            "js": [
+                "build/dist/js/productionExecutable/scoop-main.js"
+            ]
+        }
+    ]
 }

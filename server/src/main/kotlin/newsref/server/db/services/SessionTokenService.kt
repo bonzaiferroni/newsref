@@ -4,11 +4,13 @@ import newsref.db.DataService
 import newsref.db.models.SessionToken
 import newsref.db.tables.SessionTokenEntity
 import newsref.db.tables.SessionTokenTable
+import newsref.db.tables.SessionTokenTable.token
 import newsref.db.tables.fromData
 import newsref.db.tables.toData
 
-class SessionTokenService : DataService<SessionToken, SessionTokenEntity>(
+class SessionTokenService : DataService<SessionToken, Int, SessionTokenEntity>(
     SessionTokenEntity,
+    {token -> token.id},
     SessionTokenEntity::fromData,
     SessionTokenEntity::toData
 ) {
