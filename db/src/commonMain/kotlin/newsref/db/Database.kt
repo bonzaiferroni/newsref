@@ -6,6 +6,7 @@ import org.jetbrains.exposed.sql.SchemaUtils
 import org.jetbrains.exposed.sql.transactions.transaction
 
 fun initDb() {
+    println("initDb: initializing db")
     val password = System.getenv("NEWSREF_PSQL_PW")
     val db = Database.connect(
         "jdbc:postgresql://localhost:5432/newsrefdb",

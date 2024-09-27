@@ -1,7 +1,6 @@
 package newsref.web.io.client
 
 import kotlinx.serialization.SerializationStrategy
-import newsref.model.core.*
 import newsref.model.dto.*
 
 inline fun <reified T> getSerializer(): SerializationStrategy<T> {

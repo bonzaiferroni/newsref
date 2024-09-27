@@ -30,6 +30,6 @@ fun ContentRow.toData() = Content(
     text = this.text,
 )
 
-fun ContentRow.fromData(data: Content) {
-    text = data.text
+fun ContentRow.fromData(content: String) {
+    text = content
 }

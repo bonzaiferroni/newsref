@@ -3,7 +3,7 @@ package newsref.web.ui.models
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import newsref.model.dto.LoginRequest
-import newsref.model.obfuscate
+import newsref.model.utils.obfuscate
 import newsref.web.core.ViewModel
 import newsref.web.io.client.ApiClient
 import newsref.web.io.client.globalApiClient

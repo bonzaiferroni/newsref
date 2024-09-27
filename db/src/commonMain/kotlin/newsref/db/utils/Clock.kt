@@ -1,14 +1,15 @@
 package newsref.db.utils
 
-import kotlinx.datetime.Clock
-import kotlinx.datetime.Instant
-import kotlinx.datetime.TimeZone
-import kotlinx.datetime.toLocalDateTime
+import kotlinx.datetime.*
 
 fun Clock.Companion.nowToLocalDateTimeUTC() = Clock.System.now().toLocalDateTime(TimeZone.UTC)
 
 fun Instant.Companion.tryParse(str: String) = try {
-    Instant.parse(str)
+    parse(str)
 } catch (e: Exception) {
-    null
+    try {
+        LocalDateTime.parse(str).toInstant(TimeZone.UTC)
+    } catch (_: Exception) {
+        null
+    }
 }
