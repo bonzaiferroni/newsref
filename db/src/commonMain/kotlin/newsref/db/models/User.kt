@@ -2,11 +2,14 @@ package newsref.db.models
 
 import kotlinx.datetime.Instant
 import kotlinx.serialization.Serializable
+import newsref.db.utils.UUIDSerializer
 import newsref.model.dto.PrivateInfo
+import java.util.*
 
 @Serializable
 data class User(
-    val id: Int = 0,
+    @Serializable(with = UUIDSerializer::class)
+    val id: UUID = UUID.randomUUID(),
     val name: String? = "",
     val username: String = "",
     val hashedPassword: String = "",

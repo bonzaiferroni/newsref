@@ -1,5 +1,6 @@
 package newsref.server.db.services
 
+import kotlinx.datetime.Clock
 import org.jetbrains.exposed.sql.SqlExpressionBuilder.eq
 import org.jetbrains.exposed.sql.lowerCase
 import org.jetbrains.exposed.sql.or
@@ -14,23 +15,26 @@ import newsref.db.DataService
 import newsref.server.db.generateSalt
 import newsref.server.db.hashPassword
 import newsref.server.db.toBase64
-import newsref.db.logger
 import newsref.db.tables.*
 import newsref.db.models.User
 import newsref.db.models.toPrivateInfo
+import newsref.db.utils.nowToLocalDateTimeUTC
 import newsref.server.plugins.ROLE_USER
+import newsref.server.serverLog
+import java.util.*
 
-class UserService : DataService<User, UserEntity>(
-    UserEntity,
-    UserEntity::fromData,
-    UserEntity::toData
+class UserService : DataService<User, UUID, UserRow>(
+    UserRow,
+    {user -> user.id},
+    UserRow::fromData,
+    UserRow::toData
 ) {
 
     fun findByUsername(username: String): User? =
-        UserEntity.find { UserTable.username.lowerCase() eq username.lowercase() }.firstOrNull()?.toData()
+        UserRow.find { UserTable.username.lowerCase() eq username.lowercase() }.firstOrNull()?.toData()
 
     suspend fun findByUsernameOrEmail(usernameOrEmail: String): User? = dbQuery {
-        UserEntity.find {
+        UserRow.find {
             (UserTable.username.lowerCase() eq usernameOrEmail.lowercase()) or
             (UserTable.email.lowerCase() eq usernameOrEmail.lowercase())
         }.firstOrNull()?.toData()
@@ -61,8 +65,8 @@ class UserService : DataService<User, UserEntity>(
             salt = salt.toBase64(),
             email = info.email,
             roles = ROLE_USER,
-            createdAt = System.currentTimeMillis(),
-            updatedAt = System.currentTimeMillis(),
+            createdAt = Clock.System.now(),
+            updatedAt = Clock.System.now(),
             avatarUrl = null,
             venmo = null
         )
@@ -72,14 +76,14 @@ class UserService : DataService<User, UserEntity>(
     private fun validateUsername(info: SignUpRequest) {
         if (!info.username.validUsernameLength) throw IllegalArgumentException("Username should be least 3 characters.")
         if (!info.username.validUsernameChars) throw IllegalArgumentException("Username has invalid characters.")
-        val existingUsername = UserEntity.find { UserTable.username.lowerCase() eq info.username.lowercase() }.any()
+        val existingUsername = UserRow.find { UserTable.username.lowerCase() eq info.username.lowercase() }.any()
         if (existingUsername) throw IllegalArgumentException("Username already exists.")
     }
 
     private fun validateEmail(info: SignUpRequest) {
         val email = info.email ?: return // email is optional
         if (!info.email.validEmail) throw IllegalArgumentException("Invalid email.")
-        val existingEmail = UserEntity.find { UserTable.email.lowerCase() eq email.lowercase() }.any()
+        val existingEmail = UserRow.find { UserTable.email.lowerCase() eq email.lowercase() }.any()
         if (existingEmail) throw IllegalArgumentException("Email already exists.")
     }
 
@@ -94,20 +98,20 @@ class UserService : DataService<User, UserEntity>(
 
     suspend fun updateUser(username: String, info: EditUserRequest) = dbQuery {
         if (info.deleteUser) {
-            logger.info("UserService: Deleting user $username")
-            UserEntity.findSingleByAndUpdate(UserTable.username.lowerCase() eq username.lowercase()) { entity ->
+            serverLog.logInfo("UserService: Deleting user $username")
+            UserRow.findSingleByAndUpdate(UserTable.username.lowerCase() eq username.lowercase()) { entity ->
                 SessionTokenEntity.find { SessionTokenTable.user eq entity.id }.forEach { it.delete() }
             }
         } else {
-            logger.info("UserService: Updating user $username")
-            UserEntity.findSingleByAndUpdate(UserTable.username.lowerCase() eq username.lowercase()) { entity ->
+            serverLog.logInfo("UserService: Updating user $username")
+            UserRow.findSingleByAndUpdate(UserTable.username.lowerCase() eq username.lowercase()) { entity ->
                 entity.name = info.name
                 if (info.deleteName) entity.name = null
                 entity.email = info.email
                 if (info.deleteEmail) entity.email = null
                 entity.venmo = info.venmo
                 entity.avatarUrl = info.avatarUrl
-                entity.updatedAt = System.currentTimeMillis()
+                entity.updatedAt = Clock.nowToLocalDateTimeUTC()
                 // TODO validate email
             }
         }

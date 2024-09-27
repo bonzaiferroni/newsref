@@ -9,13 +9,13 @@ import org.jetbrains.exposed.dao.id.IntIdTable
 import org.jetbrains.exposed.sql.SizedCollection
 
 object AuthorTable: IntIdTable("author") {
-    val byLines = array<String>("by_lines")
+    val bylines = array<String>("bylines")
 }
 
 class AuthorRow(id: EntityID<Int>): IntEntity(id) {
     companion object : EntityClass<Int, AuthorRow>(AuthorTable)
 
-    var byLines by AuthorTable.byLines
+    var bylines by AuthorTable.bylines
 
     var outlets by OutletRow via OutletAuthorTable
 }
@@ -28,10 +28,10 @@ object OutletAuthorTable : CompositeIdTable("outlet_author") {
 
 fun AuthorRow.toData() = Author(
     id = this.id.value,
-    byLines = this.byLines.toSet(),
+    bylines = this.bylines.toSet(),
 )
 
 fun AuthorRow.fromData(author: Author, outletRow: OutletRow) {
     outlets = SizedCollection(outletRow)
-    byLines = author.byLines.toList()
+    bylines = author.bylines.toList()
 }

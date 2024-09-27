@@ -5,14 +5,15 @@ import kotlinx.datetime.UtcOffset
 import kotlinx.datetime.toInstant
 import kotlinx.datetime.toLocalDateTime
 import org.jetbrains.exposed.dao.EntityClass
-import org.jetbrains.exposed.dao.IntEntity
 import org.jetbrains.exposed.dao.id.EntityID
-import org.jetbrains.exposed.dao.id.IntIdTable
 import newsref.model.dto.UserInfo
 import newsref.db.models.User
+import org.jetbrains.exposed.dao.UUIDEntity
+import org.jetbrains.exposed.dao.id.UUIDTable
 import org.jetbrains.exposed.sql.kotlin.datetime.datetime
+import java.util.*
 
-object UserTable : IntIdTable("user") {
+object UserTable : UUIDTable("user") {
     val name = text("name").nullable()
     val username = text("username")
     val hashedPassword = text("hashed_password")
@@ -25,8 +26,8 @@ object UserTable : IntIdTable("user") {
     val updatedAt = datetime("updated_at")
 }
 
-class UserEntity(id: EntityID<Int>) : IntEntity(id) {
-    companion object : EntityClass<Int, UserEntity>(UserTable)
+class UserRow(id: EntityID<UUID>) : UUIDEntity(id) {
+    companion object : EntityClass<UUID, UserRow>(UserTable)
 
     var name by UserTable.name
     var username by UserTable.username
@@ -40,7 +41,7 @@ class UserEntity(id: EntityID<Int>) : IntEntity(id) {
     var updatedAt by UserTable.updatedAt
 }
 
-fun UserEntity.toData() = User(
+fun UserRow.toData() = User(
     this.id.value,
     this.name,
     this.username,
@@ -54,7 +55,7 @@ fun UserEntity.toData() = User(
     this.updatedAt.toInstant(UtcOffset.ZERO),
 )
 
-fun UserEntity.fromData(data: User) {
+fun UserRow.fromData(data: User) {
     name = data.name
     username = data.username
     hashedPassword = data.hashedPassword
@@ -67,7 +68,7 @@ fun UserEntity.fromData(data: User) {
     updatedAt = data.updatedAt.toLocalDateTime(TimeZone.UTC)
 }
 
-fun UserEntity.toInfo() = UserInfo(
+fun UserRow.toInfo() = UserInfo(
     this.username,
     this.roles,
     this.avatarUrl,

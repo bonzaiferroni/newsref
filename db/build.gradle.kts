@@ -1,4 +1,4 @@
-val exposedVersion: String by project
+val exposed_version: String by project
 val logback_version: String by project
 
 plugins {
@@ -13,12 +13,12 @@ kotlin {
             dependencies {
                 implementation(libs.kotlinx.serialization.json)
                 implementation(libs.kotlinx.datetime)
-                implementation("org.jetbrains.exposed:exposed-core:$exposedVersion")
-                implementation("org.jetbrains.exposed:exposed-crypt:$exposedVersion")
-                implementation("org.jetbrains.exposed:exposed-dao:$exposedVersion")
-                implementation("org.jetbrains.exposed:exposed-jdbc:$exposedVersion")
-                implementation("org.jetbrains.exposed:exposed-kotlin-datetime:$exposedVersion")
-                implementation("org.jetbrains.exposed:exposed-json:$exposedVersion")
+                implementation("org.jetbrains.exposed:exposed-core:$exposed_version")
+                implementation("org.jetbrains.exposed:exposed-crypt:$exposed_version")
+                implementation("org.jetbrains.exposed:exposed-dao:$exposed_version")
+                implementation("org.jetbrains.exposed:exposed-jdbc:$exposed_version")
+                implementation("org.jetbrains.exposed:exposed-kotlin-datetime:$exposed_version")
+                implementation("org.jetbrains.exposed:exposed-json:$exposed_version")
 
                 implementation("org.postgresql:postgresql:42.7.1")
 

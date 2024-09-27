@@ -18,7 +18,7 @@ object SessionTokenTable : IntIdTable() {
 class SessionTokenEntity(id: EntityID<Int>) : IntEntity(id) {
     companion object : IntEntityClass<SessionTokenEntity>(SessionTokenTable)
 
-    var user by UserEntity referencedOn SessionTokenTable.user
+    var user by UserRow referencedOn SessionTokenTable.user
     var token by SessionTokenTable.token
     var createdAt by SessionTokenTable.createdAt
     var expiresAt by SessionTokenTable.expiresAt
@@ -35,7 +35,7 @@ fun SessionTokenEntity.toData() = SessionToken(
 )
 
 fun SessionTokenEntity.fromData(data: SessionToken) {
-    user = UserEntity[data.userId]
+    user = UserRow[data.userId]
     token = data.token
     createdAt = data.createdAt
     expiresAt = data.expiresAt

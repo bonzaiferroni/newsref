@@ -13,7 +13,6 @@ import newsref.model.utils.getApexDomain
 import newsref.model.utils.removeQueryParameters
 import org.jetbrains.exposed.sql.and
 import org.jetbrains.exposed.sql.anyFrom
-import org.jetbrains.exposed.sql.json.contains
 import org.jetbrains.exposed.sql.lowerCase
 import org.jetbrains.exposed.sql.stringParam
 
@@ -29,10 +28,10 @@ class SourceService(
 
         // create author
         val authorRows = info.authors?.map { byLine ->
-            val authorRows = AuthorRow.find { (stringParam(byLine) eq anyFrom(AuthorTable.byLines)) }
+            val authorRows = AuthorRow.find { (stringParam(byLine) eq anyFrom(AuthorTable.bylines)) }
             authorRows.firstNotNullOfOrNull {
                 it.outlets.firstOrNull { it.id == outletRow.id }
-            } ?: AuthorRow.new { fromData(Author(byLines = setOf(byLine)), outletRow) }
+            } ?: AuthorRow.new { fromData(Author(bylines = setOf(byLine)), outletRow) }
         }
 
         // create Content
