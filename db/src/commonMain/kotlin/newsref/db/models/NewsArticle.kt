@@ -1,6 +1,10 @@
-package newsref.db.utils
+package newsref.db.models
 
 import kotlinx.serialization.Serializable
+import newsref.db.utils.ImageListSerializer
+import newsref.db.utils.KeywordListSerializer
+import newsref.db.utils.QuantitativeValueSerializer
+import newsref.db.utils.SingleOrArraySerializer
 
 @Serializable
 data class NewsArticle(
@@ -14,7 +18,8 @@ data class NewsArticle(
     val articleBody: String? = null,
     val articleSection: String? = null,
     val wordCount: Int? = null,
-    val keywords: String? = null,
+    @Serializable(KeywordListSerializer::class)
+    val keywords: List<String>? = null,
     val abstract: String? = null,
     val alternativeHeadline: String? = null,
     val description: String? = null,
@@ -22,8 +27,10 @@ data class NewsArticle(
     val isAccessibleForFree: Boolean? = null,
     val text: String? = null,
     val thumbnailUrl: String? = null,
-    @Serializable(SingleOrArraySerializer::class)
+    @Serializable(ImageListSerializer::class)
     val image: List<Image>? = null,
+    val inLanguage: String? = null,
+    val commentCount: Int? = null,
 )
 
 @Serializable
@@ -32,7 +39,8 @@ data class Author(
     val url: String? = null,
     val email: String? = null,
     val sameAs: String? = null,
-    val image: String? = null,
+    @Serializable(ImageListSerializer::class)
+    val image: List<Image>? = null,
 )
 
 @Serializable
@@ -48,13 +56,17 @@ data class Logo(
 
 @Serializable
 data class Image(
-    val width: QuantitativeValue,
-    val height: QuantitativeValue,
-    val url: String
+    @Serializable(QuantitativeValueSerializer::class)
+    val width: QuantitativeValue? = null,
+    @Serializable(QuantitativeValueSerializer::class)
+    val height: QuantitativeValue? = null,
+    val url: String? = null,
+    val caption: String? = null,
+    val creditText: String? = null,
 )
 
 @Serializable
 data class QuantitativeValue(
-    val unitCode: String,
-    val value: Int
+    val unitCode: String? = null,
+    val value: Int? = null,
 )

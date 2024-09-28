@@ -27,5 +27,12 @@ kotlin {
                 implementation(project(":model"))
             }
         }
+
+        // Define commonTest source set for shared test logic
+        val commonTest by getting {
+            dependencies {
+                implementation(kotlin("test")) // Includes kotlin.test assertions and test framework
+            }
+        }
     }
 }

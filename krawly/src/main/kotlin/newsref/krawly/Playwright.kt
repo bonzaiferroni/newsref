@@ -4,17 +4,18 @@ import com.microsoft.playwright.Browser
 import com.microsoft.playwright.BrowserType
 import com.microsoft.playwright.Page
 import com.microsoft.playwright.Playwright
+import newsref.db.utils.cacheResource
 import java.io.File
 
-fun pwFetch(url: String) = Playwright.create().use { playwright ->
+fun pwFetch(url: String): String = Playwright.create().use { playwright ->
     playwright.chromium().launch().use { browser ->
         val page = browser.newContext(contextOptions).newPage()
-        page.setViewportSize(1700, 728)
+        page.setViewportSize(1000, 728)
         page.setExtraHTTPHeaders(extraHeaders)
         page.navigate(url)
+
         val screenshot = page.screenshot(screenshotOptions)
-        val file = File("dump/lastpage.png")
-        file.writeBytes(screenshot)
+        screenshot.cacheResource(url, "png")
         page.content() // return
     }
 }
@@ -34,4 +35,5 @@ val extraHeaders = mutableMapOf(
 )
 val screenshotOptions = Page.ScreenshotOptions().apply {
     fullPage = true
+
 }

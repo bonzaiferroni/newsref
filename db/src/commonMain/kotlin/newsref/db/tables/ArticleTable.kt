@@ -13,6 +13,13 @@ object ArticleTable: LongIdTable("article") {
     val title = text("title")
     val description = text("description").nullable()
     val imageUrl = text("image_url").nullable()
+    val section = text("section").nullable()
+    val keywords = array<String>("keywords").nullable()
+    val wordCount = integer("word_count").nullable()
+    val isFree = bool("is_free").nullable()
+    val thumbnail = text("thumbnail").nullable()
+    val language = text("language").nullable()
+    val commentCount = integer("comment_count").nullable()
     val accessedAt = datetime("accessed_at")
     val publishedAt = datetime("published_at").nullable()
     val modifiedAt = datetime("modified_at").nullable()
@@ -26,6 +33,13 @@ class ArticleRow(id: EntityID<Long>) : LongEntity(id) {
     var title by ArticleTable.title
     var description by ArticleTable.description
     var imageUrl by ArticleTable.imageUrl
+    var section by ArticleTable.section
+    var keywords by ArticleTable.keywords
+    var wordCount by ArticleTable.wordCount
+    var isFree by ArticleTable.isFree
+    var thumbnail by ArticleTable.thumbnail
+    var language by ArticleTable.language
+    var commentCount by ArticleTable.commentCount
     var accessedAt by ArticleTable.accessedAt
     var publishedAt by ArticleTable.publishedAt
     var modifiedAt by ArticleTable.modifiedAt
@@ -37,6 +51,13 @@ fun ArticleRow.toData() = Article(
     headline = this.title,
     description = this.description,
     imageUrl = this.imageUrl,
+    section = this.section,
+    keywords = this.keywords,
+    wordCount = this.wordCount,
+    isFree = this.isFree,
+    thumbnail = this.thumbnail,
+    language = this.language,
+    commentCount = this.commentCount,
     accessedAt = this.accessedAt.toInstant(UtcOffset.ZERO),
     publishedAt = this.publishedAt?.toInstant(UtcOffset.ZERO),
     modifiedAt = this.modifiedAt?.toInstant(UtcOffset.ZERO)
@@ -47,6 +68,13 @@ fun ArticleRow.fromData(article: Article, sourceRow: SourceRow) {
     title = article.headline
     description = article.description
     imageUrl = article.imageUrl
+    section = article.section
+    keywords = article.keywords
+    wordCount = article.wordCount
+    isFree = article.isFree
+    thumbnail = article.thumbnail
+    language = article.language
+    commentCount = article.commentCount
     accessedAt = article.accessedAt.toLocalDateTime(TimeZone.UTC)
     publishedAt = article.publishedAt?.toLocalDateTime(TimeZone.UTC)
     modifiedAt = article.modifiedAt?.toLocalDateTime(TimeZone.UTC)

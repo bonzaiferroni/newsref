@@ -5,19 +5,21 @@ import it.skrape.selects.DocElement
 import it.skrape.selects.ElementNotFoundException
 import kotlinx.datetime.Clock
 import kotlinx.serialization.json.Json
-import newsref.db.utils.NewsArticle
+import newsref.db.models.NewsArticle
 import newsref.model.dto.SourceInfo
 import kotlinx.datetime.Instant
+import newsref.db.utils.cacheResource
+import newsref.db.utils.cacheSerializable
 import newsref.db.utils.tryParse
 import newsref.krawly.utils.wordCount
 import newsref.model.data.*
 import newsref.model.dto.LinkInfo
+import newsref.model.utils.getApexDomain
 import java.io.File
 
 fun read(leadUrl: String): SourceInfo {
     val document = fetch(leadUrl)
-    val file = File("dump/lastpage.html")
-    file.writeText(document.html)
+    document.html.cacheResource(leadUrl, "html")
     println("Reader: reading document")
     return document.readByElements(leadUrl)
 }
@@ -54,7 +56,10 @@ fun Doc.scanElements(leadUrl: String, elements: List<DocElement>): SourceInfo {
             }
         }
     }
-    println("Reader: NewsArticle: ${newsArticle != null}")
+    if (newsArticle == null) {
+        println("Reader: NewsArticle was null")
+    }
+    newsArticle?.cacheSerializable(leadUrl, "news_article")
     return SourceInfo(
         leadUrl = leadUrl,
         outletName = this.readOutletName() ?: newsArticle?.publisher?.name,
@@ -67,13 +72,17 @@ fun Doc.scanElements(leadUrl: String, elements: List<DocElement>): SourceInfo {
             headline = this.readHeadline() ?: newsArticle?.headline ?: h1Title ?: this.titleText,
             alternativeHeadline = newsArticle?.alternativeHeadline,
             description = this.readDescription() ?: newsArticle?.description,
+            imageUrl = this.readImageUrl() ?: newsArticle?.image?.firstOrNull()?.url,
             section = newsArticle?.articleSection,
             keywords = newsArticle?.keywords,
-            imageUrl = this.readImageUrl() ?: newsArticle?.image?.firstOrNull()?.url,
+            wordCount = newsArticle?.wordCount ?: wordCount,
+            isFree = newsArticle?.isAccessibleForFree,
+            thumbnail = newsArticle?.thumbnailUrl,
+            language = newsArticle?.inLanguage,
+            commentCount = newsArticle?.commentCount,
             accessedAt = Clock.System.now(),
             publishedAt = this.readPublishedAt() ?: newsArticle?.readPublishedAt(),
-            modifiedAt = this.readModifiedAt() ?: newsArticle?.readModifiedAt(),
-            wordCount = newsArticle?.wordCount ?: wordCount
+            modifiedAt = this.readModifiedAt() ?: newsArticle?.readModifiedAt()
         ),
         contents = contents,
         links = links,

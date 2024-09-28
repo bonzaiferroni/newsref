@@ -1,0 +1,128 @@
+{
+    "@context": "https://schema.org",
+    "image": [
+        "https://www.reuters.com/resizer/v2/A2HY4CEQ45PPDBLZFS3GO2JT2E.jpg?auth=ada07a2e57e2244dfa09a22ed5a63349da8701f16cd0a6b6a521b7c68569e046&height=1005&width=1920&quality=80&smart=true",
+        "https://www.reuters.com/resizer/v2/A2HY4CEQ45PPDBLZFS3GO2JT2E.jpg?auth=ada07a2e57e2244dfa09a22ed5a63349da8701f16cd0a6b6a521b7c68569e046&height=628&width=1200&quality=80&smart=true",
+        "https://www.reuters.com/resizer/v2/A2HY4CEQ45PPDBLZFS3GO2JT2E.jpg?auth=ada07a2e57e2244dfa09a22ed5a63349da8701f16cd0a6b6a521b7c68569e046&height=1920&width=1920&quality=80&smart=true",
+        "https://www.reuters.com/resizer/v2/A2HY4CEQ45PPDBLZFS3GO2JT2E.jpg?auth=ada07a2e57e2244dfa09a22ed5a63349da8701f16cd0a6b6a521b7c68569e046&height=1200&width=1200&quality=80&smart=true",
+        "https://www.reuters.com/resizer/v2/A2HY4CEQ45PPDBLZFS3GO2JT2E.jpg?auth=ada07a2e57e2244dfa09a22ed5a63349da8701f16cd0a6b6a521b7c68569e046&height=2400&width=1920&quality=80&smart=true",
+        "https://www.reuters.com/resizer/v2/A2HY4CEQ45PPDBLZFS3GO2JT2E.jpg?auth=ada07a2e57e2244dfa09a22ed5a63349da8701f16cd0a6b6a521b7c68569e046&height=1500&width=1200&quality=80&smart=true"
+    ],
+    "@type": "NewsArticle",
+    "mainEntityOfPage": {
+        "@type": "WebPage",
+        "@id": "https://www.reuters.com/world/middle-east/israel-continue-ceasefire-discussions-lebanon-netanyahu-says-2024-09-27/"
+    },
+    "articleSection": "Middle East",
+    "keywords": [
+        "RULES:ISRAEL-PALESTINIANS",
+        "RULES:HEADLINEROW-TOP",
+        "MTVID",
+        "MTGFX",
+        "MTPIX",
+        "TOPNWS",
+        "AID",
+        "CWP",
+        "DIP",
+        "DLI",
+        "GEN",
+        "INTAG",
+        "MPOP",
+        "NEWS1",
+        "POL",
+        "RACR",
+        "SECUR",
+        "SOCI",
+        "TOPCMB",
+        "UN1",
+        "VIO",
+        "WAR",
+        "IL",
+        "AMERS",
+        "SWASIA",
+        "US",
+        "MEAST",
+        "NAMER",
+        "EMEA",
+        "ASXPAC",
+        "PS",
+        "EMRG",
+        "ASIA",
+        "LB",
+        "SY",
+        "PACKAGE:US-TOP-NEWS",
+        "PACKAGE:WORLD-NEWS",
+        "UNHCR",
+        "AER",
+        "AERO",
+        "INDG",
+        "INDG08",
+        "INDS",
+        "INDS08",
+        "TGLF",
+        "IR"
+    ],
+    "headline": "Israeli airstrikes rock Beirut, target Hezbollah command",
+    "description": "The Israeli military told residents in parts of Beirut's southern suburbs to evacuate late on Friday, after strikes that it said had targeted Hezbollah's central headquarters and with no word hours later from the group on the fate of their head Sayyed Hassan Nasrallah.",
+    "dateCreated": "2024-09-27T08:45:26.324Z",
+    "datePublished": "2024-09-27T08:45:26.324Z",
+    "dateModified": "2024-09-27T23:58:39.566Z",
+    "author": [
+        {
+            "@type": "Person",
+            "name": "Maya Gebeily",
+            "sameAs": "https://www.reuters.com/authors/maya-gebeily/",
+            "image": [
+                "https://www.reuters.com/resizer/v2/https%3A%2F%2Fcloudfront-us-east-2.images.arcpublishing.com%2Freuters%2F4QXBW6RP45FBRHDZQXLNRGX5UY.jpg?auth=e1772941ce808f8ae868041cda5dcfc1b331c1a72daa0dd1981d9596d7332199&height=1005&width=1920&quality=80&smart=true",
+                "https://www.reuters.com/resizer/v2/https%3A%2F%2Fcloudfront-us-east-2.images.arcpublishing.com%2Freuters%2F4QXBW6RP45FBRHDZQXLNRGX5UY.jpg?auth=e1772941ce808f8ae868041cda5dcfc1b331c1a72daa0dd1981d9596d7332199&height=628&width=1200&quality=80&smart=true",
+                "https://www.reuters.com/resizer/v2/https%3A%2F%2Fcloudfront-us-east-2.images.arcpublishing.com%2Freuters%2F4QXBW6RP45FBRHDZQXLNRGX5UY.jpg?auth=e1772941ce808f8ae868041cda5dcfc1b331c1a72daa0dd1981d9596d7332199&height=1920&width=1920&quality=80&smart=true",
+                "https://www.reuters.com/resizer/v2/https%3A%2F%2Fcloudfront-us-east-2.images.arcpublishing.com%2Freuters%2F4QXBW6RP45FBRHDZQXLNRGX5UY.jpg?auth=e1772941ce808f8ae868041cda5dcfc1b331c1a72daa0dd1981d9596d7332199&height=1200&width=1200&quality=80&smart=true",
+                "https://www.reuters.com/resizer/v2/https%3A%2F%2Fcloudfront-us-east-2.images.arcpublishing.com%2Freuters%2F4QXBW6RP45FBRHDZQXLNRGX5UY.jpg?auth=e1772941ce808f8ae868041cda5dcfc1b331c1a72daa0dd1981d9596d7332199&height=2400&width=1920&quality=80&smart=true",
+                "https://www.reuters.com/resizer/v2/https%3A%2F%2Fcloudfront-us-east-2.images.arcpublishing.com%2Freuters%2F4QXBW6RP45FBRHDZQXLNRGX5UY.jpg?auth=e1772941ce808f8ae868041cda5dcfc1b331c1a72daa0dd1981d9596d7332199&height=1500&width=1200&quality=80&smart=true"
+            ]
+        },
+        {
+            "@type": "Person",
+            "name": "Tom Perry",
+            "sameAs": "https://www.reuters.com/authors/tom-perry/",
+            "image": [
+                "https://www.reuters.com/resizer/v2/https%3A%2F%2Fcloudfront-us-east-2.images.arcpublishing.com%2Freuters%2F4QXBW6RP45FBRHDZQXLNRGX5UY.jpg?auth=e1772941ce808f8ae868041cda5dcfc1b331c1a72daa0dd1981d9596d7332199&height=1005&width=1920&quality=80&smart=true",
+                "https://www.reuters.com/resizer/v2/https%3A%2F%2Fcloudfront-us-east-2.images.arcpublishing.com%2Freuters%2F4QXBW6RP45FBRHDZQXLNRGX5UY.jpg?auth=e1772941ce808f8ae868041cda5dcfc1b331c1a72daa0dd1981d9596d7332199&height=628&width=1200&quality=80&smart=true",
+                "https://www.reuters.com/resizer/v2/https%3A%2F%2Fcloudfront-us-east-2.images.arcpublishing.com%2Freuters%2F4QXBW6RP45FBRHDZQXLNRGX5UY.jpg?auth=e1772941ce808f8ae868041cda5dcfc1b331c1a72daa0dd1981d9596d7332199&height=1920&width=1920&quality=80&smart=true",
+                "https://www.reuters.com/resizer/v2/https%3A%2F%2Fcloudfront-us-east-2.images.arcpublishing.com%2Freuters%2F4QXBW6RP45FBRHDZQXLNRGX5UY.jpg?auth=e1772941ce808f8ae868041cda5dcfc1b331c1a72daa0dd1981d9596d7332199&height=1200&width=1200&quality=80&smart=true",
+                "https://www.reuters.com/resizer/v2/https%3A%2F%2Fcloudfront-us-east-2.images.arcpublishing.com%2Freuters%2F4QXBW6RP45FBRHDZQXLNRGX5UY.jpg?auth=e1772941ce808f8ae868041cda5dcfc1b331c1a72daa0dd1981d9596d7332199&height=2400&width=1920&quality=80&smart=true",
+                "https://www.reuters.com/resizer/v2/https%3A%2F%2Fcloudfront-us-east-2.images.arcpublishing.com%2Freuters%2F4QXBW6RP45FBRHDZQXLNRGX5UY.jpg?auth=e1772941ce808f8ae868041cda5dcfc1b331c1a72daa0dd1981d9596d7332199&height=1500&width=1200&quality=80&smart=true"
+            ]
+        },
+        {
+            "@type": "Person",
+            "name": "Emily Rose",
+            "sameAs": "https://www.reuters.com/authors/emily-rose/",
+            "image": [
+                "https://www.reuters.com/resizer/v2/https%3A%2F%2Fcloudfront-us-east-2.images.arcpublishing.com%2Freuters%2F4QXBW6RP45FBRHDZQXLNRGX5UY.jpg?auth=e1772941ce808f8ae868041cda5dcfc1b331c1a72daa0dd1981d9596d7332199&height=1005&width=1920&quality=80&smart=true",
+                "https://www.reuters.com/resizer/v2/https%3A%2F%2Fcloudfront-us-east-2.images.arcpublishing.com%2Freuters%2F4QXBW6RP45FBRHDZQXLNRGX5UY.jpg?auth=e1772941ce808f8ae868041cda5dcfc1b331c1a72daa0dd1981d9596d7332199&height=628&width=1200&quality=80&smart=true",
+                "https://www.reuters.com/resizer/v2/https%3A%2F%2Fcloudfront-us-east-2.images.arcpublishing.com%2Freuters%2F4QXBW6RP45FBRHDZQXLNRGX5UY.jpg?auth=e1772941ce808f8ae868041cda5dcfc1b331c1a72daa0dd1981d9596d7332199&height=1920&width=1920&quality=80&smart=true",
+                "https://www.reuters.com/resizer/v2/https%3A%2F%2Fcloudfront-us-east-2.images.arcpublishing.com%2Freuters%2F4QXBW6RP45FBRHDZQXLNRGX5UY.jpg?auth=e1772941ce808f8ae868041cda5dcfc1b331c1a72daa0dd1981d9596d7332199&height=1200&width=1200&quality=80&smart=true",
+                "https://www.reuters.com/resizer/v2/https%3A%2F%2Fcloudfront-us-east-2.images.arcpublishing.com%2Freuters%2F4QXBW6RP45FBRHDZQXLNRGX5UY.jpg?auth=e1772941ce808f8ae868041cda5dcfc1b331c1a72daa0dd1981d9596d7332199&height=2400&width=1920&quality=80&smart=true",
+                "https://www.reuters.com/resizer/v2/https%3A%2F%2Fcloudfront-us-east-2.images.arcpublishing.com%2Freuters%2F4QXBW6RP45FBRHDZQXLNRGX5UY.jpg?auth=e1772941ce808f8ae868041cda5dcfc1b331c1a72daa0dd1981d9596d7332199&height=1500&width=1200&quality=80&smart=true"
+            ]
+        }
+    ],
+    "isAccessibleForFree": false,
+    "hasPart": {
+        "@type": "WebPageElement",
+        "isAccessibleForFree": false,
+        "cssSelector": ".paywall"
+    },
+    "video": {
+        "@type": "VideoObject",
+        "name": "Israeli airstrikes rock Beirut, target Hezbollah command",
+        "description": "The Israeli military said it had targeted Hezbollah's central headquarters in Beirut's southern suburbs on Friday (September 27) in an attack that shook the Lebanese capital and sent thick clouds of smoke over the city. Emma Jehle produced this report.",
+        "datePublished": "2024-09-27T21:42:33Z",
+        "dateModified": "2024-09-27T22:02:46Z",
+        "thumbnailUrl": "https://ajo.prod.reuters.tv/api/v2/img/66f726cae4b0c105f5acf85b",
+        "duration": "P2M4.6370000000000005S",
+        "uploadDate": "2024-09-27T22:02:46Z",
+        "embedUrl": "https://ajo.prod.reuters.tv/v3/playlist/654387/master.m3u8"
+    }
+}

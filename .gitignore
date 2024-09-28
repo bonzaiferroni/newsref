@@ -23,6 +23,7 @@ test.trace.db
 backup.json
 /www/uploads
 /dump
+/cache
 
 **/.kotlin-js-store/
 
