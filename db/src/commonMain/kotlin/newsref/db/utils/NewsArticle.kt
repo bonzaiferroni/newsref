@@ -29,8 +29,10 @@ data class NewsArticle(
 @Serializable
 data class Author(
     val name: String? = null,
+    val url: String? = null,
     val email: String? = null,
     val sameAs: String? = null,
+    val image: String? = null,
 )
 
 @Serializable
@@ -50,8 +52,6 @@ data class Image(
     val height: QuantitativeValue,
     val url: String
 )
-
-@Serializable
 data class QuantitativeValue(
     val unitCode: String,
     val value: Int
