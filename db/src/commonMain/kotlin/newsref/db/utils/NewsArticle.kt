@@ -52,6 +52,8 @@ data class Image(
     val height: QuantitativeValue,
     val url: String
 )
+
+@Serializable
 data class QuantitativeValue(
     val unitCode: String,
     val value: Int
