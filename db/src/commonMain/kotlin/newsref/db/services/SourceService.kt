@@ -54,14 +54,14 @@ class SourceService(
         leadRow.source = sourceRow
 
         // exit here if not news article
-        val document = info.document
+        val document = info.article
         if (document == null || sourceRow.type != SourceType.ARTICLE)
             return@dbQuery sourceRow.id.value
 
         // create or update document
-        val documentRow = DocumentRow.find { DocumentTable.sourceId eq sourceRow.id }.firstOrNull()
+        val articleRow = ArticleRow.find { ArticleTable.sourceId eq sourceRow.id }.firstOrNull()
             ?. fromData(document, sourceRow)
-            ?: DocumentRow.new { fromData(document, sourceRow) }
+            ?: ArticleRow.new { fromData(document, sourceRow) }
 
         val linkRows = info.links.map { link ->
             val linkUrl = link.url.removeQueryParameters(urlParams)

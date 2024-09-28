@@ -1,61 +1,58 @@
 package newsref.db.utils
 
-import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 
 @Serializable
 data class NewsArticle(
-    val publisher: Publisher,
-    // val stnMeta: StnMeta,
-    val headline: String,
-    // val url: String,
-    // val mainEntityOfPage: String,
-    val dateModified: String,
-    val datePublished: String,
-    // val identifier: Long,
-    // val thumbnailUrl: String,
-    // val image: String,
-    // val keywords: List<String>,
-    val articleSection: String,
-    val description: String,
-    val author: List<Author>,
-    // val isAccessibleForFree: Boolean,
-    // val hasPart: HasPart
-)
-
-@Serializable
-data class Publisher(
-    val logo: Logo,
-    val name: String
-)
-
-@Serializable
-data class Logo(
-    val url: String
-)
-
-@Serializable
-data class StnMeta(
-    val bmb: String,
-    val campaign: String,
-    val ch: String,
-    val cid: String,
-    val franchise: String,
-    val permutive: List<String>,
-    val tags: List<String>,
-    val topics: List<String>
+    val dateline: String? = null,
+    val headline: String? = null,
+    val datePublished: String? = null,
+    val dateModified: String? = null,
+    @Serializable(with = SingleOrArraySerializer::class)
+    val author: List<Author>? = null,
+    val publisher: Publisher? = null,
+    val articleBody: String? = null,
+    val articleSection: String? = null,
+    val wordCount: Int? = null,
+    val keywords: String? = null,
+    val abstract: String? = null,
+    val alternativeHeadline: String? = null,
+    val description: String? = null,
+    val url: String? = null,
+    val isAccessibleForFree: Boolean? = null,
+    val text: String? = null,
+    val thumbnailUrl: String? = null,
+    @Serializable(with = SingleOrArraySerializer::class)
+    val image: List<Image>? = null,
 )
 
 @Serializable
 data class Author(
-    val name: String,
-    val url: String,
+    val name: String? = null,
     val email: String? = null,
-    val image: String? = null
+    val sameAs: String? = null,
 )
 
 @Serializable
-data class HasPart(
-    val cssSelector: String,
-    val isAccessibleForFree: String
+data class Publisher(
+    val name: String? = null,
+    val logo: Logo? = null
+)
+
+@Serializable
+data class Logo(
+    val url: String? = null
+)
+
+@Serializable
+data class Image(
+    val width: QuantitativeValue,
+    val height: QuantitativeValue,
+    val url: String
+)
+
+@Serializable
+data class QuantitativeValue(
+    val unitCode: String,
+    val value: Int
 )

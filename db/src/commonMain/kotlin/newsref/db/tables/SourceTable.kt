@@ -31,7 +31,7 @@ class SourceRow(id: EntityID<Long>) : LongEntity(id) {
     var attemptedAt by SourceTable.attemptedAt
 
     val links by LinkRow referrersOn LinkTable.sourceId
-    val document by DocumentRow referrersOn DocumentTable.sourceId
+    val document by ArticleRow referrersOn ArticleTable.sourceId
 }
 
 fun SourceRow.toData() = Source(

@@ -6,8 +6,11 @@ import org.jetbrains.exposed.dao.id.EntityID
 import org.jetbrains.exposed.dao.id.IntIdTable
 import org.jetbrains.exposed.sql.ReferenceOption
 import newsref.db.models.SessionToken
+import org.jetbrains.exposed.dao.LongEntity
+import org.jetbrains.exposed.dao.LongEntityClass
+import org.jetbrains.exposed.dao.id.LongIdTable
 
-object SessionTokenTable : IntIdTable() {
+object SessionTokenTable : LongIdTable() {
     val user = reference("user_id", UserTable, onDelete = ReferenceOption.CASCADE)
     val token = text("token")
     val createdAt = long("created_at")
@@ -15,8 +18,8 @@ object SessionTokenTable : IntIdTable() {
     val issuer = text("issuer")
 }
 
-class SessionTokenEntity(id: EntityID<Int>) : IntEntity(id) {
-    companion object : IntEntityClass<SessionTokenEntity>(SessionTokenTable)
+class SessionTokenEntity(id: EntityID<Long>) : LongEntity(id) {
+    companion object : LongEntityClass<SessionTokenEntity>(SessionTokenTable)
 
     var user by UserRow referencedOn SessionTokenTable.user
     var token by SessionTokenTable.token

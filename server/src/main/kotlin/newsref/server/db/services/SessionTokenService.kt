@@ -8,7 +8,7 @@ import newsref.db.tables.SessionTokenTable.token
 import newsref.db.tables.fromData
 import newsref.db.tables.toData
 
-class SessionTokenService : DataService<SessionToken, Int, SessionTokenEntity>(
+class SessionTokenService : DataService<SessionToken, Long, SessionTokenEntity>(
     SessionTokenEntity,
     {token -> token.id},
     SessionTokenEntity::fromData,

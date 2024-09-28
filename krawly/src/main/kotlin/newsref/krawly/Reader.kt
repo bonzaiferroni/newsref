@@ -9,11 +9,15 @@ import newsref.db.utils.NewsArticle
 import newsref.model.dto.SourceInfo
 import kotlinx.datetime.Instant
 import newsref.db.utils.tryParse
+import newsref.krawly.utils.wordCount
 import newsref.model.data.*
 import newsref.model.dto.LinkInfo
+import java.io.File
 
 fun read(leadUrl: String): SourceInfo {
     val document = fetch(leadUrl)
+    val file = File("dump/lastpage.html")
+    file.writeText(document.html)
     println("Reader: reading document")
     return document.readByElements(leadUrl)
 }
@@ -31,6 +35,7 @@ fun Doc.scanElements(leadUrl: String, elements: List<DocElement>): SourceInfo {
     val links = mutableListOf<LinkInfo>()
     var newsArticle = this.findFirstOrNull("script#json-schema")?.readNewsArticle()
     var h1Title: String? = null
+    var wordCount = 0
     elements.forEach {
         if (newsArticle == null && it.tagName == "script" && it.html.contains("NewsArticle")) {
             newsArticle = it.readNewsArticle()
@@ -43,30 +48,36 @@ fun Doc.scanElements(leadUrl: String, elements: List<DocElement>): SourceInfo {
         }
         if (it.isContent()) {
             contents.add(it.text)
+            wordCount += it.text.wordCount()
             it.eachLink.forEach { (text, url) ->
                 links.add(LinkInfo(url = url, urlText = text, context = it.text))
             }
         }
     }
+    println("Reader: NewsArticle: ${newsArticle != null}")
     return SourceInfo(
         leadUrl = leadUrl,
         outletName = this.readOutletName() ?: newsArticle?.publisher?.name,
         source = Source(
-            url = this.readUrl() ?: leadUrl,
-            type = this.readType(),
+            url = this.readUrl() ?: newsArticle?.url ?: leadUrl,
+            type = newsArticle?.let { SourceType.ARTICLE } ?: this.readType(),
             attemptedAt = Clock.System.now()
         ),
-        document = Document(
-            title = this.readTitle() ?: h1Title ?: this.titleText,
-            description = this.readDescription(),
-            imageUrl = this.readImageUrl(),
+        article = Article(
+            headline = this.readHeadline() ?: newsArticle?.headline ?: h1Title ?: this.titleText,
+            alternativeHeadline = newsArticle?.alternativeHeadline,
+            description = this.readDescription() ?: newsArticle?.description,
+            section = newsArticle?.articleSection,
+            keywords = newsArticle?.keywords,
+            imageUrl = this.readImageUrl() ?: newsArticle?.image?.firstOrNull()?.url,
             accessedAt = Clock.System.now(),
             publishedAt = this.readPublishedAt() ?: newsArticle?.readPublishedAt(),
-            modifiedAt = this.readModifiedAt() ?: newsArticle?.readModifiedAt()
+            modifiedAt = this.readModifiedAt() ?: newsArticle?.readModifiedAt(),
+            wordCount = newsArticle?.wordCount ?: wordCount
         ),
         contents = contents,
         links = links,
-        authors = readAuthor()?.let { setOf(it) }
+        authors = (this.readAuthor() ?: newsArticle?.readAuthor())?.let { setOf(it) }
     )
 }
 
@@ -94,7 +105,7 @@ fun Doc.findFirstOrNull(cssSelector: String): DocElement? = try {
 }
 
 fun Doc.readUrl() = this.readMetaContent("url", "og:url", "twitter:url")
-fun Doc.readTitle() = this.readMetaContent("title", "og:title", "twitter:title")
+fun Doc.readHeadline() = this.readMetaContent("title", "og:title", "twitter:title")
 fun Doc.readDescription() = this.readMetaContent("description", "og:description", "twitter:description")
 fun Doc.readImageUrl() = this.readMetaContent("image", "og:image", "twitter:image")
 fun Doc.readOutletName() = this.readMetaContent("site", "og:site_name", "twitter:site")
@@ -103,8 +114,9 @@ fun Doc.readAuthor() = this.readMetaContent("author", "article:author", "og:arti
 fun Doc.readPublishedAt() = this.readMetaContent("date", "article:published_time")?.let { Instant.tryParse(it) }
 fun Doc.readModifiedAt() = this.readMetaContent("last-modified", "article:modified_time")?.let { Instant.tryParse(it) }
 
-fun NewsArticle.readPublishedAt() = this.datePublished.let { Instant.tryParse(it) }
-fun NewsArticle.readModifiedAt() = this.dateModified.let { Instant.tryParse(it) }
+fun NewsArticle.readPublishedAt() = this.datePublished?.let { Instant.tryParse(it) }
+fun NewsArticle.readModifiedAt() = this.dateModified?.let { Instant.tryParse(it) }
+fun NewsArticle.readAuthor() = this.author?.firstOrNull()?.name
 
 fun DocElement.readNewsArticle() = html
     .removePrefix("//<![CDATA[")
