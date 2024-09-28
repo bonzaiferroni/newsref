@@ -2,7 +2,7 @@ package newsref.db.models
 
 import kotlinx.datetime.Instant
 import kotlinx.serialization.Serializable
-import newsref.db.utils.UUIDSerializer
+import newsref.db.serializers.UUIDSerializer
 import newsref.model.dto.PrivateInfo
 import java.util.*
 

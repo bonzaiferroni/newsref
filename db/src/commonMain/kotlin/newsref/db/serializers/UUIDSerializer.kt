@@ -1,4 +1,4 @@
-package newsref.db.utils
+package newsref.db.serializers
 
 import kotlinx.serialization.KSerializer
 import kotlinx.serialization.descriptors.PrimitiveKind

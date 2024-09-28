@@ -35,12 +35,12 @@ fun Doc.readyBySelector(url: String): SourceInfo {
 fun Doc.scanElements(leadUrl: String, elements: List<DocElement>): SourceInfo {
     val contents = mutableSetOf<String>()
     val links = mutableListOf<LinkInfo>()
-    var newsArticle = this.findFirstOrNull("script#json-schema")?.readNewsArticle()
+    var newsArticle = this.findFirstOrNull("script#json-schema")?.readNewsArticle(leadUrl)
     var h1Title: String? = null
     var wordCount = 0
     elements.forEach {
         if (newsArticle == null && it.tagName == "script" && it.html.contains("NewsArticle")) {
-            newsArticle = it.readNewsArticle()
+            newsArticle = it.readNewsArticle(leadUrl)
         }
         if (it.isLinkContent()) return@forEach
         if (it.isHeading()) {
@@ -95,7 +95,7 @@ private val contentMarkers = setOf('.', '?', '!', ',')
 
 fun DocElement.isHeading() = tagName in headingTags
 
-fun DocElement.isContent() = tagName == "p" && text.any { it in contentMarkers }
+fun DocElement.isContent() = (tagName == "p" || tagName == "li") && text.any { it in contentMarkers }
 
 fun DocElement.isLinkContent() =
     this.eachLink.keys.firstOrNull()?.let { it == this.text } ?: false
@@ -127,7 +127,7 @@ fun NewsArticle.readPublishedAt() = this.datePublished?.let { Instant.tryParse(i
 fun NewsArticle.readModifiedAt() = this.dateModified?.let { Instant.tryParse(it) }
 fun NewsArticle.readAuthor() = this.author?.firstOrNull()?.name
 
-fun DocElement.readNewsArticle() = html
+fun DocElement.readNewsArticle(url: String) = html
     .removePrefix("//<![CDATA[")
     .removeSuffix("//]]>")
     .trim()
@@ -135,8 +135,7 @@ fun DocElement.readNewsArticle() = html
         try {
             json.decodeFromString<NewsArticle>(it);
         } catch (e: Exception) {
-            println(e)
-            println(it)
+            it.cacheResource(url, "json")
             null
         }
     }

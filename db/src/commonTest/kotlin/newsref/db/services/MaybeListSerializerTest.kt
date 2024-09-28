@@ -1,12 +1,12 @@
 package newsref.db.services
 
-import newsref.db.utils.QuantitativeValueSerializer
+import newsref.db.serializers.QuantitativeValueSerializer
 import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlinx.serialization.json.Json
 import newsref.db.models.Image
 import newsref.db.models.QuantitativeValue
-import newsref.db.utils.ImageListSerializer
+import newsref.db.serializers.ImageListSerializer
 
 class MaybeListSerializerTest {
 
