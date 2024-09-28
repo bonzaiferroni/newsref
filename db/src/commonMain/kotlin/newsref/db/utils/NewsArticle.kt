@@ -8,7 +8,7 @@ data class NewsArticle(
     val headline: String? = null,
     val datePublished: String? = null,
     val dateModified: String? = null,
-    @Serializable(with = SingleOrArraySerializer::class)
+    @Serializable(SingleOrArraySerializer::class)
     val author: List<Author>? = null,
     val publisher: Publisher? = null,
     val articleBody: String? = null,
@@ -22,7 +22,7 @@ data class NewsArticle(
     val isAccessibleForFree: Boolean? = null,
     val text: String? = null,
     val thumbnailUrl: String? = null,
-    @Serializable(with = SingleOrArraySerializer::class)
+    @Serializable(SingleOrArraySerializer::class)
     val image: List<Image>? = null,
 )
 

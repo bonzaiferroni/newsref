@@ -16,7 +16,8 @@ class SingleOrArraySerializer<T : Any>(private val elementSerializer: KSerialize
     }
 
     override fun serialize(encoder: Encoder, value: List<T>) {
-        val jsonEncoder = encoder as? JsonEncoder ?: throw SerializationException("This class can be saved only by Json")
+        val jsonEncoder = encoder as? JsonEncoder
+            ?: throw SerializationException("This class can be saved only by Json")
         val jsonElement = if (value.size == 1) {
             jsonEncoder.json.encodeToJsonElement(elementSerializer, value[0])
         } else {
@@ -26,9 +27,9 @@ class SingleOrArraySerializer<T : Any>(private val elementSerializer: KSerialize
     }
 
     override fun deserialize(decoder: Decoder): List<T> {
-        val jsonDecoder = decoder as? JsonDecoder ?: throw SerializationException("This class can be loaded only by Json")
-        val jsonElement = jsonDecoder.decodeJsonElement()
-        return when (jsonElement) {
+        val jsonDecoder = decoder as? JsonDecoder
+            ?: throw SerializationException("This class can be loaded only by Json")
+        return when (val jsonElement = jsonDecoder.decodeJsonElement()) {
             is JsonArray -> jsonDecoder.json.decodeFromJsonElement(ListSerializer(elementSerializer), jsonElement)
             is JsonObject -> listOf(jsonDecoder.json.decodeFromJsonElement(elementSerializer, jsonElement))
             else -> throw SerializationException("Unexpected JSON element")
