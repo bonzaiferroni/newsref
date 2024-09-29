@@ -3,7 +3,8 @@ package newsref.db.models
 import kotlin.test.Test
 import kotlin.test.assertNotNull
 import kotlinx.serialization.json.Json
-import newsref.db.resourcePath
+import newsref.db.serializers.readArrayOrObject
+import newsref.db.utils.resourcePath
 import java.io.File
 
 class NewsArticleTest {
@@ -12,12 +13,12 @@ class NewsArticleTest {
 
     @Test
     fun `test parse real-world NewsArticle JSON`() {
-        val resourcePath = "${resourcePath}/news_json"
+        val resourcePath = "${resourcePath}/json"
         val jsonFiles = File(resourcePath).listFiles { _, name -> name.endsWith(".json") } ?: return
 
         for (file in jsonFiles) {
             val jsonString = file.readText()
-            val result = json.decodeFromString(NewsArticle.serializer(), jsonString)
+            val result = jsonString.readArrayOrObject()
             assertNotNull(result, "Parsed NewsArticle object from ${file.name} should not be null")
         }
     }

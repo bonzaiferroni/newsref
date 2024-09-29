@@ -1,10 +1,12 @@
 package newsref.db.models
 
+import kotlinx.serialization.KSerializer
 import kotlinx.serialization.Serializable
-import newsref.db.serializers.ImageListSerializer
-import newsref.db.serializers.KeywordListSerializer
-import newsref.db.serializers.QuantitativeValueSerializer
-import newsref.db.serializers.SingleOrArraySerializer
+import kotlinx.serialization.SerializationException
+import kotlinx.serialization.json.Json
+import kotlinx.serialization.json.JsonArray
+import newsref.db.serializers.*
+import newsref.db.utils.cacheResource
 
 @Serializable
 data class NewsArticle(

@@ -8,14 +8,16 @@ import kotlinx.serialization.json.Json
 import newsref.db.models.NewsArticle
 import newsref.model.dto.SourceInfo
 import kotlinx.datetime.Instant
+import kotlinx.serialization.SerializationException
+import kotlinx.serialization.json.JsonArray
+import newsref.db.serializers.readArrayOrObject
+import newsref.db.tables.ScoopTable.html
 import newsref.db.utils.cacheResource
 import newsref.db.utils.cacheSerializable
 import newsref.db.utils.tryParse
 import newsref.krawly.utils.wordCount
 import newsref.model.data.*
 import newsref.model.dto.LinkInfo
-import newsref.model.utils.getApexDomain
-import java.io.File
 
 fun read(leadUrl: String): SourceInfo {
     val document = fetch(leadUrl)
@@ -35,12 +37,12 @@ fun Doc.readyBySelector(url: String): SourceInfo {
 fun Doc.scanElements(leadUrl: String, elements: List<DocElement>): SourceInfo {
     val contents = mutableSetOf<String>()
     val links = mutableListOf<LinkInfo>()
-    var newsArticle = this.findFirstOrNull("script#json-schema")?.readNewsArticle(leadUrl)
+    var newsArticle = this.findFirstOrNull("script#json-schema")?.html?.readNewsArticle(leadUrl)
     var h1Title: String? = null
     var wordCount = 0
     elements.forEach {
         if (newsArticle == null && it.tagName == "script" && it.html.contains("NewsArticle")) {
-            newsArticle = it.readNewsArticle(leadUrl)
+            newsArticle = it.html.readNewsArticle(leadUrl)
         }
         if (it.isLinkContent()) return@forEach
         if (it.isHeading()) {
@@ -113,6 +115,18 @@ fun Doc.findFirstOrNull(cssSelector: String): DocElement? = try {
     null
 }
 
+fun String.readNewsArticle(url: String): NewsArticle? = this
+    .removePrefix("//<![CDATA[")
+    .removeSuffix("//]]>")
+    .trim()
+    .let {
+        this.cacheResource(url, "json", "news_article_raw")
+        val article = it.readArrayOrObject()
+        if (article == null)
+            this.cacheResource(url, "json", "news_article_parsed")
+        article // return
+    }
+
 fun Doc.readUrl() = this.readMetaContent("url", "og:url", "twitter:url")
 fun Doc.readHeadline() = this.readMetaContent("title", "og:title", "twitter:title")
 fun Doc.readDescription() = this.readMetaContent("description", "og:description", "twitter:description")
@@ -126,18 +140,3 @@ fun Doc.readModifiedAt() = this.readMetaContent("last-modified", "article:modifi
 fun NewsArticle.readPublishedAt() = this.datePublished?.let { Instant.tryParse(it) }
 fun NewsArticle.readModifiedAt() = this.dateModified?.let { Instant.tryParse(it) }
 fun NewsArticle.readAuthor() = this.author?.firstOrNull()?.name
-
-fun DocElement.readNewsArticle(url: String) = html
-    .removePrefix("//<![CDATA[")
-    .removeSuffix("//]]>")
-    .trim()
-    .let {
-        try {
-            json.decodeFromString<NewsArticle>(it);
-        } catch (e: Exception) {
-            it.cacheResource(url, "json")
-            null
-        }
-    }
-
-private val json = Json { ignoreUnknownKeys = true }

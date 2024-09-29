@@ -2,18 +2,19 @@ package newsref.db.utils
 
 import kotlinx.serialization.json.Json
 import kotlinx.serialization.serializer
+import newsref.db.serializers.globalJson
 import newsref.model.utils.getApexDomain
 import java.io.File
 
 const val resourcePath = "cache"
 
-fun String.cacheResource(url: String, type: String): String {
+fun String.cacheResource(url: String, type: String, path: String? = null): String {
     val apex = url.getApexDomain()
     if (this.isBlank()) {
         println("cacheResource: found blank $type string from $apex")
         return this
     }
-    val file = File("$resourcePath/$type/$apex.$type")
+    val file = File("$resourcePath/${path ?: type}/$apex.$type")
     file.parentFile?.mkdirs() // Create missing directories if they don't exist
     if (!file.exists()) {
         file.writeText(this)
@@ -21,9 +22,9 @@ fun String.cacheResource(url: String, type: String): String {
     return this
 }
 
-fun ByteArray.cacheResource(url: String, type: String): ByteArray {
+fun ByteArray.cacheResource(url: String, type: String, path: String? = null): ByteArray {
     val apex = url.getApexDomain()
-    val file = File("$resourcePath/$type/$apex.$type")
+    val file = File("$resourcePath/${path ?: type}/$apex.$type")
     file.parentFile?.mkdirs() // Create missing directories if they don't exist
     if (!file.exists()) {
         file.writeBytes(this)
@@ -32,13 +33,13 @@ fun ByteArray.cacheResource(url: String, type: String): ByteArray {
 }
 
 // General function to cache any serializable object
-inline fun <reified T> T.cacheSerializable(url: String, type: String): T where T : Any {
+inline fun <reified T> T.cacheSerializable(url: String, type: String, path: String? = null): T where T : Any {
     val apex = url.getApexDomain()  // Assuming ye have this extension defined
-    val file = File("$resourcePath/$type/$apex.json")
+    val file = File("$resourcePath/${path ?: type}/$apex.json")
     file.parentFile?.mkdirs() // Create directories if they don't exist
 
     // Serialize object to JSON
-    val jsonString = Json.encodeToString(serializer(), this)
+    val jsonString = globalJson.encodeToString(serializer(), this)
 
     if (!file.exists()) {
         file.writeText(jsonString)
