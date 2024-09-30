@@ -5,11 +5,10 @@ import kotlinx.serialization.Serializable
 @Serializable
 data class Outlet(
     val id: Int = 0,
-    val apex: String = "",
     val name: String? = null,
-    val robotsTxt: String? = null,
-    val sitemapXml: String? = null,
-    val disallowed: Set<String> = emptySet(),
-    val domains: Set<String> = emptySet(),
+    val logo: String? = null,
+    val robotsTxt: String? = null,                      // initialize
+    val disallowed: Set<String>? = null,                // initialize
+    val domains: Set<String> = emptySet(),              // initialize
     val urlParams: Set<String> = emptySet(),
 )

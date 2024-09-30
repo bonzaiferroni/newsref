@@ -16,6 +16,7 @@ import org.jetbrains.exposed.sql.kotlin.datetime.datetime
 object SourceTable : LongIdTable("source") {
     val outletId = reference("outlet_id", OutletTable)
     val url = text("url")
+    val leadTitle = text("lead_title").nullable()
     val type = enumerationByName<SourceType>("source_type", 20)
     val attemptedAt = datetime("attempted_at")
 }
@@ -27,6 +28,7 @@ class SourceRow(id: EntityID<Long>) : LongEntity(id) {
     var contents by ContentRow via SourceContentTable
 
     var url by SourceTable.url
+    var leadTitle by SourceTable.leadTitle
     var type by SourceTable.type
     var attemptedAt by SourceTable.attemptedAt
 
@@ -37,6 +39,7 @@ class SourceRow(id: EntityID<Long>) : LongEntity(id) {
 fun SourceRow.toData() = Source(
     id = this.id.value,
     url = this.url,
+    leadTitle = this.leadTitle,
     type = this.type,
     attemptedAt = this.attemptedAt.toInstant(UtcOffset.ZERO)
 )
@@ -45,6 +48,7 @@ fun SourceRow.fromData(source: Source, outletRow: OutletRow, contentEntities: Li
     outlet = outletRow
     contents = SizedCollection(contentEntities)
     url = source.url
+    leadTitle = source.leadTitle
     type = source.type
     attemptedAt = source.attemptedAt.toLocalDateTime(TimeZone.UTC)
 }

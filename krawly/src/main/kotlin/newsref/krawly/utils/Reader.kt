@@ -1,48 +1,32 @@
-package newsref.krawly
+package newsref.krawly.utils
 
 import it.skrape.selects.Doc
 import it.skrape.selects.DocElement
 import it.skrape.selects.ElementNotFoundException
 import kotlinx.datetime.Clock
-import kotlinx.serialization.json.Json
 import newsref.db.models.NewsArticle
 import newsref.model.dto.SourceInfo
 import kotlinx.datetime.Instant
-import kotlinx.serialization.SerializationException
-import kotlinx.serialization.json.JsonArray
 import newsref.db.serializers.readArrayOrObject
-import newsref.db.tables.ScoopTable.html
 import newsref.db.utils.cacheResource
 import newsref.db.utils.cacheSerializable
 import newsref.db.utils.tryParse
-import newsref.krawly.utils.wordCount
 import newsref.model.data.*
 import newsref.model.dto.LinkInfo
 
-fun read(leadUrl: String): SourceInfo {
-    val document = fetch(leadUrl)
-    document.html.cacheResource(leadUrl, "html")
-    println("Reader: reading document")
-    return document.readByElements(leadUrl)
+fun Doc?.readFromLead(lead: Lead): SourceInfo {
+    return this.scanElements(lead, this?.allElements)
 }
 
-fun Doc.readByElements(url: String): SourceInfo {
-    return this.scanElements(url, allElements)
-}
-
-fun Doc.readyBySelector(url: String): SourceInfo {
-    return this.scanElements(url, this.findAll("div#article-content"))
-}
-
-fun Doc.scanElements(leadUrl: String, elements: List<DocElement>): SourceInfo {
+fun Doc?.scanElements(lead: Lead, elements: List<DocElement>?): SourceInfo {
     val contents = mutableSetOf<String>()
     val links = mutableListOf<LinkInfo>()
-    var newsArticle = this.findFirstOrNull("script#json-schema")?.html?.readNewsArticle(leadUrl)
+    var newsArticle = this?.findFirstOrNull("script#json-schema")?.html?.readNewsArticle(lead.url)
     var h1Title: String? = null
     var wordCount = 0
-    elements.forEach {
+    elements?.forEach {
         if (newsArticle == null && it.tagName == "script" && it.html.contains("NewsArticle")) {
-            newsArticle = it.html.readNewsArticle(leadUrl)
+            newsArticle = it.html.readNewsArticle(lead.url)
         }
         if (it.isLinkContent()) return@forEach
         if (it.isHeading()) {
@@ -58,19 +42,19 @@ fun Doc.scanElements(leadUrl: String, elements: List<DocElement>): SourceInfo {
             }
         }
     }
-    if (newsArticle == null) {
-        println("Reader: NewsArticle was null")
+    if (newsArticle != null) {
+        print("📜 ")
     }
-    newsArticle?.cacheSerializable(leadUrl, "news_article")
     return SourceInfo(
-        leadUrl = leadUrl,
-        outletName = this.readOutletName() ?: newsArticle?.publisher?.name,
+        leadUrl = lead.url,
+        outletName = this?.readOutletName() ?: newsArticle?.publisher?.name,
         source = Source(
-            url = this.readUrl() ?: newsArticle?.url ?: leadUrl,
-            type = newsArticle?.let { SourceType.ARTICLE } ?: this.readType(),
+            url = this?.readUrl() ?: newsArticle?.url ?: lead.url,
+            leadTitle = lead.headline,
+            type = newsArticle?.let { SourceType.ARTICLE } ?: this?.readType() ?: SourceType.UNKNOWN,
             attemptedAt = Clock.System.now()
         ),
-        article = Article(
+        article = if (this != null) Article(
             headline = this.readHeadline() ?: newsArticle?.headline ?: h1Title ?: this.titleText,
             alternativeHeadline = newsArticle?.alternativeHeadline,
             description = this.readDescription() ?: newsArticle?.description,
@@ -85,10 +69,10 @@ fun Doc.scanElements(leadUrl: String, elements: List<DocElement>): SourceInfo {
             accessedAt = Clock.System.now(),
             publishedAt = this.readPublishedAt() ?: newsArticle?.readPublishedAt(),
             modifiedAt = this.readModifiedAt() ?: newsArticle?.readModifiedAt()
-        ),
+        ) else null,
         contents = contents,
         links = links,
-        authors = (this.readAuthor() ?: newsArticle?.readAuthor())?.let { setOf(it) }
+        authors = (this?.readAuthor() ?: newsArticle?.readAuthor())?.let { setOf(it) }
     )
 }
 
@@ -124,7 +108,7 @@ fun String.readNewsArticle(url: String): NewsArticle? = this
         val article = it.readArrayOrObject()
         if (article == null)
             this.cacheResource(url, "json", "news_article_parsed")
-        article // return
+        return article // return
     }
 
 fun Doc.readUrl() = this.readMetaContent("url", "og:url", "twitter:url")

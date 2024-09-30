@@ -4,10 +4,7 @@ import kotlinx.datetime.Clock
 import newsref.db.DbService
 import newsref.db.tables.*
 import newsref.db.utils.nowToLocalDateTimeUTC
-import newsref.model.data.Author
-import newsref.model.data.Lead
-import newsref.model.data.Link
-import newsref.model.data.SourceType
+import newsref.model.data.*
 import newsref.model.dto.SourceInfo
 import newsref.model.utils.getApexDomain
 import newsref.model.utils.removeQueryParameters
@@ -15,15 +12,14 @@ import org.jetbrains.exposed.sql.and
 import org.jetbrains.exposed.sql.anyFrom
 import org.jetbrains.exposed.sql.lowerCase
 import org.jetbrains.exposed.sql.stringParam
+import java.util.MissingResourceException
 
-class SourceService(
-): DbService() {
-    suspend fun consume(info: SourceInfo) = dbQuery {
-        println("SourceService: consuming info")
+class SourceService: DbService() {
+
+    suspend fun consume(info: SourceInfo, outletId: Int): Long = dbQuery {
         // create or update Outlet
-        val apex = info.source.url.getApexDomain().lowercase()
-        val outletRow = OutletRow.find { stringParam(apex) eq anyFrom(OutletTable.domains) }.firstOrNull()
-            ?: OutletRow.new { fromData(info.toOutlet()) }
+        val outletRow = OutletRow.find { OutletTable.id eq outletId }.firstOrNull()
+            ?: throw MissingResourceException("Missing Outlet", "SourceService", outletId.toString())
         val urlParams = outletRow.urlParams.toList()
 
         // create author
@@ -46,13 +42,6 @@ class SourceService(
         val sourceRow = SourceRow.find { SourceTable.url.lowerCase() eq url.lowercase() }.firstOrNull()
             ?: SourceRow.new { fromData(infoCopy, outletRow, contentRows) }
 
-        // update visited lead
-        val leadRow = LeadRow.find { LeadTable.url.lowerCase() eq info.leadUrl.lowercase() }.firstOrNull()
-            ?: LeadRow.new { fromData(Lead(url = info.leadUrl)) }
-        leadRow.attemptCount++
-        leadRow.attemptedAt = Clock.nowToLocalDateTimeUTC()
-        leadRow.source = sourceRow
-
         // exit here if not news article
         val document = info.article
         if (document == null || sourceRow.type != SourceType.ARTICLE)
@@ -65,10 +54,6 @@ class SourceService(
 
         val linkRows = info.links.map { link ->
             val linkUrl = link.url.removeQueryParameters(urlParams)
-
-            // create new leads
-            LeadRow.find { LeadTable.url.lowerCase() eq linkUrl.lowercase() }.firstOrNull()
-                ?: LeadRow.new { fromData(Lead(url = linkUrl)) }
 
             // update or create links
             val contentRow = contentRows.first { it.text == link.context }

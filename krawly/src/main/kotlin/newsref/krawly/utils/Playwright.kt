@@ -1,22 +1,23 @@
-package newsref.krawly
+package newsref.krawly.utils
 
 import com.microsoft.playwright.Browser
 import com.microsoft.playwright.BrowserType
 import com.microsoft.playwright.Page
 import com.microsoft.playwright.Playwright
-import newsref.db.utils.cacheResource
-import java.io.File
+import newsref.krawly.chromeLinuxAgent
 
-fun pwFetch(url: String): String = Playwright.create().use { playwright ->
+fun pwFetch(url: String, screenshot: Boolean = false): WebResult = Playwright.create().use { playwright ->
     playwright.chromium().launch().use { browser ->
         val page = browser.newContext(contextOptions).newPage()
         page.setViewportSize(1000, 728)
         page.setExtraHTTPHeaders(extraHeaders)
-        page.navigate(url)
-
-        val screenshot = page.screenshot(screenshotOptions)
-        screenshot.cacheResource(url, "png")
-        page.content() // return
+        val response = page.navigate(url)
+        val bytes = if (screenshot) page.screenshot(screenshotOptions) else null
+        WebResult(
+            status = response.status(),
+            content = page.content(),
+            screenshot = bytes
+        )
     }
 }
 
@@ -35,5 +36,12 @@ val extraHeaders = mutableMapOf(
 )
 val screenshotOptions = Page.ScreenshotOptions().apply {
     fullPage = true
+}
 
+data class WebResult(
+    val status: Int,
+    val content: String?,
+    val screenshot: ByteArray?,
+) {
+    fun isSuccess() = status in 200..299
 }

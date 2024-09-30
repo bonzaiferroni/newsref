@@ -1,4 +1,4 @@
-package newsref.krawly
+package newsref.krawly.utils
 
 import newsref.model.dto.SourceInfo
 

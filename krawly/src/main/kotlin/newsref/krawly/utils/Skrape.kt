@@ -1,10 +1,11 @@
-package newsref.krawly
+package newsref.krawly.utils
 
 import it.skrape.core.htmlDocument
 import it.skrape.fetcher.BrowserFetcher
 import it.skrape.fetcher.response
 import it.skrape.fetcher.skrape
 import it.skrape.selects.Doc
+import newsref.krawly.firefoxAgent
 
 fun skrapeDoc(url: String): Doc =
     skrape(BrowserFetcher) { // <--- pass BrowserFetcher to include rendered JS
@@ -18,4 +19,4 @@ fun skrapeDoc(url: String): Doc =
         }
     }
 
-fun readDoc(html: String): Doc = htmlDocument(html)
+fun contentToDoc(html: String): Doc = htmlDocument(html)

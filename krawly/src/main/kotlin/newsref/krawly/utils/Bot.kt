@@ -1,13 +1,11 @@
-package newsref.krawly
+package newsref.krawly.utils
 
 import com.aallam.openai.api.chat.ChatCompletion
 import com.aallam.openai.api.chat.ChatCompletionRequest
 import com.aallam.openai.api.chat.ChatMessage
 import com.aallam.openai.api.chat.ChatRole
-import com.aallam.openai.api.http.Timeout
 import com.aallam.openai.api.model.ModelId
 import com.aallam.openai.client.OpenAI
-import kotlin.time.Duration.Companion.seconds
 
 private val key = System.getenv("OPENAI_KEY")
 val bot = OpenAI(
