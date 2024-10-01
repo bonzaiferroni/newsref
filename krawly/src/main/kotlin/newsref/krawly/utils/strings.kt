@@ -4,8 +4,8 @@ fun String.wordCount() = this.split("\\s+".toRegex()).filter { it.isNotEmpty() }
 
 private val hostRegex = Regex("^(https?://[^/]+)")
 
-fun String.getHostAndProtocol() = hostRegex.find(this)
-fun String.hasHostAndProtocol() = hostRegex.matches(this)
+fun String.getHostAndProtocol(): String? = hostRegex.find(this)?.groupValues?.get(1)
+fun String.hasHostAndProtocol(): Boolean = hostRegex.find(this) != null
 
 private val pathRegex = Regex("https?://[^/]+(/.*)?")
 

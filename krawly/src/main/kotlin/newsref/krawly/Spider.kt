@@ -7,7 +7,6 @@ import newsref.krawly.agents.FeedAgent
 import newsref.krawly.agents.LeadAgent
 import newsref.krawly.agents.OutletAgent
 import newsref.krawly.agents.SourceAgent
-import newsref.model.utils.getApexDomain
 import kotlin.time.Duration.Companion.seconds
 
 class Spider(
@@ -22,37 +21,38 @@ class Spider(
     suspend fun startCrawling() {
         println("🕷🌄 waking up")
 
-        val leads = leadAgent.getLeads()
+        val leads = leadAgent.getLeads()                                        // <- LeadAgent
         println("🕷👀 ${leads.size} initial leads")
 
         val deque = ArrayDeque(leads.shuffled())
-        var previousApex: String? = null
+        var previousHost: String? = null
         while (deque.size > 0) {
             // ensure good spider behavior
             val lead = deque.removeFirstOrNull() ?: break
-            val apex = lead.url.getApexDomain()
-            val lastAttempt = attempts[apex]
+            val host = lead.url.host
+            val lastAttempt = attempts[host]
             val currentTime = Clock.System.now()
             if (lastAttempt != null && (currentTime - lastAttempt) < 30.seconds) {
                 deque.addLast(lead)
-                if(apex == previousApex) {
+                if(host == previousHost) {
                     println("🕷💅 daydreaming")
                     delay((10000L..20000L).random())
                 }
                 continue
             }
-            previousApex = apex
-            attempts[apex] = currentTime
+            previousHost = host
+            attempts[host] = currentTime
 
             println("🕷🕸 following: ${lead.url}")
-            leadAgent.notifyAttempt(lead)
-            val result = sourceAgent.follow(lead)
+            leadAgent.notifyAttempt(lead)                                       // -> LeadAgent
+            val result = sourceAgent.follow(lead)                               // -> SourceAgent
             if (result == null) {
                 deque.addLast(lead)
                 println("🕷💩 no result: ${lead.url}")
                 continue
             }
-            val sourceLeads = leadAgent.followUp(lead, result.sourceId, result.leads)
+            val sourceLeads = leadAgent.followUp(lead, result)                  // -> LeadAgent
+                ?: continue
             println("🕷🤯 ${sourceLeads.size} new leads")
             sourceLeads.forEach { deque.addLast(it) }
         }

@@ -17,12 +17,16 @@ enum class SourceType(
     NEWS_FEED("News Feed");
 
     companion object {
-        fun fromMeta(value: String) = when (value) {
+        fun fromMeta(value: String) = fromMetaOrNull(value) ?: UNKNOWN
+
+        fun fromMetaOrNull(value: String) = when (value) {
             "article" -> ARTICLE
             // post ?
             "website" -> WEBSITE
             "profile" -> PROFILE
-            else -> UNKNOWN
+            else -> null
         }
     }
 }
+
+fun String.toSourceType(): SourceType = SourceType.fromMeta(this)

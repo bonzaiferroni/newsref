@@ -16,7 +16,7 @@ class FeedService : DataService<Feed, Int, FeedRow>(
         if (FeedRow.all().count() > 0) return@dbQuery
         FeedRow.new {
             this.url = System.getenv("NEWSREF_INIT_FEED_URL")
-            this.leadSelector = System.getenv("NEWSREF_INIT_FEED_SELECTOR")
+            this.selector = System.getenv("NEWSREF_INIT_FEED_SELECTOR")
         }
     }
 }

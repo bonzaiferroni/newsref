@@ -1,6 +1,7 @@
 package newsref.db.tables
 
 import kotlinx.datetime.*
+import newsref.db.utils.toUrl
 import newsref.model.data.Article
 import org.jetbrains.exposed.dao.EntityClass
 import org.jetbrains.exposed.dao.LongEntity
@@ -8,9 +9,10 @@ import org.jetbrains.exposed.dao.id.EntityID
 import org.jetbrains.exposed.dao.id.LongIdTable
 import org.jetbrains.exposed.sql.kotlin.datetime.datetime
 
+// todo: make all tables and rows internal
 object ArticleTable: LongIdTable("article") {
     val sourceId = reference("source_id", SourceTable)
-    val title = text("title")
+    val headline = text("headline")
     val description = text("description").nullable()
     val imageUrl = text("image_url").nullable()
     val section = text("section").nullable()
@@ -30,7 +32,7 @@ class ArticleRow(id: EntityID<Long>) : LongEntity(id) {
 
     var source by SourceRow referencedOn ArticleTable.sourceId
 
-    var title by ArticleTable.title
+    var headline by ArticleTable.headline
     var description by ArticleTable.description
     var imageUrl by ArticleTable.imageUrl
     var section by ArticleTable.section
@@ -48,9 +50,9 @@ class ArticleRow(id: EntityID<Long>) : LongEntity(id) {
 fun ArticleRow.toData() = Article(
     id = this.id.value,
     sourceId = this.source.id.value,
-    headline = this.title,
+    headline = this.headline,
     description = this.description,
-    imageUrl = this.imageUrl,
+    imageUrl = this.imageUrl?.toUrl(),
     section = this.section,
     keywords = this.keywords,
     wordCount = this.wordCount,
@@ -65,9 +67,9 @@ fun ArticleRow.toData() = Article(
 
 fun ArticleRow.fromData(article: Article, sourceRow: SourceRow) {
     source = sourceRow
-    title = article.headline
+    headline = article.headline
     description = article.description
-    imageUrl = article.imageUrl
+    imageUrl = article.imageUrl?.toString()
     section = article.section
     keywords = article.keywords
     wordCount = article.wordCount

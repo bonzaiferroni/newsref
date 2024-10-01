@@ -1,17 +1,12 @@
 package newsref.db.tables
 
-import newsref.db.tables.OutletTable.domains
-import newsref.db.tables.SourceContentTable.contentId
-import newsref.db.tables.SourceContentTable.sourceId
+import com.eygraber.uri.Url
 import newsref.model.data.Outlet
 import newsref.model.dto.SourceInfo
-import newsref.model.utils.getApexDomain
 import org.jetbrains.exposed.dao.EntityClass
 import org.jetbrains.exposed.dao.IntEntity
-import org.jetbrains.exposed.dao.id.CompositeIdTable
 import org.jetbrains.exposed.dao.id.EntityID
 import org.jetbrains.exposed.dao.id.IntIdTable
-import org.jetbrains.exposed.sql.SqlExpressionBuilder.eq
 import org.jetbrains.exposed.sql.anyFrom
 import org.jetbrains.exposed.sql.stringParam
 
@@ -60,9 +55,9 @@ fun OutletRow.fromData(outlet: Outlet) {
 
 fun SourceInfo.toOutlet(): Outlet = Outlet(
     name = outletName,
-    domains = setOf(source.url.getApexDomain().lowercase()),
+    domains = setOf(source.url.host.lowercase()),
     urlParams = emptySet(),
 )
 
-fun OutletRow.Companion.findByApex(apex: String): OutletRow? =
-    OutletRow.find { stringParam(apex) eq anyFrom(OutletTable.domains) }.firstOrNull()
+fun OutletRow.Companion.findByHost(url: Url): OutletRow? =
+    OutletRow.find { stringParam(url.host) eq anyFrom(OutletTable.domains) }.firstOrNull()

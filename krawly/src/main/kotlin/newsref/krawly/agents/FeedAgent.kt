@@ -1,9 +1,10 @@
 package newsref.krawly.agents
 
-import kotlinx.serialization.json.JsonNull.content
+import com.eygraber.uri.Url
 import newsref.db.services.FeedService
 import newsref.krawly.SpiderWeb
 import newsref.krawly.utils.contentToDoc
+import newsref.krawly.utils.tryGetUrl
 
 class FeedAgent(
     private val web: SpiderWeb,
@@ -11,18 +12,18 @@ class FeedAgent(
 ) {
 
     suspend fun checkFeeds(): List<FeedLead> {
-        feedService.init()
-        val feeds = feedService.readAll()
+        feedService.init()                                      //    FeedService ->
+        val feeds = feedService.readAll()                       // <- FeedService
         val list = mutableListOf<FeedLead>()
         for (feed in feeds) {
-            val webResult = web.crawlPage(feed.url)
-            if (!webResult.isSuccess() || webResult.content == null) {
+            val webResult = web.crawlPage(feed.url)             // <- Web
+            if (webResult == null || !webResult.isSuccess() || webResult.content == null) {
                 println("FeedAgent: feed error: ${feed.url}")
                 continue
             }
-            val doc = contentToDoc(webResult.content)
-            doc.findAll(feed.leadSelector).forEach { docElement ->
-                val (headline, url) = docElement.eachLink.entries.firstOrNull() ?: return@forEach
+            val doc = webResult.content.contentToDoc()           // <- Parse
+            for (docElement in doc.findAll(feed.selector)) {
+                val (headline, url) = docElement.tryGetUrl() ?: continue
                 list += FeedLead(feedId = feed.id, url = url, headline = headline)
             }
         }
@@ -33,6 +34,6 @@ class FeedAgent(
 
 data class FeedLead(
     val feedId: Int,
-    val url: String,
+    val url: Url,
     val headline: String
 )

@@ -1,13 +1,9 @@
 package newsref.db.services
 
-import kotlinx.datetime.Clock
 import newsref.db.DbService
 import newsref.db.tables.*
-import newsref.db.utils.nowToLocalDateTimeUTC
 import newsref.model.data.*
 import newsref.model.dto.SourceInfo
-import newsref.model.utils.getApexDomain
-import newsref.model.utils.removeQueryParameters
 import org.jetbrains.exposed.sql.and
 import org.jetbrains.exposed.sql.anyFrom
 import org.jetbrains.exposed.sql.lowerCase
@@ -37,13 +33,12 @@ class SourceService: DbService() {
         }
 
         // update or create source
-        val url = info.source.url.removeQueryParameters(urlParams)
-        val infoCopy = info.source.copy(url = url)
+        val url = info.source.url.toString()
         val sourceRow = SourceRow.find { SourceTable.url.lowerCase() eq url.lowercase() }.firstOrNull()
-            ?: SourceRow.new { fromData(infoCopy, outletRow, contentRows) }
+            ?: SourceRow.new { fromData(info.source, outletRow, contentRows) }
 
         // exit here if not news article
-        val document = info.article
+        val document = info.document
         if (document == null || sourceRow.type != SourceType.ARTICLE)
             return@dbQuery sourceRow.id.value
 
@@ -53,13 +48,13 @@ class SourceService: DbService() {
             ?: ArticleRow.new { fromData(document, sourceRow) }
 
         val linkRows = info.links.map { link ->
-            val linkUrl = link.url.removeQueryParameters(urlParams)
+            val linkUrl = link.url.toString()
 
             // update or create links
             val contentRow = contentRows.first { it.text == link.context }
             val linkRow = LinkRow.find { (LinkTable.url.lowerCase() eq linkUrl.lowercase()) and
-                    (LinkTable.urlText eq link.urlText) and (LinkTable.sourceId eq sourceRow.id) }.firstOrNull()
-                ?: LinkRow.new { fromData(Link(url = linkUrl, urlText = link.urlText), sourceRow, contentRow) }
+                    (LinkTable.urlText eq link.anchorText) and (LinkTable.sourceId eq sourceRow.id) }.firstOrNull()
+                ?: LinkRow.new { fromData(Link(url = link.url, text = link.anchorText), sourceRow, contentRow) }
             linkRow // return@map
         }
 

@@ -1,5 +1,6 @@
 package newsref.db.tables
 
+import newsref.db.utils.toUrl
 import newsref.model.data.Link
 import org.jetbrains.exposed.dao.LongEntity
 import org.jetbrains.exposed.dao.LongEntityClass
@@ -26,13 +27,13 @@ class LinkRow(id: EntityID<Long>): LongEntity(id) {
 fun LinkRow.toData() = Link(
     id = this.id.value,
     sourceId = this.source.id.value,
-    url = this.url,
-    urlText = this.urlText,
+    url = this.url.toUrl(),
+    text = this.urlText,
 )
 
 fun LinkRow.fromData(data: Link, sourceRow: SourceRow, contentRow: ContentRow) {
     source = sourceRow
     content = contentRow
-    url = data.url
-    urlText = data.urlText
+    url = data.url.toString()
+    urlText = data.text
 }

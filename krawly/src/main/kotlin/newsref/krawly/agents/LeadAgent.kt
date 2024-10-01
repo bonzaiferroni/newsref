@@ -1,8 +1,10 @@
 package newsref.krawly.agents
 
+import com.eygraber.uri.Url
 import newsref.db.services.LeadService
 import newsref.krawly.SpiderWeb
 import newsref.model.data.Lead
+import newsref.model.dto.SourceInfo
 
 
 class LeadAgent(
@@ -14,11 +16,15 @@ class LeadAgent(
 
     suspend fun getLeads(): List<Lead> {
         val leads = mutableListOf<Lead>()
-        val unfollowed = leadService.getUnfollowed()
-        val feedLeads = feedAgent.checkFeeds()
+        val unfollowed = leadService.getUnfollowed()                            // <- LeadService
+        val feedLeads = feedAgent.checkFeeds()                                  // <- FeedAgent
         for (feedLead in feedLeads) {
-            if (!outletAgent.isAllowed(feedLead.url)) continue
-            val lead = leadService.createIfFresh(feedLead.url, feedLead.feedId, feedLead.headline) ?: continue
+            if (!outletAgent.isAllowed(feedLead.url)) continue                  // <- OutletAgent
+            val lead = leadService.createIfFresh(                               //    LeadService ->
+                feedLead.url,
+                feedLead.feedId,
+                feedLead.headline
+            ) ?: continue
             leads += lead
         }
         leads += unfollowed
@@ -26,15 +32,17 @@ class LeadAgent(
     }
 
     suspend fun notifyAttempt(lead: Lead) {
-        leadService.addAttempt(lead)
+        leadService.addAttempt(lead)                                            //    LeadService ->
     }
 
-    suspend fun followUp(origin: Lead, sourceId: Long, newLeads: List<String>): List<Lead> {
+    suspend fun followUp(origin: Lead, sourceInfo: SourceInfo): List<Lead>? {
         val leads = mutableListOf<Lead>()
-        leadService.addSource(origin, sourceId)
+        leadService.addSource(origin, sourceInfo.id)                            //    LeadService ->
+        val newLeads = sourceInfo.document?.links?.map { it.url }
+            ?: return null
         for (url in newLeads) {
-            if (!outletAgent.isAllowed(url)) continue
-            val lead = leadService.createIfFresh(url) ?: continue
+            if (!outletAgent.isAllowed(url)) continue                           // <- OutletAgent
+            val lead = leadService.createIfFresh(url) ?: continue               //    LeadService ->
             leads += lead
         }
         return leads

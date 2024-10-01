@@ -1,8 +1,11 @@
 package newsref.model.data
 
+import com.eygraber.uri.Url
+
 data class Link(
     val id: Long = 0,
     val sourceId: Long = 0,
-    val url: String,
-    val urlText: String,
+    // todo: add content id
+    val url: Url,
+    val text: String,
 )

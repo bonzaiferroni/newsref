@@ -1,5 +1,6 @@
 package newsref.model.data
 
+import com.eygraber.uri.Url
 import kotlinx.datetime.Instant
 
 data class Article(
@@ -8,7 +9,7 @@ data class Article(
     val headline: String = "",
     val alternativeHeadline: String? = null,
     val description: String? = null,
-    val imageUrl: String? = null,
+    val imageUrl: Url? = null,
     val section: String? = null,
     val keywords: List<String>? = null,
     val wordCount: Int? = null,

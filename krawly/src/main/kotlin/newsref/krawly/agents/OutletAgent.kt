@@ -1,19 +1,18 @@
 package newsref.krawly.agents
 
+import com.eygraber.uri.Url
 import newsref.db.services.OutletService
 import newsref.krawly.SpiderWeb
 import newsref.krawly.utils.*
 import newsref.model.data.Outlet
-import newsref.model.utils.getApexDomain
-import newsref.model.utils.removeQueryParameters
 
 class OutletAgent(
     private val web: SpiderWeb,
     private val outletService: OutletService = OutletService()
 ) {
-    suspend fun isAllowed(url: String): Boolean {
+    suspend fun isAllowed(url: Url): Boolean {
         val outlet = getOutlet(url)
-        val path = url.getPath()
+        val path = url.path ?: "/"
         val disallowedPaths = outlet.disallowed ?: return true
         for (disallowedPath in disallowedPaths) {
             if (path.startsWith(disallowedPath, true)) {
@@ -24,23 +23,21 @@ class OutletAgent(
         return true
     }
 
-    suspend fun removeParameters(url: String): String {
-        val outlet = getOutlet(url)
-        val urlParams = outlet.urlParams.toList()
-        return url.removeQueryParameters(urlParams)
+    suspend fun getOutlet(url: Url): Outlet {
+        return outletService.findByHost(url) ?: createOutlet(url, null)         // <- OutletService
     }
 
-    suspend fun getOutlet(url: String): Outlet {
-        val apex = url.getApexDomain()
-        return outletService.findByApex(apex) ?: createOutlet(url)
+    suspend fun findAndSetName(url: Url, name: String?): Outlet {
+        return outletService.findAndSetName(url, name)
+            ?: createOutlet(url, name)
     }
 
-    private suspend fun createOutlet(url: String): Outlet {
-        val result = url.getRobotsTxtUrl()?.let { web.crawlPage(it) }
+    private suspend fun createOutlet(url: Url, name: String?): Outlet {
+        val robotsUrl = url.getRobotsTxtUrl()
+        val result = web.crawlPage(robotsUrl)                                   // <- Web
         val robotsTxt = result?.let{ if (it.isSuccess()) it.content else null }
         val disallowed = robotsTxt?.let { parseRobotsTxt(it) }
-        val apex = url.getApexDomain()
-        return outletService.createOutlet(apex, robotsTxt, disallowed)
+        return outletService.createOutlet(url, robotsTxt, disallowed, name)     //    OutletService ->
     }
 }
 

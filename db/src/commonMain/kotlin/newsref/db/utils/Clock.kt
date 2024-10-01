@@ -13,3 +13,5 @@ fun Instant.Companion.tryParse(str: String) = try {
         null
     }
 }
+
+fun String.tryParseInstantOrNull() = Instant.tryParse(this)

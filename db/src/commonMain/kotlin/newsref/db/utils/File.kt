@@ -1,20 +1,20 @@
 package newsref.db.utils
 
+import com.eygraber.uri.Uri
+import com.eygraber.uri.Url
 import kotlinx.serialization.json.Json
 import kotlinx.serialization.serializer
 import newsref.db.serializers.globalJson
-import newsref.model.utils.getApexDomain
 import java.io.File
 
 const val resourcePath = "cache"
 
-fun String.cacheResource(url: String, type: String, path: String? = null): String {
-    val apex = url.getApexDomain()
+fun String.cacheResource(url: Uri, type: String, path: String? = null): String {
     if (this.isBlank()) {
-        println("cacheResource: found blank $type string from $apex")
+        println("cacheResource: found blank $type string from ${url.host}")
         return this
     }
-    val file = File("$resourcePath/${path ?: type}/$apex.$type")
+    val file = File("$resourcePath/${path ?: type}/${url.host}.$type")
     file.parentFile?.mkdirs() // Create missing directories if they don't exist
     if (!file.exists()) {
         file.writeText(this)
@@ -22,9 +22,8 @@ fun String.cacheResource(url: String, type: String, path: String? = null): Strin
     return this
 }
 
-fun ByteArray.cacheResource(url: String, type: String, path: String? = null): ByteArray {
-    val apex = url.getApexDomain()
-    val file = File("$resourcePath/${path ?: type}/$apex.$type")
+fun ByteArray.cacheResource(url: Uri, type: String, path: String? = null): ByteArray {
+    val file = File("$resourcePath/${path ?: type}/${url.host}.$type")
     file.parentFile?.mkdirs() // Create missing directories if they don't exist
     if (!file.exists()) {
         file.writeBytes(this)
@@ -33,9 +32,8 @@ fun ByteArray.cacheResource(url: String, type: String, path: String? = null): By
 }
 
 // General function to cache any serializable object
-inline fun <reified T> T.cacheSerializable(url: String, type: String, path: String? = null): T where T : Any {
-    val apex = url.getApexDomain()  // Assuming ye have this extension defined
-    val file = File("$resourcePath/${path ?: type}/$apex.json")
+inline fun <reified T> T.cacheSerializable(url: Uri, type: String, path: String? = null): T where T : Any {
+    val file = File("$resourcePath/${path ?: type}/${url.host}.json")
     file.parentFile?.mkdirs() // Create directories if they don't exist
 
     // Serialize object to JSON

@@ -1,15 +1,11 @@
 package newsref.db.services
 
-import com.sun.jndi.toolkit.url.Uri
+import com.eygraber.uri.Url
 import kotlinx.datetime.TimeZone
 import kotlinx.datetime.toLocalDateTime
 import newsref.db.DataService
 import newsref.db.tables.*
-import newsref.db.tables.OutletTable.disallowed
-import newsref.model.data.Feed
 import newsref.model.data.Lead
-import newsref.model.utils.getApexDomain
-import newsref.model.utils.removeQueryParameters
 import org.jetbrains.exposed.sql.lowerCase
 
 class LeadService : DataService<Lead, Long, LeadRow>(
@@ -18,11 +14,12 @@ class LeadService : DataService<Lead, Long, LeadRow>(
     LeadRow::fromData,
     LeadRow::toData
 ) {
-    suspend fun createIfFresh(url: String, feedId: Int? = null, headline: String? = null): Lead? = dbQuery {
-        val leadRow = LeadRow.find { LeadTable.url.lowerCase() eq url.lowercase() }.firstOrNull()
+    suspend fun createIfFresh(url: Url, feedId: Int? = null, headline: String? = null): Lead? = dbQuery {
+        val urlString = url.toString()
+        val leadRow = LeadRow.find { LeadTable.url.lowerCase() eq urlString.lowercase() }.firstOrNull()
         if (leadRow != null) return@dbQuery null
         LeadRow.new {
-            this.url = url
+            this.url = urlString
             this.attemptCount = 0
             this.headline = headline
             this.feed = feedId?.let { FeedRow[it] }

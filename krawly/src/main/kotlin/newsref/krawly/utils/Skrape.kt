@@ -1,22 +1,23 @@
 package newsref.krawly.utils
 
+import com.eygraber.uri.Url
 import it.skrape.core.htmlDocument
 import it.skrape.fetcher.BrowserFetcher
 import it.skrape.fetcher.response
 import it.skrape.fetcher.skrape
 import it.skrape.selects.Doc
-import newsref.krawly.firefoxAgent
+import newsref.krawly.chromeLinuxAgent
 
-fun skrapeDoc(url: String): Doc =
+fun Url.skrapeDoc(): Doc =
     skrape(BrowserFetcher) { // <--- pass BrowserFetcher to include rendered JS
         request {
-            this.url = url
+            this.url = this.toString()
             timeout = 30000
-            userAgent = firefoxAgent
+            userAgent = chromeLinuxAgent
         }
         response {
             htmlDocument { this }
         }
     }
 
-fun contentToDoc(html: String): Doc = htmlDocument(html)
+fun String.contentToDoc(): Doc = htmlDocument(this)

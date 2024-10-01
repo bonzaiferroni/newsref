@@ -1,4 +1,5 @@
 val ktor_version: String by project
+val kotlin_version: String by project
 
 plugins {
     alias(libs.plugins.kotlinJvm)
@@ -16,8 +17,17 @@ dependencies {
     implementation(project(":db"))
 
     implementation(libs.kotlinx.datetime)
+
+    // Add dependencies for unit testing
+    testImplementation(kotlin("test"))
+    testImplementation("org.jetbrains.kotlin:kotlin-test-junit5:$kotlin_version")
 }
 
 application {
     mainClass.set("newsref.krawly.MainKt")
+}
+
+// Configure the test task to use JUnit platform
+tasks.test {
+    useJUnitPlatform()
 }

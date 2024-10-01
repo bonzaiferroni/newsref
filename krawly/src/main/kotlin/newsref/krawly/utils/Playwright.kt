@@ -1,23 +1,25 @@
 package newsref.krawly.utils
 
-import com.microsoft.playwright.Browser
-import com.microsoft.playwright.BrowserType
-import com.microsoft.playwright.Page
-import com.microsoft.playwright.Playwright
+import com.microsoft.playwright.*
+import io.ktor.http.*
 import newsref.krawly.chromeLinuxAgent
 
-fun pwFetch(url: String, screenshot: Boolean = false): WebResult = Playwright.create().use { playwright ->
+fun pwFetch(url: Url, screenshot: Boolean = false): WebResult? = Playwright.create().use { playwright ->
     playwright.chromium().launch().use { browser ->
         val page = browser.newContext(contextOptions).newPage()
         page.setViewportSize(1000, 728)
         page.setExtraHTTPHeaders(extraHeaders)
-        val response = page.navigate(url)
-        val bytes = if (screenshot) page.screenshot(screenshotOptions) else null
-        WebResult(
-            status = response.status(),
-            content = page.content(),
-            screenshot = bytes
-        )
+        try {
+            val response = page.navigate(url.toString())
+            val bytes = if (screenshot) page.screenshot(screenshotOptions) else null
+            WebResult(
+                status = response.status(),
+                content = page.content(),
+                screenshot = bytes
+            )
+        } catch (e: TimeoutError) {
+            return null
+        }
     }
 }
 
