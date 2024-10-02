@@ -11,7 +11,6 @@ kotlin {
             dependencies {
                 implementation(libs.kotlinx.serialization.json)
                 implementation(libs.kotlinx.datetime)
-                api("com.eygraber:uri-kmp:0.0.18")
             }
         }
         // Add the commonTest source set
