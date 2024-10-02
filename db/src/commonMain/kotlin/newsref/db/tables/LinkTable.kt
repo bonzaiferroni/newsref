@@ -1,21 +1,20 @@
 package newsref.db.tables
 
-import newsref.db.utils.toTrustedUrl
-import newsref.db.utils.toUri
+import newsref.db.utils.toCheckedFromDb
 import newsref.model.data.Link
 import org.jetbrains.exposed.dao.LongEntity
 import org.jetbrains.exposed.dao.LongEntityClass
 import org.jetbrains.exposed.dao.id.EntityID
 import org.jetbrains.exposed.dao.id.LongIdTable
 
-object LinkTable: LongIdTable("link") {
+internal object LinkTable: LongIdTable("link") {
     val sourceId = reference("source_id", SourceTable)
     val contentId = reference("content_id", ContentTable)
     val url = text("url")
     val urlText = text("url_text")
 }
 
-class LinkRow(id: EntityID<Long>): LongEntity(id) {
+internal class LinkRow(id: EntityID<Long>): LongEntity(id) {
     companion object: LongEntityClass<LinkRow>(LinkTable)
 
     var source by SourceRow referencedOn LinkTable.sourceId
@@ -25,14 +24,14 @@ class LinkRow(id: EntityID<Long>): LongEntity(id) {
     var urlText by LinkTable.urlText
 }
 
-fun LinkRow.toData() = Link(
+internal fun LinkRow.toData() = Link(
     id = this.id.value,
     sourceId = this.source.id.value,
-    url = this.url.toTrustedUrl(),
+    url = this.url.toCheckedFromDb(),
     text = this.urlText,
 )
 
-fun LinkRow.fromData(data: Link, sourceRow: SourceRow, contentRow: ContentRow) {
+internal fun LinkRow.fromData(data: Link, sourceRow: SourceRow, contentRow: ContentRow) {
     source = sourceRow
     content = contentRow
     url = data.url.toString()

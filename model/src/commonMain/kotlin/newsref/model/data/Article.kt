@@ -1,7 +1,7 @@
 package newsref.model.data
 
-import com.eygraber.uri.Url
 import kotlinx.datetime.Instant
+import newsref.model.core.Url
 
 data class Article(
     val id: Long = 0,

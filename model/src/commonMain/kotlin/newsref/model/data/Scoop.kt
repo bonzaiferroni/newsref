@@ -1,7 +1,6 @@
 package newsref.model.data
 
-import com.eygraber.uri.Uri
-import com.eygraber.uri.Url
+import newsref.model.core.Url
 
 data class Scoop(
     val id: Long = 0,

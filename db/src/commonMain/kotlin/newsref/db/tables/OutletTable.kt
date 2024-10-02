@@ -1,17 +1,14 @@
 package newsref.db.tables
 
-import com.eygraber.uri.Url
 import newsref.model.data.Outlet
-import newsref.model.dto.SourceInfo
 import org.jetbrains.exposed.dao.EntityClass
 import org.jetbrains.exposed.dao.IntEntity
 import org.jetbrains.exposed.dao.id.EntityID
 import org.jetbrains.exposed.dao.id.IntIdTable
-import org.jetbrains.exposed.sql.SqlExpressionBuilder.eq
 import org.jetbrains.exposed.sql.anyFrom
 import org.jetbrains.exposed.sql.stringParam
 
-object OutletTable : IntIdTable("outlet") {
+internal object OutletTable : IntIdTable("outlet") {
     val name = text("name").nullable()
     val logo = text("logo").nullable()
     val robotsTxt = text("robots_txt").nullable()
@@ -20,7 +17,7 @@ object OutletTable : IntIdTable("outlet") {
     val urlParams = array<String>("url_params")
 }
 
-class OutletRow(id: EntityID<Int>): IntEntity(id) {
+internal class OutletRow(id: EntityID<Int>): IntEntity(id) {
     companion object : EntityClass<Int, OutletRow>(OutletTable)
 
     var authors by AuthorRow via OutletAuthorTable
@@ -35,7 +32,7 @@ class OutletRow(id: EntityID<Int>): IntEntity(id) {
     val sources by SourceRow referrersOn SourceTable.outletId
 }
 
-fun OutletRow.toData() = Outlet(
+internal fun OutletRow.toData() = Outlet(
     id = this.id.value,
     name = this.name,
     logo = this.logo,
@@ -45,7 +42,7 @@ fun OutletRow.toData() = Outlet(
     urlParams = this.urlParams.toSet(),
 )
 
-fun OutletRow.fromData(outlet: Outlet) {
+internal fun OutletRow.fromData(outlet: Outlet) {
     name = outlet.name
     logo = outlet.logo
     robotsTxt = outlet.robotsTxt
@@ -54,5 +51,5 @@ fun OutletRow.fromData(outlet: Outlet) {
     urlParams = outlet.urlParams.toList()
 }
 
-fun OutletRow.Companion.findByHost(host: String): OutletRow? =
+internal fun OutletRow.Companion.findByHost(host: String): OutletRow? =
     this.find { stringParam(host) eq anyFrom(OutletTable.domains) }.firstOrNull()

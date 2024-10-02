@@ -1,8 +1,7 @@
 package newsref.db.tables
 
 import kotlinx.datetime.*
-import newsref.db.utils.toTrustedUrl
-import newsref.db.utils.toUri
+import newsref.db.utils.toCheckedFromDb
 import newsref.model.data.Article
 import org.jetbrains.exposed.dao.EntityClass
 import org.jetbrains.exposed.dao.LongEntity
@@ -11,11 +10,11 @@ import org.jetbrains.exposed.dao.id.LongIdTable
 import org.jetbrains.exposed.sql.kotlin.datetime.datetime
 
 // todo: make all tables and rows internal
-object ArticleTable: LongIdTable("article") {
+internal object ArticleTable: LongIdTable("article") {
     val sourceId = reference("source_id", SourceTable)
     val headline = text("headline")
     val description = text("description").nullable()
-    val imageUrl = text("image_url").nullable()
+    val imageUrl = text("image_url").nullable()                                 // unchecked
     val section = text("section").nullable()
     val keywords = array<String>("keywords").nullable()
     val wordCount = integer("word_count").nullable()
@@ -28,14 +27,14 @@ object ArticleTable: LongIdTable("article") {
     val modifiedAt = datetime("modified_at").nullable()
 }
 
-class ArticleRow(id: EntityID<Long>) : LongEntity(id) {
+internal class ArticleRow(id: EntityID<Long>) : LongEntity(id) {
     companion object : EntityClass<Long, ArticleRow>(ArticleTable)
 
     var source by SourceRow referencedOn ArticleTable.sourceId
 
     var headline by ArticleTable.headline
     var description by ArticleTable.description
-    var imageUrl by ArticleTable.imageUrl
+    var imageUrl by ArticleTable.imageUrl                                       // unchecked
     var section by ArticleTable.section
     var keywords by ArticleTable.keywords
     var wordCount by ArticleTable.wordCount
@@ -48,12 +47,12 @@ class ArticleRow(id: EntityID<Long>) : LongEntity(id) {
     var modifiedAt by ArticleTable.modifiedAt
 }
 
-fun ArticleRow.toData() = Article(
+internal fun ArticleRow.toData() = Article(
     id = this.id.value,
     sourceId = this.source.id.value,
     headline = this.headline,
     description = this.description,
-    imageUrl = this.imageUrl?.toTrustedUrl(),
+    imageUrl = this.imageUrl?.toCheckedFromDb(),
     section = this.section,
     keywords = this.keywords,
     wordCount = this.wordCount,
@@ -66,7 +65,7 @@ fun ArticleRow.toData() = Article(
     modifiedAt = this.modifiedAt?.toInstant(UtcOffset.ZERO)
 )
 
-fun ArticleRow.fromData(article: Article, sourceRow: SourceRow) {
+internal fun ArticleRow.fromData(article: Article, sourceRow: SourceRow) {
     source = sourceRow
     headline = article.headline
     description = article.description

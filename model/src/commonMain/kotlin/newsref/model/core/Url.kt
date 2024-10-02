@@ -3,7 +3,7 @@ package newsref.model.core
 open class Url internal constructor(
 	val rawUrl: String,
 	val requiredParams: Set<String>?,
-	val disallowedPaths: Set<String>?,
+	disallowedPaths: Set<String>?,
 ) {
 	val scheme: String
 	val host: String
@@ -43,6 +43,14 @@ open class Url internal constructor(
 		checkedUrl = if (requiredParams != null && isDisallowed != null && !isDisallowed)
 			"$authority$path#$fragment"
 		else null
+	}
+
+	override fun toString() = checkedUrl ?: rawUrl
+	override fun equals(other: Any?) = other is Url && this.toString() == other.toString()
+	override fun hashCode(): Int {
+		var result = rawUrl.hashCode()
+		result = 31 * result + (checkedUrl?.hashCode() ?: 0)
+		return result
 	}
 }
 

@@ -13,7 +13,7 @@ import org.jetbrains.exposed.dao.id.UUIDTable
 import org.jetbrains.exposed.sql.kotlin.datetime.datetime
 import java.util.*
 
-object UserTable : UUIDTable("user") {
+internal object UserTable : UUIDTable("user") {
     val name = text("name").nullable()
     val username = text("username")
     val hashedPassword = text("hashed_password")
@@ -26,7 +26,7 @@ object UserTable : UUIDTable("user") {
     val updatedAt = datetime("updated_at")
 }
 
-class UserRow(id: EntityID<UUID>) : UUIDEntity(id) {
+internal class UserRow(id: EntityID<UUID>) : UUIDEntity(id) {
     companion object : EntityClass<UUID, UserRow>(UserTable)
 
     var name by UserTable.name
@@ -41,7 +41,7 @@ class UserRow(id: EntityID<UUID>) : UUIDEntity(id) {
     var updatedAt by UserTable.updatedAt
 }
 
-fun UserRow.toData() = User(
+internal fun UserRow.toData() = User(
     this.id.value,
     this.name,
     this.username,
@@ -55,7 +55,7 @@ fun UserRow.toData() = User(
     this.updatedAt.toInstant(UtcOffset.ZERO),
 )
 
-fun UserRow.fromData(data: User) {
+internal fun UserRow.fromData(data: User) {
     name = data.name
     username = data.username
     hashedPassword = data.hashedPassword
@@ -68,7 +68,7 @@ fun UserRow.fromData(data: User) {
     updatedAt = data.updatedAt.toLocalDateTime(TimeZone.UTC)
 }
 
-fun UserRow.toInfo() = UserInfo(
+internal fun UserRow.toInfo() = UserInfo(
     this.username,
     this.roles,
     this.avatarUrl,

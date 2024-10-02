@@ -4,8 +4,7 @@ import kotlinx.datetime.TimeZone
 import kotlinx.datetime.UtcOffset
 import kotlinx.datetime.toInstant
 import kotlinx.datetime.toLocalDateTime
-import newsref.db.utils.toTrustedUrl
-import newsref.db.utils.toUri
+import newsref.db.utils.toCheckedFromDb
 import newsref.model.data.Lead
 import org.jetbrains.exposed.dao.EntityClass
 import org.jetbrains.exposed.dao.LongEntity
@@ -13,7 +12,7 @@ import org.jetbrains.exposed.dao.id.EntityID
 import org.jetbrains.exposed.dao.id.LongIdTable
 import org.jetbrains.exposed.sql.kotlin.datetime.datetime
 
-object LeadTable: LongIdTable("lead") {
+internal object LeadTable: LongIdTable("lead") {
     val targetId = reference("target_id", SourceTable).nullable()
     val feedId = reference("feed_id", FeedTable).nullable()
     val url = text("url")
@@ -22,7 +21,7 @@ object LeadTable: LongIdTable("lead") {
     val attemptedAt = datetime("attempted_at").nullable()
 }
 
-class LeadRow(id: EntityID<Long>): LongEntity(id) {
+internal class LeadRow(id: EntityID<Long>): LongEntity(id) {
     companion object: EntityClass<Long, LeadRow>(LeadTable)
 
     var target by SourceRow optionalReferencedOn LeadTable.targetId
@@ -34,17 +33,17 @@ class LeadRow(id: EntityID<Long>): LongEntity(id) {
     var attemptedAt by LeadTable.attemptedAt
 }
 
-fun LeadRow.toData() = Lead(
+internal fun LeadRow.toData() = Lead(
     id = this.id.value,
     sourceId = this.target?.id?.value,
     feedId = this.feed?.id?.value,
-    url = this.url.toTrustedUrl(),
+    url = this.url.toCheckedFromDb(),
     headline = this.headline,
     attemptCount = this.attemptCount,
     attemptedAt = this.attemptedAt?.toInstant(UtcOffset.ZERO)
 )
 
-fun LeadRow.fromData(lead: Lead, sourceRow: SourceRow? = null, feedRow: FeedRow? = null) {
+internal fun LeadRow.fromData(lead: Lead, sourceRow: SourceRow? = null, feedRow: FeedRow? = null) {
     target = sourceRow
     feed = feedRow
     url = lead.url.toString()

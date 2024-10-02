@@ -1,7 +1,6 @@
 package newsref.db.tables
 
-import newsref.db.utils.toTrustedUrl
-import newsref.db.utils.toUri
+import newsref.model.core.parseUnchecked
 import newsref.model.data.Scoop
 import org.jetbrains.exposed.dao.EntityClass
 import org.jetbrains.exposed.dao.LongEntity
@@ -22,7 +21,7 @@ class ScoopRow(id: EntityID<Long>) : LongEntity(id) {
 
 fun ScoopRow.toData() = Scoop(
     id = this.id.value,
-    url = this.url.toTrustedUrl(),
+    url = this.url.parseUnchecked(),
     html = this.html
 )
 

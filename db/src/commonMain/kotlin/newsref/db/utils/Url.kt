@@ -1,9 +1,5 @@
 package newsref.db.utils
 
-import com.eygraber.uri.Uri
-import com.eygraber.uri.Url
+import newsref.model.core.parseChecked
 
-fun String.toUri() = Uri.parse(this)
-fun String.toUriOrNull() = Uri.parseOrNull(this)
-
-fun String.toTrustedUrl() = Url.parse(this)
+internal fun String.toCheckedFromDb() = this.parseChecked(emptySet(), emptySet())

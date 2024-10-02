@@ -1,6 +1,6 @@
 package newsref.model.data
 
-import com.eygraber.uri.Url
+import newsref.model.core.Url
 
 data class Feed(
     val id: Int,

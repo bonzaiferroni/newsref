@@ -7,11 +7,11 @@ import org.jetbrains.exposed.dao.id.CompositeIdTable
 import org.jetbrains.exposed.dao.id.EntityID
 import org.jetbrains.exposed.dao.id.LongIdTable
 
-object ContentTable : LongIdTable("content") {
+internal object ContentTable : LongIdTable("content") {
     val text = text("text")
 }
 
-class ContentRow(id: EntityID<Long>) : LongEntity(id) {
+internal class ContentRow(id: EntityID<Long>) : LongEntity(id) {
     companion object : EntityClass<Long, ContentRow>(ContentTable)
 
     var text by ContentTable.text
@@ -19,17 +19,17 @@ class ContentRow(id: EntityID<Long>) : LongEntity(id) {
     val sources by SourceRow via SourceContentTable
 }
 
-object SourceContentTable : CompositeIdTable("source_content") {
+internal object SourceContentTable : CompositeIdTable("source_content") {
     val sourceId = reference("source_id", SourceTable)
     val contentId = reference("content_id", ContentTable)
     override val primaryKey = PrimaryKey(sourceId, contentId)
 }
 
-fun ContentRow.toData() = Content(
+internal fun ContentRow.toData() = Content(
     id = this.id.value,
     text = this.text,
 )
 
-fun ContentRow.fromData(content: String) {
+internal fun ContentRow.fromData(content: String) {
     text = content
 }
