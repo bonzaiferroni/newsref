@@ -1,13 +1,13 @@
 package newsref.db.tables
 
-import newsref.model.core.parseUnchecked
+import newsref.model.core.toUrl
 import newsref.model.data.Scoop
 import org.jetbrains.exposed.dao.EntityClass
 import org.jetbrains.exposed.dao.LongEntity
 import org.jetbrains.exposed.dao.id.EntityID
 import org.jetbrains.exposed.dao.id.LongIdTable
 
-object ScoopTable : LongIdTable("scoop") {
+internal object ScoopTable : LongIdTable("scoop") {
     val url = text("uri")
     val html = text("html")
 }
@@ -21,7 +21,7 @@ class ScoopRow(id: EntityID<Long>) : LongEntity(id) {
 
 fun ScoopRow.toData() = Scoop(
     id = this.id.value,
-    url = this.url.parseUnchecked(),
+    url = this.url.toUrl(),
     html = this.html
 )
 

@@ -1,13 +1,13 @@
 package newsref.krawly.utils
 
-import com.eygraber.uri.Url
 import it.skrape.selects.Doc
 import kotlinx.datetime.Clock
 import newsref.db.models.NewsArticle
+import newsref.krawly.MAX_URL_CHARS
+import newsref.model.core.*
 import newsref.model.data.*
 import newsref.model.dto.DocumentInfo
 import newsref.model.dto.LinkInfo
-import newsref.model.utils.tryParseTrustedUrl
 
 fun Doc.read(sourceUrl: Url, outlet: Outlet, newsArticle: NewsArticle?): DocumentInfo {
     val contents = mutableSetOf<String>()
@@ -26,19 +26,25 @@ fun Doc.read(sourceUrl: Url, outlet: Outlet, newsArticle: NewsArticle?): Documen
             contents.add(element.text)
             wordCount += element.text.wordCount()
             for ((text, href) in element.eachLink) {
-                val url = href.tryParseTrustedUrl(outlet.urlParams, sourceUrl) ?: continue
+                if (href.length > MAX_URL_CHARS) {
+                    println("Reader: Url too long: ${href.length}")
+                    continue
+                }
+                val url = href.toCheckedWithContextOrNull(outlet, sourceUrl) ?: continue
                 links.add(LinkInfo(url = url, anchorText = text, context = element.text))
             }
         }
     }
     val urlString = newsArticle?.url ?: this.readUrl()
-    val docUrl = urlString?.tryParseTrustedUrl(outlet.urlParams, sourceUrl)
+    val docUrl = urlString?.toCheckedWithContextOrNull(outlet, sourceUrl)
     val imageUrlString = newsArticle?.image?.firstOrNull()?.url ?: this.readImageUrl()
-    val imageUrl = imageUrlString?.tryParseTrustedUrl(outlet.urlParams, sourceUrl)
+    val imageUrl = imageUrlString?.toCheckedWithContextOrNull(outlet, sourceUrl)
+    val outletName = newsArticle?.publisher?.name ?: this.readOutletName()
 
     return DocumentInfo(
         docUrl = docUrl,
         outletId = outlet.id,
+        outletName = outletName,
         article = Article(
             headline = this.readHeadline() ?: newsArticle?.headline ?: h1Title ?: this.titleText,
             alternativeHeadline = newsArticle?.alternativeHeadline,

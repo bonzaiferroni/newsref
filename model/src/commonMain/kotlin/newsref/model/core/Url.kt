@@ -10,7 +10,7 @@ open class Url internal constructor(
 	val path: String
 	val params: Map<String, String>
 	val fragment: String?
-	val isDisallowed: Boolean?
+	val robotsAllowed: Boolean?
 	val checkedUrl: String?
 	val authority get() = "$scheme://$host"
 
@@ -24,7 +24,7 @@ open class Url internal constructor(
 		val (beforePath, afterPath) = afterScheme.deconstruct("/")
 		if (beforePath.contains('@')) throw IllegalArgumentException("URL contains user info: $rawUrl")
 		host = beforePath
-		val rawPath = afterPath ?: "/"
+		val rawPath = afterPath?.let { "/$it" } ?: "/"
 
 		val (beforeParams, afterParams) = rawPath.deconstruct("?")
 		var requiredParamPath = ""
@@ -39,9 +39,9 @@ open class Url internal constructor(
 			Pair(key, value)
 		}?.toMap() ?: emptyMap()
 		path = beforeParams + requiredParamPath
-		isDisallowed = disallowedPaths?.any { path.startsWith(it) }
-		checkedUrl = if (requiredParams != null && isDisallowed != null && !isDisallowed)
-			"$authority$path#$fragment"
+		robotsAllowed = disallowedPaths?.any { path.startsWith(it) }
+		checkedUrl = if (requiredParams != null && (robotsAllowed == null || robotsAllowed))
+			"$authority$path${fragment?.let { "#$it" } ?: ""}"
 		else null
 	}
 
@@ -54,7 +54,7 @@ open class Url internal constructor(
 	}
 }
 
-internal fun tryParseUrl(block: () -> Url): Url? {
+internal fun <T: Url> tryParseUrl(block: () -> T): T? {
 	return try {
 		block()
 	} catch (e: IllegalArgumentException) {
@@ -63,7 +63,7 @@ internal fun tryParseUrl(block: () -> Url): Url? {
 }
 
 private fun String.deconstruct(delimiter: String): Pair<String, String?> =
-	this.split(delimiter).let { Pair(it[0], it.getOrNull(1)) }
+	this.split(delimiter, limit = 2).let { Pair(it[0], it.getOrNull(1)) }
 
 internal fun String.maybeCombine(context: Url) = if (this.contains("://")) {
 	this
@@ -71,11 +71,11 @@ internal fun String.maybeCombine(context: Url) = if (this.contains("://")) {
 	"${context.authority}${if (this.startsWith("/")) "" else "/"}${this}"
 }
 
-fun String.parseUnchecked() = Url(this, null, null)
+fun String.toUrl() = Url(this, null, null)
 
-fun String.parseMaybeRelative(context: Url) = this.maybeCombine(context).parseUnchecked()
+fun String.toUrlWithContext(context: Url) = this.maybeCombine(context).toUrl()
 
-fun String.tryParseUnchecked(): Url? = tryParseUrl { this.parseUnchecked() }
+fun String.toUrlOrNull(): Url? = tryParseUrl { this.toUrl() }
 
-fun String.tryParseMaybeRelative(context: Url): Url? =
-	tryParseUrl { this.maybeCombine(context).parseUnchecked() }
+fun String.toUrlWithContextOrNull(context: Url): Url? =
+	tryParseUrl { this.maybeCombine(context).toUrl() }

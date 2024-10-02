@@ -1,10 +1,8 @@
 package newsref.model
 
-import com.eygraber.uri.Uri
-import com.eygraber.uri.Url
+import newsref.model.core.toUrl
 import kotlin.test.Test
 import kotlin.test.assertEquals
-import kotlin.test.assertNotNull
 
 class ConstantsTest {
 
@@ -17,7 +15,7 @@ class ConstantsTest {
             "https://example.com/with-path",
             "https://example.com/with-path#and-fragment"
         )
-        val uris = strings.map { Uri.parse(it)}
+        val uris = strings.map { it.toUrl() }
         strings.forEachIndexed { index, s ->
             assertEquals(s, uris[index].toString())
         }

@@ -1,8 +1,6 @@
 package newsref.krawly.utils
 
-import com.eygraber.uri.Uri
 import it.skrape.selects.DocElement
-import newsref.db.utils.toUriOrNull
 
 fun DocElement.tryGetHref(): Pair<String, String>? =
     this.eachLink.entries.firstOrNull()?.let { Pair(it.key, it.value) }

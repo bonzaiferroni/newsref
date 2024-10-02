@@ -1,10 +1,12 @@
 package newsref.krawly.agents
 
-import com.eygraber.uri.Url
 import newsref.db.services.FeedService
 import newsref.krawly.SpiderWeb
 import newsref.krawly.utils.tryGetHref
-import newsref.model.utils.tryParseTrustedUrl
+import newsref.model.core.CheckedUrl
+import newsref.model.core.toCheckedUrl
+import newsref.model.core.toUrl
+import newsref.model.core.toUrlOrNull
 
 class FeedAgent(
     private val web: SpiderWeb,
@@ -25,8 +27,10 @@ class FeedAgent(
             val doc = webResult.doc                                             // <- Parse
             for (docElement in doc.findAll(feed.selector)) {
                 val (headline, href) = docElement.tryGetHref() ?: continue
-                val url = outletAgent.getTrustedUrl(href, null) ?: continue     // <- OutletAgent ->
-                list += FeedLead(feedId = feed.id, url = url, headline = headline)
+                val url = href.toUrlOrNull() ?: continue
+                val outlet = outletAgent.getOutlet(url)                         // <- OutletAgent ->
+                val checkedUrl = href.toCheckedUrl(outlet)
+                list += FeedLead(feedId = feed.id, url = checkedUrl, headline = headline)
             }
         }
 
@@ -36,6 +40,6 @@ class FeedAgent(
 
 data class FeedLead(
     val feedId: Int,
-    val url: Url,
+    val url: CheckedUrl,
     val headline: String
 )

@@ -17,7 +17,7 @@ internal object OutletTable : IntIdTable("outlet") {
     val urlParams = array<String>("url_params")
 }
 
-internal class OutletRow(id: EntityID<Int>): IntEntity(id) {
+class OutletRow(id: EntityID<Int>): IntEntity(id) {
     companion object : EntityClass<Int, OutletRow>(OutletTable)
 
     var authors by AuthorRow via OutletAuthorTable
@@ -32,7 +32,7 @@ internal class OutletRow(id: EntityID<Int>): IntEntity(id) {
     val sources by SourceRow referrersOn SourceTable.outletId
 }
 
-internal fun OutletRow.toData() = Outlet(
+fun OutletRow.toData() = Outlet(
     id = this.id.value,
     name = this.name,
     logo = this.logo,
@@ -42,7 +42,7 @@ internal fun OutletRow.toData() = Outlet(
     urlParams = this.urlParams.toSet(),
 )
 
-internal fun OutletRow.fromData(outlet: Outlet) {
+fun OutletRow.fromData(outlet: Outlet) {
     name = outlet.name
     logo = outlet.logo
     robotsTxt = outlet.robotsTxt
@@ -51,5 +51,5 @@ internal fun OutletRow.fromData(outlet: Outlet) {
     urlParams = outlet.urlParams.toList()
 }
 
-internal fun OutletRow.Companion.findByHost(host: String): OutletRow? =
+fun OutletRow.Companion.findByHost(host: String): OutletRow? =
     this.find { stringParam(host) eq anyFrom(OutletTable.domains) }.firstOrNull()

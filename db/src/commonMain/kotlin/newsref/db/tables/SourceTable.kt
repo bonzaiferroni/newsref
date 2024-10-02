@@ -22,7 +22,7 @@ internal object SourceTable : LongIdTable("source") {
     val attemptedAt = datetime("attempted_at")
 }
 
-internal class SourceRow(id: EntityID<Long>) : LongEntity(id) {
+class SourceRow(id: EntityID<Long>) : LongEntity(id) {
     companion object : EntityClass<Long, SourceRow>(SourceTable)
 
     var outlet by OutletRow referencedOn SourceTable.outletId
@@ -37,7 +37,7 @@ internal class SourceRow(id: EntityID<Long>) : LongEntity(id) {
     val document by ArticleRow referrersOn ArticleTable.sourceId
 }
 
-internal fun SourceRow.toData() = Source(
+fun SourceRow.toData() = Source(
     id = this.id.value,
     url = this.url.toCheckedFromDb(),
     leadTitle = this.leadTitle,
@@ -45,7 +45,7 @@ internal fun SourceRow.toData() = Source(
     attemptedAt = this.attemptedAt.toInstant(UtcOffset.ZERO)
 )
 
-internal fun SourceRow.fromData(source: Source, outletRow: OutletRow) {
+fun SourceRow.fromData(source: Source, outletRow: OutletRow) {
     outlet = outletRow
     url = source.url.toString()
     leadTitle = source.leadTitle
@@ -53,6 +53,6 @@ internal fun SourceRow.fromData(source: Source, outletRow: OutletRow) {
     attemptedAt = source.attemptedAt.toLocalDateTime(TimeZone.UTC)
 }
 
-internal fun SourceRow.addContents(contentEntities: List<ContentRow>) {
+fun SourceRow.addContents(contentEntities: List<ContentRow>) {
     contents = SizedCollection(contentEntities)
 }

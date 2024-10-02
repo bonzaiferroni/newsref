@@ -1,9 +1,9 @@
 package newsref.krawly.utils
 
-import com.eygraber.uri.Url
 import com.microsoft.playwright.*
 import it.skrape.selects.Doc
 import newsref.krawly.chromeLinuxAgent
+import newsref.model.core.Url
 
 fun pwFetch(url: Url, screenshot: Boolean = false): WebResult? = Playwright.create().use { playwright ->
     playwright.chromium().launch().use { browser ->

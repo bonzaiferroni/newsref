@@ -7,7 +7,7 @@ import org.jetbrains.exposed.dao.id.EntityID
 import org.jetbrains.exposed.dao.id.LongIdTable
 import org.jetbrains.exposed.sql.ReferenceOption
 
-internal object SessionTokenTable : LongIdTable() {
+object SessionTokenTable : LongIdTable() {
     val user = reference("user_id", UserTable, onDelete = ReferenceOption.CASCADE)
     val token = text("token")
     val createdAt = long("created_at")
@@ -15,7 +15,7 @@ internal object SessionTokenTable : LongIdTable() {
     val issuer = text("issuer")
 }
 
-internal class SessionTokenEntity(id: EntityID<Long>) : LongEntity(id) {
+class SessionTokenEntity(id: EntityID<Long>) : LongEntity(id) {
     companion object : LongEntityClass<SessionTokenEntity>(SessionTokenTable)
 
     var user by UserRow referencedOn SessionTokenTable.user
@@ -25,7 +25,7 @@ internal class SessionTokenEntity(id: EntityID<Long>) : LongEntity(id) {
     var issuer by SessionTokenTable.issuer
 }
 
-internal fun SessionTokenEntity.toData() = SessionToken(
+fun SessionTokenEntity.toData() = SessionToken(
     this.id.value,
     this.user.id.value,
     this.token,
@@ -34,7 +34,7 @@ internal fun SessionTokenEntity.toData() = SessionToken(
     this.issuer,
 )
 
-internal fun SessionTokenEntity.fromData(data: SessionToken) {
+fun SessionTokenEntity.fromData(data: SessionToken) {
     user = UserRow[data.userId]
     token = data.token
     createdAt = data.createdAt

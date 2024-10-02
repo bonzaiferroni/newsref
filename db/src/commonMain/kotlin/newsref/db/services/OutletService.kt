@@ -1,11 +1,11 @@
 package newsref.db.services
 
-import com.eygraber.uri.Url
 import newsref.db.DataService
 import newsref.db.tables.OutletRow
 import newsref.db.tables.findByHost
 import newsref.db.tables.fromData
 import newsref.db.tables.toData
+import newsref.model.core.Url
 import newsref.model.data.Outlet
 
 class OutletService : DataService<Outlet, Int, OutletRow>(

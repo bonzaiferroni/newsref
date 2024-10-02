@@ -13,7 +13,7 @@ class Spider(
     private val web: SpiderWeb,
     private val outletAgent: OutletAgent = OutletAgent(web),
     private val feedAgent: FeedAgent = FeedAgent(web, outletAgent),
-    private val leadAgent: LeadAgent = LeadAgent(web, outletAgent, feedAgent),
+    private val leadAgent: LeadAgent = LeadAgent(web, feedAgent),
     private val sourceAgent: SourceAgent = SourceAgent(web, outletAgent)
 ) {
     private val attempts = mutableMapOf<String, Instant>()
@@ -21,7 +21,7 @@ class Spider(
     suspend fun startCrawling() {
         println("🕷🌄 waking up")
 
-        val leads = leadAgent.getLeads()                                        // <- LeadAgent
+        val leads = leadAgent.getLeads()                                        // <- LeadAgent ->
         println("🕷👀 ${leads.size} initial leads")
 
         val deque = ArrayDeque(leads.shuffled())
@@ -44,14 +44,14 @@ class Spider(
             attempts[host] = currentTime
 
             println("🕷🕸 following: ${lead.url}")
-            leadAgent.notifyAttempt(lead)                                       // -> LeadAgent
-            val result = sourceAgent.followLead(lead)                           // -> SourceAgent
+            leadAgent.notifyAttempt(lead)                                       //    LeadAgent ->
+            val result = sourceAgent.followLead(lead)                           // <- SourceAgent ->
             if (result == null) {
                 deque.addLast(lead)
                 println("🕷💩 no result: ${lead.url}")
                 continue
             }
-            val sourceLeads = leadAgent.followUp(lead, result)                  // -> LeadAgent
+            val sourceLeads = leadAgent.followUp(lead, result)                  // <- LeadAgent ->
                 ?: continue
             println("🕷🤯 ${sourceLeads.size} new leads")
             sourceLeads.forEach { deque.addLast(it) }

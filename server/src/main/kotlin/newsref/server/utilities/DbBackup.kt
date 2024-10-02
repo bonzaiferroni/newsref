@@ -35,10 +35,10 @@ object DbBackup {
         val json = file.readText()
         val backup = Json.decodeFromString<DataBackup>(json)
 
-        backup.users.forEach {
-            val userId = UserService().create(it)
-            IdMap.setNewId(User::class, it.id, userId)
-        }
+//        backup.users.forEach {
+//            val userId = UserService().create(it)
+//            IdMap.setNewId(User::class, it.id, userId)
+//        }
 //        backup.areas.forEach {
 //            val areaId = AreaService().create(it)
 //            IdMap.setNewId(Area::class, it.id, areaId)

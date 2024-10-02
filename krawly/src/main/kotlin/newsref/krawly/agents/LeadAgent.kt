@@ -1,6 +1,5 @@
 package newsref.krawly.agents
 
-import com.eygraber.uri.Url
 import newsref.db.services.LeadService
 import newsref.krawly.SpiderWeb
 import newsref.model.data.Lead
@@ -9,7 +8,6 @@ import newsref.model.dto.SourceInfo
 
 class LeadAgent(
     private val web: SpiderWeb,
-    private val outletAgent: OutletAgent,
     private val feedAgent: FeedAgent,
     private val leadService: LeadService = LeadService()
 ) {
@@ -17,9 +15,8 @@ class LeadAgent(
     suspend fun getLeads(): List<Lead> {
         val leads = mutableListOf<Lead>()
         val unfollowed = leadService.getUnfollowed()                            // <- LeadService
-        val feedLeads = feedAgent.checkFeeds()                                  // <- FeedAgent
+        val feedLeads = feedAgent.checkFeeds()                                  // <- FeedAgent ->
         for (feedLead in feedLeads) {
-            if (!outletAgent.isAllowed(feedLead.url)) continue                  // <- OutletAgent
             val lead = leadService.createIfFresh(                               //    LeadService ->
                 feedLead.url,
                 feedLead.feedId,
@@ -41,7 +38,6 @@ class LeadAgent(
         val newLeads = sourceInfo.document?.links?.map { it.url }
             ?: return null
         for (url in newLeads) {
-            if (!outletAgent.isAllowed(url)) continue                           // <- OutletAgent
             val lead = leadService.createIfFresh(url) ?: continue               //    LeadService ->
             leads += lead
         }

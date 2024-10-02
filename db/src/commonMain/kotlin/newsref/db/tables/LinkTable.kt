@@ -14,7 +14,7 @@ internal object LinkTable: LongIdTable("link") {
     val urlText = text("url_text")
 }
 
-internal class LinkRow(id: EntityID<Long>): LongEntity(id) {
+class LinkRow(id: EntityID<Long>): LongEntity(id) {
     companion object: LongEntityClass<LinkRow>(LinkTable)
 
     var source by SourceRow referencedOn LinkTable.sourceId
@@ -24,14 +24,14 @@ internal class LinkRow(id: EntityID<Long>): LongEntity(id) {
     var urlText by LinkTable.urlText
 }
 
-internal fun LinkRow.toData() = Link(
+fun LinkRow.toData() = Link(
     id = this.id.value,
     sourceId = this.source.id.value,
     url = this.url.toCheckedFromDb(),
     text = this.urlText,
 )
 
-internal fun LinkRow.fromData(data: Link, sourceRow: SourceRow, contentRow: ContentRow) {
+fun LinkRow.fromData(data: Link, sourceRow: SourceRow, contentRow: ContentRow) {
     source = sourceRow
     content = contentRow
     url = data.url.toString()

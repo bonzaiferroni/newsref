@@ -3,7 +3,7 @@ package newsref.db.models
 import kotlin.test.Test
 import kotlin.test.assertNotNull
 import kotlinx.serialization.json.Json
-import newsref.db.serializers.readArrayOrObject
+import newsref.db.utils.readArrayOrObject
 import newsref.db.utils.resourcePath
 import java.io.File
 

@@ -2,7 +2,8 @@ package newsref.server.plugins
 
 import io.ktor.server.application.*
 import io.ktor.util.logging.*
+import newsref.server.serverLog
 
 fun Application.configureLogging() {
-    Log.initialize(environment.log)
+    // serverLog.initialize(environment.log)
 }

@@ -1,5 +1,5 @@
 package newsref.db.utils
 
-import newsref.model.core.parseChecked
+import newsref.model.core.toCheckedUrl
 
-internal fun String.toCheckedFromDb() = this.parseChecked(emptySet(), emptySet())
+internal fun String.toCheckedFromDb() = this.toCheckedUrl(emptySet(), emptySet())

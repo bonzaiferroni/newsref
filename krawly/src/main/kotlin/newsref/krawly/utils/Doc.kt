@@ -1,6 +1,5 @@
 package newsref.krawly.utils
 
-import com.eygraber.uri.Url
 import it.skrape.selects.Doc
 import it.skrape.selects.DocElement
 import it.skrape.selects.ElementNotFoundException
@@ -10,10 +9,8 @@ import kotlinx.serialization.json.JsonArray
 import kotlinx.serialization.json.JsonObject
 import kotlinx.serialization.json.decodeFromJsonElement
 import newsref.db.models.NewsArticle
-import newsref.db.serializers.globalJson
-import newsref.db.utils.cacheResource
-import newsref.db.utils.tryParse
-import newsref.db.utils.tryParseInstantOrNull
+import newsref.db.utils.*
+import newsref.model.core.Url
 import newsref.model.data.toSourceType
 
 fun Doc.readMetaContent(vararg propertyValues: String) = propertyValues.firstNotNullOfOrNull {
@@ -45,8 +42,7 @@ fun Doc.getNewsArticle(cacheId: Url): NewsArticle? {
     val json = innerHtml.trimCData()
     json.cacheResource(cacheId, "json", "news_article_raw")
     val article = json.readArrayOrObject()
-    if (article == null)
-        json.cacheResource(cacheId, "json", "news_article_parsed")
+    article?.cacheSerializable(cacheId, "json", "news_article_parsed")
     return article // return
 }
 
@@ -67,18 +63,18 @@ private fun Doc.scanTagsForNewsArticle(): String? {
 private fun String.readArrayOrObject(): NewsArticle? {
     try {
         // Try to decode the string as a JsonArray first
-        val jsonArray = globalJson.decodeFromString<JsonArray>(this)
+        val jsonArray = prettyPrintJson.decodeFromString<JsonArray>(this)
         return jsonArray.firstNotNullOfOrNull { jsonElement ->
             val jsonObject = jsonElement as? JsonObject ?: return@firstNotNullOfOrNull null
             val type = jsonObject["@type"].toString()
             if (type != "\"NewsArticle\"") return@firstNotNullOfOrNull null
-            runCatching { globalJson.decodeFromJsonElement<NewsArticle>(jsonObject) }
+            runCatching { prettyPrintJson.decodeFromJsonElement<NewsArticle>(jsonObject) }
                 .getOrNull()
         } ?: throw SerializationException("No valid NewsArticle found in JSON array")
     } catch (e: SerializationException) {
         return try {
             // If it's not a JsonArray, try to decode it directly as a NewsArticle
-            globalJson.decodeFromString<NewsArticle>(this)
+            prettyPrintJson.decodeFromString<NewsArticle>(this)
         } catch (e: Exception) {
             null
         }

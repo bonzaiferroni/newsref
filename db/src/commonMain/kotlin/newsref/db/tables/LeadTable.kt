@@ -21,7 +21,7 @@ internal object LeadTable: LongIdTable("lead") {
     val attemptedAt = datetime("attempted_at").nullable()
 }
 
-internal class LeadRow(id: EntityID<Long>): LongEntity(id) {
+class LeadRow(id: EntityID<Long>): LongEntity(id) {
     companion object: EntityClass<Long, LeadRow>(LeadTable)
 
     var target by SourceRow optionalReferencedOn LeadTable.targetId
@@ -33,7 +33,7 @@ internal class LeadRow(id: EntityID<Long>): LongEntity(id) {
     var attemptedAt by LeadTable.attemptedAt
 }
 
-internal fun LeadRow.toData() = Lead(
+fun LeadRow.toData() = Lead(
     id = this.id.value,
     sourceId = this.target?.id?.value,
     feedId = this.feed?.id?.value,
@@ -43,7 +43,7 @@ internal fun LeadRow.toData() = Lead(
     attemptedAt = this.attemptedAt?.toInstant(UtcOffset.ZERO)
 )
 
-internal fun LeadRow.fromData(lead: Lead, sourceRow: SourceRow? = null, feedRow: FeedRow? = null) {
+fun LeadRow.fromData(lead: Lead, sourceRow: SourceRow? = null, feedRow: FeedRow? = null) {
     target = sourceRow
     feed = feedRow
     url = lead.url.toString()

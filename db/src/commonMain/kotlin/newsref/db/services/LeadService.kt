@@ -1,10 +1,10 @@
 package newsref.db.services
 
-import com.eygraber.uri.Url
 import kotlinx.datetime.TimeZone
 import kotlinx.datetime.toLocalDateTime
 import newsref.db.DataService
 import newsref.db.tables.*
+import newsref.model.core.Url
 import newsref.model.data.Lead
 import org.jetbrains.exposed.sql.lowerCase
 

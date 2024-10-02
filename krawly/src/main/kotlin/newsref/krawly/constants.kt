@@ -15,3 +15,6 @@ val safariAgent = "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/6
 //private val lead = "https://apnews.com/article/trump-wisconsin-immigration-visit-arrest-0810efccefc8b094756d0c46f927b7dc"
 //private val lead = "https://www.timesofisrael.com/liveblog_entry/senior-iaf-officials-say-strike-that-killed-nasrallah-pulled-off-flawlessly/"
 //private val lead = "https://www.wsj.com/world/middle-east/israel-brings-fight-to-beirut-still-assessing-whether-hezbollahsleader-is-dead-1bf0d098"
+
+const val MAX_URL_ATTEMPTS = 5
+const val MAX_URL_CHARS = 500
