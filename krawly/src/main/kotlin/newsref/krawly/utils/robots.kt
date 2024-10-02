@@ -1,7 +1,7 @@
 package newsref.krawly.utils
 
 import com.eygraber.uri.Url
-import newsref.model.utils.tryParseUrl
+import newsref.model.utils.tryParseTrustedUrl
 
 fun parseRobotsTxt(content: String): Set<String> {
     val disallowedPaths = mutableSetOf<String>()
@@ -30,7 +30,7 @@ fun parseRobotsTxt(content: String): Set<String> {
     return disallowedPaths
 }
 
-fun Url.getRobotsTxtUrl() = "/robots.txt".tryParseUrl(context = this)
+fun Url.getRobotsTxtUrl() = "/robots.txt".tryParseTrustedUrl(emptySet(), context = this)
     ?: throw IllegalArgumentException("Invalid robots.txt URL: $this")
-fun Url.getSitemapUrl() = "/sitemap.xml".tryParseUrl(context = this)
+fun Url.getSitemapUrl() = "/sitemap.xml".tryParseTrustedUrl(emptySet(), context = this)
     ?: throw IllegalArgumentException("Invalid sitemap.xml URL: $this")

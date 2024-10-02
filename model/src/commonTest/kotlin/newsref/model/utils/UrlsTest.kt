@@ -22,11 +22,11 @@ class UrlsTest {
             "myPath",
             "myPath?stripped=param"
         )
-        val context = Uri.parse("http://example.com")
+        val context = Url.parse("http://example.com")
         val expectedStr = "http://example.com/myPath"
-        val expectedUri = Uri.parse(expectedStr)
+        val expectedUri = Url.parse(expectedStr)
         urls.forEach { url ->
-            val parsed = url.tryParseUri(context = context)
+            val parsed = url.tryParseUntrustedUrl(emptySet(), context = context)
             assertEquals(expectedUri, parsed)
             assertEquals(expectedStr, parsed.toString())
         }
@@ -41,9 +41,9 @@ class UrlsTest {
         )
         val context = Url.parse("http://example.com")
         val expectedStr = "http://example.com/myPath"
-        val expectedUri = Uri.parse(expectedStr)
+        val expectedUri = Url.parse(expectedStr)
         urls.forEach { url ->
-            val parsed = url.tryParseUrl(context = context)
+            val parsed = url.tryParseTrustedUrl(emptySet(), context = context)
             assertEquals(expectedUri.toString(), parsed.toString())
             assertEquals(expectedStr, parsed.toString())
         }

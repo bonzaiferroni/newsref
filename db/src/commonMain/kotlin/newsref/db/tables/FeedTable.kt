@@ -1,7 +1,7 @@
 package newsref.db.tables
 
-import com.eygraber.uri.Uri
-import newsref.db.utils.toUrl
+import newsref.db.utils.toTrustedUrl
+import newsref.db.utils.toUri
 import org.jetbrains.exposed.dao.EntityClass
 import org.jetbrains.exposed.dao.IntEntity
 import org.jetbrains.exposed.dao.id.EntityID
@@ -21,7 +21,7 @@ class FeedRow(id: EntityID<Int>): IntEntity(id) {
 
 fun FeedRow.toData() = newsref.model.data.Feed(
     id = this.id.value,
-    url = this.url.toUrl(),
+    url = this.url.toTrustedUrl(),
     selector = this.selector,
 )
 

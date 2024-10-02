@@ -1,6 +1,7 @@
 package newsref.db.tables
 
-import newsref.db.utils.toUrl
+import newsref.db.utils.toTrustedUrl
+import newsref.db.utils.toUri
 import newsref.model.data.Link
 import org.jetbrains.exposed.dao.LongEntity
 import org.jetbrains.exposed.dao.LongEntityClass
@@ -27,7 +28,7 @@ class LinkRow(id: EntityID<Long>): LongEntity(id) {
 fun LinkRow.toData() = Link(
     id = this.id.value,
     sourceId = this.source.id.value,
-    url = this.url.toUrl(),
+    url = this.url.toTrustedUrl(),
     text = this.urlText,
 )
 

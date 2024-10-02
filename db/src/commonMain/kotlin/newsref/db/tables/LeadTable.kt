@@ -1,11 +1,11 @@
 package newsref.db.tables
 
-import com.eygraber.uri.Url
 import kotlinx.datetime.TimeZone
 import kotlinx.datetime.UtcOffset
 import kotlinx.datetime.toInstant
 import kotlinx.datetime.toLocalDateTime
-import newsref.db.utils.toUrl
+import newsref.db.utils.toTrustedUrl
+import newsref.db.utils.toUri
 import newsref.model.data.Lead
 import org.jetbrains.exposed.dao.EntityClass
 import org.jetbrains.exposed.dao.LongEntity
@@ -38,7 +38,7 @@ fun LeadRow.toData() = Lead(
     id = this.id.value,
     sourceId = this.target?.id?.value,
     feedId = this.feed?.id?.value,
-    url = this.url.toUrl(),
+    url = this.url.toTrustedUrl(),
     headline = this.headline,
     attemptCount = this.attemptCount,
     attemptedAt = this.attemptedAt?.toInstant(UtcOffset.ZERO)

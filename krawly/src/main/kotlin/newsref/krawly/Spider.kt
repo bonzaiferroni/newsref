@@ -12,7 +12,7 @@ import kotlin.time.Duration.Companion.seconds
 class Spider(
     private val web: SpiderWeb,
     private val outletAgent: OutletAgent = OutletAgent(web),
-    private val feedAgent: FeedAgent = FeedAgent(web),
+    private val feedAgent: FeedAgent = FeedAgent(web, outletAgent),
     private val leadAgent: LeadAgent = LeadAgent(web, outletAgent, feedAgent),
     private val sourceAgent: SourceAgent = SourceAgent(web, outletAgent)
 ) {
@@ -45,7 +45,7 @@ class Spider(
 
             println("🕷🕸 following: ${lead.url}")
             leadAgent.notifyAttempt(lead)                                       // -> LeadAgent
-            val result = sourceAgent.follow(lead)                               // -> SourceAgent
+            val result = sourceAgent.followLead(lead)                           // -> SourceAgent
             if (result == null) {
                 deque.addLast(lead)
                 println("🕷💩 no result: ${lead.url}")

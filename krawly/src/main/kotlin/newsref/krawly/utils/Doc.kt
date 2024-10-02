@@ -16,6 +16,13 @@ import newsref.db.utils.tryParse
 import newsref.db.utils.tryParseInstantOrNull
 import newsref.model.data.toSourceType
 
+fun Doc.readMetaContent(vararg propertyValues: String) = propertyValues.firstNotNullOfOrNull {
+    var value = this.findFirstOrNull("meta[property=\"$it\"]")?.attributes?.get("content")
+    if (value == null)
+        value = this.findFirstOrNull("meta[name=\"$it\"]")?.attributes?.get("content")
+    value // return
+}
+
 fun Doc.readUrl() = this.readMetaContent("url", "og:url", "twitter:url")
 fun Doc.readHeadline() = this.readMetaContent("title", "og:title", "twitter:title")
 fun Doc.readDescription() = this.readMetaContent("description", "og:description", "twitter:description")

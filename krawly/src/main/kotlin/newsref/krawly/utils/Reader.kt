@@ -1,16 +1,15 @@
 package newsref.krawly.utils
 
+import com.eygraber.uri.Url
 import it.skrape.selects.Doc
-import it.skrape.selects.DocElement
 import kotlinx.datetime.Clock
 import newsref.db.models.NewsArticle
-import newsref.db.utils.toUrlOrNull
 import newsref.model.data.*
 import newsref.model.dto.DocumentInfo
 import newsref.model.dto.LinkInfo
-import newsref.model.utils.tryParseUrl
+import newsref.model.utils.tryParseTrustedUrl
 
-fun Doc.read(lead: Lead, outlet: Outlet, newsArticle: NewsArticle?): DocumentInfo {
+fun Doc.read(sourceUrl: Url, outlet: Outlet, newsArticle: NewsArticle?): DocumentInfo {
     val contents = mutableSetOf<String>()
     val links = mutableListOf<LinkInfo>()
     // var newsArticle = this
@@ -27,18 +26,24 @@ fun Doc.read(lead: Lead, outlet: Outlet, newsArticle: NewsArticle?): DocumentInf
             contents.add(element.text)
             wordCount += element.text.wordCount()
             for ((text, href) in element.eachLink) {
-                val url = href.tryParseUrl(outlet.urlParams, lead.url) ?: continue
+                val url = href.tryParseTrustedUrl(outlet.urlParams, sourceUrl) ?: continue
                 links.add(LinkInfo(url = url, anchorText = text, context = element.text))
             }
         }
     }
+    val urlString = newsArticle?.url ?: this.readUrl()
+    val docUrl = urlString?.tryParseTrustedUrl(outlet.urlParams, sourceUrl)
+    val imageUrlString = newsArticle?.image?.firstOrNull()?.url ?: this.readImageUrl()
+    val imageUrl = imageUrlString?.tryParseTrustedUrl(outlet.urlParams, sourceUrl)
 
     return DocumentInfo(
+        docUrl = docUrl,
+        outletId = outlet.id,
         article = Article(
             headline = this.readHeadline() ?: newsArticle?.headline ?: h1Title ?: this.titleText,
             alternativeHeadline = newsArticle?.alternativeHeadline,
             description = newsArticle?.description ?: this.readDescription(),
-            imageUrl = (newsArticle?.image?.firstOrNull()?.url ?: this.readImageUrl())?.toUrlOrNull(),
+            imageUrl = imageUrl,
             section = newsArticle?.articleSection,
             keywords = newsArticle?.keywords,
             wordCount = newsArticle?.wordCount ?: wordCount,
@@ -52,19 +57,8 @@ fun Doc.read(lead: Lead, outlet: Outlet, newsArticle: NewsArticle?): DocumentInf
         ),
         contents = contents,
         links = links,
-        authors = (newsArticle?.readAuthor() ?: this.readAuthor())?.let { setOf(it) }
+        authors = (newsArticle?.readAuthor() ?: this.readAuthor())?.let { setOf(it) },
+        type = newsArticle?.let { SourceType.ARTICLE }
+            ?: this.readType() ?: SourceType.UNKNOWN,
     )
 }
-
-
-
-fun Doc.readMetaContent(vararg propertyValues: String) = propertyValues.firstNotNullOfOrNull {
-    var value = this.findFirstOrNull("meta[property=\"$it\"]")?.attributes?.get("content")
-    if (value == null)
-        value = this.findFirstOrNull("meta[name=\"$it\"]")?.attributes?.get("content")
-    value // return
-}
-
-
-
-

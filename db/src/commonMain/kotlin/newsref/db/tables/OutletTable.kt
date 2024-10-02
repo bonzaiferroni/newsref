@@ -7,6 +7,7 @@ import org.jetbrains.exposed.dao.EntityClass
 import org.jetbrains.exposed.dao.IntEntity
 import org.jetbrains.exposed.dao.id.EntityID
 import org.jetbrains.exposed.dao.id.IntIdTable
+import org.jetbrains.exposed.sql.SqlExpressionBuilder.eq
 import org.jetbrains.exposed.sql.anyFrom
 import org.jetbrains.exposed.sql.stringParam
 
@@ -53,11 +54,5 @@ fun OutletRow.fromData(outlet: Outlet) {
     urlParams = outlet.urlParams.toList()
 }
 
-fun SourceInfo.toOutlet(): Outlet = Outlet(
-    name = outletName,
-    domains = setOf(source.url.host.lowercase()),
-    urlParams = emptySet(),
-)
-
-fun OutletRow.Companion.findByHost(url: Url): OutletRow? =
-    OutletRow.find { stringParam(url.host) eq anyFrom(OutletTable.domains) }.firstOrNull()
+fun OutletRow.Companion.findByHost(host: String): OutletRow? =
+    this.find { stringParam(host) eq anyFrom(OutletTable.domains) }.firstOrNull()

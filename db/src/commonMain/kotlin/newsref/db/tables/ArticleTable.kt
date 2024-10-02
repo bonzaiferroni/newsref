@@ -1,7 +1,8 @@
 package newsref.db.tables
 
 import kotlinx.datetime.*
-import newsref.db.utils.toUrl
+import newsref.db.utils.toTrustedUrl
+import newsref.db.utils.toUri
 import newsref.model.data.Article
 import org.jetbrains.exposed.dao.EntityClass
 import org.jetbrains.exposed.dao.LongEntity
@@ -52,7 +53,7 @@ fun ArticleRow.toData() = Article(
     sourceId = this.source.id.value,
     headline = this.headline,
     description = this.description,
-    imageUrl = this.imageUrl?.toUrl(),
+    imageUrl = this.imageUrl?.toTrustedUrl(),
     section = this.section,
     keywords = this.keywords,
     wordCount = this.wordCount,

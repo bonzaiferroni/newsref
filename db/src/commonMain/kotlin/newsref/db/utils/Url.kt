@@ -1,6 +1,9 @@
 package newsref.db.utils
 
+import com.eygraber.uri.Uri
 import com.eygraber.uri.Url
 
-fun String.toUrl() = Url.parse(this)
-fun String.toUrlOrNull() = Url.parseOrNull(this)
+fun String.toUri() = Uri.parse(this)
+fun String.toUriOrNull() = Uri.parseOrNull(this)
+
+fun String.toTrustedUrl() = Url.parse(this)

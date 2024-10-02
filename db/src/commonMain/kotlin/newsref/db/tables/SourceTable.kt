@@ -4,7 +4,8 @@ import kotlinx.datetime.TimeZone
 import kotlinx.datetime.UtcOffset
 import kotlinx.datetime.toInstant
 import kotlinx.datetime.toLocalDateTime
-import newsref.db.utils.toUrl
+import newsref.db.utils.toTrustedUrl
+import newsref.db.utils.toUri
 import newsref.model.data.Source
 import newsref.model.data.SourceType
 import org.jetbrains.exposed.dao.EntityClass
@@ -39,17 +40,20 @@ class SourceRow(id: EntityID<Long>) : LongEntity(id) {
 
 fun SourceRow.toData() = Source(
     id = this.id.value,
-    url = this.url.toUrl(),
+    url = this.url.toTrustedUrl(),
     leadTitle = this.leadTitle,
     type = this.type,
     attemptedAt = this.attemptedAt.toInstant(UtcOffset.ZERO)
 )
 
-fun SourceRow.fromData(source: Source, outletRow: OutletRow, contentEntities: List<ContentRow>) {
+fun SourceRow.fromData(source: Source, outletRow: OutletRow) {
     outlet = outletRow
-    contents = SizedCollection(contentEntities)
     url = source.url.toString()
     leadTitle = source.leadTitle
     type = source.type
     attemptedAt = source.attemptedAt.toLocalDateTime(TimeZone.UTC)
+}
+
+fun SourceRow.addContents(contentEntities: List<ContentRow>) {
+    contents = SizedCollection(contentEntities)
 }

@@ -3,6 +3,7 @@ package newsref.model.dto
 import com.eygraber.uri.Url
 import newsref.model.data.Article
 import newsref.model.data.Source
+import newsref.model.data.SourceType
 
 data class SourceInfo(
     val id: Long = 0,
@@ -13,6 +14,9 @@ data class SourceInfo(
 
 data class DocumentInfo(
     val article: Article,
+    val docUrl: Url?,
+    val type: SourceType,
+    val outletId: Int,
     val contents: Set<String> = emptySet(),
     val links: List<LinkInfo> = emptyList(),
     val authors: Set<String>? = null,

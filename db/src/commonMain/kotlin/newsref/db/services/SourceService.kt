@@ -18,8 +18,18 @@ class SourceService: DbService() {
             ?: throw MissingResourceException("Missing Outlet", "SourceService", outletId.toString())
         val urlParams = outletRow.urlParams.toList()
 
+        // update or create source
+        val url = info.source.url.toString()
+        val sourceRow = SourceRow.find { SourceTable.url.lowerCase() eq url.lowercase() }.firstOrNull()
+            ?: SourceRow.new { fromData(info.source, outletRow) }
+
+        // exit here if not news article
+        val document = info.document
+        if (document == null || sourceRow.type != SourceType.ARTICLE)
+            return@dbQuery sourceRow.id.value
+
         // create author
-        val authorRows = info.authors?.map { byLine ->
+        val authorRows = document.authors?.map { byLine ->
             val authorRows = AuthorRow.find { (stringParam(byLine) eq anyFrom(AuthorTable.bylines)) }
             authorRows.firstNotNullOfOrNull {
                 it.outlets.firstOrNull { it.id == outletRow.id }
@@ -27,27 +37,17 @@ class SourceService: DbService() {
         }
 
         // create Content
-        val contentRows = info.contents.map { content ->
+        val contentRows = document.contents.map { content ->
             ContentRow.find { ContentTable.text eq content }.firstOrNull()
                 ?:ContentRow.new { fromData(content) } // return@map
         }
 
-        // update or create source
-        val url = info.source.url.toString()
-        val sourceRow = SourceRow.find { SourceTable.url.lowerCase() eq url.lowercase() }.firstOrNull()
-            ?: SourceRow.new { fromData(info.source, outletRow, contentRows) }
-
-        // exit here if not news article
-        val document = info.document
-        if (document == null || sourceRow.type != SourceType.ARTICLE)
-            return@dbQuery sourceRow.id.value
-
         // create or update document
         val articleRow = ArticleRow.find { ArticleTable.sourceId eq sourceRow.id }.firstOrNull()
-            ?. fromData(document, sourceRow)
-            ?: ArticleRow.new { fromData(document, sourceRow) }
+            ?. fromData(document.article, sourceRow)
+            ?: ArticleRow.new { fromData(document.article, sourceRow) }
 
-        val linkRows = info.links.map { link ->
+        val linkRows = document.links.map { link ->
             val linkUrl = link.url.toString()
 
             // update or create links

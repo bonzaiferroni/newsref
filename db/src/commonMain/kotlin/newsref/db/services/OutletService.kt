@@ -14,26 +14,26 @@ class OutletService : DataService<Outlet, Int, OutletRow>(
     OutletRow::fromData,
     OutletRow::toData
 ) {
-    suspend fun findByHost(url: Url): Outlet? = dbQuery { OutletRow.findByHost(url) }?.toData()
+    suspend fun findByHost(host: String): Outlet? = dbQuery { OutletRow.findByHost(host) }?.toData()
 
-    suspend fun findAndSetName(url: Url, name: String?): Outlet? = dbQuery {
-        val row = OutletRow.findByHost(url) ?: return@dbQuery null
+    suspend fun findAndSetName(url: Url, name: String?): Outlet = dbQuery {
+        val row = OutletRow.findByHost(url.host)
+            ?: throw IllegalArgumentException("Outlet not found: ${url.host}")
         name?.let { row.name = name }
         row.toData()
     }
 
     suspend fun createOutlet(
-        url: Url,
+        host: String,
         robotsTxt: String?,
         disallowed: Set<String>?,
-        name: String?
+        keepParams: Set<String>
     ) = dbQuery {
         OutletRow.new {
-            this.domains = listOf(url.host)
+            this.domains = listOf(host)
             this.robotsTxt = robotsTxt
             this.disallowed = disallowed?.toList()
-            this.urlParams = emptyList()
-            this.name = name
+            this.urlParams = keepParams.toList()
         }.toData()
     }
 }
