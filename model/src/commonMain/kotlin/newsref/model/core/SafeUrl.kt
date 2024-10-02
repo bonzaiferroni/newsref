@@ -1,6 +1,10 @@
 package newsref.model.core
 
-class SafeUrl(
+class SafeUrl(raw: String, val requiredParams: Set<String>) : MyUrl(raw) {
+	override fun isRequired(key: String) = key in requiredParams
+}
+
+open class MyUrl(
 	val raw: String
 ) {
 	private val fragmentSplit by lazy { raw.deconstruct("#") }
@@ -15,7 +19,11 @@ class SafeUrl(
 		afterScheme.deconstruct("/")
 	}
 
-	val host by lazy { hostSplit.first }
+	val host by lazy {
+		val beforePath = hostSplit.first
+		if (beforePath.contains('@')) throw IllegalArgumentException("URL contains user info: $raw")
+		beforePath
+	}
 
 	val path by lazy { hostSplit.second?.let { "/$it" } ?: "/" }
 
@@ -32,13 +40,15 @@ class SafeUrl(
 			val beforeFragment = afterDelimiter.split("#")[0]
 			beforeFragment.split("&").mapNotNull { param ->
 				val (key, value) = param.deconstruct("=")
-				if (value == null) return@mapNotNull null
+				if (value == null || !isRequired(key)) return@mapNotNull null
 				Pair(key, value)
 			}.toMap() // return
 		}
 	}
 
 	val fragment get() = fragmentSplit.second
+
+	protected open fun isRequired(key: String) = true
 }
 
 private fun String.deconstruct(delimiter: String): Pair<String, String?> =
