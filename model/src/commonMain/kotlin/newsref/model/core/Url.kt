@@ -44,18 +44,6 @@ open class Url internal constructor(
 			"$authority$path#$fragment"
 		else null
 	}
-
-	companion object {
-		fun parseUnchecked(url: String) = Url(url, null, null)
-
-		fun parseMaybeRelative(url: String, context: Url) = parseUnchecked(url.maybeCombine(context))
-
-		fun tryParseUnchecked(url: String): Url? =
-			tryParseUrl { parseUnchecked(url) }
-
-		fun tryParseMaybeRelative(url: String, context: Url): Url? =
-			tryParseUrl { parseMaybeRelative(url, context) }
-	}
 }
 
 internal fun tryParseUrl(block: () -> Url): Url? {
@@ -74,3 +62,12 @@ internal fun String.maybeCombine(context: Url) = if (this.contains("://")) {
 } else {
 	"${context.authority}${if (this.startsWith("/")) "" else "/"}${this}"
 }
+
+fun String.parseUnchecked() = Url(this, null, null)
+
+fun String.parseMaybeRelative(context: Url) = this.maybeCombine(context).parseUnchecked()
+
+fun String.tryParseUnchecked(): Url? = tryParseUrl { this.parseUnchecked() }
+
+fun String.tryParseMaybeRelative(context: Url): Url? =
+	tryParseUrl { this.maybeCombine(context).parseUnchecked() }
