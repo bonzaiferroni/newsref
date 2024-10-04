@@ -2,6 +2,7 @@ package newsref.krawly.agents
 
 import newsref.db.services.FeedService
 import newsref.krawly.SpiderWeb
+import newsref.krawly.utils.isMaybeRelevant
 import newsref.krawly.utils.tryGetHref
 import newsref.model.core.CheckedUrl
 import newsref.model.core.toCheckedUrl
@@ -28,6 +29,7 @@ class FeedAgent(
             for (docElement in doc.findAll(feed.selector)) {
                 val (headline, href) = docElement.tryGetHref() ?: continue
                 val url = href.toUrlOrNull() ?: continue
+                if (!url.isMaybeRelevant()) continue
                 val outlet = outletAgent.getOutlet(url)                         // <- OutletAgent ->
                 val checkedUrl = href.toCheckedUrl(outlet)
                 list += FeedLead(feedId = feed.id, url = checkedUrl, headline = headline)

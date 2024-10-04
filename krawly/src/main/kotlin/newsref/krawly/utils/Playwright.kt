@@ -20,6 +20,10 @@ fun pwFetch(url: Url, screenshot: Boolean = false): WebResult? = Playwright.crea
             )
         } catch (e: TimeoutError) {
             return null
+        } catch (e: PlaywrightException) {
+            // adventure mode throws these
+            println("pwFetch: Unusual exception\n${e.message}")
+            return null
         }
     }
 }

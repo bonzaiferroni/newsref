@@ -12,7 +12,9 @@ open class Url internal constructor(
 	val fragment: String?
 	val robotsAllowed: Boolean?
 	val checkedUrl: String?
+
 	val authority get() = "$scheme://$host"
+	val length get() = toString().length
 
 	init {
 		val (beforeFragment, afterFragment) = rawUrl.deconstruct("#")

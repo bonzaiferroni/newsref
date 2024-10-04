@@ -11,4 +11,5 @@ data class Lead(
     val headline: String? = null,
     val attemptCount: Int = 0,
     val attemptedAt: Instant? = null
-)
+) {
+}

@@ -26,11 +26,8 @@ fun Doc.read(sourceUrl: Url, outlet: Outlet, newsArticle: NewsArticle?): Documen
             contents.add(element.text)
             wordCount += element.text.wordCount()
             for ((text, href) in element.eachLink) {
-                if (href.length > MAX_URL_CHARS) {
-                    println("Reader: Url too long: ${href.length}")
-                    continue
-                }
                 val url = href.toCheckedWithContextOrNull(outlet, sourceUrl) ?: continue
+                if (!url.isMaybeRelevant()) continue
                 links.add(LinkInfo(url = url, anchorText = text, context = element.text))
             }
         }

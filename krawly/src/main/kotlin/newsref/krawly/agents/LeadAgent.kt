@@ -3,6 +3,7 @@ package newsref.krawly.agents
 import newsref.db.services.LeadService
 import newsref.krawly.SpiderWeb
 import newsref.model.data.Lead
+import newsref.model.data.SourceType
 import newsref.model.dto.SourceInfo
 
 
@@ -35,6 +36,7 @@ class LeadAgent(
     suspend fun followUp(origin: Lead, sourceInfo: SourceInfo): List<Lead>? {
         val leads = mutableListOf<Lead>()
         leadService.addSource(origin, sourceInfo.id)                            //    LeadService ->
+        if (sourceInfo.source.type != SourceType.ARTICLE) return null
         val newLeads = sourceInfo.document?.links?.map { it.url }
             ?: return null
         for (url in newLeads) {
