@@ -28,7 +28,7 @@ fun parseRobotsTxt(content: String): Set<String> {
             }
         }
     }
-    return disallowedPaths
+    return disallowedPaths.filter { it.isNotBlank() }.toSet()
 }
 
 fun Url.getRobotsTxtUrl() = "/robots.txt".toUrlWithContextOrNull(this)

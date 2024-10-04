@@ -13,17 +13,9 @@ fun Url.isInvalidSuffix(): Boolean {
 }
 
 fun Url.isMaybeArticle(): Boolean {
-	if (isInvalidSuffix()) {
-		println("isMaybeArticle: Url too long:\n>   $this")
-		return false
-	}
-	return true
+	return !isInvalidSuffix()
 }
 
 fun Url.isMaybeRelevant(): Boolean {
-	if (length > MAX_URL_CHARS) {
-		println("isMaybeRelevant: Url too long: $length")
-		return false
-	}
-	return true
+	return length <= MAX_URL_CHARS
 }

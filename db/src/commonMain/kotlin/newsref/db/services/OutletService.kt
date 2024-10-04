@@ -26,13 +26,13 @@ class OutletService : DataService<Outlet, Int, OutletRow>(
     suspend fun createOutlet(
         host: String,
         robotsTxt: String?,
-        disallowed: Set<String>?,
+        disallowed: Set<String>,
         keepParams: Set<String>
     ) = dbQuery {
         OutletRow.new {
             this.domains = listOf(host)
             this.robotsTxt = robotsTxt
-            this.disallowed = disallowed?.toList()
+            this.disallowed = disallowed.toList()
             this.urlParams = keepParams.toList()
         }.toData()
     }

@@ -12,7 +12,7 @@ internal object OutletTable : IntIdTable("outlet") {
     val name = text("name").nullable()
     val logo = text("logo").nullable()
     val robotsTxt = text("robots_txt").nullable()
-    val disallowed = array<String>("disallowed").nullable()
+    val disallowed = array<String>("disallowed")
     val domains = array<String>("domains")
     val urlParams = array<String>("url_params")
 }
@@ -37,7 +37,7 @@ fun OutletRow.toData() = Outlet(
     name = this.name,
     logo = this.logo,
     robotsTxt = this.robotsTxt,
-    disallowed = this.disallowed?.toSet(),
+    disallowed = this.disallowed.toSet(),
     domains = this.domains.toSet(),
     urlParams = this.urlParams.toSet(),
 )
@@ -46,7 +46,7 @@ fun OutletRow.fromData(outlet: Outlet) {
     name = outlet.name
     logo = outlet.logo
     robotsTxt = outlet.robotsTxt
-    disallowed = outlet.disallowed?.toList()
+    disallowed = outlet.disallowed.toList()
     domains = outlet.domains.toList()
     urlParams = outlet.urlParams.toList()
 }

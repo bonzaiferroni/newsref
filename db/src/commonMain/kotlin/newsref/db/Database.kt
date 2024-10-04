@@ -22,6 +22,7 @@ fun initDb() {
         SchemaUtils.create(OutletTable)
         SchemaUtils.create(ArticleTable)
         SchemaUtils.create(LeadTable)
+        SchemaUtils.create(LeadJobTable)
         SchemaUtils.create(SourceContentTable)
         SchemaUtils.create(ContentTable)
         SchemaUtils.create(OutletAuthorTable)

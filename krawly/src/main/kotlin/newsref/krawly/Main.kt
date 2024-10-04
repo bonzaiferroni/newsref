@@ -2,34 +2,22 @@ package newsref.krawly
 
 import kotlinx.coroutines.delay
 import newsref.db.initDb
-import newsref.db.services.FeedService
-import newsref.db.services.LeadService
-import newsref.db.services.OutletService
+import newsref.krawly.agents.FeedChecker
 import newsref.krawly.agents.OutletAgent
 import newsref.krawly.log.*
-import newsref.krawly.log.oceanBlue
-import newsref.krawly.log.sunsetOrange
-import newsref.krawly.log.toAnsiForeground
+import kotlin.time.Duration.Companion.minutes
 
 suspend fun main(args: Array<String>) {
-    val console = LogConsole(showStatus = args.contains("showStatus"))
-    val handle = console.getHandle("main")
-    val otherHandle = console.getHandle("other")
-    handle.logInfo(args[0])
-    handle.logTrace("hello world".toBlueBg())
-    handle.logDebug("hello world".toGreenBg())
-    handle.logInfo("hello world".toGrayBg())
-    handle.logWarning("hello world".toPurpleBg())
-    handle.logError("hello world".toForestBg())
-    while (true) {
-        delay(1000)
-        handle.logInfo("hello world", "a")
-        delay(1000)
-        handle.logInfo("hello world".bold(), "🕷")
-        delay(1000)
-        handle.logInfo("hello world", "🕸")
-    }
-    // initDb()
-    // val spider = Spider(SpiderWeb())
-    // spider.startCrawling()
+	val console = LogConsole(showStatus = args.contains("showStatus"))
+	initDb()
+	val web = SpiderWeb()
+	val outletAgent = OutletAgent(console, web)
+	val feedChecker = FeedChecker(console, web, outletAgent)
+	feedChecker.start()
+	while (true) {
+		// don't exit
+		delay(10.minutes)
+	}
+	// val spider = Spider(SpiderWeb(), console)
+	// spider.startCrawling()
 }

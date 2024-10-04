@@ -30,7 +30,7 @@ class LeadAgent(
     }
 
     suspend fun notifyAttempt(lead: Lead) {
-        leadService.addAttempt(lead)                                            //    LeadService ->
+        // leadService.addAttempt(lead)                                            //    LeadService ->
     }
 
     suspend fun followUp(origin: Lead, sourceInfo: SourceInfo): List<Lead>? {
