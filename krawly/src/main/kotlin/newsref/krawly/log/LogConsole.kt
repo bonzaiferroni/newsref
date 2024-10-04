@@ -2,8 +2,9 @@ package newsref.krawly.log
 
 
 class LogConsole(
-	val writer: LogWriter = PrintWriter,
-	val showStatus: Boolean = false
+	val showStatus: Boolean = false,
+	val minLevel: LogLevel = LogLevel.TRACE,
+	val writer: LogWriter? = null
 ) {
 	private val builder = LineBuilder()
 	private val handles = mutableListOf<LogHandle>()
@@ -17,6 +18,11 @@ class LogConsole(
 	fun log(message: String) = log("", LogLevel.INFO, message)
 
 	fun log(source: String, level: LogLevel, message: String) {
+		if (writer != null) {
+			if (level.ordinal >= writer.minLevel.ordinal) writer.writeLine(source, level, message)
+		}
+
+		if (level.ordinal < minLevel.ordinal) return
 		if (showStatus) {
 			print(moveCursorBackLines(1))
 			print(clearLine)
@@ -48,10 +54,10 @@ class LogConsole(
 
 const val MAX_SOURCE_CHARS = 10
 
-enum class LogLevel(level: Int) {
-	TRACE(0),
-	DEBUG(1),
-	INFO(2),
-	WARNING(3),
-	ERROR(4),
+enum class LogLevel {
+	TRACE,
+	DEBUG,
+	INFO,
+	WARNING,
+	ERROR,
 }
