@@ -1,7 +1,6 @@
-package newsref.db.log
+package newsref.krawly.log
 
-class LogLine(
-	val logWriter: LogWriter? = null
+class LineBuilder(
 ) {
 	val builder = StringBuilder()
 	var foreground = defaultForeground
@@ -10,39 +9,57 @@ class LogLine(
 
 	fun write(part: LogPart) = write(part.toString())
 
-	fun write(part: String): LogLine {
+	fun write(part: String): LineBuilder {
 		builder.append(part)
-		logWriter?.write(part)
 		return this
+	}
+
+	fun writeLength(message: String, length: Int): LineBuilder {
+		val formattedMessage = if (message.length > length) {
+			message.take(length)
+		} else {
+			message.padEnd(length)
+		}
+		return write(formattedMessage)
 	}
 
 	fun setForeground(hex: String) = setForeground(hex.toAnsiForeground())
 
-	fun setForeground(foreground: Foreground): LogLine {
+	fun setForeground(foreground: Foreground): LineBuilder {
 		if (this.foreground == foreground) return this
 		write(foreground)
 		this.foreground = foreground
 		return this
 	}
 
+	fun setForeground(level: LogLevel): LineBuilder {
+		val color = when (level) {
+			LogLevel.TRACE -> oceanBlueFg
+			LogLevel.DEBUG -> lavenderPurpleFg
+			LogLevel.INFO -> emeraldGreenFg
+			LogLevel.WARNING -> goldenYellowFg
+			LogLevel.ERROR -> sunsetOrangeFg
+		}
+		return setForeground(color)
+	}
+
+	fun defaultForeground() = setForeground(defaultForeground)
+
 	fun setBackground(hex: String) = setBackground(hex.toAnsiBackground())
 
-	fun setBackground(background: Background): LogLine {
+	fun setBackground(background: Background): LineBuilder {
 		if (this.background == background) return this
 		write(background)
 		this.background = background
 		return this
 	}
 
-	fun setFormat(format: Format): LogLine {
+	fun defaultBackground() = setBackground(defaultBackground)
+
+	fun setFormat(format: Format): LineBuilder {
 		if (this.format == format) return this
 		write(format)
 		this.format = format
-		return this
-	}
-
-	fun cell(value: String, width: Int, justified: Justified): LogLine {
-		write(value.fitToWidth(width, justified)).write(" ")
 		return this
 	}
 
@@ -53,24 +70,17 @@ class LogLine(
 
 	override fun toString() = builder.toString()
 
-	fun clear(): LogLine {
+	fun clear(): LineBuilder {
 		setForeground(defaultForeground)
 		setBackground(defaultBackground)
 		setFormat(defaultText)
 		builder.clear()
 		return this
 	}
-}
 
-fun String.fitToWidth(width: Int, justified: Justified): String {
-	return if (this.length >= width) {
-		this.take(width) // Truncate if string is longer than `width`
-	} else {
-		this.pad(width, justified)
+	fun build(): String {
+		val string = toString()
+		clear()
+		return string
 	}
-}
-
-fun String.pad(width: Int, justified: Justified) = when(justified) {
-	Justified.LEFT -> this.padStart(width)
-	Justified.RIGHT -> this.padEnd(width)
 }

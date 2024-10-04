@@ -1,4 +1,4 @@
-package newsref.db.log
+package newsref.krawly.log
 
 interface LogWriter {
 	fun writeLine(line: String = "")

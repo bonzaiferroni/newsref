@@ -1,4 +1,18 @@
-package newsref.db.log
+package newsref.krawly.log
+
+fun String.toColor(hex: String) = "${hex.toAnsiForeground()}$this$defaultForeground"
+fun String.toBlue() = toColor(oceanBlue)
+fun String.toOrange() = toColor(sunsetOrange)
+fun String.toGreen() = toColor(emeraldGreen)
+fun String.toPurple() = toColor(lavenderPurple)
+fun String.toYellow() = toColor(goldenYellow)
+
+fun String.toColorBg(hex: String) = "${hex.toAnsiBackground()}$this$defaultBackground"
+fun String.toBlueBg() = toColorBg(deepspaceBlue)
+fun String.toGreenBg() = toColorBg(midnightGreen)
+fun String.toGrayBg() = toColorBg(charcoalGray)
+fun String.toPurpleBg() = toColorBg(darkPlum)
+fun String.toForestBg() = toColorBg(forestNight)
 
 internal fun hexToRgb(hex: String): Triple<Int, Int, Int> {
 	// Remove the '#' if it be there and convert to an integer
@@ -21,8 +35,6 @@ internal fun String.toAnsiBackground(): Background {
 	return Background("\u001B[48;2;$r;$g;${b}m")
 }
 
-
-
 internal val escapeChar = Char(27).toString()
 internal val defaultForeground = Foreground("\u001B[0m")
 internal val defaultBackground = Background("\u001B[49m")
@@ -39,7 +51,7 @@ internal val sourceColor = cyanForeground
 internal val urgentColor = magentaForeground
 internal val messageColor = defaultForeground
 
-internal const val oceanBlue = "#1B75BC"
+internal const val oceanBlue = "#3A8DE8"
 internal const val sunsetOrange = "#FF4500"
 internal const val emeraldGreen = "#50C878"
 internal const val lavenderPurple = "#967BB6"
@@ -51,6 +63,11 @@ internal val foregrounds = listOf(
 	lavenderPurple,
 	goldenYellow
 )
+internal val oceanBlueFg = oceanBlue.toAnsiForeground()
+internal val sunsetOrangeFg = sunsetOrange.toAnsiForeground()
+internal val emeraldGreenFg = emeraldGreen.toAnsiForeground()
+internal val lavenderPurpleFg = lavenderPurple.toAnsiForeground()
+internal val goldenYellowFg = goldenYellow.toAnsiForeground()
 
 internal const val deepspaceBlue = "#000033"
 internal const val midnightGreen = "#004953"

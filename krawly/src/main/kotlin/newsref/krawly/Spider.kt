@@ -3,8 +3,7 @@ package newsref.krawly
 import kotlinx.coroutines.delay
 import kotlinx.datetime.Clock
 import kotlinx.datetime.Instant
-import newsref.db.log.LogConsole
-import newsref.db.log.LogTable
+import newsref.krawly.log.LogConsole
 import newsref.krawly.agents.FeedAgent
 import newsref.krawly.agents.LeadAgent
 import newsref.krawly.agents.OutletAgent

@@ -1,9 +1,13 @@
-package newsref.db.log
+package newsref.krawly.log
 
 class Foreground(sequence: String): LogPart(sequence)
 class Background(sequence: String): LogPart(sequence)
 class Format(sequence: String): LogPart(sequence)
 class Control(sequence: String): LogPart(sequence)
+
+fun String.bold() = "$boldText$this$defaultText"
+fun String.italic() = "$italicText$this$defaultText"
+fun String.underline() = "$underlineText$this$defaultText"
 
 abstract class LogPart(val sequence: String) {
 	override fun toString() = sequence
@@ -26,3 +30,4 @@ internal val underlineText = Format("\u001B[4m")
 internal val defaultText = Format("\u001B[0m")
 
 fun eraseChars(count: Int) = Control("\u001B[${count}X")
+fun moveCursorBackLines(count: Int) = Control("\u001B[${count}F")
