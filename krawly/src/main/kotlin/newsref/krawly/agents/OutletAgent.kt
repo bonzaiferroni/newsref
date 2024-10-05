@@ -1,20 +1,20 @@
 package newsref.krawly.agents
 
 import kotlinx.coroutines.delay
+import newsref.db.globalConsole
 import newsref.db.services.OutletService
 import newsref.krawly.SpiderWeb
-import newsref.krawly.log.LogConsole
+import newsref.db.log.LogConsole
 import newsref.krawly.utils.*
 import newsref.model.core.Url
 import newsref.model.core.toCheckedUrl
 import newsref.model.data.Outlet
 
 class OutletAgent(
-    console: LogConsole,
-    private val web: SpiderWeb,
-    private val outletService: OutletService = OutletService()
+	private val web: SpiderWeb,
+	private val outletService: OutletService = OutletService()
 ) {
-    private val console = console.getHandle("OutletAgent")
+    private val console = globalConsole.getHandle("OutletAgent")
 
     suspend fun getOutlet(url: Url): Outlet {
         return outletService.findByHost(url.host)                               // <- OutletService

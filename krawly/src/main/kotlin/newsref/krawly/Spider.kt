@@ -3,18 +3,18 @@ package newsref.krawly
 import kotlinx.coroutines.delay
 import kotlinx.datetime.Clock
 import kotlinx.datetime.Instant
-import newsref.krawly.log.LogConsole
+import newsref.db.log.LogConsole
 import newsref.krawly.agents.FeedAgent
 import newsref.krawly.agents.OutletAgent
 import newsref.krawly.agents.SourceAgent
 import kotlin.time.Duration.Companion.seconds
 
 class Spider(
-    private val web: SpiderWeb,
-    private val console: LogConsole = LogConsole(),
-    private val outletAgent: OutletAgent = OutletAgent(console, web),
-    private val feedAgent: FeedAgent = FeedAgent(web, outletAgent),
-    private val sourceAgent: SourceAgent = SourceAgent(outletAgent)
+	private val web: SpiderWeb,
+	private val console: LogConsole = LogConsole(),
+	private val outletAgent: OutletAgent = OutletAgent(web),
+	private val feedAgent: FeedAgent = FeedAgent(web, outletAgent),
+	private val sourceAgent: SourceAgent = SourceAgent(outletAgent)
 ) {
     private val attempts = mutableMapOf<String, Instant>()
 

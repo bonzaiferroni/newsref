@@ -1,4 +1,4 @@
-package newsref.krawly.log
+package newsref.db.log
 
 class Foreground(sequence: String): LogPart(sequence)
 class Background(sequence: String): LogPart(sequence)

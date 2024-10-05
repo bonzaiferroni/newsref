@@ -1,4 +1,4 @@
-package newsref.krawly.log
+package newsref.db.log
 
 class LineBuilder(
 ) {

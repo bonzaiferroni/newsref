@@ -4,22 +4,21 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
+import newsref.db.globalConsole
 import newsref.db.services.LeadService
 import newsref.db.utils.cacheResource
 import newsref.krawly.MAX_URL_ATTEMPTS
 import newsref.krawly.SpiderWeb
-import newsref.krawly.log.LogConsole
 import kotlin.time.Duration.Companion.seconds
 
 class LeadFollower(
-	console: LogConsole,
 	private val web: SpiderWeb,
 	private val leadMaker: LeadMaker,
 	private val outletAgent: OutletAgent,
 	private val sourceAgent: SourceAgent = SourceAgent(outletAgent),
 	private val leadService: LeadService = LeadService()
 ) {
-	private val console = console.getHandle("LeadFollower")
+	private val console = globalConsole.getHandle("LeadFollower")
 
 	fun start() {
 		CoroutineScope(Dispatchers.Default).launch {

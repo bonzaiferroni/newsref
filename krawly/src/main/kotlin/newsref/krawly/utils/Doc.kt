@@ -42,7 +42,7 @@ fun Doc.getNewsArticle(cacheId: Url): NewsArticle? {
     val json = innerHtml.trimCData()
     json.cacheResource(cacheId, "json", "news_article_raw")
     val article = json.readArrayOrObject()
-    article?.cacheSerializable(cacheId, "json", "news_article_parsed")
+    article?.cacheSerializable(cacheId, "news_article_parsed")
     return article // return
 }
 

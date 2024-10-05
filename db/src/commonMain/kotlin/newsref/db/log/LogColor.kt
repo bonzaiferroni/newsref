@@ -1,4 +1,4 @@
-package newsref.krawly.log
+package newsref.db.log
 
 fun String.toColor(hex: String) = "${hex.toAnsiForeground()}$this$defaultForeground"
 fun String.toBlue() = toColor(oceanBlue)

@@ -1,11 +1,7 @@
-package newsref.krawly.log
+package newsref.db.log
 
-
-class LogConsole(
-	val showStatus: Boolean = false,
-	val minLevel: LogLevel = LogLevel.TRACE,
-	val writer: LogWriter? = null
-) {
+class LogConsole {
+	var config = ConsoleConfig()
 	private val builder = LineBuilder()
 	private val handles = mutableListOf<LogHandle>()
 
@@ -18,12 +14,12 @@ class LogConsole(
 	fun log(message: String) = log("", LogLevel.INFO, message)
 
 	fun log(source: String, level: LogLevel, message: String) {
-		if (writer != null) {
+		config.writer?.let { writer ->
 			if (level.ordinal >= writer.minLevel.ordinal) writer.writeLine(source, level, message)
 		}
 
-		if (level.ordinal < minLevel.ordinal) return
-		if (showStatus) {
+		if (level.ordinal < config.minLevel.ordinal) return
+		if (config.showStatus) {
 			print(moveCursorBackLines(1))
 			print(clearLine)
 		}
@@ -32,7 +28,7 @@ class LogConsole(
 			.defaultFormat().defaultForeground().write(" ").write(message).build()
 		println(line)
 
-		if (showStatus) {
+		if (config.showStatus) {
 			for (handle in handles) {
 				builder.write("[").setForeground(handle.level)
 				if (handle.name == source) builder.underscore()
@@ -61,3 +57,9 @@ enum class LogLevel {
 	WARNING,
 	ERROR,
 }
+
+data class ConsoleConfig(
+	val showStatus: Boolean = false,
+	val minLevel: LogLevel = LogLevel.TRACE,
+	val writer: LogWriter? = null
+)

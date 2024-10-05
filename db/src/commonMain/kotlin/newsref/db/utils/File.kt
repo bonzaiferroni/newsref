@@ -1,47 +1,53 @@
 package newsref.db.utils
 
 import kotlinx.serialization.serializer
+import newsref.db.globalConsole
+import newsref.db.tables.SourceTable.type
 import newsref.model.core.Url
 import java.io.File
 
-const val resourcePath = "cache"
+const val resourcePath = "../cache"
 
-fun String.cacheResource(url: Url, type: String, path: String? = null): String {
+fun String.cacheResource(
+    url: Url,
+    type: String,
+    path: String = type,
+    fileName: String = url.host
+): String {
     if (this.isBlank()) {
-        println("cacheResource: found blank $type string from ${url.host}")
+        globalConsole.logDebug("cacheResource", "found blank $type string from ${url.host}")
         return this
     }
-    val file = File("$resourcePath/${path ?: type}/${url.host}.$type")
+    val file = File("$resourcePath/$path/$fileName.$type")
     file.parentFile?.mkdirs() // Create missing directories if they don't exist
-    if (!file.exists()) {
-        file.writeText(this)
-    }
+    file.writeText(this)
     return this
 }
 
-fun ByteArray.cacheResource(url: Url, type: String, path: String? = null): ByteArray {
-    val file = File("$resourcePath/${path ?: type}/${url.host}.$type")
+fun ByteArray.cacheResource(
+    url: Url,
+    type: String,
+    path: String = type,
+    fileName: String = url.host
+): ByteArray {
+    val file = File("$resourcePath/$path/$fileName.$type")
     file.parentFile?.mkdirs() // Create missing directories if they don't exist
-    if (!file.exists()) {
-        file.writeBytes(this)
-    }
+    file.writeBytes(this)
     return this
 }
 
 // General function to cache any serializable object
-inline fun <reified T> T.cacheSerializable(url: Url, type: String, path: String? = null): T where T : Any {
-    val file = File("$resourcePath/${path ?: type}/${url.host}.json")
+inline fun <reified T> T.cacheSerializable(
+    url: Url,
+    path: String,
+    fileName: String = url.host
+): T where T : Any {
+    val file = File("$resourcePath/$path/$fileName.json")
     file.parentFile?.mkdirs() // Create directories if they don't exist
 
     // Serialize object to JSON
     val jsonString = prettyPrintJson.encodeToString(serializer(), this)
-
-    if (!file.exists()) {
-        file.writeText(jsonString)
-        println("Saved $type resource to $file")
-    } else {
-        println("$type resource already cached at $file")
-    }
+    file.writeText(jsonString)
 
     return this
 }

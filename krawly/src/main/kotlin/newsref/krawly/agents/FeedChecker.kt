@@ -1,11 +1,12 @@
 package newsref.krawly.agents
 
 import kotlinx.coroutines.*
+import newsref.db.globalConsole
 import newsref.db.services.FeedService
 import newsref.db.services.LeadService
 import newsref.krawly.SpiderWeb
-import newsref.krawly.log.LogConsole
-import newsref.krawly.log.underline
+import newsref.db.log.LogConsole
+import newsref.db.log.underline
 import newsref.krawly.utils.isLikelyAd
 import newsref.krawly.utils.tryGetHref
 import newsref.model.core.toCheckedUrl
@@ -14,13 +15,12 @@ import newsref.model.data.LeadJob
 import kotlin.time.Duration.Companion.minutes
 
 class FeedChecker(
-	console: LogConsole,
 	private val web: SpiderWeb,
 	private val outletAgent: OutletAgent,
 	private val leadMaker: LeadMaker,
 	private val feedService: FeedService = FeedService(),
 ) {
-	private val console = console.getHandle("FeedChecker")
+	private val console = globalConsole.getHandle("FeedChecker")
 
 	fun start() {
 		CoroutineScope(Dispatchers.Default).launch {

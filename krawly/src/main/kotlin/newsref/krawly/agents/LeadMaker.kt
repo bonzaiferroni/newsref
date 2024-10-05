@@ -1,8 +1,8 @@
 package newsref.krawly.agents
 
+import newsref.db.globalConsole
 import newsref.db.services.LeadService
-import newsref.krawly.console
-import newsref.krawly.log.LogConsole
+import newsref.db.log.LogConsole
 import newsref.model.data.LeadJob
 import newsref.model.data.SourceType
 import newsref.model.dto.SourceInfo
@@ -10,6 +10,7 @@ import newsref.model.dto.SourceInfo
 class LeadMaker(
 	private val leadService: LeadService = LeadService()
 ) {
+	private val console = globalConsole.getHandle("LeadMaker")
 
 	suspend fun makeLeads(sourceInfo: SourceInfo): Int {
 		if (sourceInfo.source.type != SourceType.ARTICLE) return 0
