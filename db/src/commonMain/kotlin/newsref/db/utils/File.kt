@@ -6,7 +6,7 @@ import newsref.db.tables.SourceTable.type
 import newsref.model.core.Url
 import java.io.File
 
-const val resourcePath = "../cache"
+const val resourcePath = "../../cache"
 
 fun String.cacheResource(
     url: Url,

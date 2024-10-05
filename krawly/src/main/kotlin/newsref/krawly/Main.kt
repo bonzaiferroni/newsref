@@ -43,5 +43,6 @@ fun test(href: String) {
 	val url = href.toUrl()
 	val result = pwFetch(url, true)
 	result?.screenshot?.cacheResource(url, "png", "test/${url.host}")
-	result?.requestHeaders?.map { "${it.key}:\n${it.value}" }?.joinToString("\n\n")?.cacheResource(url, "txt", "test/${url.host}", "headers")
+	result?.requestHeaders?.map { "${it.key}:\n${it.value}" }?.joinToString("\n\n")
+		?.cacheResource(url, "txt", "test/${url.host}", "headers")
 }

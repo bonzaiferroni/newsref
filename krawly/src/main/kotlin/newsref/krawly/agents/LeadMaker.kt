@@ -8,9 +8,20 @@ import newsref.model.data.SourceType
 import newsref.model.dto.SourceInfo
 
 class LeadMaker(
+	val outletAgent: OutletAgent,
 	private val leadService: LeadService = LeadService()
 ) {
 	private val console = globalConsole.getHandle("LeadMaker")
+
+	suspend fun makeLead(leadJob: LeadJob): LeadJob? {
+		if (leadService.leadExists(leadJob.url)) return null
+		return try {
+			leadService.createIfFreshLead(leadJob)								//    LeadService ->
+		} catch (e: IllegalArgumentException) {
+			console.logWarning(e.message ?: "Error creating job: $leadJob")
+			null
+		}
+	}
 
 	suspend fun makeLeads(sourceInfo: SourceInfo): Int {
 		if (sourceInfo.source.type != SourceType.ARTICLE) return 0
@@ -22,13 +33,8 @@ class LeadMaker(
 	suspend fun makeLeads(jobs: List<LeadJob>): Int {
 		var newLeadCount = 0
 		for (job in jobs) {
-			if (leadService.leadExists(job.url)) continue
-			try {
-				leadService.createIfFreshLead(job)								//    LeadService ->
-				newLeadCount++
-			} catch (e: IllegalArgumentException) {
-				console.logWarning("LeadMaker", e.message ?: "Error creating job: $job")
-			}
+			val newJob = makeLead(job)
+			if (newJob != null) newLeadCount++
 		}
 		return newLeadCount
 	}

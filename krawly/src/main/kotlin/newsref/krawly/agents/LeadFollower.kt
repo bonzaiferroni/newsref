@@ -18,14 +18,14 @@ class LeadFollower(
 	private val sourceAgent: SourceAgent = SourceAgent(outletAgent),
 	private val leadService: LeadService = LeadService()
 ) {
-	private val console = globalConsole.getHandle("LeadFollower")
+	private val console = globalConsole.getHandle("LeadFollower", true)
 
 	fun start() {
 		CoroutineScope(Dispatchers.Default).launch {
 			while (true) {
-				console.log("checking leads", "🕷  ")
+				console.logTrace("checking leads", "🕷  ")
 				checkLeads()
-				console.log("sleeping", "zzz")
+				console.logTrace("sleeping", "zzz")
 				delay((10..15).random().seconds)
 			}
 		}
@@ -34,13 +34,13 @@ class LeadFollower(
 	private suspend fun checkLeads() {
 		val jobs = leadService.getJobs()
 		var leadCount = jobs.size
-		console.log("found ${jobs.size} jobs", leadCount)
+		console.logTrace("found ${jobs.size} jobs", leadCount)
 		val hosts = mutableSetOf<String>()
 		for (job in jobs) {
 			if (hosts.contains(job.url.host)) { continue }
 			hosts.add(job.url.host)
 
-			console.logDebug("attempting: ${job.url.host}", --leadCount)
+			console.logInfo("attempting: ${job.url}", --leadCount)
 			leadService.addAttempt(job)
 			val result = web.crawlPage(job.url, true)
 			if (result == null || !result.isSuccess()) {
@@ -57,7 +57,8 @@ class LeadFollower(
 			leadService.addSource(job.leadId, sourceInfo.id)                    //    LeadService ->
 
 			val count = leadMaker.makeLeads(sourceInfo)
-			console.log("found $count new leads from ${job.url.host}")
+			console.logInfo("found $count new leads from ${job.url.host}")
+			delay((1..3).random().seconds)
 		}
 	}
 }

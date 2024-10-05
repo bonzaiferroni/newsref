@@ -20,7 +20,7 @@ class FeedChecker(
 	private val leadMaker: LeadMaker,
 	private val feedService: FeedService = FeedService(),
 ) {
-	private val console = globalConsole.getHandle("FeedChecker")
+	private val console = globalConsole.getHandle("FeedChecker", true)
 
 	fun start() {
 		CoroutineScope(Dispatchers.Default).launch {
@@ -36,9 +36,9 @@ class FeedChecker(
 
 	private suspend fun checkFeeds() {
 		val feeds = feedService.readAll()                                       // <- FeedService
-		val jobs = mutableListOf<LeadJob>()
 		for (feed in feeds) {
-			console.log("checking feed: ${feed.url}")
+			var count = 0
+			console.logDebug("checking feed: ${feed.url}")
 			val webResult = web.crawlPage(feed.url)                             // <- Web
 			if (webResult == null || !webResult.isSuccess() || webResult.doc == null) {
 				console.logError("feed error: ${feed.url}")
@@ -46,7 +46,7 @@ class FeedChecker(
 			}
 			val doc = webResult.doc                                             // <- Parse
 			val elements = doc.findAll(feed.selector)
-			console.log("found ${elements.size} elements at ${
+			console.logDebug("found ${elements.size} elements at ${
 				feed.url.host.underline()} with selector ${feed.selector.underline()}")
 			for (docElement in doc.findAll(feed.selector)) {
 				val (headline, href) = docElement.tryGetHref() ?: continue
@@ -54,12 +54,11 @@ class FeedChecker(
 				if (url.isLikelyAd()) continue
 				val outlet = outletAgent.getOutlet(url)                         // <- OutletAgent ->
 				val checkedUrl = href.toCheckedUrl(outlet)
-				jobs += LeadJob(url = checkedUrl, feedId = feed.id, headline = headline)
+				val job = LeadJob(url = checkedUrl, feedId = feed.id, headline = headline)
+				val newJob = leadMaker.makeLead(job)
+				if (newJob != null) count++
 			}
-			console.log("found ${jobs.size} feed leads from ${elements.size} elements")
+			console.logDebug("found $count feed leads from ${elements.size} elements")
 		}
-
-		val count = leadMaker.makeLeads(jobs)
-		console.log("created $count new leadJobs")
 	}
 }

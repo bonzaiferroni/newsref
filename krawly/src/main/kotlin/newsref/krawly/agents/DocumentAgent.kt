@@ -22,7 +22,7 @@ class DocumentAgent(
 
 	suspend fun readDoc(job: LeadJob, outlet: Outlet, doc: Doc): DocumentInfo? {
 		val newsArticle = doc.getNewsArticle(job.url)
-		console.logInfo("DocumentAgent", "NewsArticle ${job.url.host}: ${if (newsArticle != null) "??" else "null"}")
+		console.logDebug("NewsArticle ${job.url.host}: ${if (newsArticle != null) "??" else "null"}")
 		val sourceUrl = (newsArticle?.url ?: doc.readUrl())?.toUrlOrNull() ?: job.url
 		val sourceOutlet = outletAgent.getOutlet(sourceUrl)                     // <- OutletAgent ->
 

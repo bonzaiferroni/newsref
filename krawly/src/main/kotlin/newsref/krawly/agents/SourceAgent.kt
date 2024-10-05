@@ -32,7 +32,7 @@ class SourceAgent(
             ),
             document = docInfo,
         )
-        console.logInfo("SourceAgent", "found SourceType ${info.source.type}")
+        console.logDebug("found SourceType ${info.source.type}")
 
         val sourceId = sourceService.consume(
             info,

@@ -27,13 +27,13 @@ class OutletAgent(
     }
 
     private suspend fun createOutlet(url: Url): Outlet {
-        console.log("creating outlet: ${url.host}")
+        console.logDebug("creating outlet: ${url.host}")
         val robotsUrl = url.getRobotsTxtUrl()
         var result = web.crawlPage(robotsUrl, false)                            // <- Web
 
         val robotsTxt = result?.let{ if (it.isSuccess()) it.doc?.text else null }
         val disallowed = robotsTxt?.let { parseRobotsTxt(it) } ?: emptySet()
-        console.log("${disallowed.size} disallowed: ${disallowed.take(5)}")
+        console.logDebug("${disallowed.size} disallowed: ${disallowed.take(5)}")
         val urlWithoutParams = url.toString().toCheckedUrl(emptySet(), null)
 
         delay((1000..2000L).random())
@@ -42,7 +42,7 @@ class OutletAgent(
         val keepParams = if (result != null && result.isSuccess()) { emptySet() } else {
             url.params.map { it.key }.toSet()
         }
-        console.log("keepParams: $keepParams")
+        console.logDebug("keepParams: $keepParams")
 
         return outletService.createOutlet(
             host = url.host, robotsTxt = robotsTxt, disallowed = disallowed, keepParams = keepParams

@@ -29,7 +29,6 @@ class LeadService : DbService() {
 
         val leadRow = LeadRow.new { url = leadJob.url.toString() }
         val feedRow = FeedRow.find { FeedTable.id eq leadJob.feedId }.firstOrNull()
-            ?: throw IllegalArgumentException("Feed does not exist: ${leadJob.feedId}")
         val leadJobRow = LeadJobRow.new { fromData(leadJob, leadRow, feedRow) }
         leadJobRow.toData() // return
     }

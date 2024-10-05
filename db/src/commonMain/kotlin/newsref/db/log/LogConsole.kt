@@ -5,8 +5,8 @@ class LogConsole {
 	private val builder = LineBuilder()
 	private val handles = mutableListOf<LogHandle>()
 
-	fun getHandle(name: String): LogHandle {
-		val handle = LogHandle(name, this)
+	fun getHandle(name: String, showStatus: Boolean = false): LogHandle {
+		val handle = LogHandle(name, showStatus, this)
 		handles.add(handle)
 		return handle
 	}
@@ -30,6 +30,7 @@ class LogConsole {
 
 		if (config.showStatus) {
 			for (handle in handles) {
+				if (!handle.showStatus) continue
 				builder.write("[").setForeground(handle.level)
 				if (handle.name == source) builder.underscore()
 				builder.write(handle.name).defaultFormat().defaultForeground()
@@ -60,6 +61,6 @@ enum class LogLevel {
 
 data class ConsoleConfig(
 	val showStatus: Boolean = false,
-	val minLevel: LogLevel = LogLevel.TRACE,
+	val minLevel: LogLevel = LogLevel.DEBUG,
 	val writer: LogWriter? = null
 )

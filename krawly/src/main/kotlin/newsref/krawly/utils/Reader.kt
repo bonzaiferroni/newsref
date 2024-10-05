@@ -2,11 +2,14 @@ package newsref.krawly.utils
 
 import it.skrape.selects.Doc
 import kotlinx.datetime.Clock
+import newsref.db.globalConsole
 import newsref.db.models.NewsArticle
 import newsref.model.core.*
 import newsref.model.data.*
 import newsref.model.dto.DocumentInfo
 import newsref.model.dto.LinkInfo
+
+private val console = globalConsole.getHandle("Reader")
 
 fun Doc.read(sourceUrl: Url, outlet: Outlet, newsArticle: NewsArticle?): DocumentInfo {
     val contents = mutableSetOf<String>()
@@ -26,11 +29,12 @@ fun Doc.read(sourceUrl: Url, outlet: Outlet, newsArticle: NewsArticle?): Documen
             wordCount += element.text.wordCount()
             for ((text, href) in element.eachLink) {
                 val url = href.toCheckedWithContextOrNull(outlet, sourceUrl) ?: continue
-                if (!url.isLikelyAd()) continue
+                if (url.isLikelyAd()) continue
                 links.add(LinkInfo(url = url, anchorText = text, context = element.text))
             }
         }
     }
+    console.logDebug("found ${links.size} links")
     val urlString = newsArticle?.url ?: this.readUrl()
     val docUrl = urlString?.toCheckedWithContextOrNull(outlet, sourceUrl)
     val imageUrlString = newsArticle?.image?.firstOrNull()?.url ?: this.readImageUrl()

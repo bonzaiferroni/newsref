@@ -2,6 +2,7 @@ package newsref.db.log
 
 class LogHandle(
 	val name: String,
+	val showStatus: Boolean,
 	val console: LogConsole,
 ) {
 	var status: String = ""
