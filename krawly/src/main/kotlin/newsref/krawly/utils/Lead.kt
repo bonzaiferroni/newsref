@@ -16,6 +16,7 @@ fun Url.isMaybeArticle(): Boolean {
 	return !isInvalidSuffix()
 }
 
-fun Url.isMaybeRelevant(): Boolean {
-	return length <= MAX_URL_CHARS
+// call this to filter ads and self-promotion
+fun Url.isLikelyAd(): Boolean {
+	return length > MAX_URL_CHARS
 }

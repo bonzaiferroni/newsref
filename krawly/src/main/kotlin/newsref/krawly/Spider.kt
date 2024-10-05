@@ -5,7 +5,6 @@ import kotlinx.datetime.Clock
 import kotlinx.datetime.Instant
 import newsref.krawly.log.LogConsole
 import newsref.krawly.agents.FeedAgent
-import newsref.krawly.agents.LeadAgent
 import newsref.krawly.agents.OutletAgent
 import newsref.krawly.agents.SourceAgent
 import kotlin.time.Duration.Companion.seconds
@@ -15,12 +14,11 @@ class Spider(
     private val console: LogConsole = LogConsole(),
     private val outletAgent: OutletAgent = OutletAgent(console, web),
     private val feedAgent: FeedAgent = FeedAgent(web, outletAgent),
-    private val leadAgent: LeadAgent = LeadAgent(web, feedAgent),
-    private val sourceAgent: SourceAgent = SourceAgent(web, outletAgent)
+    private val sourceAgent: SourceAgent = SourceAgent(outletAgent)
 ) {
     private val attempts = mutableMapOf<String, Instant>()
 
-//    suspend fun startCrawling() {
+    suspend fun startCrawling() {
 //        console.log("waking up 🌄")
 //
 //        val leads = leadAgent.getLeads()                                        // <- LeadAgent ->
@@ -31,7 +29,7 @@ class Spider(
 //        var previousHost: String? = null
 //        while (deque.size > 0) {
 //            // ensure good spider behavior
-//            val lead = deque.removeFirstOrNull() ?: break
+//            val lead = deque.removeFirstOrNull()
 //            val host = lead.url.host
 //            val lastAttempt = attempts[host]
 //            val currentTime = Clock.System.now()
@@ -48,7 +46,7 @@ class Spider(
 //
 //            console.log("🕷🕸 following: ${lead.url}")
 //            leadAgent.notifyAttempt(lead)                                       //    LeadAgent ->
-//            val result = sourceAgent.followLead(lead)                           // <- SourceAgent ->
+//            val result = sourceAgent.read(lead)                           // <- SourceAgent ->
 //            if (result == null) {
 //                deque.addLast(lead)
 //                console.log("🕷💩 no result: ${lead.url}")
@@ -63,6 +61,6 @@ class Spider(
 //        console.log("🕷🛌 resting")
 //        delay((30000L..60000L).random())
 //        startCrawling()
-//    }
+    }
 }
 

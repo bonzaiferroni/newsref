@@ -3,7 +3,6 @@ package newsref.krawly.utils
 import it.skrape.selects.Doc
 import kotlinx.datetime.Clock
 import newsref.db.models.NewsArticle
-import newsref.krawly.MAX_URL_CHARS
 import newsref.model.core.*
 import newsref.model.data.*
 import newsref.model.dto.DocumentInfo
@@ -27,7 +26,7 @@ fun Doc.read(sourceUrl: Url, outlet: Outlet, newsArticle: NewsArticle?): Documen
             wordCount += element.text.wordCount()
             for ((text, href) in element.eachLink) {
                 val url = href.toCheckedWithContextOrNull(outlet, sourceUrl) ?: continue
-                if (!url.isMaybeRelevant()) continue
+                if (!url.isLikelyAd()) continue
                 links.add(LinkInfo(url = url, anchorText = text, context = element.text))
             }
         }

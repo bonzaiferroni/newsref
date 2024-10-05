@@ -17,6 +17,7 @@ import org.jetbrains.exposed.sql.kotlin.datetime.datetime
 
 internal object LeadJobTable: LongIdTable("lead_job") {
 	val url = text("url")
+	val leadId = reference("lead_id", LeadTable)
 	val feedId = reference("feed_id", FeedTable).nullable()
 	val headline = text("headline").nullable()
 	val attemptCount = integer("attempt_count")
@@ -26,6 +27,7 @@ internal object LeadJobTable: LongIdTable("lead_job") {
 class LeadJobRow(id: EntityID<Long>): LongEntity(id) {
 	companion object: EntityClass<Long, LeadJobRow>(LeadJobTable)
 	var url by LeadJobTable.url
+	var lead by LeadRow referencedOn LeadJobTable.leadId
 	var feed by FeedRow optionalReferencedOn LeadJobTable.feedId
 	var headline by LeadJobTable.headline
 	var attemptCount by LeadJobTable.attemptCount
@@ -34,16 +36,18 @@ class LeadJobRow(id: EntityID<Long>): LongEntity(id) {
 
 fun LeadJobRow.toData() = LeadJob(
 	id = this.id.value,
-	url = this.url.toCheckedFromDb(),
+	leadId = this.lead.id.value,
 	feedId = this.feed?.id?.value,
+	url = this.url.toCheckedFromDb(),
 	headline = this.headline,
 	attemptCount = this.attemptCount,
 	attemptedAt = this.attemptedAt?.toInstant(UtcOffset.ZERO)
 )
 
-fun LeadJobRow.fromData(leadJob: LeadJob, feedRow: FeedRow? = null) {
-	url = leadJob.url.toString()
+fun LeadJobRow.fromData(leadJob: LeadJob, leadRow: LeadRow, feedRow: FeedRow? = null) {
+	lead = leadRow
 	feed = feedRow
+	url = leadJob.url.toString()
 	headline = leadJob.headline
 	attemptCount = leadJob.attemptCount
 	attemptedAt = leadJob.attemptedAt?.toLocalDateTime(TimeZone.UTC)
