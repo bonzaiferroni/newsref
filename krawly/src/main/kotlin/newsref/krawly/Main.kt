@@ -38,8 +38,8 @@ fun crawl() {
 	val leadMaker = LeadMaker(outletAgent)
 	val feedChecker = FeedChecker(web, outletAgent, leadMaker)
 	val leadFollower = LeadFollower(web, leadMaker, outletAgent)
-	feedChecker.start()
-	leadFollower.start()
+	// feedChecker.start()
+	// leadFollower.start()
 
 	// Set the terminal to raw mode with no echo
 	Runtime.getRuntime().exec(arrayOf("sh", "-c", "stty -icanon -echo min 1 time 0 < /dev/tty")).waitFor()
@@ -48,7 +48,6 @@ fun crawl() {
 		Runtime.getRuntime().exec(arrayOf("sh", "-c", "stty sane erase ^H < /dev/tty")).waitFor()
 	})
 
-	// Capture input in a coroutine
 	while (globalConsole.isActive) {
 		val char = System.`in`.read()
 		globalConsole.addInput(char.toChar())

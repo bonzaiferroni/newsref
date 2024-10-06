@@ -58,7 +58,7 @@ class LeadFollower(
 
 			val count = leadMaker.makeLeads(sourceInfo)
 			console.logInfo("found $count new leads from ${job.url.host}")
-			delay((1..3).random().seconds)
+			delay((200..2000L).random())
 		}
 	}
 }

@@ -46,6 +46,8 @@ class LogConsole {
 	}
 
 	fun addInput(char: Char) {
+		print(moveCursorToBeginningOfLine)
+		print(clearLine)
 		if (char == '\n') {
 			if (input == "quit") isActive = false
 			log("console", LogLevel.INFO, input)
@@ -58,8 +60,6 @@ class LogConsole {
 			log("console", LogLevel.INFO, "got input $char")
 			input += char
 		}
-		print(moveCursorToBeginningOfLine)
-		print(clearLine)
 		print("> $input")
 	}
 

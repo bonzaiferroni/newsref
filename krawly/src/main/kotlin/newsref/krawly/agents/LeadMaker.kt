@@ -2,7 +2,8 @@ package newsref.krawly.agents
 
 import newsref.db.globalConsole
 import newsref.db.services.LeadService
-import newsref.db.log.LogConsole
+import newsref.db.log.toPink
+import newsref.db.log.toYellow
 import newsref.model.data.LeadJob
 import newsref.model.data.SourceType
 import newsref.model.dto.SourceInfo
@@ -18,7 +19,10 @@ class LeadMaker(
 		return try {
 			leadService.createIfFreshLead(leadJob)								//    LeadService ->
 		} catch (e: IllegalArgumentException) {
-			console.logWarning(e.message ?: "Error creating job: $leadJob")
+			val urlString = leadJob.url.toString().toYellow()
+			console.logWarning(e.message?.let {
+				"Error creating job: $urlString\n${it.toPink()}"
+			} ?: "Error creating job: $urlString")
 			null
 		}
 	}

@@ -6,6 +6,7 @@ fun String.toOrange() = toColor(sunsetOrange)
 fun String.toGreen() = toColor(emeraldGreen)
 fun String.toPurple() = toColor(lavenderPurple)
 fun String.toYellow() = toColor(goldenYellow)
+fun String.toPink() = toColor("#FF69B4")
 
 fun String.toColorBg(hex: String) = "${hex.toAnsiBackground()}$this$defaultBackground"
 fun String.toBlueBg() = toColorBg(deepspaceBlue)

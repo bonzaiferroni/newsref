@@ -10,6 +10,7 @@ private val console = globalConsole.getHandle("Playwright")
 
 fun pwFetch(url: Url, screenshot: Boolean = false): WebResult? = Playwright.create().use { playwright ->
     playwright.chromium().launch().use { browser ->
+        if (url.isInvalidSuffix()) return null
         val page = browser.newContext(contextOptions).newPage()
         page.setViewportSize(1000, 728)
         page.setExtraHTTPHeaders(extraHeaders)
