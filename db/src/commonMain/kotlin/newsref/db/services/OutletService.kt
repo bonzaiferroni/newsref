@@ -14,7 +14,9 @@ class OutletService : DataService<Outlet, Int, OutletRow>(
     OutletRow::fromData,
     OutletRow::toData
 ) {
-    suspend fun findByHost(host: String): Outlet? = dbQuery { OutletRow.findByHost(host) }?.toData()
+    suspend fun findByHost(host: String): Outlet? = dbQuery {
+        OutletRow.findByHost(host.removePrefix("www."))
+    }?.toData()
 
     suspend fun findAndSetName(url: Url, name: String?): Outlet = dbQuery {
         val row = OutletRow.findByHost(url.host)

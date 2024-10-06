@@ -1,16 +1,22 @@
 package newsref.db.services
 
-import kotlinx.datetime.TimeZone
-import kotlinx.datetime.toLocalDateTime
+import kotlinx.datetime.Clock
 import newsref.db.DbService
 import newsref.db.tables.*
+import newsref.db.utils.nowToLocalDateTimeUTC
 import newsref.model.core.CheckedUrl
 import newsref.model.data.Lead
 import newsref.model.data.LeadJob
+import org.jetbrains.exposed.sql.SqlExpressionBuilder.isNull
 
 class LeadService : DbService() {
 
-    suspend fun getJobs() = dbQuery { LeadJobRow.all().map { it.toData() } }
+    suspend fun getOpenJobs() = dbQuery {
+        val query = LeadTable.leftJoin(LeadJobTable)
+            .select(LeadJobTable.columns)
+            .where(LeadTable.targetId.isNull())
+        LeadJobRow.wrapRows(query).toList().map { it.toData() }
+    }
 
     suspend fun addSource(leadId: Long, sourceId: Long) = dbQuery {
         val leadRow = LeadRow[leadId]
@@ -36,7 +42,7 @@ class LeadService : DbService() {
     suspend fun addAttempt(leadJob: LeadJob) = dbQuery {
         val leadRow = LeadJobRow[leadJob.id]
         leadRow.attemptCount++
-        leadRow.attemptedAt = leadJob.attemptedAt?.toLocalDateTime(TimeZone.UTC)
+        leadRow.attemptedAt = Clock.nowToLocalDateTimeUTC()
     }
 
     suspend fun leadExists(checkedUrl: CheckedUrl) = dbQuery { LeadRow.leadExists(checkedUrl) }

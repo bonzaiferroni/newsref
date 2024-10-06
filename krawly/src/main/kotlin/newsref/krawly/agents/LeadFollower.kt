@@ -32,7 +32,7 @@ class LeadFollower(
 	}
 
 	private suspend fun checkLeads() {
-		val jobs = leadService.getJobs()
+		val jobs = leadService.getOpenJobs()
 		var leadCount = jobs.size
 		console.logTrace("found ${jobs.size} jobs", leadCount)
 		val hosts = mutableSetOf<String>()

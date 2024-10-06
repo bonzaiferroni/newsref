@@ -18,12 +18,15 @@ import org.jetbrains.exposed.sql.lowerCase
 internal object LeadTable: LongIdTable("lead") {
     val url = text("url").uniqueIndex()
     val targetId = reference("target_id", SourceTable).nullable()
+    val urlLowercase = url.lowerCase()
 }
 
 class LeadRow(id: EntityID<Long>): LongEntity(id) {
     companion object: EntityClass<Long, LeadRow>(LeadTable)
     var target by SourceRow optionalReferencedOn LeadTable.targetId
     var url by LeadTable.url
+
+    val urlLowercase: String get() = readValues[LeadTable.url]
 }
 
 fun LeadRow.toData() = Lead(

@@ -17,6 +17,10 @@ class SourceService: DbService() {
         val outletRow = OutletRow.find { OutletTable.id eq outletId }.firstOrNull()
             ?: throw MissingResourceException("Missing Outlet", "SourceService", outletId.toString())
         val urlParams = outletRow.urlParams.toList()
+        val outletName = info.document?.outletName
+        if (outletName != null) {
+            outletRow.name = outletName
+        }
 
         // update or create source
         val url = info.source.url.toString()
