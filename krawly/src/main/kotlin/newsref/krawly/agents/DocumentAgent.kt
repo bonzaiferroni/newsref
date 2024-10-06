@@ -3,10 +3,7 @@ package newsref.krawly.agents
 import it.skrape.selects.Doc
 import kotlinx.datetime.Clock
 import newsref.db.globalConsole
-import newsref.db.services.ArticleService
 import newsref.db.utils.cacheResource
-import newsref.krawly.MAX_URL_ATTEMPTS
-import newsref.krawly.SpiderWeb
 import newsref.krawly.utils.*
 import newsref.model.core.toCheckedOrNull
 import newsref.model.core.toCheckedWithContextOrNull
@@ -71,7 +68,7 @@ class DocumentAgent(
 				alternativeHeadline = newsArticle?.alternativeHeadline,
 				description = newsArticle?.description ?: doc.readDescription(),
 				imageUrl = imageUrl,
-				section = newsArticle?.articleSection,
+				section = newsArticle?.articleSection?.firstOrNull(),
 				keywords = newsArticle?.keywords,
 				wordCount = newsArticle?.wordCount ?: wordCount,
 				isFree = newsArticle?.isAccessibleForFree,

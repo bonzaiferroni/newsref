@@ -1,4 +1,4 @@
-package newsref.db.serializers
+package newsref.krawly.serializers
 
 import kotlinx.serialization.KSerializer
 import kotlinx.serialization.SerializationException
@@ -9,7 +9,8 @@ import kotlinx.serialization.descriptors.buildClassSerialDescriptor
 import kotlinx.serialization.encoding.Decoder
 import kotlinx.serialization.encoding.Encoder
 import kotlinx.serialization.json.*
-import newsref.db.models.Image
+import newsref.krawly.models.Image
+import newsref.krawly.models.Logo
 
 open class MaybeListSerializer<Primitive, Object>(
     val objectSerializer: KSerializer<Object>,
@@ -50,6 +51,12 @@ object ImageListSerializer : MaybeListSerializer<String, Image>(
     objectSerializer = Image.serializer(),
     primitiveSerializer = String.serializer(),
     convert = { Image(url = it) }
+)
+
+object LogoListSerializer : MaybeListSerializer<String, Logo>(
+    objectSerializer = Logo.serializer(),
+    primitiveSerializer = String.serializer(),
+    convert = { Logo(url = it)}
 )
 
 object KeywordListSerializer : MaybeListSerializer<String, String>(

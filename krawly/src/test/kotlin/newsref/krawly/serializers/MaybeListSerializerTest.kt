@@ -1,12 +1,10 @@
-package newsref.db.services
+package newsref.krawly.serializers
 
-import newsref.db.serializers.QuantitativeValueSerializer
 import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlinx.serialization.json.Json
-import newsref.db.models.Image
-import newsref.db.models.QuantitativeValue
-import newsref.db.serializers.ImageListSerializer
+import newsref.krawly.models.Image
+import newsref.krawly.models.QuantitativeValue
 
 class MaybeListSerializerTest {
 

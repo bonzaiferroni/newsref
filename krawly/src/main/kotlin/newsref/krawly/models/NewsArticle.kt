@@ -1,24 +1,20 @@
-package newsref.db.models
+package newsref.krawly.models
 
-import kotlinx.serialization.KSerializer
 import kotlinx.serialization.Serializable
-import kotlinx.serialization.SerializationException
-import kotlinx.serialization.json.Json
-import kotlinx.serialization.json.JsonArray
-import newsref.db.serializers.*
-import newsref.db.utils.cacheResource
+import newsref.krawly.serializers.*
 
 @Serializable
 data class NewsArticle(
-    val dateline: String? = null,
     val headline: String? = null,
+    val dateline: String? = null,
     val datePublished: String? = null,
     val dateModified: String? = null,
     @Serializable(SingleOrArraySerializer::class)
-    val author: List<Author>? = null,
+    val author: List<NewsAuthor>? = null,
     val publisher: Publisher? = null,
     val articleBody: String? = null,
-    val articleSection: String? = null,
+    @Serializable(SingleOrArraySerializer::class)
+    val articleSection: List<String>? = null,
     val wordCount: Int? = null,
     @Serializable(KeywordListSerializer::class)
     val keywords: List<String>? = null,
@@ -36,32 +32,26 @@ data class NewsArticle(
 )
 
 @Serializable
-data class Author(
+data class NewsAuthor(
     val name: String? = null,
     val url: String? = null,
     val email: String? = null,
     val sameAs: String? = null,
-    @Serializable(ImageListSerializer::class)
-    val image: List<Image>? = null,
+    // @Serializable(ImageListSerializer::class)
+    val image: Image? = null,
 )
 
 @Serializable
 data class Publisher(
     val name: String? = null,
-    val logo: Logo? = null
-)
-
-@Serializable
-data class Logo(
-    val url: String? = null
+    // @Serializable(LogoListSerializer::class)
+    val logo: Image? = null
 )
 
 @Serializable
 data class Image(
-    @Serializable(QuantitativeValueSerializer::class)
-    val width: QuantitativeValue? = null,
-    @Serializable(QuantitativeValueSerializer::class)
-    val height: QuantitativeValue? = null,
+    val width: Int? = null,
+    val height: Int? = null,
     val url: String? = null,
     val caption: String? = null,
     val creditText: String? = null,

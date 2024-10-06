@@ -8,8 +8,9 @@ import kotlinx.serialization.SerializationException
 import kotlinx.serialization.json.JsonArray
 import kotlinx.serialization.json.JsonObject
 import kotlinx.serialization.json.decodeFromJsonElement
-import newsref.db.models.NewsArticle
+import newsref.db.globalConsole
 import newsref.db.utils.*
+import newsref.krawly.models.NewsArticle
 import newsref.model.core.Url
 import newsref.model.data.toSourceType
 
@@ -53,14 +54,14 @@ private fun String.trimCData() = this
 
 private fun Doc.scanTagsForNewsArticle(): String? {
     for (element in this.findFirst("head").children) {
-        if (element.tagName == "script" && element.html.contains("NewsArticle")) {
+        if (element.tagName == "script" && element.html.contains("\"NewsArticle\"")) {
             return element.html
         }
     }
     return null
 }
 
-private fun String.readArrayOrObject(): NewsArticle? {
+fun String.readArrayOrObject(): NewsArticle? {
     try {
         // Try to decode the string as a JsonArray first
         val jsonArray = prettyPrintJson.decodeFromString<JsonArray>(this)
@@ -76,6 +77,7 @@ private fun String.readArrayOrObject(): NewsArticle? {
             // If it's not a JsonArray, try to decode it directly as a NewsArticle
             prettyPrintJson.decodeFromString<NewsArticle>(this)
         } catch (e: Exception) {
+            globalConsole.logError("NewsArticle", e.message.toString())
             null
         }
     }

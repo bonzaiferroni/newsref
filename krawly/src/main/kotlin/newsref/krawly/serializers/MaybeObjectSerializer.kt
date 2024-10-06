@@ -1,4 +1,4 @@
-package newsref.db.serializers
+package newsref.krawly.serializers
 
 import kotlinx.serialization.KSerializer
 import kotlinx.serialization.SerializationException
@@ -10,7 +10,7 @@ import kotlinx.serialization.encoding.Encoder
 import kotlinx.serialization.json.JsonDecoder
 import kotlinx.serialization.json.JsonObject
 import kotlinx.serialization.json.JsonPrimitive
-import newsref.db.models.QuantitativeValue
+import newsref.krawly.models.QuantitativeValue
 
 open class MaybeObjectSerializer<Primitive : Any, Object : Any>(
     private val objectSerializer: KSerializer<Object>,

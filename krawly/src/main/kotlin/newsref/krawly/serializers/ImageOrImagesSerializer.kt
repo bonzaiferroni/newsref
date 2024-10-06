@@ -1,4 +1,4 @@
-package newsref.db.serializers
+package newsref.krawly.serializers
 
 import kotlinx.serialization.KSerializer
 import kotlinx.serialization.SerializationException
