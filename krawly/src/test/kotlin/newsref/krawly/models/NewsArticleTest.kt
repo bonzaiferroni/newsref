@@ -1,10 +1,12 @@
 package newsref.krawly.models
 
+import newsref.db.utils.cacheSerializable
 import kotlin.test.Test
 import kotlin.test.assertNotNull
 import newsref.db.utils.resourcePath
 import newsref.krawly.utils.decodeNewsArticle
 import newsref.krawly.utils.readArrayOrObject
+import newsref.model.core.toUrl
 import java.io.File
 
 class NewsArticleTest {
@@ -30,6 +32,7 @@ class NewsArticleTest {
         for (file in jsonFiles) {
             val jsonString = file.readText()
             val result = jsonString.decodeNewsArticle()
+            result?.cacheSerializable("http://example.com".toUrl(), "news_article_tests", file.name)
             assertNotNull(result, "Parsed NewsArticle object from ${file.name} should not be null")
         }
     }

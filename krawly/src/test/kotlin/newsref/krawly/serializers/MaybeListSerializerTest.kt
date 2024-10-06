@@ -32,60 +32,6 @@ class MaybeListSerializerTest {
     }
 
     @Test
-    fun `test NewsImageSerializer with single Image object input`() {
-        val jsonString = """
-            {
-                "url": "https://example.com/image.jpg",
-                "width": { "value": 800 },
-                "height": { "value": 600 }
-            }
-        """.trimIndent()
-        val result = json.decodeFromString(ImageListSerializer, jsonString)
-
-        val expected = listOf(
-            Image(
-                url = "https://example.com/image.jpg",
-                width = QuantitativeValue(value = 800),
-                height = QuantitativeValue(value = 600)
-            )
-        )
-        assertEquals(expected, result, "Expected a single Image object converted to a list of Image objects")
-    }
-
-    @Test
-    fun `test NewsImageSerializer with list of Image objects input`() {
-        val jsonString = """
-            [
-                {
-                    "url": "https://example.com/image1.jpg",
-                    "width": { "value": 800 },
-                    "height": { "value": 600 }
-                },
-                {
-                    "url": "https://example.com/image2.jpg",
-                    "width": { "value": 1024 },
-                    "height": { "value": 768 }
-                }
-            ]
-        """.trimIndent()
-        val result = json.decodeFromString(ImageListSerializer, jsonString)
-
-        val expected = listOf(
-            Image(
-                url = "https://example.com/image1.jpg",
-                width = QuantitativeValue(value = 800),
-                height = QuantitativeValue(value = 600)
-            ),
-            Image(
-                url = "https://example.com/image2.jpg",
-                width = QuantitativeValue(value = 1024),
-                height = QuantitativeValue(value = 768)
-            )
-        )
-        assertEquals(expected, result, "Expected a list of Image objects matching the input JSON")
-    }
-
-    @Test
     fun `test QuantitativeValueSerializer with single Int input`() {
         val jsonString = "42"
         val result = json.decodeFromString(QuantitativeValueSerializer, jsonString)

@@ -9,14 +9,11 @@ data class NewsArticle(
     val dateline: String? = null,
     val datePublished: String? = null,
     val dateModified: String? = null,
-    @Serializable(SingleOrArraySerializer::class)
     val author: List<NewsAuthor>? = null,
     val publisher: Publisher? = null,
     val articleBody: String? = null,
-    @Serializable(SingleOrArraySerializer::class)
     val articleSection: List<String>? = null,
     val wordCount: Int? = null,
-    @Serializable(KeywordListSerializer::class)
     val keywords: List<String>? = null,
     val abstract: String? = null,
     val alternativeHeadline: String? = null,
@@ -25,7 +22,6 @@ data class NewsArticle(
     val isAccessibleForFree: Boolean? = null,
     val text: String? = null,
     val thumbnailUrl: String? = null,
-    @Serializable(ImageListSerializer::class)
     val image: List<Image>? = null,
     val inLanguage: String? = null,
     val commentCount: Int? = null,
@@ -36,15 +32,13 @@ data class NewsAuthor(
     val name: String? = null,
     val url: String? = null,
     val email: String? = null,
-    val sameAs: String? = null,
-    // @Serializable(ImageListSerializer::class)
+    val sameAs: List<String>? = null,
     val image: Image? = null,
 )
 
 @Serializable
 data class Publisher(
     val name: String? = null,
-    // @Serializable(LogoListSerializer::class)
     val logo: Image? = null
 )
 
