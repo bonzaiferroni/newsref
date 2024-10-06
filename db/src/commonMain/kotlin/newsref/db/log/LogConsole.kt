@@ -3,7 +3,9 @@ package newsref.db.log
 class LogConsole {
 	var config = ConsoleConfig()
 	var isActive = true
+	private var reservedLines = 1
 	private val builder = LineBuilder()
+	private val partialBuilder = LineBuilder()
 	private val handles = mutableListOf<LogHandle>()
 	private var input = ""
 	private var commands = mutableMapOf<String, (List<String>?) -> String>()
@@ -24,6 +26,7 @@ class LogConsole {
 	}
 
 	fun getHandle(name: String, showStatus: Boolean = false): LogHandle {
+		if (showStatus) reservedLines++
 		val handle = LogHandle(name, showStatus, this)
 		handles.add(handle)
 		return handle
@@ -37,18 +40,45 @@ class LogConsole {
 		}
 
 		if (level.ordinal < config.minLevel.ordinal) return
-		if (config.showStatus) {
-			print(moveCursorBackLines(1))
-			print(clearLine)
-		}
-
 		val line = builder.bold().setForeground(level).writeLength(source, MAX_SOURCE_CHARS)
 			.defaultFormat().defaultForeground().write(" ").write(message).build()
-		println(line)
+		renderLog(source, line)
+	}
+
+	fun logTrace(source: String, message: String) = log(source, LogLevel.TRACE, message)
+	fun logDebug(source: String, message: String) = log(source, LogLevel.DEBUG, message)
+	fun logInfo(source: String, message: String) = log(source, LogLevel.INFO, message)
+	fun logWarning(source: String, message: String) = log(source, LogLevel.WARNING, message)
+	fun logError(source: String, message: String) = log(source, LogLevel.ERROR, message)
+
+	fun refreshLog() = renderLog(null, null)
+
+	private fun renderLog(source: String?, newLine: String?) {
+		if (config.showStatus) {
+			repeat(reservedLines) {
+				print(moveCursorBackLines(1))
+				print(clearLine)
+			}
+		}
+
+		if (newLine != null) {
+			println(newLine)
+		}
 
 		if (config.showStatus) {
 			for (handle in handles) {
 				if (!handle.showStatus) continue
+				// render partial lines
+				print(clearLine)
+				val partial = handle.partial
+				if (partial != null) {
+					val partialLine = partialBuilder.setForeground(dim).writeLength(handle.name, MAX_SOURCE_CHARS)
+						.defaultForeground().write(" > ").write(partial.takeLast(80)).build()
+					println(partialLine) 										// reserved line
+				} else {
+					println()
+				}
+				// add to status bar
 				builder.write("[").setForeground(handle.level)
 				if (handle.name == source) builder.underscore()
 				builder.write(handle.name).defaultFormat().defaultForeground()
@@ -56,8 +86,8 @@ class LogConsole {
 				builder.write("]")
 			}
 			val statusLine = builder.build()
-			println(statusLine)
-			print("> $input")
+			println(statusLine) 												// reserved line
+			print("> $input") 													// prompt
 		}
 	}
 
@@ -65,7 +95,6 @@ class LogConsole {
 		print(moveCursorToBeginningOfLine)
 		print(clearLine)
 		if (char == '\n') {
-			if (input == "quit") isActive = false
 			val array = input.split(' ')
 			val command = array.firstOrNull()
 			if (command != null) sendCommand(command, array.drop(1))
@@ -79,12 +108,6 @@ class LogConsole {
 		}
 		print("> $input")
 	}
-
-	fun logTrace(source: String, message: String) = log(source, LogLevel.TRACE, message)
-	fun logDebug(source: String, message: String) = log(source, LogLevel.DEBUG, message)
-	fun logInfo(source: String, message: String) = log(source, LogLevel.INFO, message)
-	fun logWarning(source: String, message: String) = log(source, LogLevel.WARNING, message)
-	fun logError(source: String, message: String) = log(source, LogLevel.ERROR, message)
 }
 
 const val MAX_SOURCE_CHARS = 10

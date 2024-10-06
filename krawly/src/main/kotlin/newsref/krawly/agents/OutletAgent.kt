@@ -30,7 +30,7 @@ class OutletAgent(
 
         val robotsTxt = result?.let{ if (it.isSuccess()) it.doc?.text else null }
         val disallowed = robotsTxt?.let { parseRobotsTxt(it) } ?: emptySet()
-        console.logPartial("${disallowed.size} disallowed: ${disallowed.take(5)}")
+        console.logPartial(", ${disallowed.size} disallowed: ${disallowed.take(5)}")
         val urlWithoutParams = url.toString().toCheckedUrl(emptySet(), null)
 
         delay((1..2).random().seconds)
@@ -39,7 +39,7 @@ class OutletAgent(
         val keepParams = if (result != null && result.isSuccess()) { emptySet() } else {
             url.params.map { it.key }.toSet()
         }
-        console.finishPartial("keepParams: ${keepParams.take(5)}", LogLevel.DEBUG)
+        console.finishPartial(", keepParams: ${keepParams.take(5)}", LogLevel.DEBUG)
 
         return outletService.createOutlet(
             host = url.host, robotsTxt = robotsTxt, disallowed = disallowed, keepParams = keepParams

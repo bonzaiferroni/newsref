@@ -8,6 +8,7 @@ fun String.toPurple() = toColor(lavenderPurple)
 fun String.toYellow() = toColor(goldenYellow)
 fun String.toPink() = toColor("#FF69B4")
 
+
 fun String.toColorBg(hex: String) = "${hex.toAnsiBackground()}$this$defaultBackground"
 fun String.toBlueBg() = toColorBg(deepspaceBlue)
 fun String.toGreenBg() = toColorBg(midnightGreen)
@@ -47,6 +48,7 @@ internal val blueForeground = Foreground("\u001B[34m")
 internal val magentaForeground = Foreground("\u001B[35m")
 internal val cyanForeground = Foreground("\u001B[36m")
 internal val whiteForeground = Foreground("\u001B[37m")
+val dim = "#999999".toAnsiForeground()
 
 internal val sourceColor = cyanForeground
 internal val urgentColor = magentaForeground

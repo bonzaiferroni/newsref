@@ -33,7 +33,7 @@ fun pwFetch(url: Url, screenshot: Boolean = false): WebResult? = Playwright.crea
             return null
         } catch (e: PlaywrightException) {
             // adventure mode throws these
-            console.logError("Unusual exception\n${e.message}")
+            console.logError("Unusual exception: $url\n${e.message}")
             return null
         }
     }
