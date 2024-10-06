@@ -7,7 +7,7 @@ class LogHandle(
 ) {
 	var status: String = ""
 	var level: LogLevel = LogLevel.INFO
-	var partial: String? = null
+	var partialLine = LineBuilder()
 
 	fun log(message: String, status: Any? = null, level: LogLevel = LogLevel.INFO) {
 		if (status != null) this.status = status.toString()
@@ -15,17 +15,22 @@ class LogHandle(
 		console.log(name, level, message)
 	}
 
-	fun logPartial(message: String) {
-		if (partial == null) partial = message
-		else partial += message
-		console.refreshLog()
+	fun logPartial(message: String, refresh: Boolean = false) {
+		if (partialLine.isEmpty) partialLine.write(message)
+		else partialLine.write(" | ").write(message)
+		if (refresh) console.refreshLog()
 	}
 
-	fun finishPartial(message: String, level: LogLevel = LogLevel.INFO) {
+	fun logMsgIfTrue(emoji: String, width: Int? = null, block: () -> Boolean) {
+		val partialMsg = if (block()) emoji else "💢"
+		val paddedMsg = width?.let { partialMsg.padStart(it) } ?: partialMsg
+		logPartial(paddedMsg)
+	}
+
+	fun finishPartial(message: String = "", level: LogLevel = LogLevel.INFO) {
 		logPartial(message)
-		val fullMessage = partial ?: return
-		partial = null
-		console.log(name, level, fullMessage)
+		val line = partialLine.build()
+		console.log(name, level, line)
 	}
 
 	fun logTrace(message: String, status: Any? = null) = log(message, status, LogLevel.TRACE)

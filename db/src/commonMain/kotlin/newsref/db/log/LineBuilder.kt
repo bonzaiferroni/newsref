@@ -6,6 +6,8 @@ class LineBuilder(
 	var foreground = defaultForeground
 	var background = defaultBackground
 	var format = defaultText
+	val length get () = builder.length
+	val isEmpty get () = builder.isEmpty()
 
 	fun write(part: LogPart) = write(part.toString())
 
@@ -82,5 +84,9 @@ class LineBuilder(
 		val string = toString()
 		clear()
 		return string
+	}
+
+	fun current(): String {
+		return toString()
 	}
 }

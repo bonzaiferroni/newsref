@@ -3,6 +3,7 @@ package newsref.krawly.utils
 import com.microsoft.playwright.*
 import it.skrape.selects.Doc
 import newsref.db.globalConsole
+import newsref.db.utils.fileLog
 import newsref.krawly.chromeLinuxAgent
 import newsref.model.core.Url
 
@@ -32,6 +33,7 @@ fun pwFetch(url: Url, screenshot: Boolean = false): WebResult? = Playwright.crea
             console.logError("Timeout: $url")
             return null
         } catch (e: PlaywrightException) {
+            e.message?.fileLog("exceptions", "playwright")
             // adventure mode throws these
             console.logError("Unusual exception: $url\n${e.message}")
             return null

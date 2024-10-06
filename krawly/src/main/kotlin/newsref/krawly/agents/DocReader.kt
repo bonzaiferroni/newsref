@@ -17,11 +17,11 @@ class DocReader(
 	private val outletAgent: OutletAgent,
 	// private val articleService: ArticleService = ArticleService()
 ) {
-	private val console = globalConsole.getHandle("DocReader")
+	private val console = globalConsole.getHandle("DocReader", true)
 
 	suspend fun readDoc(job: LeadJob, outlet: Outlet, doc: Doc): DocumentInfo? {
 		val newsArticle = doc.getNewsArticle(job.url)
-		console.logDebug("NewsArticle ${job.url.host}: ${if (newsArticle != null) "??" else "null"}")
+		console.logMsgIfTrue("📜") { newsArticle != null }
 
 		val sourceUrl = (newsArticle?.url ?: doc.readUrl())?.toUrlOrNull() ?: job.url
 		val sourceOutlet = outletAgent.getOutlet(sourceUrl)                     // <- OutletAgent ->
@@ -52,38 +52,52 @@ class DocReader(
 				}
 			}
 		}
-		console.logDebug("found ${links.size} links")
 		val urlString = newsArticle?.url ?: doc.readUrl()
 		val docUrl = urlString?.toCheckedWithContextOrNull(outlet, sourceUrl)
+
 		val imageUrlString = newsArticle?.image?.firstOrNull()?.url ?: doc.readImageUrl()
 		val imageUrl = imageUrlString?.toCheckedWithContextOrNull(outlet, sourceUrl)
+		console.logMsgIfTrue("🖼️") { imageUrl != null }
 		val outletName = newsArticle?.publisher?.name ?: doc.readOutletName()
+		val headline = doc.readHeadline() ?: newsArticle?.headline ?: h1Title ?: doc.titleText
+		val description = newsArticle?.description ?: doc.readDescription()
+		console.logMsgIfTrue("📝") { description != null }
+		val publishedAt = newsArticle?.readPublishedAt() ?: doc.readPublishedAt()
+		val modifiedAt = newsArticle?.readModifiedAt() ?: doc.readModifiedAt()
+		console.logMsgIfTrue("📅") { publishedAt != null }
+		val authors = (newsArticle?.readAuthor() ?: doc.readAuthor())?.let { setOf(it) }
+		console.logMsgIfTrue("🧑‍🏫") { authors != null }
+		val sourceType = newsArticle?.let { SourceType.ARTICLE } ?: doc.readType() ?: SourceType.UNKNOWN
+		console.logMsgIfTrue("📰") { sourceType != SourceType.UNKNOWN }
+		wordCount = newsArticle?.wordCount ?: wordCount
+		console.logMsgIfTrue("$wordCount words", 9) { wordCount > 0 }
+		console.logMsgIfTrue("${links.size} links", 9) { links.size > 0 }
+		console.finishPartial()
 
 		val docInfo = DocumentInfo(
 			docUrl = docUrl,
 			outletId = outlet.id,
 			outletName = outletName,
 			article = Article(
-				headline = doc.readHeadline() ?: newsArticle?.headline ?: h1Title ?: doc.titleText,
+				headline = headline,
 				alternativeHeadline = newsArticle?.alternativeHeadline,
-				description = newsArticle?.description ?: doc.readDescription(),
+				description = description,
 				imageUrl = imageUrl,
 				section = newsArticle?.articleSection?.firstOrNull(),
 				keywords = newsArticle?.keywords,
-				wordCount = newsArticle?.wordCount ?: wordCount,
+				wordCount = wordCount,
 				isFree = newsArticle?.isAccessibleForFree,
 				thumbnail = newsArticle?.thumbnailUrl,
 				language = newsArticle?.inLanguage,
 				commentCount = newsArticle?.commentCount,
 				accessedAt = Clock.System.now(),
-				publishedAt = newsArticle?.readPublishedAt() ?: doc.readPublishedAt(),
-				modifiedAt = newsArticle?.readModifiedAt() ?: doc.readModifiedAt()
+				publishedAt = publishedAt,
+				modifiedAt = modifiedAt,
 			),
 			contents = contents,
 			links = links,
-			authors = (newsArticle?.readAuthor() ?: doc.readAuthor())?.let { setOf(it) },
-			type = newsArticle?.let { SourceType.ARTICLE }
-				?: doc.readType() ?: SourceType.UNKNOWN,
+			authors = authors,
+			type = sourceType,
 		)
 
 		if (docInfo.contents.isNotEmpty()) {

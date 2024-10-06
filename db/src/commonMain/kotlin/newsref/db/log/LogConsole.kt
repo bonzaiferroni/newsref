@@ -70,9 +70,9 @@ class LogConsole {
 				if (!handle.showStatus) continue
 				// render partial lines
 				print(clearLine)
-				val partial = handle.partial
-				if (partial != null) {
-					val partialLine = partialBuilder.setForeground(dim).writeLength(handle.name, MAX_SOURCE_CHARS)
+				val partial = handle.partialLine.current()
+				if (partial.isNotEmpty()) {
+					val partialLine = partialBuilder.setForeground(dim).writeLength(handle.name, MAX_SOURCE_CHARS - 2)
 						.defaultForeground().write(" > ").write(partial.takeLast(80)).build()
 					println(partialLine) 										// reserved line
 				} else {

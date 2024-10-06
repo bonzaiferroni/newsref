@@ -2,7 +2,6 @@ package newsref.db.utils
 
 import kotlinx.serialization.serializer
 import newsref.db.globalConsole
-import newsref.db.tables.SourceTable.type
 import newsref.model.core.Url
 import java.io.File
 
@@ -50,4 +49,13 @@ inline fun <reified T> T.cacheSerializable(
     file.writeText(jsonString)
 
     return this
+}
+
+fun String.fileLog(
+    path: String,
+    fileName: String
+) {
+    val file = File("$resourcePath/$path/$fileName.log")
+    file.parentFile?.mkdirs() // Create missing directories if they don't exist
+    file.appendText("$this\n\n")
 }
