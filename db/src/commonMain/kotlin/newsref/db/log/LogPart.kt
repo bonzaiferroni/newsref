@@ -23,6 +23,7 @@ internal val saveCursorPos = Control("\u001B[s")
 internal val restoreCursorPos = Control("\u001B[u")
 internal val clearLine = Control("\u001B[2K")
 internal val clearScreen = Control("\u001B[2J")
+internal val moveCursorToBeginningOfLine = Control("\u001B[1G")
 
 internal val boldText = Format("\u001B[1m")
 internal val italicText = Format("\u001B[3m")

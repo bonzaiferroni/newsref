@@ -1,6 +1,9 @@
 package newsref.krawly
 
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.runBlocking
 import newsref.db.globalConsole
 import newsref.db.initDb
 import newsref.db.log.ConsoleConfig
@@ -10,9 +13,15 @@ import newsref.krawly.agents.*
 import newsref.krawly.utils.pwFetch
 import newsref.model.core.Url
 import newsref.model.core.toUrl
+import org.jline.terminal.TerminalBuilder
+import java.io.BufferedReader
+import java.io.File
+import java.io.InputStreamReader
+import java.util.*
 import kotlin.time.Duration.Companion.minutes
+import kotlin.time.Duration.Companion.seconds
 
-suspend fun main(args: Array<String>) {
+fun main(args: Array<String>) {
 	println(args.joinToString(", "))
 	if (args.any {it.contains("http")}) {
 		test(args.first())
@@ -22,21 +31,28 @@ suspend fun main(args: Array<String>) {
 	}
 }
 
-suspend fun crawl() {
+fun crawl() {
 	initDb()
 	val web = SpiderWeb()
-	val leadMaker = LeadMaker()
 	val outletAgent = OutletAgent(web)
+	val leadMaker = LeadMaker(outletAgent)
 	val feedChecker = FeedChecker(web, outletAgent, leadMaker)
 	val leadFollower = LeadFollower(web, leadMaker, outletAgent)
 	feedChecker.start()
 	leadFollower.start()
-	while (true) {
-		// don't exit
-		delay(10.minutes)
+
+	// Set the terminal to raw mode with no echo
+	Runtime.getRuntime().exec(arrayOf("sh", "-c", "stty -icanon -echo min 1 time 0 < /dev/tty")).waitFor()
+	Runtime.getRuntime().addShutdownHook(Thread {
+		// Code to run on shutdown
+		Runtime.getRuntime().exec(arrayOf("sh", "-c", "stty sane erase ^H < /dev/tty")).waitFor()
+	})
+
+	// Capture input in a coroutine
+	while (globalConsole.isActive) {
+		val char = System.`in`.read()
+		globalConsole.addInput(char.toChar())
 	}
-	// val spider = Spider(SpiderWeb(), console)
-	// spider.startCrawling()
 }
 
 fun test(href: String) {

@@ -4,6 +4,8 @@ class LogConsole {
 	var config = ConsoleConfig()
 	private val builder = LineBuilder()
 	private val handles = mutableListOf<LogHandle>()
+	private var input = ""
+	var isActive = true
 
 	fun getHandle(name: String, showStatus: Boolean = false): LogHandle {
 		val handle = LogHandle(name, showStatus, this)
@@ -39,7 +41,26 @@ class LogConsole {
 			}
 			val statusLine = builder.build()
 			println(statusLine)
+			print("> $input")
 		}
+	}
+
+	fun addInput(char: Char) {
+		if (char == '\n') {
+			if (input == "quit") isActive = false
+			log("console", LogLevel.INFO, input)
+			input = ""
+		} else if(char == '\b') {
+			if (input.isNotEmpty()) {
+				input = input.dropLast(1)
+			}
+		} else {
+			log("console", LogLevel.INFO, "got input $char")
+			input += char
+		}
+		print(moveCursorToBeginningOfLine)
+		print(clearLine)
+		print("> $input")
 	}
 
 	fun logTrace(source: String, message: String) = log(source, LogLevel.TRACE, message)

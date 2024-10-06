@@ -28,11 +28,11 @@ fun pwFetch(url: Url, screenshot: Boolean = false): WebResult? = Playwright.crea
                 requestHeaders = headers
             )
         } catch (e: TimeoutError) {
-            console.logError("pwFetch", "Timeout: $url")
+            console.logError("Timeout: $url")
             return null
         } catch (e: PlaywrightException) {
             // adventure mode throws these
-            console.logError("pwFetch", "Unusual exception\n${e.message}")
+            console.logError("Unusual exception\n${e.message}")
             return null
         }
     }

@@ -9,6 +9,7 @@ import newsref.krawly.utils.*
 import newsref.model.core.Url
 import newsref.model.core.toCheckedUrl
 import newsref.model.data.Outlet
+import kotlin.time.Duration.Companion.seconds
 
 class OutletAgent(
 	private val web: SpiderWeb,
@@ -27,7 +28,7 @@ class OutletAgent(
     }
 
     private suspend fun createOutlet(url: Url): Outlet {
-        console.logDebug("creating outlet: ${url.host}")
+        console.logDebug("create: ${url.host}")
         val robotsUrl = url.getRobotsTxtUrl()
         var result = web.crawlPage(robotsUrl, false)                            // <- Web
 
@@ -36,7 +37,7 @@ class OutletAgent(
         console.logDebug("${disallowed.size} disallowed: ${disallowed.take(5)}")
         val urlWithoutParams = url.toString().toCheckedUrl(emptySet(), null)
 
-        delay((1000..2000L).random())
+        delay((1..2).random().seconds)
         result = web.crawlPage(urlWithoutParams, false)                         // <- Web
 
         val keepParams = if (result != null && result.isSuccess()) { emptySet() } else {
