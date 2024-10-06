@@ -38,8 +38,11 @@ fun crawl() {
 	val leadMaker = LeadMaker(outletAgent)
 	val feedChecker = FeedChecker(web, outletAgent, leadMaker)
 	val leadFollower = LeadFollower(web, leadMaker, outletAgent)
-	// feedChecker.start()
-	// leadFollower.start()
+	globalConsole.addCommand("start") {
+		feedChecker.start()
+		leadFollower.start()
+		"Starting spider 🕷"
+	}
 
 	// Set the terminal to raw mode with no echo
 	Runtime.getRuntime().exec(arrayOf("sh", "-c", "stty -icanon -echo min 1 time 0 < /dev/tty")).waitFor()

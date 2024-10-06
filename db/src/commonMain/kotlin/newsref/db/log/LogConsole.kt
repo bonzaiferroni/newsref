@@ -2,10 +2,26 @@ package newsref.db.log
 
 class LogConsole {
 	var config = ConsoleConfig()
+	var isActive = true
 	private val builder = LineBuilder()
 	private val handles = mutableListOf<LogHandle>()
 	private var input = ""
-	var isActive = true
+	private var commands = mutableMapOf<String, (List<String>?) -> String>()
+
+	init {
+		addCommand("quit") { isActive = false; "Goodbye!" }
+	}
+
+	fun addCommand(name: String, action: (List<String>?) -> String) {
+		commands[name] = action
+	}
+
+	fun sendCommand(name: String, args: List<String>?): String {
+		val command = commands[name] ?: return "Bad command or file name: $name"
+		val result = command(args)
+		log("console", LogLevel.INFO, result)
+		return result
+	}
 
 	fun getHandle(name: String, showStatus: Boolean = false): LogHandle {
 		val handle = LogHandle(name, showStatus, this)
@@ -50,14 +66,15 @@ class LogConsole {
 		print(clearLine)
 		if (char == '\n') {
 			if (input == "quit") isActive = false
-			log("console", LogLevel.INFO, input)
+			val array = input.split(' ')
+			val command = array.firstOrNull()
+			if (command != null) sendCommand(command, array.drop(1))
 			input = ""
 		} else if(char == '\b') {
 			if (input.isNotEmpty()) {
 				input = input.dropLast(1)
 			}
 		} else {
-			log("console", LogLevel.INFO, "got input $char")
 			input += char
 		}
 		print("> $input")

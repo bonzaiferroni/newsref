@@ -12,7 +12,7 @@ import newsref.model.dto.SourceInfo
 
 class SourceAgent(
     private val outletAgent: OutletAgent,
-    private val documentAgent: DocumentAgent = DocumentAgent(outletAgent),
+    private val docReader: DocReader = DocReader(outletAgent),
     private val sourceService: SourceService = SourceService()
 ) {
     private val console = globalConsole.getHandle("SourceAgent")
@@ -20,7 +20,7 @@ class SourceAgent(
     suspend fun read(job: LeadJob, doc: Doc?): SourceInfo {
         val outlet = outletAgent.getOutlet(job.url)                            // <- OutletAgent
         val docInfo = if (doc != null && job.url.isMaybeArticle())
-            documentAgent.readDoc(job, outlet, doc) else null
+            docReader.readDoc(job, outlet, doc) else null
 
         val info = SourceInfo(
             leadUrl = job.url,

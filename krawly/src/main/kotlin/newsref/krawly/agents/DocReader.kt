@@ -13,11 +13,11 @@ import newsref.model.data.*
 import newsref.model.dto.DocumentInfo
 import newsref.model.dto.LinkInfo
 
-class DocumentAgent(
+class DocReader(
 	private val outletAgent: OutletAgent,
 	// private val articleService: ArticleService = ArticleService()
 ) {
-	private val console = globalConsole.getHandle("DocumentAgent")
+	private val console = globalConsole.getHandle("DocReader")
 
 	suspend fun readDoc(job: LeadJob, outlet: Outlet, doc: Doc): DocumentInfo? {
 		val newsArticle = doc.getNewsArticle(job.url)
