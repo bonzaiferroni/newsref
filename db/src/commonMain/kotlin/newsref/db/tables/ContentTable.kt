@@ -8,7 +8,7 @@ import org.jetbrains.exposed.dao.id.EntityID
 import org.jetbrains.exposed.dao.id.LongIdTable
 
 internal object ContentTable : LongIdTable("content") {
-    val text = text("text")
+    val text = text("text").uniqueIndex()
 }
 
 class ContentRow(id: EntityID<Long>) : LongEntity(id) {

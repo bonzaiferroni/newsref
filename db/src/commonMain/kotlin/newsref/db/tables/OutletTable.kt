@@ -5,6 +5,7 @@ import org.jetbrains.exposed.dao.EntityClass
 import org.jetbrains.exposed.dao.IntEntity
 import org.jetbrains.exposed.dao.id.EntityID
 import org.jetbrains.exposed.dao.id.IntIdTable
+import org.jetbrains.exposed.sql.SqlExpressionBuilder.eq
 import org.jetbrains.exposed.sql.anyFrom
 import org.jetbrains.exposed.sql.stringParam
 
@@ -51,5 +52,14 @@ fun OutletRow.fromData(outlet: Outlet) {
     urlParams = outlet.urlParams.toList()
 }
 
-fun OutletRow.Companion.findByHost(host: String): OutletRow? =
-    this.find { stringParam(host) eq anyFrom(OutletTable.domains) }.firstOrNull()
+fun OutletRow.Companion.findByHost(host: String): OutletRow? {
+    // Prepare host variants outside the query block
+    val normalizedHost = host.removePrefix("www.")
+    val wwwPrefixedHost = "www.$host"
+
+    // Search for exact match first
+    return this.find { stringParam(host) eq anyFrom(OutletTable.domains) }.firstOrNull()
+        ?: this.find { stringParam(normalizedHost) eq anyFrom(OutletTable.domains) }.firstOrNull()
+        ?: this.find { stringParam(wwwPrefixedHost) eq anyFrom(OutletTable.domains) }.firstOrNull()
+}
+

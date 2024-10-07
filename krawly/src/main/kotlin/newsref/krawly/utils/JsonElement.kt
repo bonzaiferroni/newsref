@@ -61,3 +61,9 @@ fun <T> JsonArray.findType(type: String, convert: (JsonObject) -> T): T? {
 		convert(it)
 	}
 }
+
+val JsonElement.primitiveOrNull get() = try {
+	this.jsonPrimitive
+} catch (e: IllegalArgumentException) {
+	null
+}

@@ -33,9 +33,10 @@ fun pwFetch(url: Url, screenshot: Boolean = false): WebResult? = Playwright.crea
             console.logError("Timeout: $url")
             return null
         } catch (e: PlaywrightException) {
-            e.message?.fileLog("exceptions", "playwright")
+            val message = e.message ?: "Unknown error"
+            message.fileLog("exceptions", "playwright")
             // adventure mode throws these
-            console.logError("Unusual exception: $url\n${e.message}")
+            console.logError("Unusual exception: $url\n$message")
             return null
         }
     }

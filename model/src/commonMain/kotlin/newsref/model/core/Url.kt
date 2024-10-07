@@ -17,6 +17,8 @@ open class Url internal constructor(
 	val length get() = toString().length
 
 	init {
+		if (!rawUrl.startsWith("http"))
+			throw IllegalArgumentException("Url must begin with http: $rawUrl")
 		val (beforeFragment, afterFragment) = rawUrl.deconstruct("#")
 		fragment = afterFragment
 		val (beforeScheme, afterScheme) = beforeFragment.deconstruct("://")
@@ -54,6 +56,8 @@ open class Url internal constructor(
 		result = 31 * result + (checkedUrl?.hashCode() ?: 0)
 		return result
 	}
+
+	fun isSibling(other: Url) = path.split('/')[0].equals(other.path.split('/')[0], ignoreCase = true)
 }
 
 internal fun <T: Url> tryParseUrl(block: () -> T): T? {

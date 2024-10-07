@@ -6,6 +6,8 @@ import newsref.db.services.OutletService
 import newsref.krawly.SpiderWeb
 import newsref.db.log.LogConsole
 import newsref.db.log.LogLevel
+import newsref.db.log.toBlue
+import newsref.db.log.toCyan
 import newsref.krawly.utils.*
 import newsref.model.core.Url
 import newsref.model.core.toCheckedUrl
@@ -24,13 +26,13 @@ class OutletAgent(
     }
 
     private suspend fun createOutlet(url: Url): Outlet {
-        console.logPartial("create: ${url.host}")
+        console.logPartial(url.host.toBlue())
         val robotsUrl = url.getRobotsTxtUrl()
         var result = web.crawlPage(robotsUrl, false)                            // <- Web
 
         val robotsTxt = result?.let{ if (it.isSuccess()) it.doc?.text else null }
         val disallowed = robotsTxt?.let { parseRobotsTxt(it) } ?: emptySet()
-        console.logPartial(", ${disallowed.size} disallowed: ${disallowed.take(5)}")
+        console.logPartial("${disallowed.size} disallowed: ${disallowed.take(3)}")
         val urlWithoutParams = url.toString().toCheckedUrl(emptySet(), null)
 
         delay((1..2).random().seconds)
@@ -39,7 +41,7 @@ class OutletAgent(
         val keepParams = if (result != null && result.isSuccess()) { emptySet() } else {
             url.params.map { it.key }.toSet()
         }
-        console.finishPartial(", keepParams: ${keepParams.take(5)}", LogLevel.DEBUG)
+        console.finishPartial("params: ${keepParams.take(3)}", LogLevel.DEBUG)
 
         return outletService.createOutlet(
             host = url.host, robotsTxt = robotsTxt, disallowed = disallowed, keepParams = keepParams

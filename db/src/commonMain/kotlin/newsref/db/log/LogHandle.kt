@@ -17,12 +17,12 @@ class LogHandle(
 
 	fun logPartial(message: String, refresh: Boolean = false) {
 		if (partialLine.isEmpty) partialLine.write(message)
-		else partialLine.write(" | ").write(message)
+		else partialLine.setForeground(dim).write(" | ").defaultForeground().write(message)
 		if (refresh) console.refreshLog()
 	}
 
-	fun logMsgIfTrue(emoji: String, width: Int? = null, block: () -> Boolean) {
-		val partialMsg = if (block()) emoji else "💢"
+	fun logIfTrue(emoji: String, width: Int? = null, block: (() -> Boolean)? = null) {
+		val partialMsg = if (block == null || block()) emoji else "💢"
 		val paddedMsg = width?.let { partialMsg.padStart(it) } ?: partialMsg
 		logPartial(paddedMsg)
 	}

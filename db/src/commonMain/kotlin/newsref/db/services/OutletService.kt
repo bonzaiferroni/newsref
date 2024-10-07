@@ -5,7 +5,6 @@ import newsref.db.tables.OutletRow
 import newsref.db.tables.findByHost
 import newsref.db.tables.fromData
 import newsref.db.tables.toData
-import newsref.model.core.Url
 import newsref.model.data.Outlet
 
 class OutletService : DataService<Outlet, Int, OutletRow>(
@@ -17,13 +16,6 @@ class OutletService : DataService<Outlet, Int, OutletRow>(
     suspend fun findByHost(host: String): Outlet? = dbQuery {
         OutletRow.findByHost(host.removePrefix("www."))
     }?.toData()
-
-    suspend fun findAndSetName(url: Url, name: String?): Outlet = dbQuery {
-        val row = OutletRow.findByHost(url.host)
-            ?: throw IllegalArgumentException("Outlet not found: ${url.host}")
-        name?.let { row.name = name }
-        row.toData()
-    }
 
     suspend fun createOutlet(
         host: String,

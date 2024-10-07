@@ -40,5 +40,9 @@ fun LeadRow.fromData(lead: Lead, sourceRow: SourceRow? = null) {
     url = lead.url.toString()
 }
 
-fun LeadRow.Companion.leadExists(checkedUrl: CheckedUrl) =
-    this.find { LeadTable.url.lowerCase() eq checkedUrl.toString().lowercase() }.any()
+fun LeadRow.Companion.leadExists(checkedUrl: CheckedUrl): Boolean {
+    val list = mutableListOf(checkedUrl.toString().lowercase())
+    if (checkedUrl.host.startsWith("www."))
+        list.add(checkedUrl.toString().replaceFirst("www.", "").lowercase())
+    return this.find { LeadTable.url.lowerCase() inList list }.any()
+}

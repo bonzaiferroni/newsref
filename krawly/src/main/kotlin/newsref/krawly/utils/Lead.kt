@@ -20,3 +20,5 @@ fun Url.isMaybeArticle(): Boolean {
 fun Url.isLikelyAd(): Boolean {
 	return length > MAX_URL_CHARS
 }
+
+fun Url.isNotWebLink() = this.toString().contains("mailto:")

@@ -26,38 +26,38 @@ fun String.decodeNewsArticle(): NewsArticle? {
 fun JsonObject.toNewsArticle(): NewsArticle? {
 	if (this["@type"]?.toString()?.contains("NewsArticle") != true) return null
 	return NewsArticle(
-		headline = this["headline"]?.jsonPrimitive?.contentOrNull,
-		dateline = this["dateline"]?.jsonPrimitive?.contentOrNull,
-		datePublished = this["datePublished"]?.jsonPrimitive?.contentOrNull,
-		dateModified = this["dateModified"]?.jsonPrimitive?.contentOrNull,
+		headline = this["headline"]?.primitiveOrNull?.contentOrNull,
+		dateline = this["dateline"]?.primitiveOrNull?.contentOrNull,
+		datePublished = this["datePublished"]?.primitiveOrNull?.contentOrNull,
+		dateModified = this["dateModified"]?.primitiveOrNull?.contentOrNull,
 		author = this["author"]?.toArray(JsonObject::toAuthor) { NewsAuthor(name = it.toString()) },
 		publisher = this["publisher"]?.toSingle(JsonObject::toPublisher) { Publisher(name = it.toString()) },
-		articleBody = this["articleBody"]?.jsonPrimitive?.contentOrNull,
+		articleBody = this["articleBody"]?.primitiveOrNull?.contentOrNull,
 		articleSection = this["articleSection"]?.toStrings(),
-		wordCount = this["wordCount"]?.jsonPrimitive?.intOrNull,
+		wordCount = this["wordCount"]?.primitiveOrNull?.intOrNull,
 		keywords = this["keywords"]?.toStrings(),
-		abstract = this["abstract"]?.jsonPrimitive?.contentOrNull,
-		alternativeHeadline = this["alternativeHeadline"]?.jsonPrimitive?.contentOrNull,
-		description = this["description"]?.jsonPrimitive?.contentOrNull,
-		url = this["url"]?.jsonPrimitive?.contentOrNull,
-		isAccessibleForFree = this["isAccessibleForFree"]?.jsonPrimitive?.booleanOrNull,
-		text = this["text"]?.jsonPrimitive?.contentOrNull,
-		thumbnailUrl = this["thumbnailUrl"]?.jsonPrimitive?.contentOrNull,
+		abstract = this["abstract"]?.primitiveOrNull?.contentOrNull,
+		alternativeHeadline = this["alternativeHeadline"]?.primitiveOrNull?.contentOrNull,
+		description = this["description"]?.primitiveOrNull?.contentOrNull,
+		url = this["url"]?.primitiveOrNull?.contentOrNull,
+		isAccessibleForFree = this["isAccessibleForFree"]?.primitiveOrNull?.booleanOrNull,
+		text = this["text"]?.primitiveOrNull?.contentOrNull,
+		thumbnailUrl = this["thumbnailUrl"]?.primitiveOrNull?.contentOrNull,
 		image = this["image"]?.toArray(JsonObject::toImage) { Image(url = it.toString()) },
-		inLanguage = this["inLanguage"]?.jsonPrimitive?.contentOrNull,
-		commentCount = this["commentCount"]?.jsonPrimitive?.intOrNull
+		inLanguage = this["inLanguage"]?.primitiveOrNull?.contentOrNull,
+		commentCount = this["commentCount"]?.primitiveOrNull?.intOrNull
 	)
 }
 
 fun JsonObject.toPublisher() = Publisher(
-	name = this["name"]?.jsonPrimitive?.contentOrNull,
+	name = this["name"]?.primitiveOrNull?.contentOrNull,
 	logo = this["logo"]?.toSingle(JsonObject::toImage) { Image(url = it.toString()) }
 )
 
 fun JsonObject.toAuthor() = NewsAuthor(
-	name = this["name"]?.jsonPrimitive?.contentOrNull,
-	url = this["url"]?.jsonPrimitive?.contentOrNull,
-	email = this["email"]?.jsonPrimitive?.contentOrNull,
+	name = this["name"]?.primitiveOrNull?.contentOrNull,
+	url = this["url"]?.primitiveOrNull?.contentOrNull,
+	email = this["email"]?.primitiveOrNull?.contentOrNull,
 	sameAs = this["sameAs"]?.toStrings(),
 	image = this["image"]?.toSingle(JsonObject::toImage) { Image(url = it.toString()) }
 )
@@ -65,11 +65,11 @@ fun JsonObject.toAuthor() = NewsAuthor(
 fun JsonObject.toImage() = Image(
 	width = this["width"]?.toSingle(JsonObject::toQuantInt) { it.intOrNull },
 	height = this["height"]?.toSingle(JsonObject::toQuantInt) { it.intOrNull },
-	url = this["url"]?.jsonPrimitive?.contentOrNull,
-	caption = this["caption"]?.jsonPrimitive?.contentOrNull,
-	creditText = this["creditText"]?.jsonPrimitive?.contentOrNull,
+	url = this["url"]?.primitiveOrNull?.contentOrNull,
+	caption = this["caption"]?.primitiveOrNull?.contentOrNull,
+	creditText = this["creditText"]?.primitiveOrNull?.contentOrNull,
 )
 
-fun JsonObject.toQuantInt() = this["value"]?.jsonPrimitive?.intOrNull
+fun JsonObject.toQuantInt() = this["value"]?.primitiveOrNull?.intOrNull
 
 

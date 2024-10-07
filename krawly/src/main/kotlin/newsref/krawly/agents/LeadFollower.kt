@@ -5,6 +5,7 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import newsref.db.globalConsole
+import newsref.db.log.toCyan
 import newsref.db.services.LeadService
 import newsref.db.utils.cacheResource
 import newsref.krawly.MAX_URL_ATTEMPTS
@@ -40,7 +41,7 @@ class LeadFollower(
 			if (hosts.contains(job.url.host)) { continue }
 			hosts.add(job.url.host)
 
-			console.logInfo("attempting: ${job.url}", --leadCount)
+			console.logInfo(job.url.toString().toCyan(), --leadCount)
 			leadService.addAttempt(job)
 			val result = web.crawlPage(job.url, true)
 			if (result == null || !result.isSuccess()) {
@@ -58,7 +59,7 @@ class LeadFollower(
 
 			val count = leadMaker.makeLeads(sourceInfo)
 			console.logInfo("found $count new leads from ${job.url.host}")
-			delay((200..2000L).random())
+			delay((200..500L).random())
 		}
 	}
 }

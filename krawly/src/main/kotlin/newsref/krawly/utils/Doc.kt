@@ -42,9 +42,15 @@ fun Doc.getNewsArticle(cacheId: Url): NewsArticle? {
     val innerHtml = this.findFirstOrNull("script#json-schema")?.html ?: this.scanTagsForNewsArticle() ?: return null
     val json = innerHtml.trimCData()
     json.cacheResource(cacheId, "json", "news_article_raw")
-    val article = json.decodeNewsArticle()
-    article?.cacheSerializable(cacheId, "news_article_parsed")
-    return article // return
+    try {
+        val article = json.decodeNewsArticle()
+        article?.cacheSerializable(cacheId, "news_article_parsed")
+        return article // return
+    } catch (e: Exception) {
+        json.cacheResource(cacheId, "json", "news_article_error")
+        return null
+    }
+
 }
 
 private fun String.trimCData() = this
