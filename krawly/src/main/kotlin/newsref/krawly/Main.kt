@@ -6,12 +6,14 @@ import newsref.db.log.ConsoleConfig
 import newsref.db.utils.cacheResource
 import newsref.krawly.agents.*
 import newsref.krawly.utils.pwFetch
+import newsref.krawly.utils.pwFetchHead
 import newsref.model.core.toUrl
 
 fun main(args: Array<String>) {
 	println(args.joinToString(", "))
 	if (args.any {it.contains("http")}) {
-		test(args.first())
+		// test(args.first())
+		testHead(args.first())
 	} else {
 		globalConsole.config = ConsoleConfig(showStatus = args.contains("showStatus"))
 		crawl(args)
@@ -53,4 +55,11 @@ fun test(href: String) {
 	result?.screenshot?.cacheResource(url, "png", "test/${url.host}")
 	result?.requestHeaders?.map { "${it.key}:\n${it.value}" }?.joinToString("\n\n")
 		?.cacheResource(url, "txt", "test/${url.host}", "headers")
+}
+
+fun testHead(href: String) {
+	val url = href.toUrl()
+	val result = pwFetchHead(url)
+	println(result?.status)
+	result?.doc?.html?.cacheResource(url, "html", "test/head", url.host)
 }

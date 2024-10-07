@@ -16,7 +16,7 @@ class LeadFollower(
 	private val web: SpiderWeb,
 	private val leadMaker: LeadMaker,
 	private val outletAgent: OutletAgent,
-	private val sourceAgent: SourceAgent = SourceAgent(outletAgent),
+	private val sourceAgent: SourceAgent = SourceAgent(web, outletAgent),
 	private val leadService: LeadService = LeadService()
 ) {
 	private val console = globalConsole.getHandle("LeadFollower", true)
@@ -43,23 +43,11 @@ class LeadFollower(
 
 			console.logInfo(job.url.toString().toCyan(), --leadCount)
 			leadService.addAttempt(job)
-			val result = web.crawlPage(job.url, true)
-			if (result == null || !result.isSuccess()) {
-				console.logWarning("crawl fail (${result?.status}): ${job.url}")
-				result?.screenshot?.cacheResource(job.url, "png", "nav_fail")
-
-				// keep job and try a few times
-				if (job.attemptCount < MAX_URL_ATTEMPTS) { continue }
-			}
-			result?.screenshot?.cacheResource(job.url, "png")
-			result?.doc?.html?.cacheResource(job.url, "html", "content")
-
-			val sourceInfo = sourceAgent.read(job, result?.doc)
+			val sourceInfo = sourceAgent.read(job) ?: continue
 			leadService.addSource(job.leadId, sourceInfo.id)                    //    LeadService ->
 
 			val count = leadMaker.makeLeads(sourceInfo)
 			console.logInfo("found $count new leads from ${job.url.host}")
-			delay((200..500L).random())
 		}
 	}
 }

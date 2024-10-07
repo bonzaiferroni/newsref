@@ -1,6 +1,7 @@
 package newsref.krawly.utils
 
 import com.microsoft.playwright.*
+import com.microsoft.playwright.options.RequestOptions
 import it.skrape.selects.Doc
 import newsref.db.globalConsole
 import newsref.db.utils.fileLog
@@ -9,44 +10,71 @@ import newsref.model.core.Url
 
 private val console = globalConsole.getHandle("Playwright")
 
-fun pwFetch(url: Url, screenshot: Boolean = false): WebResult? = Playwright.create().use { playwright ->
-    playwright.chromium().launch().use { browser ->
-        if (url.isInvalidSuffix()) return null
-        val page = browser.newContext(contextOptions).newPage()
-        page.setViewportSize(1000, 728)
-        page.setExtraHTTPHeaders(extraHeaders)
-        var headers: Map<String, String>? = null
-        page.onRequest { request ->
-            headers = request.headers()
-        }
-        try {
-            val response = page.navigate(url.toString())
-            val bytes = if (screenshot) page.screenshot(screenshotOptions) else null
-            WebResult(
-                status = response.status(),
-                doc = page.content().contentToDoc(),
-                screenshot = bytes,
-                url = page.url(),
-                requestHeaders = headers
-            )
-        } catch (e: TimeoutError) {
-            console.logError("Timeout: $url")
-            return null
-        } catch (e: PlaywrightException) {
-            val message = e.message ?: "Unknown error"
-            message.fileLog("exceptions", "playwright")
-            // adventure mode throws these
-            console.logError("Unusual exception: $url\n$message")
-            return null
+data class WebResult(
+    val status: Int,
+    val doc: Doc?,
+    val url: String,
+    val screenshot: ByteArray? = null,
+    val requestHeaders: Map<String, String>? = null,
+) {
+    fun isSuccess() = status in 200..299
+}
+
+fun pwFetch(url: Url, screenshot: Boolean = false): WebResult? = useChromium(url) { page ->
+    if (url.isInvalidSuffix()) return@useChromium null
+    val response = page.navigate(url.toString())
+    val bytes = if (screenshot) page.screenshot(screenshotOptions) else null
+    WebResult(
+        status = response.status(),
+        doc = page.content().contentToDoc(),
+        screenshot = bytes,
+        url = page.url(),
+    )
+}
+
+fun pwFetchHead(url: Url): WebResult? = useChromium(url) { page ->
+    // Use the fetch API for sending a HEAD request
+    val options = RequestOptions.create().apply {
+        setMethod("Head")
+    }
+    val response = page.request().fetch(url.toString(), options)
+    WebResult(
+        status = response.status(),
+        doc = page.content().contentToDoc(),
+        url = page.url(),
+    )
+}
+
+private fun useChromium(url: Url, block: (Page) -> WebResult?): WebResult? {
+    Playwright.create().use { playwright ->
+        playwright.chromium().launch().use { browser ->
+            val page = browser.newContext(contextOptions).newPage()
+            page.setViewportSize(1000, 728)
+            page.setExtraHTTPHeaders(extraHeaders)
+            var headers: Map<String, String>? = null
+            page.onRequest { request ->
+                headers = request.headers()
+            }
+            try {
+                val result = block(page)
+                return result?.copy(requestHeaders = headers)
+            } catch (e: TimeoutError) {
+                console.logError("Timeout: $url")
+                return null
+            } catch (e: PlaywrightException) {
+                val message = e.message ?: "Unknown error"
+                message.fileLog("exceptions", "playwright")
+                // adventure mode throws these
+                console.logError("Unusual exception: $url\n$message")
+                return null
+            }
         }
     }
 }
 
-val contextOptions = Browser.NewContextOptions().apply { userAgent = chromeLinuxAgent }
-val launchOptions = BrowserType.LaunchOptions().apply {
-    setHeadless(false)
-}
-val extraHeaders = mutableMapOf(
+private val contextOptions = Browser.NewContextOptions().apply { userAgent = chromeLinuxAgent }
+private val launchOptions = BrowserType.LaunchOptions().apply { setHeadless(false) }
+private val extraHeaders = mutableMapOf(
     "priority" to "u=0, i",
     "dnt" to "1",
     "accept-language" to "en-US,en;q=0.9",
@@ -60,16 +88,4 @@ val extraHeaders = mutableMapOf(
     "cache-control" to "max-age=0",
     "upgrade-insecure-requests" to "1"
 )
-val screenshotOptions = Page.ScreenshotOptions().apply {
-    fullPage = true
-}
-
-data class WebResult(
-    val status: Int,
-    val doc: Doc?,
-    val screenshot: ByteArray?,
-    val url: String,
-    val requestHeaders: Map<String, String>?,
-) {
-    fun isSuccess() = status in 200..299
-}
+private val screenshotOptions = Page.ScreenshotOptions().apply { fullPage = true }

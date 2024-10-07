@@ -20,7 +20,7 @@ class FeedChecker(
 	private val leadMaker: LeadMaker,
 	private val feedService: FeedService = FeedService(),
 ) {
-	private val console = globalConsole.getHandle("FeedChecker", true)
+	private val console = globalConsole.getHandle("FeedChecker")
 
 	fun start() {
 		CoroutineScope(Dispatchers.Default).launch {
