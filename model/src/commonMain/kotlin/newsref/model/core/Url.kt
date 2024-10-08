@@ -10,7 +10,7 @@ open class Url internal constructor(
 	val path: String
 	val params: Map<String, String>
 	val fragment: String?
-	val robotsAllowed: Boolean?
+	val isRobotAllowed: Boolean?
 	val checkedUrl: String?
 
 	val authority get() = "$scheme://$host"
@@ -43,9 +43,8 @@ open class Url internal constructor(
 			Pair(key, value)
 		}?.toMap() ?: emptyMap()
 		path = beforeParams + requiredParamPath
-		robotsAllowed = disallowedPaths?.any { path.startsWith(it) }
-		checkedUrl = if (requiredParams != null && (robotsAllowed == null || robotsAllowed))
-			"$authority$path${fragment?.let { "#$it" } ?: ""}"
+		isRobotAllowed = disallowedPaths?.all { !path.startsWith(it) }
+		checkedUrl = if (requiredParams != null) "$authority$path${fragment?.let { "#$it" } ?: ""}"
 		else null
 	}
 

@@ -20,7 +20,7 @@ class LeadService : DbService() {
 
     suspend fun addSource(leadId: Long, sourceId: Long) = dbQuery {
         val leadRow = LeadRow[leadId]
-        leadRow.target = SourceRow[sourceId]
+        leadRow.target = SourceRow[sourceId] // testing 123
     }
 
     suspend fun createIfFreshLead(leadJob: LeadJob) = dbQuery {
@@ -29,9 +29,6 @@ class LeadService : DbService() {
 
         val outletRow = OutletRow.findByHost(leadJob.url.host)
             ?: throw IllegalArgumentException("Outlet missing: ${leadJob.url.host}")
-
-        if (outletRow.disallowed.any { leadJob.url.path.startsWith(it) })
-            throw IllegalArgumentException("Lead path is disallowed")
 
         val leadRow = LeadRow.new { url = leadJob.url.toString() }
         val feedRow = FeedRow.find { FeedTable.id eq leadJob.feedId }.firstOrNull()
@@ -46,6 +43,7 @@ class LeadService : DbService() {
     }
 
     suspend fun leadExists(checkedUrl: CheckedUrl) = dbQuery { LeadRow.leadExists(checkedUrl) }
+
 
     suspend fun getUnfollowed(): List<Lead> = dbQuery {
         LeadRow.find { LeadTable.targetId.isNull() }.map { it.toData() }

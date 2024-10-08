@@ -5,6 +5,7 @@ import newsref.model.core.Url
 
 val NOT_ARTICLE_SUFFIX = setOf(
 	"pdf",
+	"mp3",
 	"zip"
 )
 
@@ -13,6 +14,7 @@ fun Url.isInvalidSuffix(): Boolean {
 }
 
 fun Url.isMaybeArticle(): Boolean {
+	// todo: add more awareness to maybeArticle
 	return !isInvalidSuffix()
 }
 

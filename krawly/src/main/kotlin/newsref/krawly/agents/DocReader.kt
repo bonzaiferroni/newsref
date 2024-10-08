@@ -7,10 +7,7 @@ import newsref.db.log.toCyan
 import newsref.db.services.ContentService
 import newsref.db.utils.cacheResource
 import newsref.krawly.utils.*
-import newsref.model.core.toCheckedOrNull
-import newsref.model.core.toCheckedWithContextOrNull
-import newsref.model.core.toUrlOrNull
-import newsref.model.core.toUrlWithContextOrNull
+import newsref.model.core.*
 import newsref.model.data.*
 import newsref.model.dto.DocumentInfo
 import newsref.model.dto.LinkInfo
@@ -24,11 +21,11 @@ class DocReader(
 	private var docCount = 0
 	private var articleCount = 0
 
-	suspend fun readDoc(job: LeadJob, outlet: Outlet, doc: Doc): DocumentInfo? {
-		val newsArticle = doc.getNewsArticle(job.url)
+	suspend fun readDoc(url: CheckedUrl, outlet: Outlet, doc: Doc): DocumentInfo? {
+		val newsArticle = doc.getNewsArticle(url)
 		console.logIfTrue("📜") { newsArticle != null }
 
-		val sourceUrl = (newsArticle?.url ?: doc.readUrl())?.toUrlOrNull() ?: job.url
+		val sourceUrl = (newsArticle?.url ?: doc.readUrl())?.toUrlOrNull() ?: url
 		val sourceOutlet = outletAgent.getOutlet(sourceUrl)                     // <- OutletAgent ->
 		val sourceCheckedUrl = sourceUrl.toString().toCheckedOrNull(sourceOutlet) ?: return null
 
@@ -120,7 +117,7 @@ class DocReader(
 
 		if (docInfo.contents.isNotEmpty()) {
 			val md = docInfo.toMarkdown()
-			md.cacheResource(job.url, "md")
+			md.cacheResource(url, "md")
 		}
 
 		return docInfo

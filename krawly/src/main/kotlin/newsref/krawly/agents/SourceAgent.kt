@@ -8,6 +8,8 @@ import newsref.db.utils.cacheResource
 import newsref.krawly.MAX_URL_ATTEMPTS
 import newsref.krawly.SpiderWeb
 import newsref.krawly.utils.isMaybeArticle
+import newsref.model.core.toCheckedUrl
+import newsref.model.core.toUrlOrNull
 import newsref.model.data.LeadJob
 import newsref.model.data.Source
 import newsref.model.data.SourceType
@@ -22,6 +24,7 @@ class SourceAgent(
     private val console = globalConsole.getHandle("SourceAgent", true)
 
     suspend fun read(job: LeadJob): SourceInfo? {
+
         val result = web.crawlPage(job.url, true)
         val doc = result?.doc
         if (doc == null || !result.isSuccess()) {
@@ -34,12 +37,19 @@ class SourceAgent(
         result?.screenshot?.cacheResource(job.url, "png")
         result?.doc?.html?.cacheResource(job.url, "html", "content")
 
-        val outlet = outletAgent.getOutlet(job.url)                            // <- OutletAgent
-        val docInfo = if (doc != null && job.url.isMaybeArticle())
-            docReader.readDoc(job, outlet, doc) else null
+        val resultUrl = result?.url?.toUrlOrNull()
+        val resultOutlet = resultUrl?.let { outletAgent.getOutlet(it) }
+        val resultCheckedUrl = resultOutlet?.let { resultUrl.toString().toCheckedUrl(it) }
+
+        val outlet = resultOutlet ?: outletAgent.getOutlet(job.url)
+        val url = resultCheckedUrl ?: job.url
+
+        // parse strategies
+        val docInfo = if (doc != null && url.isMaybeArticle())
+            docReader.readDoc(url, outlet, doc) else null
 
         val info = SourceInfo(
-            leadUrl = job.url,
+            leadUrl = resultCheckedUrl ?: job.url,
             source = Source(
                 url = docInfo?.docUrl ?: job.url,
                 leadTitle = job.headline,
