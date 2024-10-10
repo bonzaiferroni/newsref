@@ -1,4 +1,4 @@
-package newsref.model.data
+package newsref.model.core
 
 enum class SourceType(
     val displayName: String

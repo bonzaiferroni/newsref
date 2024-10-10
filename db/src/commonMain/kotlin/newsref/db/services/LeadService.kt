@@ -6,40 +6,43 @@ import newsref.db.tables.*
 import newsref.db.utils.nowToLocalDateTimeUTC
 import newsref.model.core.CheckedUrl
 import newsref.model.data.Lead
-import newsref.model.data.LeadJob
+import newsref.model.data.ResultType
 import org.jetbrains.exposed.sql.SqlExpressionBuilder.isNull
+import kotlin.time.Duration
+import kotlin.time.Duration.Companion.days
 
 class LeadService : DbService() {
 
     suspend fun getOpenJobs() = dbQuery {
-        val query = LeadTable.leftJoin(LeadJobTable)
-            .select(LeadJobTable.columns)
+        LeadTable.leftJoin(LeadJobTable).leftJoin(LeadResultTable)
+            .select(LeadInfoColumns)
             .where(LeadTable.targetId.isNull())
-        LeadJobRow.wrapRows(query).toList().map { it.toData() }
+            .wrapLeadInfo()
     }
 
     suspend fun addSource(leadId: Long, sourceId: Long) = dbQuery {
         val leadRow = LeadRow[leadId]
-        leadRow.target = SourceRow[sourceId] // testing 123
+        leadRow.target = SourceRow[sourceId]
     }
 
-    suspend fun createIfFreshLead(leadJob: LeadJob) = dbQuery {
-        if (LeadRow.leadExists(leadJob.url))
-            throw IllegalArgumentException("Lead already exists: ${leadJob.url}")
+    suspend fun createIfFreshLead(url: CheckedUrl) = dbQuery {
+        if (LeadRow.leadExists(url))
+            throw IllegalArgumentException("Lead already exists: $url")
 
-        val outletRow = OutletRow.findByHost(leadJob.url.host)
-            ?: throw IllegalArgumentException("Outlet missing: ${leadJob.url.host}")
+        val outletRow = OutletRow.findByHost(url.host)
+            ?: throw IllegalArgumentException("Outlet missing: ${url.host}")
 
-        val leadRow = LeadRow.new { url = leadJob.url.toString() }
-        val feedRow = FeedRow.find { FeedTable.id eq leadJob.feedId }.firstOrNull()
-        val leadJobRow = LeadJobRow.new { fromData(leadJob, leadRow, feedRow) }
-        leadJobRow.toData() // return
+        val leadRow = LeadRow.new { this.url = url.toString() }
+        leadRow.toData() // return
     }
 
-    suspend fun addAttempt(leadJob: LeadJob) = dbQuery {
-        val leadRow = LeadJobRow[leadJob.id]
-        leadRow.attemptCount++
-        leadRow.attemptedAt = Clock.nowToLocalDateTimeUTC()
+    suspend fun addResult(leadId: Long, outletId: Int, result: ResultType) = dbQuery {
+        LeadResultRow.new {
+            lead = LeadRow[leadId]
+            outlet = OutletRow[outletId]
+            this.result = result
+            attemptedAt = Clock.nowToLocalDateTimeUTC()
+        }.toData()
     }
 
     suspend fun leadExists(checkedUrl: CheckedUrl) = dbQuery { LeadRow.leadExists(checkedUrl) }

@@ -11,7 +11,7 @@ internal object ContentTable : LongIdTable("content") {
     val text = text("text").uniqueIndex()
 }
 
-class ContentRow(id: EntityID<Long>) : LongEntity(id) {
+internal class ContentRow(id: EntityID<Long>) : LongEntity(id) {
     companion object : EntityClass<Long, ContentRow>(ContentTable)
 
     var text by ContentTable.text
@@ -25,11 +25,11 @@ internal object SourceContentTable : CompositeIdTable("source_content") {
     override val primaryKey = PrimaryKey(sourceId, contentId)
 }
 
-fun ContentRow.toData() = Content(
+internal fun ContentRow.toData() = Content(
     id = this.id.value,
     text = this.text,
 )
 
-fun ContentRow.fromData(content: String) {
+internal fun ContentRow.newFromData(content: String) {
     text = content
 }

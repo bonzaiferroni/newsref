@@ -25,7 +25,7 @@ fun FeedRow.toData() = Feed(
     selector = this.selector,
 )
 
-fun FeedRow.fromData(feed: Feed) {
+fun FeedRow.newFromData(feed: Feed) {
     url = feed.url.toString()
     selector = feed.selector
 }

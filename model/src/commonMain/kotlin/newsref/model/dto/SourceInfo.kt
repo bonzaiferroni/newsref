@@ -1,9 +1,9 @@
 package newsref.model.dto
 
 import newsref.model.core.CheckedUrl
+import newsref.model.core.SourceType
 import newsref.model.data.Article
 import newsref.model.data.Source
-import newsref.model.data.SourceType
 
 data class SourceInfo(
     val id: Long = 0,

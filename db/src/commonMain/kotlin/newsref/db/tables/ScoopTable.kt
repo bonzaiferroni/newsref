@@ -25,7 +25,7 @@ fun ScoopRow.toData() = Scoop(
     html = this.html
 )
 
-fun ScoopRow.fromData(scoop: Scoop) {
+fun ScoopRow.newFromData(scoop: Scoop) {
     url = scoop.url.toString()
     html = scoop.html
 }

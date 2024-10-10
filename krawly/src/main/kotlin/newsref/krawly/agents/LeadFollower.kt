@@ -7,8 +7,6 @@ import kotlinx.coroutines.launch
 import newsref.db.globalConsole
 import newsref.db.log.toCyan
 import newsref.db.services.LeadService
-import newsref.db.utils.cacheResource
-import newsref.krawly.MAX_URL_ATTEMPTS
 import newsref.krawly.SpiderWeb
 import kotlin.time.Duration.Companion.seconds
 
@@ -42,7 +40,7 @@ class LeadFollower(
 			hosts.add(job.url.host)
 
 			console.logInfo(job.url.toString().toCyan(), --leadCount)
-			leadService.addAttempt(job)
+			leadService.addResult(job)
 			val sourceInfo = sourceAgent.read(job) ?: continue
 			leadService.addSource(job.leadId, sourceInfo.id)                    //    LeadService ->
 

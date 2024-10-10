@@ -2,6 +2,7 @@ package newsref.model.data
 
 import kotlinx.datetime.Instant
 import newsref.model.core.CheckedUrl
+import newsref.model.core.SourceType
 
 data class Source(
     val id: Long = 0,

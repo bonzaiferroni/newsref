@@ -11,11 +11,12 @@ import newsref.model.core.Url
 private val console = globalConsole.getHandle("Playwright")
 
 data class WebResult(
-    val status: Int,
-    val doc: Doc?,
-    val url: String,
+    val pageUrl: String? = null,
+    val status: Int? = null,
+    val doc: Doc? = null,
     val screenshot: ByteArray? = null,
     val requestHeaders: Map<String, String>? = null,
+    val timeout: Boolean = false
 ) {
     fun isSuccess() = status in 200..299
 }
@@ -28,7 +29,7 @@ fun pwFetch(url: Url, screenshot: Boolean = false): WebResult? = useChromium(url
         status = response.status(),
         doc = page.content().contentToDoc(),
         screenshot = bytes,
-        url = page.url(),
+        pageUrl = page.url(),
     )
 }
 
@@ -41,7 +42,7 @@ fun pwFetchHead(url: Url): WebResult? = useChromium(url) { page ->
     WebResult(
         status = response.status(),
         doc = page.content().contentToDoc(),
-        url = page.url(),
+        pageUrl = page.url(),
     )
 }
 
@@ -60,7 +61,7 @@ private fun useChromium(url: Url, block: (Page) -> WebResult?): WebResult? {
                 return result?.copy(requestHeaders = headers)
             } catch (e: TimeoutError) {
                 console.logError("Timeout: $url")
-                return null
+                return WebResult(timeout = true)
             } catch (e: PlaywrightException) {
                 val message = e.message ?: "Unknown error"
                 message.fileLog("exceptions", "playwright")

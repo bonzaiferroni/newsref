@@ -34,7 +34,7 @@ fun SessionTokenEntity.toData() = SessionToken(
     this.issuer,
 )
 
-fun SessionTokenEntity.fromData(data: SessionToken) {
+fun SessionTokenEntity.newFromData(data: SessionToken) {
     user = UserRow[data.userId]
     token = data.token
     createdAt = data.createdAt

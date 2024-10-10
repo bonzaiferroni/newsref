@@ -34,5 +34,11 @@ kotlin {
                 implementation(kotlin("test")) // Includes kotlin.test assertions and test framework
             }
         }
+
+        val jvmTest by getting {
+            dependencies {
+                implementation("org.testcontainers:postgresql:1.20.2")
+            }
+        }
     }
 }

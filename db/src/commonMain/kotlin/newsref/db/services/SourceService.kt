@@ -2,6 +2,7 @@ package newsref.db.services
 
 import newsref.db.DbService
 import newsref.db.tables.*
+import newsref.model.core.SourceType
 import newsref.model.data.*
 import newsref.model.dto.SourceInfo
 import org.jetbrains.exposed.sql.and
@@ -25,7 +26,7 @@ class SourceService: DbService() {
         // update or create source
         val url = info.source.url.toString()
         val sourceRow = SourceRow.find { SourceTable.url.lowerCase() eq url.lowercase() }.firstOrNull()
-            ?: SourceRow.new { fromData(info.source, outletRow) }
+            ?: SourceRow.new { newFromData(info.source, outletRow) }
 
         // exit here if not news article
         val document = info.document
@@ -37,19 +38,19 @@ class SourceService: DbService() {
             val authorRows = AuthorRow.find { (stringParam(byLine) eq anyFrom(AuthorTable.bylines)) }
             authorRows.firstNotNullOfOrNull {
                 it.outlets.firstOrNull { it.id == outletRow.id }
-            } ?: AuthorRow.new { fromData(Author(bylines = setOf(byLine)), outletRow) }
+            } ?: AuthorRow.new { newFromData(Author(bylines = setOf(byLine)), outletRow) }
         }
 
         // create Content
         val contentRows = document.contents.map { content ->
             ContentRow.find { ContentTable.text eq content }.firstOrNull()
-                ?:ContentRow.new { fromData(content) } // return@map
+                ?:ContentRow.new { newFromData(content) } // return@map
         }
 
         // create or update document
         val articleRow = ArticleRow.find { ArticleTable.sourceId eq sourceRow.id }.firstOrNull()
-            ?. fromData(document.article, sourceRow)
-            ?: ArticleRow.new { fromData(document.article, sourceRow) }
+            ?. newFromData(document.article, sourceRow)
+            ?: ArticleRow.new { newFromData(document.article, sourceRow) }
 
         val linkRows = document.links.map { link ->
             val linkUrl = link.url.toString()
@@ -58,7 +59,7 @@ class SourceService: DbService() {
             val contentRow = contentRows.first { it.text == link.context }
             val linkRow = LinkRow.find { (LinkTable.url.lowerCase() eq linkUrl.lowercase()) and
                     (LinkTable.urlText eq link.anchorText) and (LinkTable.sourceId eq sourceRow.id) }.firstOrNull()
-                ?: LinkRow.new { fromData(Link(url = link.url, text = link.anchorText), sourceRow, contentRow) }
+                ?: LinkRow.new { newFromData(Link(url = link.url, text = link.anchorText), sourceRow, contentRow) }
             linkRow // return@map
         }
 

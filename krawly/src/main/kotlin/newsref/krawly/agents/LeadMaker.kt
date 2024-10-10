@@ -4,8 +4,8 @@ import newsref.db.globalConsole
 import newsref.db.services.LeadService
 import newsref.db.log.toPink
 import newsref.db.log.toYellow
+import newsref.model.core.SourceType
 import newsref.model.data.LeadJob
-import newsref.model.data.SourceType
 import newsref.model.dto.SourceInfo
 
 class LeadMaker(

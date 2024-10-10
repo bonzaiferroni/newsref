@@ -26,7 +26,7 @@ import java.util.*
 class UserService : DataService<User, UUID, UserRow>(
     UserRow,
     {user -> user.id},
-    UserRow::fromData,
+    UserRow::newFromData,
     UserRow::toData
 ) {
 

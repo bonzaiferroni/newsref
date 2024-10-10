@@ -27,7 +27,7 @@ internal object ArticleTable: LongIdTable("article") {
     val modifiedAt = datetime("modified_at").nullable()
 }
 
-class ArticleRow(id: EntityID<Long>) : LongEntity(id) {
+internal class ArticleRow(id: EntityID<Long>) : LongEntity(id) {
     companion object : EntityClass<Long, ArticleRow>(ArticleTable)
 
     var source by SourceRow referencedOn ArticleTable.sourceId
@@ -47,7 +47,7 @@ class ArticleRow(id: EntityID<Long>) : LongEntity(id) {
     var modifiedAt by ArticleTable.modifiedAt
 }
 
-fun ArticleRow.toData() = Article(
+internal fun ArticleRow.toData() = Article(
     id = this.id.value,
     sourceId = this.source.id.value,
     headline = this.headline,
@@ -65,7 +65,7 @@ fun ArticleRow.toData() = Article(
     modifiedAt = this.modifiedAt?.toInstant(UtcOffset.ZERO)
 )
 
-fun ArticleRow.fromData(article: Article, sourceRow: SourceRow) {
+internal fun ArticleRow.newFromData(article: Article, sourceRow: SourceRow) {
     source = sourceRow
     headline = article.headline
     description = article.description

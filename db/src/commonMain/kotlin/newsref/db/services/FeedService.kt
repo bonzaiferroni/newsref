@@ -2,14 +2,14 @@ package newsref.db.services
 
 import newsref.db.DataService
 import newsref.db.tables.FeedRow
-import newsref.db.tables.fromData
+import newsref.db.tables.newFromData
 import newsref.db.tables.toData
 import newsref.model.data.Feed
 
 class FeedService : DataService<Feed, Int, FeedRow>(
     FeedRow,
     { it.id },
-    FeedRow::fromData,
+    FeedRow::newFromData,
     FeedRow::toData
 ) {
     suspend fun init() = dbQuery {

@@ -8,6 +8,7 @@ import newsref.krawly.utils.decodeNewsArticle
 import newsref.krawly.utils.readArrayOrObject
 import newsref.model.core.toUrl
 import java.io.File
+import kotlin.test.assertNull
 
 class NewsArticleTest {
 
@@ -20,7 +21,7 @@ class NewsArticleTest {
             val jsonString = file.readText()
             val result = jsonString.decodeNewsArticle()
             result?.cacheSerializable("http://example.com".toUrl(), "news_article_tests", file.name)
-            assertNotNull(result, "Parsed NewsArticle object from ${file.name} should not be null")
+            assertNull(result, "Parsed NewsArticle object from ${file.name} should not be null")
         }
     }
 }

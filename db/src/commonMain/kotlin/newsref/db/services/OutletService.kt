@@ -1,18 +1,14 @@
 package newsref.db.services
 
 import newsref.db.DataService
+import newsref.db.DbService
 import newsref.db.tables.OutletRow
 import newsref.db.tables.findByHost
-import newsref.db.tables.fromData
+import newsref.db.tables.newFromData
 import newsref.db.tables.toData
 import newsref.model.data.Outlet
 
-class OutletService : DataService<Outlet, Int, OutletRow>(
-    OutletRow,
-    { it.id },
-    OutletRow::fromData,
-    OutletRow::toData
-) {
+class OutletService : DbService(){
     suspend fun findByHost(host: String): Outlet? = dbQuery {
         OutletRow.findByHost(host.removePrefix("www."))
     }?.toData()

@@ -13,7 +13,7 @@ internal object AuthorTable: IntIdTable("author") {
     val bylines = array<String>("bylines")
 }
 
-class AuthorRow(id: EntityID<Int>): IntEntity(id) {
+internal class AuthorRow(id: EntityID<Int>): IntEntity(id) {
     companion object : EntityClass<Int, AuthorRow>(AuthorTable)
 
     var bylines by AuthorTable.bylines
@@ -27,12 +27,12 @@ internal object OutletAuthorTable : CompositeIdTable("outlet_author") {
     override val primaryKey = PrimaryKey(outletId, authorId)
 }
 
-fun AuthorRow.toData() = Author(
+internal fun AuthorRow.toData() = Author(
     id = this.id.value,
     bylines = this.bylines.toSet(),
 )
 
-fun AuthorRow.fromData(author: Author, outletRow: OutletRow) {
+internal fun AuthorRow.newFromData(author: Author, outletRow: OutletRow) {
     outlets = SizedCollection(outletRow)
     bylines = author.bylines.toList()
 }

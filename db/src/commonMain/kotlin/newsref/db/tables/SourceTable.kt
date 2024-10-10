@@ -5,8 +5,8 @@ import kotlinx.datetime.UtcOffset
 import kotlinx.datetime.toInstant
 import kotlinx.datetime.toLocalDateTime
 import newsref.db.utils.toCheckedFromDb
+import newsref.model.core.SourceType
 import newsref.model.data.Source
-import newsref.model.data.SourceType
 import org.jetbrains.exposed.dao.EntityClass
 import org.jetbrains.exposed.dao.LongEntity
 import org.jetbrains.exposed.dao.id.EntityID
@@ -22,7 +22,7 @@ internal object SourceTable : LongIdTable("source") {
     val attemptedAt = datetime("attempted_at")
 }
 
-class SourceRow(id: EntityID<Long>) : LongEntity(id) {
+internal class SourceRow(id: EntityID<Long>) : LongEntity(id) {
     companion object : EntityClass<Long, SourceRow>(SourceTable)
 
     var outlet by OutletRow referencedOn SourceTable.outletId
@@ -37,7 +37,7 @@ class SourceRow(id: EntityID<Long>) : LongEntity(id) {
     val document by ArticleRow referrersOn ArticleTable.sourceId
 }
 
-fun SourceRow.toData() = Source(
+internal fun SourceRow.toData() = Source(
     id = this.id.value,
     url = this.url.toCheckedFromDb(),
     leadTitle = this.leadTitle,
@@ -45,7 +45,7 @@ fun SourceRow.toData() = Source(
     attemptedAt = this.attemptedAt.toInstant(UtcOffset.ZERO)
 )
 
-fun SourceRow.fromData(source: Source, outletRow: OutletRow) {
+internal fun SourceRow.newFromData(source: Source, outletRow: OutletRow) {
     outlet = outletRow
     url = source.url.toString()
     leadTitle = source.leadTitle
@@ -53,6 +53,6 @@ fun SourceRow.fromData(source: Source, outletRow: OutletRow) {
     attemptedAt = source.attemptedAt.toLocalDateTime(TimeZone.UTC)
 }
 
-fun SourceRow.addContents(contentEntities: List<ContentRow>) {
+internal fun SourceRow.addContents(contentEntities: List<ContentRow>) {
     contents = SizedCollection(contentEntities)
 }

@@ -1,6 +1,5 @@
 package newsref.krawly.agents
 
-import it.skrape.selects.Doc
 import kotlinx.datetime.Clock
 import newsref.db.globalConsole
 import newsref.db.services.SourceService
@@ -8,11 +7,11 @@ import newsref.db.utils.cacheResource
 import newsref.krawly.MAX_URL_ATTEMPTS
 import newsref.krawly.SpiderWeb
 import newsref.krawly.utils.isMaybeArticle
+import newsref.model.core.SourceType
 import newsref.model.core.toCheckedUrl
 import newsref.model.core.toUrlOrNull
 import newsref.model.data.LeadJob
 import newsref.model.data.Source
-import newsref.model.data.SourceType
 import newsref.model.dto.SourceInfo
 
 class SourceAgent(
@@ -37,7 +36,7 @@ class SourceAgent(
         result?.screenshot?.cacheResource(job.url, "png")
         result?.doc?.html?.cacheResource(job.url, "html", "content")
 
-        val resultUrl = result?.url?.toUrlOrNull()
+        val resultUrl = result?.pageUrl?.toUrlOrNull()
         val resultOutlet = resultUrl?.let { outletAgent.getOutlet(it) }
         val resultCheckedUrl = resultOutlet?.let { resultUrl.toString().toCheckedUrl(it) }
 
@@ -61,7 +60,7 @@ class SourceAgent(
         console.logDebug("found SourceType ${info.source.type}")
 
         val outletId = info.document?.outletId ?: outlet.id
-        val sourceId = sourceService.consume(info, outletId)                                                                       //    SourceService ->
+        val sourceId = sourceService.consume(info, outletId)                    //    SourceService ->
 
         return info.copy(id = sourceId)
     }

@@ -55,7 +55,7 @@ fun UserRow.toData() = User(
     this.updatedAt.toInstant(UtcOffset.ZERO),
 )
 
-fun UserRow.fromData(data: User) {
+fun UserRow.newFromData(data: User) {
     name = data.name
     username = data.username
     hashedPassword = data.hashedPassword
