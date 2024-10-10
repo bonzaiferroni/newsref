@@ -1,0 +1,8 @@
+Only follow links from news articles. These will be:
+	1. Links to news articles
+	2. Links to news sources
+	3. Non-relevant links
+	
+My crawler wants to follow through to 1 and 2 and not 3. It wants to read articles and verify the link on sources.
+
+Some sites won't load, should it try to handle those? 
