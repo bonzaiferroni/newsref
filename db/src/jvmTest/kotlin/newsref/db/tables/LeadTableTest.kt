@@ -29,13 +29,13 @@ class LeadTableTest : DbTest() {
 				it[domains] = listOf("axios.com")
 			}
 			val leadRow = LeadTable.insert {
+				it[outletId] = outletRow[OutletTable.id]
 				it[url] = "http://axios.com/article_headline"
 			}
 			resultMap.forEach { (resultType, count) ->
 				repeat(count) {
 					LeadResultTable.insert {
 						it[leadId] = leadRow[LeadTable.id]
-						it[outletId] = outletRow[OutletTable.id]
 						it[result] = resultType
 						it[attemptedAt] = (Clock.System.now() - 1.days).toLocalDateTimeUTC()
 					}
@@ -43,7 +43,6 @@ class LeadTableTest : DbTest() {
 			}
 			LeadResultTable.insert {
 				it[leadId] = leadRow[LeadTable.id]
-				it[outletId] = outletRow[OutletTable.id]
 				it[result] = ResultType.RELEVANT
 				it[attemptedAt] = (Clock.System.now() - 3.days).toLocalDateTimeUTC()
 			}
@@ -52,7 +51,7 @@ class LeadTableTest : DbTest() {
 
 	@Test
 	fun `getOutletResults returns mapped Results`() = transaction {
-		val map = LeadResultRow.getOutletResults(1, 1.days)
+		val map = LeadRow.getOutletResults(1, 1.days)
 		assertEquals(resultMap, map)
 	}
 }

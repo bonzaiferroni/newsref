@@ -11,17 +11,18 @@ import org.jetbrains.exposed.dao.LongEntity
 import org.jetbrains.exposed.dao.id.EntityID
 import org.jetbrains.exposed.dao.id.LongIdTable
 import org.jetbrains.exposed.sql.*
+import org.jetbrains.exposed.sql.SqlExpressionBuilder.greaterEq
 import org.jetbrains.exposed.sql.kotlin.datetime.datetime
 import kotlin.time.Duration
 
 internal object LeadTable: LongIdTable("lead") {
     val url = text("url").uniqueIndex()
+    val outletId = reference("outlet_id", OutletTable)
     val targetId = reference("target_id", SourceTable).nullable()
 }
 
 internal object LeadResultTable : LongIdTable("lead_result") {
     val leadId = reference("lead_id", LeadTable)
-    val outletId = reference("outlet_id", OutletTable)
     val result = enumeration("result", ResultType::class)
     val attemptedAt = datetime("attempted_at")
     val resultCount = result.count().castTo(IntegerColumnType())
@@ -35,6 +36,7 @@ internal object LeadJobTable: LongIdTable("lead_job") {
 
 internal class LeadRow(id: EntityID<Long>): LongEntity(id) {
     companion object: EntityClass<Long, LeadRow>(LeadTable)
+    var outlet by OutletRow referencedOn LeadTable.outletId
     var target by SourceRow optionalReferencedOn LeadTable.targetId
     var url by LeadTable.url
 
@@ -51,7 +53,6 @@ internal class LeadJobRow(id: EntityID<Long>): LongEntity(id) {
 internal class LeadResultRow(id: EntityID<Long>) : LongEntity(id) {
     companion object : EntityClass<Long, LeadResultRow>(LeadResultTable)
     var lead by LeadRow referencedOn LeadResultTable.leadId
-    var outlet by OutletRow referencedOn LeadResultTable.outletId
     var result by LeadResultTable.result
     var attemptedAt by LeadResultTable.attemptedAt
 }
@@ -60,7 +61,7 @@ internal val leadInfoColumns = listOf(
     LeadTable.id,
     LeadTable.url,
     LeadTable.targetId,
-    LeadResultTable.outletId,
+    LeadTable.outletId,
     LeadJobTable.headline, // attemptCount
     // LeadResultTable.leadId.count()
 )
@@ -70,7 +71,7 @@ internal fun Query.wrapLeadInfo() = this.map { row ->
         id = row[LeadTable.id].value,
         url = row[LeadTable.url].toCheckedFromDb(),
         targetId = row[LeadTable.targetId]?.value,
-        outletId = row.getOrNull(LeadResultTable.outletId)?.value, // Use getOrNull for nullable values
+        outletId = row[LeadTable.outletId].value, // Use getOrNull for nullable values
         feedHeadline = row.getOrNull(LeadJobTable.headline),       // Safely get the headline
         attemptCount = row[LeadResultTable.leadId.count()].toInt(), // count() usually returns 0 for nulls, but verify
         lastAttemptAt = row.getOrNull(LeadResultTable.attemptedAt)?.toInstant(UtcOffset.ZERO) // Handle nullable datetime
@@ -79,6 +80,7 @@ internal fun Query.wrapLeadInfo() = this.map { row ->
 
 internal fun LeadRow.toData() = Lead(
     id = this.id.value,
+    outletId = this.outlet.id.value,
     targetId = this.target?.id?.value,
     url = this.url.toCheckedFromDb(),
 )
@@ -86,7 +88,6 @@ internal fun LeadRow.toData() = Lead(
 internal fun LeadResultRow.toData() = LeadResult(
     id = this.id.value,
     leadId = this.lead.id.value,
-    outletId = this.outlet.id.value,
     result = this.result,
     attemptedAt = this.attemptedAt.toInstant(UtcOffset.ZERO)
 )
@@ -116,12 +117,12 @@ internal fun LeadRow.Companion.leadExists(checkedUrl: CheckedUrl): Boolean {
     return this.find { LeadTable.url.lowerCase() inList list }.any()
 }
 
-internal fun LeadResultRow.Companion.getOutletResults(outletId: Int, since: Duration): Map<ResultType, Int> {
+internal fun LeadRow.Companion.getOutletResults(outletId: Int, since: Duration): Map<ResultType, Int> {
     val time = (Clock.System.now() - since).toLocalDateTimeUTC()
     // println("Filtered time: $time")
     // println(query.prepareSQL(QueryBuilder(false)))
-    return LeadResultTable.select(LeadResultTable.resultCount, LeadResultTable.result).where {
-        (LeadResultTable.outletId eq outletId) and (LeadResultTable.attemptedAt greaterEq time)
+    return LeadTable.leftJoin(LeadResultTable).select(LeadResultTable.resultCount, LeadResultTable.result).where {
+        (LeadTable.outletId eq outletId) and (LeadResultTable.attemptedAt greaterEq time)
     }.groupBy(LeadResultTable.result).associate { resultRow ->
         resultRow[LeadResultTable.result] to resultRow[LeadResultTable.resultCount]
     }

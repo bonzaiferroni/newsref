@@ -10,6 +10,7 @@ import newsref.db.utils.toCheckedFromDb
 import newsref.model.core.CheckedUrl
 import newsref.model.data.Lead
 import newsref.model.data.LeadInfo
+import newsref.model.data.Outlet
 import newsref.model.data.ResultType
 import org.jetbrains.exposed.sql.SqlExpressionBuilder.isNull
 import org.jetbrains.exposed.sql.count
@@ -31,29 +32,29 @@ class LeadService : DbService() {
         leadRow.target = SourceRow[sourceId]
     }
 
-    suspend fun createIfFreshLead(url: CheckedUrl) = dbQuery {
+    suspend fun createIfFreshLead(url: CheckedUrl, outlet: Outlet) = dbQuery {
         if (LeadRow.leadExists(url))
             throw IllegalArgumentException("Lead already exists: $url")
 
-        val outletRow = OutletRow.findByHost(url.host)
+        val outletRow = OutletRow.findById(outlet.id)
             ?: throw IllegalArgumentException("Outlet missing: ${url.host}")
 
-        val leadRow = LeadRow.new { this.url = url.toString() }
+        val leadRow = LeadRow.new { this.url = url.toString(); this.outlet = outletRow }
         leadRow.toData() // return
     }
 
     suspend fun addResult(leadId: Long, outletId: Int, result: ResultType) = dbQuery {
-        LeadResultRow.new {
-            lead = LeadRow[leadId]
-            outlet = OutletRow[outletId]
-            this.result = result
-            attemptedAt = Clock.nowToLocalDateTimeUTC()
-        }.toData()
+//        LeadResultRow.new {
+//            lead = LeadRow[leadId]
+//            outlet = OutletRow[outletId]
+//            this.result = result
+//            attemptedAt = Clock.nowToLocalDateTimeUTC()
+//        }.toData()
     }
 
     suspend fun leadExists(checkedUrl: CheckedUrl) = dbQuery { LeadRow.leadExists(checkedUrl) }
 
     suspend fun getResultsByOutlet(outletId: Int, since: Duration) = dbQuery {
-        LeadResultRow.getOutletResults(outletId, since)
+        LeadRow.getOutletResults(outletId, since)
     }
 }

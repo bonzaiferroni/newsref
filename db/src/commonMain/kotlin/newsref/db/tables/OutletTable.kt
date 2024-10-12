@@ -32,7 +32,7 @@ internal class OutletRow(id: EntityID<Int>) : IntEntity(id) {
 	var urlParams by OutletTable.urlParams
 
 	val sources by SourceRow referrersOn SourceTable.outletId
-	val leadResults by LeadResultRow referrersOn LeadResultTable.outletId
+	val leads by LeadRow referrersOn LeadTable.outletId
 }
 
 internal fun OutletRow.toData() = Outlet(

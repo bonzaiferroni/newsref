@@ -2,7 +2,6 @@ package newsref.krawly.utils
 
 import com.microsoft.playwright.*
 import com.microsoft.playwright.options.RequestOptions
-import io.ktor.client.utils.EmptyContent.headers
 import it.skrape.selects.Doc
 import newsref.db.globalConsole
 import newsref.db.utils.fileLog
@@ -32,7 +31,7 @@ data class HeadResult(
     fun isRedirect() = status == 301
 }
 
-fun pwFetch(url: Url, screenshot: Boolean = false): WebResult = useChromium { page ->
+fun pwFetch(url: Url, screenshot: Boolean = false): WebResult = useChromiumContext { page ->
     var headers: Map<String, String>? = null
     page.onRequest { request ->
         headers = request.headers()
@@ -59,7 +58,35 @@ fun pwFetch(url: Url, screenshot: Boolean = false): WebResult = useChromium { pa
     })
 }
 
-fun pwFetchHead(url: Url): HeadResult = useChromium { page ->
+fun pwFetchNoRedirect(url: Url, screenshot: Boolean = false): WebResult = useChromiumContext { page ->
+    var headers: Map<String, String>? = null
+    page.onRequest { request ->
+        headers = request.headers()
+    }
+    tryNavigate({
+        page.route("**\\/*") { route -> route.abort() }
+        val bytes = if (screenshot) page.screenshot(screenshotOptions) else null
+        val response = page.navigate(url.toString())
+        WebResult(
+            status = response.status(),
+            doc = page.content().contentToDoc(),
+            screenshot = bytes,
+            pageHref = page.url(),
+            requestHeaders = headers
+        )
+    }, {
+        console.logError("Timeout: $url")
+        WebResult(timeout = true)
+    }, {
+        val message = it.message ?: "Unknown error"
+        message.fileLog("exceptions", "playwright")
+        // adventure mode throws these
+        console.logError("Unusual exception: $url\n$message")
+        WebResult()
+    })
+}
+
+fun pwFetchHead(url: Url): HeadResult = useChromiumContext { page ->
     tryNavigate({
         val options = RequestOptions.create().apply {
             setMethod("Head")
@@ -73,7 +100,7 @@ fun pwFetchHead(url: Url): HeadResult = useChromium { page ->
     }, { HeadResult(timeout = true) }, {HeadResult()})
 }
 
-private fun <T> useChromium(block: (Page) -> T): T {
+private fun <T> useChromiumContext(block: (Page) -> T): T {
     Playwright.create().use { playwright ->
         playwright.chromium().launch().use { browser ->
             val page = browser.newContext(contextOptions).newPage()
@@ -82,6 +109,10 @@ private fun <T> useChromium(block: (Page) -> T): T {
             return block(page)
         }
     }
+}
+
+private fun <T> useChromiumPage(block: (Page) -> T): T {
+
 }
 
 private fun <T> tryNavigate(

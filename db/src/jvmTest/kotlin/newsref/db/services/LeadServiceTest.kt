@@ -36,13 +36,13 @@ class LeadServiceTest : DbTest() {
 			}
 			LeadTable.insert { it[url] = "http://apnews.com/article_headline" }
 			val leadRow = LeadTable.insert {
+				it[outletId] = outletRow[OutletTable.id]
 				it[url] = "http://axios.com/article_headline"
 			}
 			resultMap.forEach { (resultType, count) ->
 				repeat(count) {
 					LeadResultTable.insert {
 						it[leadId] = leadRow[LeadTable.id]
-						it[outletId] = outletRow[OutletTable.id]
 						it[result] = resultType
 						it[attemptedAt] = (Clock.System.now() - 1.days).toLocalDateTimeUTC()
 					}
@@ -50,7 +50,6 @@ class LeadServiceTest : DbTest() {
 			}
 			LeadResultTable.insert {
 				it[leadId] = leadRow[LeadTable.id]
-				it[outletId] = outletRow[OutletTable.id]
 				it[result] = ResultType.RELEVANT
 				it[attemptedAt] = (Clock.System.now() - 3.days).toLocalDateTimeUTC()
 			}

@@ -52,8 +52,7 @@ class FeedChecker(
 				if (url.isLikelyAd()) continue
 				val outlet = outletAgent.getOutlet(url)                         // <- OutletAgent ->
 				val checkedUrl = href.toCheckedUrl(outlet)
-				val job = LeadJob(url = checkedUrl, feedId = feed.id, headline = headline)
-				val newJob = leadMaker.makeLead(job)
+				val newJob = leadMaker.makeLead(checkedUrl, outlet)
 				if (newJob != null) count++
 			}
 			console.logDebug("found $count feed leads from ${elements.size} elements")
