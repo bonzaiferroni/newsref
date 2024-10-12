@@ -1,13 +1,18 @@
 package newsref.db.services
 
 import kotlinx.datetime.Clock
+import kotlinx.datetime.UtcOffset
+import kotlinx.datetime.toInstant
 import newsref.db.DbService
 import newsref.db.tables.*
 import newsref.db.utils.nowToLocalDateTimeUTC
+import newsref.db.utils.toCheckedFromDb
 import newsref.model.core.CheckedUrl
 import newsref.model.data.Lead
+import newsref.model.data.LeadInfo
 import newsref.model.data.ResultType
 import org.jetbrains.exposed.sql.SqlExpressionBuilder.isNull
+import org.jetbrains.exposed.sql.count
 import kotlin.time.Duration
 import kotlin.time.Duration.Companion.days
 
@@ -15,9 +20,10 @@ class LeadService : DbService() {
 
     suspend fun getOpenJobs() = dbQuery {
         LeadTable.leftJoin(LeadJobTable).leftJoin(LeadResultTable)
-            .select(LeadInfoColumns)
+            .select(leadInfoColumns + LeadResultTable.leadId.count())
             .where(LeadTable.targetId.isNull())
-            .wrapLeadInfo()
+			.groupBy(*leadInfoColumns.toTypedArray())
+			.wrapLeadInfo()
     }
 
     suspend fun addSource(leadId: Long, sourceId: Long) = dbQuery {
@@ -47,8 +53,7 @@ class LeadService : DbService() {
 
     suspend fun leadExists(checkedUrl: CheckedUrl) = dbQuery { LeadRow.leadExists(checkedUrl) }
 
-
-    suspend fun getUnfollowed(): List<Lead> = dbQuery {
-        LeadRow.find { LeadTable.targetId.isNull() }.map { it.toData() }
+    suspend fun getResultsByOutlet(outletId: Int, since: Duration) = dbQuery {
+        LeadResultRow.getOutletResults(outletId, since)
     }
 }

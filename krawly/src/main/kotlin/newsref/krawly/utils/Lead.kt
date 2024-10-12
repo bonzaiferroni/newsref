@@ -9,13 +9,8 @@ val NOT_ARTICLE_SUFFIX = setOf(
 	"zip"
 )
 
-fun Url.isInvalidSuffix(): Boolean {
+fun Url.isFile(): Boolean {
 	return path.split(".").lastOrNull()?.let { it in NOT_ARTICLE_SUFFIX } ?: false
-}
-
-fun Url.isMaybeArticle(): Boolean {
-	// todo: add more awareness to maybeArticle
-	return !isInvalidSuffix()
 }
 
 // call this to filter ads and self-promotion

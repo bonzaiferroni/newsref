@@ -1,12 +1,16 @@
 package newsref.db.services
 
+import kotlinx.datetime.Clock
 import newsref.db.DataService
 import newsref.db.DbService
+import newsref.db.tables.*
 import newsref.db.tables.OutletRow
 import newsref.db.tables.findByHost
-import newsref.db.tables.newFromData
 import newsref.db.tables.toData
+import newsref.db.utils.toLocalDateTimeUTC
 import newsref.model.data.Outlet
+import org.jetbrains.exposed.sql.and
+import kotlin.time.Duration
 
 class OutletService : DbService(){
     suspend fun findByHost(host: String): Outlet? = dbQuery {

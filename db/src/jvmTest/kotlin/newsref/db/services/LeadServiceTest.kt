@@ -15,6 +15,7 @@ import org.jetbrains.exposed.sql.insert
 import org.jetbrains.exposed.sql.transactions.transaction
 import kotlin.test.BeforeTest
 import kotlin.test.Test
+import kotlin.test.assertEquals
 import kotlin.time.Duration.Companion.days
 
 class LeadServiceTest : DbTest() {
@@ -33,6 +34,7 @@ class LeadServiceTest : DbTest() {
 				it[urlParams] = emptyList()
 				it[domains] = listOf("axios.com")
 			}
+			LeadTable.insert { it[url] = "http://apnews.com/article_headline" }
 			val leadRow = LeadTable.insert {
 				it[url] = "http://axios.com/article_headline"
 			}
@@ -56,7 +58,8 @@ class LeadServiceTest : DbTest() {
 	}
 
 	@Test
-	fun `my function`() = transaction {
-
+	fun `getOpenJobs returns leads`() = dbQuery {
+		val leads = LeadService().getOpenJobs()
+		assertEquals(2, leads.size)
 	}
 }

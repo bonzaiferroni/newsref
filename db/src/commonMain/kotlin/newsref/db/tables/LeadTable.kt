@@ -56,12 +56,13 @@ internal class LeadResultRow(id: EntityID<Long>) : LongEntity(id) {
     var attemptedAt by LeadResultTable.attemptedAt
 }
 
-internal val LeadInfoColumns = listOf(
+internal val leadInfoColumns = listOf(
     LeadTable.id,
     LeadTable.url,
     LeadTable.targetId,
-    LeadJobTable.headline,
-    LeadResultTable.leadId.count(), // attemptCount
+    LeadResultTable.outletId,
+    LeadJobTable.headline, // attemptCount
+    // LeadResultTable.leadId.count()
 )
 
 internal fun Query.wrapLeadInfo() = this.map { row ->
@@ -69,10 +70,10 @@ internal fun Query.wrapLeadInfo() = this.map { row ->
         id = row[LeadTable.id].value,
         url = row[LeadTable.url].toCheckedFromDb(),
         targetId = row[LeadTable.targetId]?.value,
-        feedHeadline = row[LeadJobTable.headline],
-        attemptCount = row[LeadResultTable.leadId.count()].toInt(),
-        lastAttemptAt = row[LeadResultTable.attemptedAt].toInstant(UtcOffset.ZERO),
-        outletResults = emptyMap(),
+        outletId = row.getOrNull(LeadResultTable.outletId)?.value, // Use getOrNull for nullable values
+        feedHeadline = row.getOrNull(LeadJobTable.headline),       // Safely get the headline
+        attemptCount = row[LeadResultTable.leadId.count()].toInt(), // count() usually returns 0 for nulls, but verify
+        lastAttemptAt = row.getOrNull(LeadResultTable.attemptedAt)?.toInstant(UtcOffset.ZERO) // Handle nullable datetime
     )
 }
 

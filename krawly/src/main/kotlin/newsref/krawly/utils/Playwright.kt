@@ -21,8 +21,7 @@ data class WebResult(
     fun isSuccess() = status in 200..299
 }
 
-fun pwFetch(url: Url, screenshot: Boolean = false): WebResult? = useChromium(url) { page ->
-    if (url.isInvalidSuffix()) return@useChromium null
+fun pwFetch(url: Url, screenshot: Boolean = false): WebResult = useChromium(url) { page ->
     val response = page.navigate(url.toString())
     val bytes = if (screenshot) page.screenshot(screenshotOptions) else null
     WebResult(
@@ -46,7 +45,7 @@ fun pwFetchHead(url: Url): WebResult? = useChromium(url) { page ->
     )
 }
 
-private fun useChromium(url: Url, block: (Page) -> WebResult?): WebResult? {
+private fun useChromium(url: Url, block: (Page) -> WebResult?): WebResult {
     Playwright.create().use { playwright ->
         playwright.chromium().launch().use { browser ->
             val page = browser.newContext(contextOptions).newPage()
@@ -67,7 +66,7 @@ private fun useChromium(url: Url, block: (Page) -> WebResult?): WebResult? {
                 message.fileLog("exceptions", "playwright")
                 // adventure mode throws these
                 console.logError("Unusual exception: $url\n$message")
-                return null
+                return WebResult()
             }
         }
     }

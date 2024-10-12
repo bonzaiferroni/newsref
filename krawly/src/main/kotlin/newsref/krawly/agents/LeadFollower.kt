@@ -40,9 +40,8 @@ class LeadFollower(
 			hosts.add(job.url.host)
 
 			console.logInfo(job.url.toString().toCyan(), --leadCount)
-			leadService.addResult(job)
+
 			val sourceInfo = sourceAgent.read(job) ?: continue
-			leadService.addSource(job.leadId, sourceInfo.id)                    //    LeadService ->
 
 			val count = leadMaker.makeLeads(sourceInfo)
 			console.logInfo("found $count new leads from ${job.url.host}")

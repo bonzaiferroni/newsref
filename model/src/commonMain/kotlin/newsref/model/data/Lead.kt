@@ -28,6 +28,7 @@ data class LeadInfo(
     val id: Long,
     val url: CheckedUrl,
     val targetId: Long?,
+    val outletId: Int?,
     val feedHeadline: String?,
     val attemptCount: Int,
     val lastAttemptAt: Instant?,
