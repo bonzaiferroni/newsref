@@ -1,19 +1,12 @@
 package newsref.krawly.agents
 
-import kotlinx.coroutines.delay
 import newsref.db.globalConsole
 import newsref.db.services.OutletService
 import newsref.krawly.SpiderWeb
-import newsref.db.log.LogConsole
-import newsref.db.log.LogLevel
 import newsref.db.log.toBlue
-import newsref.db.log.toCyan
-import newsref.db.tables.LeadResultTable.result
 import newsref.krawly.utils.*
 import newsref.model.core.Url
-import newsref.model.core.toCheckedUrl
 import newsref.model.data.Outlet
-import kotlin.time.Duration.Companion.seconds
 
 class OutletAgent(
 	private val web: SpiderWeb,
@@ -28,8 +21,11 @@ class OutletAgent(
 
     private suspend fun createOutlet(url: Url): Outlet {
         console.logPartial(url.host.toBlue())
+
+        val headResult = web.fetchHead(url)
+
         val robotsUrl = url.getRobotsTxtUrl()
-        val result = web.crawlPage(robotsUrl, false)                            // <- Web
+        val result = web.fetch(robotsUrl, false)                            // <- Web
 
         val robotsTxt = result.let{ if (it.isSuccess()) it.doc?.text else null }
         val disallowed = robotsTxt?.let { parseRobotsTxt(it) } ?: emptySet()

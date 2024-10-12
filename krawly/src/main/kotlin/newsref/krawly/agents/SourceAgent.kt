@@ -26,9 +26,10 @@ class SourceAgent(
     private val console = globalConsole.getHandle("SourceAgent", true)
 
     suspend fun read(lead: LeadInfo): FetchInfo {
-        val resultMap = lead.outletId.let{ leadService.getResultsByOutlet(it, 1.days) }
+        val resultMap = lead.outletId?.let{ leadService.getResultsByOutlet(it, 1.days) }
         val skipFetch = isExpectedFail(resultMap) && lead.url.isFile()
-        val result = if (skipFetch) { web.crawlPage(lead.url, true) } else { null }
+        val result = if (skipFetch) { web.fetch(lead.url, true) } else { null }
+        logResult(result, lead.url)
 
         val pageInfo = result?.let { pageReader.read(lead, it) }
 

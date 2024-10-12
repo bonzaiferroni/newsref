@@ -60,6 +60,6 @@ fun test(href: String) {
 fun testHead(href: String) {
 	val url = href.toUrl()
 	val result = pwFetchHead(url)
-	println(result?.status)
-	result?.doc?.html?.cacheResource(url, "html", "test/head", url.host)
+	println(result.status)
+	// result?.doc?.html?.cacheResource(url, "html", "test/head", url.host)
 }

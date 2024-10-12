@@ -23,7 +23,7 @@ class PageReader(
 	suspend fun read(lead: LeadInfo, result: WebResult): PageInfo? {
 		val doc = result.doc ?: return null
 
-		val pageUrl = result.pageUrl?.toUrlOrNull() ?: throw IllegalArgumentException("pageUrl is null")
+		val pageUrl = result.pageHref?.toUrlOrNull() ?: throw IllegalArgumentException("pageUrl is null")
 		val pageOutlet = pageUrl.let { outletAgent.getOutlet(it) }
 		val pageCheckedUrl = pageOutlet.let { pageUrl.href.toCheckedUrl(it) }
 

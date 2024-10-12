@@ -6,7 +6,15 @@ import newsref.model.core.CheckedUrl
 data class Lead(
     val id: Long,
     val url: CheckedUrl,
+    val outletId: Int,
     val targetId: Long? = null,
+)
+
+data class LeadResult(
+    val id: Long = 0,
+    val leadId: Long,
+    val result: ResultType,
+    val attemptedAt: Instant,
 )
 
 data class LeadJob(
@@ -16,19 +24,11 @@ data class LeadJob(
     val headline: String? = null,
 )
 
-data class LeadResult(
-    val id: Long = 0,
-    val leadId: Long,
-    val outletId: Int,
-    val result: ResultType,
-    val attemptedAt: Instant,
-)
-
 data class LeadInfo(
     val id: Long,
     val url: CheckedUrl,
-    val targetId: Long?,
     val outletId: Int,
+    val targetId: Long?,
     val feedHeadline: String?,
     val attemptCount: Int,
     val lastAttemptAt: Instant?,

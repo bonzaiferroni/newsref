@@ -4,6 +4,7 @@ import newsref.db.globalConsole
 import newsref.db.services.LeadService
 import newsref.db.log.toPink
 import newsref.db.log.toYellow
+import newsref.model.core.CheckedUrl
 import newsref.model.core.SourceType
 import newsref.model.data.LeadJob
 import newsref.model.dto.FetchInfo
@@ -14,8 +15,8 @@ class LeadMaker(
 ) {
 	private val console = globalConsole.getHandle("LeadMaker")
 
-	suspend fun makeLead(leadJob: LeadJob): LeadJob? {
-		if (leadService.leadExists(leadJob.url)) return null
+	suspend fun makeLead(checkedUrl: CheckedUrl): LeadJob? {
+		if (leadService.leadExists(checkedUrl)) return null
 		return try {
 			leadService.createIfFreshLead(leadJob)								//    LeadService ->
 		} catch (e: IllegalArgumentException) {

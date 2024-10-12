@@ -3,9 +3,7 @@ package newsref.krawly.agents
 import kotlinx.coroutines.*
 import newsref.db.globalConsole
 import newsref.db.services.FeedService
-import newsref.db.services.LeadService
 import newsref.krawly.SpiderWeb
-import newsref.db.log.LogConsole
 import newsref.db.log.underline
 import newsref.krawly.utils.isLikelyAd
 import newsref.krawly.utils.tryGetHref
@@ -39,8 +37,8 @@ class FeedChecker(
 		for (feed in feeds) {
 			var count = 0
 			console.logDebug("checking feed: ${feed.url}")
-			val webResult = web.crawlPage(feed.url)                             // <- Web
-			if (webResult == null || !webResult.isSuccess() || webResult.doc == null) {
+			val webResult = web.fetch(feed.url)                             // <- Web
+			if (!webResult.isSuccess() || webResult.doc == null) {
 				console.logError("feed error: ${feed.url}")
 				continue
 			}

@@ -19,7 +19,7 @@ class FeedAgent(
         val feeds = feedService.readAll()                                       // <- FeedService
         val list = mutableListOf<FeedLead>()
         for (feed in feeds) {
-            val webResult = web.crawlPage(feed.url)                             // <- Web
+            val webResult = web.fetch(feed.url)                             // <- Web
             if (webResult == null || !webResult.isSuccess() || webResult.doc == null) {
                 println("FeedAgent: feed error: ${feed.url}")
                 continue
