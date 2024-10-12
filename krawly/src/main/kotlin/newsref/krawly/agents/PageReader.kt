@@ -1,6 +1,5 @@
 package newsref.krawly.agents
 
-import it.skrape.selects.Doc
 import kotlinx.datetime.Clock
 import newsref.db.globalConsole
 import newsref.db.log.toCyan
@@ -17,17 +16,22 @@ class PageReader(
 	private val contentService: ContentService = ContentService(),
 	// private val articleService: ArticleService = ArticleService()
 ) {
-	private val console = globalConsole.getHandle("DocReader", true)
+	private val console = globalConsole.getHandle("PageReader", true)
 	private var docCount = 0
 	private var articleCount = 0
 
-	suspend fun read(url: CheckedUrl, outlet: Outlet, doc: Doc): PageInfo? {
-		val newsArticle = doc.getNewsArticle(url)
+	suspend fun read(lead: LeadInfo, result: WebResult): PageInfo? {
+		val doc = result.doc ?: return null
+
+		val pageUrl = result.pageUrl?.toUrlOrNull() ?: throw IllegalArgumentException("pageUrl is null")
+		val pageOutlet = pageUrl.let { outletAgent.getOutlet(it) }
+		val pageCheckedUrl = pageOutlet.let { pageUrl.href.toCheckedUrl(it) }
+
+		val newsArticle = doc.getNewsArticle(pageUrl)
 		console.logIfTrue("📜") { newsArticle != null }
 
-		val sourceUrl = (newsArticle?.url ?: doc.readUrl())?.toUrlOrNull() ?: url
-		val sourceOutlet = outletAgent.getOutlet(sourceUrl)                     // <- OutletAgent ->
-		val sourceCheckedUrl = sourceUrl.toString().toCheckedOrNull(sourceOutlet) ?: return null
+		val cannonHref = newsArticle?.url ?: doc.readCannonHref()
+		val cannonUrl = cannonHref?.toUrl()
 
 		val contents = mutableSetOf<String>()
 		val links = mutableListOf<LinkInfo>()
@@ -47,24 +51,22 @@ class PageReader(
 				wordCount += content.wordCount()
 				contents.add(content)
 				for ((text, href) in element.eachLink) {
-					val url = href.toUrlWithContextOrNull(sourceCheckedUrl) ?: continue
+					val url = href.toUrlWithContextOrNull(pageUrl) ?: continue
 					if (url.isLikelyAd()) continue
 					if (url.isNotWebLink()) continue
 					val linkOutlet = outletAgent.getOutlet(url)
-					val linkUrl = url.toString().toCheckedWithContextOrNull(linkOutlet, sourceCheckedUrl)
+					val linkUrl = url.toString().toCheckedWithContextOrNull(linkOutlet, pageUrl)
 						?: continue
-					val isInternal = linkOutlet.isInternalTo(sourceOutlet)
-					val isSibling = linkUrl.isSibling(sourceUrl)
+					val isInternal = linkOutlet.isInternalTo(pageOutlet)
+					val isSibling = linkUrl.isSibling(pageUrl)
 					if (isInternal && !isSibling) continue
 					links.add(LinkInfo(url = linkUrl, anchorText = text, context = element.text))
 				}
 			}
 		}
-		val cannonUrlString = newsArticle?.url ?: doc.readUrl()
-		val cannonUrl = cannonUrlString?.toCheckedWithContextOrNull(outlet, sourceUrl)
 
 		val imageUrlString = newsArticle?.image?.firstOrNull()?.url ?: doc.readImageUrl()
-		val imageUrl = imageUrlString?.toCheckedWithContextOrNull(outlet, sourceUrl)
+		val imageUrl = imageUrlString?.toUrlWithContextOrNull(pageUrl)
 		console.logIfTrue("🖼️") { imageUrl != null }
 		val outletName = newsArticle?.publisher?.name ?: doc.readOutletName()
 		val headline = doc.readHeadline() ?: newsArticle?.headline ?: h1Title ?: doc.titleText
@@ -78,7 +80,7 @@ class PageReader(
 		val sourceType = newsArticle?.let { SourceType.ARTICLE } ?: doc.readType() ?: SourceType.UNKNOWN
 		console.logIfTrue("📰") { sourceType != SourceType.UNKNOWN }
 		wordCount = newsArticle?.wordCount ?: wordCount
-		val externalLinkCount = links.count { link -> sourceOutlet.domains.all { link.url.host != it } }
+		val externalLinkCount = links.count { link -> pageOutlet.domains.all { link.url.host != it } }
 		console.logIfTrue("${wordCount.toString().toCyan()} words", 9)
 		console.logIfTrue("${links.size.toString().toCyan()} links", 9)
 		console.logIfTrue("${externalLinkCount.toString().toCyan()} external") 
@@ -90,13 +92,15 @@ class PageReader(
 		console.finishPartial()
 
 		val docInfo = PageInfo(
-			cannonUrl = cannonUrl,
-			outletId = outlet.id,
+			leadUrl = lead.url,
+			pageUrl = pageCheckedUrl,
+			outletId = pageOutlet.id,
 			outletName = outletName,
 			article = Article(
 				headline = headline,
 				alternativeHeadline = newsArticle?.alternativeHeadline,
 				description = description,
+				cannonUrl = cannonUrl,
 				imageUrl = imageUrl,
 				section = newsArticle?.articleSection?.firstOrNull(),
 				keywords = newsArticle?.keywords,
@@ -117,7 +121,7 @@ class PageReader(
 
 		if (docInfo.contents.isNotEmpty()) {
 			val md = docInfo.toMarkdown()
-			md.cacheResource(url, "md")
+			md.cacheResource(pageUrl, "md")
 		}
 
 		return docInfo

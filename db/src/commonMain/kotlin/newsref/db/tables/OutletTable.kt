@@ -42,7 +42,7 @@ internal fun OutletRow.toData() = Outlet(
 	robotsTxt = this.robotsTxt,
 	disallowed = this.disallowed.toSet(),
 	domains = this.domains.toSet(),
-	urlParams = this.urlParams.toSet(),
+	junkParams = this.urlParams.toSet(),
 )
 
 internal fun OutletRow.newFromData(outlet: Outlet) {
@@ -51,7 +51,7 @@ internal fun OutletRow.newFromData(outlet: Outlet) {
 	robotsTxt = outlet.robotsTxt
 	disallowed = outlet.disallowed.toList()
 	domains = outlet.domains.toList()
-	urlParams = outlet.urlParams.toList()
+	urlParams = outlet.junkParams.toList()
 }
 
 internal fun OutletRow.Companion.findByHost(host: String): OutletRow? {

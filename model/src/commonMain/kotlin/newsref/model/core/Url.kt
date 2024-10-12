@@ -1,8 +1,8 @@
 package newsref.model.core
 
 open class Url internal constructor(
-	val rawUrl: String,
-	val requiredParams: Set<String>?,
+	val rawHref: String,
+	junkParams: Set<String>?,
 	disallowedPaths: Set<String>?,
 ) {
 	val scheme: String
@@ -11,22 +11,22 @@ open class Url internal constructor(
 	val params: Map<String, String>
 	val fragment: String?
 	val isRobotAllowed: Boolean?
-	val checkedUrl: String?
+	val href: String
 
 	val authority get() = "$scheme://$host"
 	val length get() = toString().length
 
 	init {
-		if (!rawUrl.startsWith("http"))
-			throw IllegalArgumentException("Url must begin with http: $rawUrl")
-		val (beforeFragment, afterFragment) = rawUrl.deconstruct("#")
+		if (!rawHref.startsWith("http"))
+			throw IllegalArgumentException("Url must begin with http: $rawHref")
+		val (beforeFragment, afterFragment) = rawHref.deconstruct("#")
 		fragment = afterFragment
 		val (beforeScheme, afterScheme) = beforeFragment.deconstruct("://")
-		requireNotNull(afterScheme) { "Invalid Url: $rawUrl" }
+		requireNotNull(afterScheme) { "Invalid Url: $rawHref" }
 		scheme = beforeScheme
 
 		val (beforePath, afterPath) = afterScheme.deconstruct("/")
-		if (beforePath.contains('@')) throw IllegalArgumentException("URL contains user info: $rawUrl")
+		if (beforePath.contains('@')) throw IllegalArgumentException("URL contains user info: $rawHref")
 		host = beforePath
 		val rawPath = afterPath?.let { "/$it" } ?: "/"
 
@@ -36,7 +36,7 @@ open class Url internal constructor(
 		params = afterParams?.split("&")?.mapNotNull { param ->
 			val (key, value) = param.deconstruct("=")
 			if (value == null) return@mapNotNull null
-			if (requiredParams != null && key !in requiredParams) return@mapNotNull null
+			if (junkParams != null && key in junkParams) return@mapNotNull null
 
 			requiredParamPath += if (requiredParamPath.isEmpty()) "?" else "&"
 			requiredParamPath += param
@@ -44,15 +44,15 @@ open class Url internal constructor(
 		}?.toMap() ?: emptyMap()
 		path = beforeParams + requiredParamPath
 		isRobotAllowed = disallowedPaths?.all { !path.startsWith(it) }
-		checkedUrl = if (requiredParams != null) "$authority$path${fragment?.let { "#$it" } ?: ""}"
-		else null
+		href = if (junkParams != null) "$authority$path${fragment?.let { "#$it" } ?: ""}"
+		else rawHref
 	}
 
-	override fun toString() = checkedUrl ?: rawUrl
+	override fun toString() = href
 	override fun equals(other: Any?) = other is Url && this.toString() == other.toString()
 	override fun hashCode(): Int {
-		var result = rawUrl.hashCode()
-		result = 31 * result + (checkedUrl?.hashCode() ?: 0)
+		var result = rawHref.hashCode()
+		result = 31 * result + href.hashCode()
 		return result
 	}
 
@@ -60,11 +60,7 @@ open class Url internal constructor(
 }
 
 internal fun <T: Url> tryParseUrl(block: () -> T): T? {
-	return try {
-		block()
-	} catch (e: IllegalArgumentException) {
-		null
-	}
+	return try { block() } catch (e: IllegalArgumentException) { null }
 }
 
 private fun String.deconstruct(delimiter: String): Pair<String, String?> =

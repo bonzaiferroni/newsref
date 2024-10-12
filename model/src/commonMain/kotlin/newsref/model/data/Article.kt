@@ -9,6 +9,7 @@ data class Article(
     val headline: String = "",
     val alternativeHeadline: String? = null,
     val description: String? = null,
+    val cannonUrl: Url? = null,
     val imageUrl: Url? = null,
     val section: String? = null,
     val keywords: List<String>? = null,

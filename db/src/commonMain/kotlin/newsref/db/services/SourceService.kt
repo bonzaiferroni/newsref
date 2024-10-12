@@ -4,7 +4,7 @@ import newsref.db.DbService
 import newsref.db.tables.*
 import newsref.model.core.SourceType
 import newsref.model.data.*
-import newsref.model.dto.SourceInfo
+import newsref.model.dto.FetchInfo
 import org.jetbrains.exposed.sql.and
 import org.jetbrains.exposed.sql.anyFrom
 import org.jetbrains.exposed.sql.lowerCase
@@ -13,23 +13,24 @@ import java.util.MissingResourceException
 
 class SourceService: DbService() {
 
-    suspend fun consume(info: SourceInfo, outletId: Int): Long = dbQuery {
+    suspend fun consume(fetchInfo: FetchInfo, leadInfo: LeadInfo): Long = dbQuery {
+        val outletId = fetchInfo.page?.outletId ?: leadInfo.outletId
         // create or update Outlet
         val outletRow = OutletRow.find { OutletTable.id eq outletId }.firstOrNull()
             ?: throw MissingResourceException("Missing Outlet", "SourceService", outletId.toString())
         val urlParams = outletRow.urlParams.toList()
-        val outletName = info.page?.outletName
+        val outletName = fetchInfo.page?.outletName
         if (outletName != null) {
             outletRow.name = outletName
         }
 
         // update or create source
-        val url = info.source.url.toString()
+        val url = fetchInfo.source.url.toString()
         val sourceRow = SourceRow.find { SourceTable.url.lowerCase() eq url.lowercase() }.firstOrNull()
-            ?: SourceRow.new { newFromData(info.source, outletRow) }
+            ?: SourceRow.new { newFromData(fetchInfo.source, outletRow) }
 
         // exit here if not news article
-        val document = info.page
+        val document = fetchInfo.page
         if (document == null || sourceRow.type != SourceType.ARTICLE)
             return@dbQuery sourceRow.id.value
 

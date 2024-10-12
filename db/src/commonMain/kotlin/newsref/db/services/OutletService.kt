@@ -21,7 +21,6 @@ class OutletService : DbService(){
         host: String,
         robotsTxt: String?,
         disallowed: Set<String>,
-        keepParams: Set<String>
     ) = dbQuery {
         val hosts = mutableListOf(host)
         if (host.startsWith("www.")) hosts.add(host.removePrefix("www."))
@@ -29,7 +28,6 @@ class OutletService : DbService(){
             this.domains = hosts
             this.robotsTxt = robotsTxt
             this.disallowed = disallowed.toList()
-            this.urlParams = keepParams.toList()
         }.toData()
     }
 }

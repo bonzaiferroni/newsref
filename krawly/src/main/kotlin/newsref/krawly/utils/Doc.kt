@@ -3,7 +3,6 @@ package newsref.krawly.utils
 import it.skrape.selects.Doc
 import it.skrape.selects.DocElement
 import it.skrape.selects.ElementNotFoundException
-import kotlinx.datetime.Instant
 import kotlinx.serialization.SerializationException
 import kotlinx.serialization.json.JsonArray
 import kotlinx.serialization.json.JsonObject
@@ -21,7 +20,7 @@ fun Doc.readMetaContent(vararg propertyValues: String) = propertyValues.firstNot
     value // return
 }
 
-fun Doc.readUrl() = this.readMetaContent("url", "og:url", "twitter:url")
+fun Doc.readCannonHref() = this.readMetaContent("url", "og:url", "twitter:url")
 fun Doc.readHeadline() = this.readMetaContent("title", "og:title", "twitter:title")
 fun Doc.readDescription() = this.readMetaContent("description", "og:description", "twitter:description")
 fun Doc.readImageUrl() = this.readMetaContent("image", "og:image", "twitter:image")

@@ -6,7 +6,7 @@ import newsref.db.log.toPink
 import newsref.db.log.toYellow
 import newsref.model.core.SourceType
 import newsref.model.data.LeadJob
-import newsref.model.dto.SourceInfo
+import newsref.model.dto.FetchInfo
 
 class LeadMaker(
 	val outletAgent: OutletAgent,
@@ -27,9 +27,9 @@ class LeadMaker(
 		}
 	}
 
-	suspend fun makeLeads(sourceInfo: SourceInfo): Int {
-		if (sourceInfo.source.type != SourceType.ARTICLE) return 0
-		val newLeads = sourceInfo.page?.links?.map { LeadJob(url = it.url) }
+	suspend fun makeLeads(fetchInfo: FetchInfo): Int {
+		if (fetchInfo.source.type != SourceType.ARTICLE) return 0
+		val newLeads = fetchInfo.page?.links?.map { LeadJob(url = it.url) }
 			?: return 0
 		return makeLeads(newLeads)
 	}
