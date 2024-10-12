@@ -7,14 +7,15 @@ import newsref.model.data.Source
 
 data class SourceInfo(
     val id: Long = 0,
-    val leadUrl: CheckedUrl,
     val source: Source,
-    val document: DocumentInfo? = null,
+    val page: PageInfo? = null,
 )
 
-data class DocumentInfo(
+data class PageInfo(
     val article: Article,
-    val docUrl: CheckedUrl?,
+    val leadUrl: CheckedUrl,
+    val pageUrl: CheckedUrl,
+    val cannonUrl: CheckedUrl?,
     val type: SourceType,
     val outletId: Int,
     val outletName: String?,

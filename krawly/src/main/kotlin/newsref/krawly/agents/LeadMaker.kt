@@ -29,7 +29,7 @@ class LeadMaker(
 
 	suspend fun makeLeads(sourceInfo: SourceInfo): Int {
 		if (sourceInfo.source.type != SourceType.ARTICLE) return 0
-		val newLeads = sourceInfo.document?.links?.map { LeadJob(url = it.url) }
+		val newLeads = sourceInfo.page?.links?.map { LeadJob(url = it.url) }
 			?: return 0
 		return makeLeads(newLeads)
 	}

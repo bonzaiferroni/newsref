@@ -1,8 +1,8 @@
 package newsref.krawly.utils
 
-import newsref.model.dto.DocumentInfo
+import newsref.model.dto.PageInfo
 
-fun DocumentInfo.toMarkdown(): String {
+fun PageInfo.toMarkdown(): String {
     val contents = this.contents.joinToString("\n\n") { it }
     var content = "# ${article.headline}\n\n${contents}"
     for (link in this.links) {

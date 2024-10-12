@@ -18,7 +18,7 @@ class SourceService: DbService() {
         val outletRow = OutletRow.find { OutletTable.id eq outletId }.firstOrNull()
             ?: throw MissingResourceException("Missing Outlet", "SourceService", outletId.toString())
         val urlParams = outletRow.urlParams.toList()
-        val outletName = info.document?.outletName
+        val outletName = info.page?.outletName
         if (outletName != null) {
             outletRow.name = outletName
         }
@@ -29,7 +29,7 @@ class SourceService: DbService() {
             ?: SourceRow.new { newFromData(info.source, outletRow) }
 
         // exit here if not news article
-        val document = info.document
+        val document = info.page
         if (document == null || sourceRow.type != SourceType.ARTICLE)
             return@dbQuery sourceRow.id.value
 

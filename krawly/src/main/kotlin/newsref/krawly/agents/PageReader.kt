@@ -9,10 +9,10 @@ import newsref.db.utils.cacheResource
 import newsref.krawly.utils.*
 import newsref.model.core.*
 import newsref.model.data.*
-import newsref.model.dto.DocumentInfo
+import newsref.model.dto.PageInfo
 import newsref.model.dto.LinkInfo
 
-class DocReader(
+class PageReader(
 	private val outletAgent: OutletAgent,
 	private val contentService: ContentService = ContentService(),
 	// private val articleService: ArticleService = ArticleService()
@@ -21,7 +21,7 @@ class DocReader(
 	private var docCount = 0
 	private var articleCount = 0
 
-	suspend fun readDoc(url: CheckedUrl, outlet: Outlet, doc: Doc): DocumentInfo? {
+	suspend fun read(url: CheckedUrl, outlet: Outlet, doc: Doc): PageInfo? {
 		val newsArticle = doc.getNewsArticle(url)
 		console.logIfTrue("📜") { newsArticle != null }
 
@@ -60,8 +60,8 @@ class DocReader(
 				}
 			}
 		}
-		val urlString = newsArticle?.url ?: doc.readUrl()
-		val docUrl = urlString?.toCheckedWithContextOrNull(outlet, sourceUrl)
+		val cannonUrlString = newsArticle?.url ?: doc.readUrl()
+		val cannonUrl = cannonUrlString?.toCheckedWithContextOrNull(outlet, sourceUrl)
 
 		val imageUrlString = newsArticle?.image?.firstOrNull()?.url ?: doc.readImageUrl()
 		val imageUrl = imageUrlString?.toCheckedWithContextOrNull(outlet, sourceUrl)
@@ -89,8 +89,8 @@ class DocReader(
 
 		console.finishPartial()
 
-		val docInfo = DocumentInfo(
-			docUrl = docUrl,
+		val docInfo = PageInfo(
+			cannonUrl = cannonUrl,
 			outletId = outlet.id,
 			outletName = outletName,
 			article = Article(

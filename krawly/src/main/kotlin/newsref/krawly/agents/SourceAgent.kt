@@ -21,7 +21,7 @@ import kotlin.time.Duration.Companion.days
 class SourceAgent(
     private val web: SpiderWeb,
     private val outletAgent: OutletAgent,
-    private val docReader: DocReader = DocReader(outletAgent),
+    private val pageReader: PageReader = PageReader(outletAgent),
     private val sourceService: SourceService = SourceService(),
     private val leadService: LeadService = LeadService(),
 ) {
@@ -39,22 +39,22 @@ class SourceAgent(
         val outlet = resultOutlet ?: outletAgent.getOutlet(lead.url)
         val url = resultCheckedUrl ?: lead.url
 
-        val docInfo = result?.doc?.let { docReader.readDoc(url, outlet, it) }
+        val pageInfo = result?.doc?.let { pageReader.read(url, outlet, it) }
 
         // parse strategies
         val info = SourceInfo(
             leadUrl = resultCheckedUrl ?: lead.url,
             source = Source(
-                url = docInfo?.docUrl ?: lead.url,
+                url = pageInfo?.cannonUrl ?: lead.url,
                 leadTitle = lead.feedHeadline,
                 attemptedAt = Clock.System.now(),
-                type = docInfo?.type ?: SourceType.UNKNOWN
+                type = pageInfo?.type ?: SourceType.UNKNOWN
             ),
-            document = docInfo,
+            page = pageInfo,
         )
         console.logDebug("found SourceType ${info.source.type}")
 
-        val outletId = info.document?.outletId ?: outlet.id
+        val outletId = info.page?.outletId ?: outlet.id
         val sourceId = sourceService.consume(info, outletId)                    //    SourceService ->
         // todo: if it is a news article, save a video of the endpoint
         leadService.addResult(lead.id, )
