@@ -6,7 +6,7 @@ import newsref.db.log.ConsoleConfig
 import newsref.db.utils.cacheResource
 import newsref.krawly.agents.*
 import newsref.krawly.utils.pwFetch
-import newsref.krawly.utils.pwFetchHead
+import newsref.krawly.utils.pwFetchRedirect
 import newsref.model.core.toUrl
 
 fun main(args: Array<String>) {
@@ -59,7 +59,7 @@ fun test(href: String) {
 
 fun testHead(href: String) {
 	val url = href.toUrl()
-	val result = pwFetchHead(url)
+	val result = pwFetchRedirect(url)
 	println(result.status)
 	// result?.doc?.html?.cacheResource(url, "html", "test/head", url.host)
 }

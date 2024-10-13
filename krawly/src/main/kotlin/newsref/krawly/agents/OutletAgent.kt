@@ -22,7 +22,10 @@ class OutletAgent(
     private suspend fun createOutlet(url: Url): Outlet {
         console.logPartial(url.host.toBlue())
 
-        val headResult = web.fetchHead(url)
+        val response = web.fetchRedirect(url)
+        if (response.isRedirect()) {
+
+        }
 
         val robotsUrl = url.getRobotsTxtUrl()
         val result = web.fetch(robotsUrl, false)                            // <- Web

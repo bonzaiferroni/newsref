@@ -22,8 +22,7 @@ data class WebResult(
     fun isSuccess() = status in 200..299
 }
 
-data class HeadResult(
-    val pageHref: String? = null,
+data class RedirectResult(
     val redirectHref: String? = null,
     val status: Int? = null,
     val timeout: Boolean = false
@@ -31,7 +30,7 @@ data class HeadResult(
     fun isRedirect() = status == 301
 }
 
-fun pwFetch(url: Url, screenshot: Boolean = false): WebResult = useChromiumContext { page ->
+fun pwFetch(url: Url, screenshot: Boolean = false): WebResult = useChromiumPage { page ->
     var headers: Map<String, String>? = null
     page.onRequest { request ->
         headers = request.headers()
@@ -58,49 +57,29 @@ fun pwFetch(url: Url, screenshot: Boolean = false): WebResult = useChromiumConte
     })
 }
 
-fun pwFetchNoRedirect(url: Url, screenshot: Boolean = false): WebResult = useChromiumContext { page ->
-    var headers: Map<String, String>? = null
-    page.onRequest { request ->
-        headers = request.headers()
-    }
+fun pwFetchRedirect(url: Url, screenshot: Boolean = false): RedirectResult = useChromiumContext { context ->
     tryNavigate({
-        page.route("**\\/*") { route -> route.abort() }
-        val bytes = if (screenshot) page.screenshot(screenshotOptions) else null
-        val response = page.navigate(url.toString())
-        WebResult(
+        val request = context.request()
+        val requestOptions = RequestOptions.create().setMaxRedirects(0)
+        val response = request.get(url.href, requestOptions)
+        val headers = response.headers()
+        RedirectResult(
             status = response.status(),
-            doc = page.content().contentToDoc(),
-            screenshot = bytes,
-            pageHref = page.url(),
-            requestHeaders = headers
+            redirectHref = headers["location"]
         )
     }, {
         console.logError("Timeout: $url")
-        WebResult(timeout = true)
+        RedirectResult(timeout = true)
     }, {
         val message = it.message ?: "Unknown error"
         message.fileLog("exceptions", "playwright")
         // adventure mode throws these
         console.logError("Unusual exception: $url\n$message")
-        WebResult()
+        RedirectResult()
     })
 }
 
-fun pwFetchHead(url: Url): HeadResult = useChromiumContext { page ->
-    tryNavigate({
-        val options = RequestOptions.create().apply {
-            setMethod("Head")
-        }
-        val response = page.request().fetch(url.toString(), options)
-        HeadResult(
-            status = response.status(),
-            pageHref = page.url(),
-            redirectHref = response.headers()["location"]
-        )
-    }, { HeadResult(timeout = true) }, {HeadResult()})
-}
-
-private fun <T> useChromiumContext(block: (Page) -> T): T {
+private fun <T> useChromiumPage(block: (Page) -> T): T {
     Playwright.create().use { playwright ->
         playwright.chromium().launch().use { browser ->
             val page = browser.newContext(contextOptions).newPage()
@@ -111,8 +90,13 @@ private fun <T> useChromiumContext(block: (Page) -> T): T {
     }
 }
 
-private fun <T> useChromiumPage(block: (Page) -> T): T {
-
+private fun <T> useChromiumContext(block: (BrowserContext) -> T): T {
+    Playwright.create().use { playwright ->
+        playwright.chromium().launch().use { browser ->
+            val context = browser.newContext(contextOptions)
+            return block(context)
+        }
+    }
 }
 
 private fun <T> tryNavigate(

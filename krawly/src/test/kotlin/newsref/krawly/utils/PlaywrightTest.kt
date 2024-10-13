@@ -2,16 +2,18 @@ package newsref.krawly.utils
 
 import newsref.model.core.toUrl
 import kotlin.test.Test
+import kotlin.test.assertEquals
 
 class PlaywrightTest {
 	@Test
 	fun `fetchHead recognizes redirect`() {
 		// given
-		val url = "https://shorturl.at/cs7Xp"
+		// val url = "https://shorturl.at/cs7Xp"
+		val url = "https://tinyurl.com/bdey5ajd"
+		var location = "https://thebookofluke.com/p/notes-from-the-radical-center"
 		// when
-		val result = pwFetchNoRedirect(url.toUrl())
+		val result = pwFetchRedirect(url.toUrl())
 		// then
-		println("ey!")
-		// assert(result.isRedirect())
+		assertEquals(result.redirectHref, location)
 	}
 }
