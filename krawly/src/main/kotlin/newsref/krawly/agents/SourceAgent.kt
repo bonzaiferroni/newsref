@@ -17,35 +17,36 @@ import newsref.model.dto.FetchInfo
 import kotlin.time.Duration.Companion.days
 
 class SourceAgent(
-    private val web: SpiderWeb,
-    private val outletAgent: OutletAgent,
-    private val pageReader: PageReader = PageReader(outletAgent),
-    private val sourceService: SourceService = SourceService(),
-    private val leadService: LeadService = LeadService(),
+	private val web: SpiderWeb,
+	private val hostAgent: HostAgent,
+	private val pageReader: PageReader = PageReader(hostAgent),
+	private val sourceService: SourceService = SourceService(),
+	private val leadService: LeadService = LeadService(),
 ) {
     private val console = globalConsole.getHandle("SourceAgent", true)
 
     suspend fun read(lead: LeadInfo): FetchInfo {
-        val resultMap = lead.outletId?.let{ leadService.getResultsByOutlet(it, 1.days) }
+        val resultMap = leadService.getResultsByOutlet(lead.hostId, 1.days)
         val skipFetch = isExpectedFail(resultMap) && lead.url.isFile()
         val result = if (skipFetch) { web.fetch(lead.url, true) } else { null }
         logResult(result, lead.url)
 
-        val pageInfo = result?.let { pageReader.read(lead, it) }
+        val page = result?.let { pageReader.read(lead, it) }
 
         // parse strategies
         val info = FetchInfo(
+            lead = lead,
             source = Source(
-                url = pageInfo?.pageUrl ?: lead.url,
+                url = page?.pageUrl ?: lead.url,
                 leadTitle = lead.feedHeadline,
                 attemptedAt = Clock.System.now(),
-                type = pageInfo?.type ?: SourceType.UNKNOWN
+                type = page?.type ?: SourceType.UNKNOWN
             ),
-            page = pageInfo,
+            page = page,
         )
         console.logDebug("found SourceType ${info.source.type}")
 
-        val sourceId = sourceService.consume(info, lead)                    //    SourceService ->
+        val sourceId = sourceService.consume(info)                    //    SourceService ->
         // todo: if it is a news article, save a video of the endpoint
         // leadService.addResult(lead.id, )
         // leadService.addSource(job.leadId, sourceInfo.id)                    //    LeadService ->

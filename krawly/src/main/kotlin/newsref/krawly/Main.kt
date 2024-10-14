@@ -23,10 +23,10 @@ fun main(args: Array<String>) {
 fun crawl(args: Array<String>) {
 	initDb()
 	val web = SpiderWeb()
-	val outletAgent = OutletAgent(web)
-	val leadMaker = LeadMaker(outletAgent)
-	val feedChecker = FeedChecker(web, outletAgent, leadMaker)
-	val leadFollower = LeadFollower(web, leadMaker, outletAgent)
+	val hostAgent = HostAgent(web)
+	val leadMaker = LeadMaker(hostAgent)
+	val feedChecker = FeedChecker(web, hostAgent, leadMaker)
+	val leadFollower = LeadFollower(web, leadMaker, hostAgent)
 	globalConsole.addCommand("start") {
 		feedChecker.start()
 		leadFollower.start()
@@ -52,9 +52,9 @@ fun crawl(args: Array<String>) {
 fun test(href: String) {
 	val url = href.toUrl()
 	val result = pwFetch(url, true)
-	result?.screenshot?.cacheResource(url, "png", "test/${url.host}")
+	result?.screenshot?.cacheResource(url, "png", "test/${url.domain}")
 	result?.requestHeaders?.map { "${it.key}:\n${it.value}" }?.joinToString("\n\n")
-		?.cacheResource(url, "txt", "test/${url.host}", "headers")
+		?.cacheResource(url, "txt", "test/${url.domain}", "headers")
 }
 
 fun testHead(href: String) {

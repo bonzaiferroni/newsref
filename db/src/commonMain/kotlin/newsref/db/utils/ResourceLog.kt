@@ -5,16 +5,16 @@ import newsref.db.globalConsole
 import newsref.model.core.Url
 import java.io.File
 
-const val resourcePath = "../../cache"
+const val resourcePath = "../cache"
 
 fun String.cacheResource(
     url: Url,
     type: String,
     path: String = type,
-    fileName: String = url.host
+    fileName: String = url.domain
 ): String {
     if (this.isBlank()) {
-        globalConsole.logDebug("cacheResource", "found blank $type string from ${url.host}")
+        globalConsole.logDebug("cacheResource", "found blank $type string from ${url.domain}")
         return this
     }
     val file = File("$resourcePath/$path/$fileName.$type")
@@ -27,7 +27,7 @@ fun ByteArray.cacheResource(
     url: Url,
     type: String,
     path: String = type,
-    fileName: String = url.host
+    fileName: String = url.domain
 ): ByteArray {
     val file = File("$resourcePath/$path/$fileName.$type")
     file.parentFile?.mkdirs() // Create missing directories if they don't exist
@@ -39,7 +39,7 @@ fun ByteArray.cacheResource(
 inline fun <reified T> T.cacheSerializable(
     url: Url,
     path: String,
-    fileName: String = url.host
+    fileName: String = url.domain
 ): T where T : Any {
     val file = File("$resourcePath/$path/$fileName.json")
     file.parentFile?.mkdirs() // Create directories if they don't exist

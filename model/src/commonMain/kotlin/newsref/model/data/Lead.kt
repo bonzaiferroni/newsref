@@ -25,13 +25,13 @@ data class LeadJob(
 )
 
 data class LeadInfo(
-    val id: Long,
-    val url: CheckedUrl,
-    val outletId: Int,
-    val targetId: Long?,
-    val feedHeadline: String?,
-    val attemptCount: Int,
-    val lastAttemptAt: Instant?,
+	val id: Long,
+	val url: CheckedUrl,
+	val hostId: Int,
+	val targetId: Long?,
+	val feedHeadline: String?,
+	val attemptCount: Int,
+	val lastAttemptAt: Instant?,
 )
 
 enum class ResultType {

@@ -6,20 +6,20 @@ import org.jetbrains.exposed.sql.transactions.transaction
 import kotlin.test.BeforeTest
 import kotlin.test.Test
 
-class OutletTableTest : DbTest() {
+class HostTableTest : DbTest() {
 	@BeforeTest
 	fun initData() {
 		transaction {
-			OutletTable.insert {
+			HostTable.insert {
 				it[name] = "Axios"
 				it[disallowed] = emptyList()
-				it[urlParams] = emptyList()
+				it[junkParams] = emptyList()
 				it[domains] = listOf("www.axios.com")
 			}
-			OutletTable.insert {
+			HostTable.insert {
 				it[name] = "The Atlantic"
 				it[disallowed] = emptyList()
-				it[urlParams] = emptyList()
+				it[junkParams] = emptyList()
 				it[domains] = listOf("theatlantic.com")
 			}
 		}
@@ -27,14 +27,14 @@ class OutletTableTest : DbTest() {
 
 	@Test
 	fun `findByHost should return host row without www`() = transaction {
-		val outlet = OutletRow.findByHost("axios.com")
+		val outlet = HostRow.findByHost("axios.com")
 		checkNotNull(outlet)
 		assert(outlet.name == "Axios")
 	}
 
 	@Test
 	fun `findByHost should return host with www`() = transaction {
-		val outlet = OutletRow.findByHost("www.theatlantic.com")
+		val outlet = HostRow.findByHost("www.theatlantic.com")
 		checkNotNull(outlet)
 		assert(outlet.name == "The Atlantic")
 	}

@@ -1,6 +1,5 @@
 package newsref.db.tables
 
-import newsref.db.tables.AuthorTable.bylines
 import newsref.model.data.Author
 import org.jetbrains.exposed.dao.EntityClass
 import org.jetbrains.exposed.dao.IntEntity
@@ -18,11 +17,11 @@ internal class AuthorRow(id: EntityID<Int>): IntEntity(id) {
 
     var bylines by AuthorTable.bylines
 
-    var outlets by OutletRow via OutletAuthorTable
+    var outlets by HostRow via HostAuthorTable
 }
 
-internal object OutletAuthorTable : CompositeIdTable("outlet_author") {
-    val outletId = reference("outlet_id", OutletTable)
+internal object HostAuthorTable : CompositeIdTable("outlet_author") {
+    val outletId = reference("outlet_id", HostTable)
     val authorId = reference("author_id", AuthorTable)
     override val primaryKey = PrimaryKey(outletId, authorId)
 }
@@ -32,7 +31,7 @@ internal fun AuthorRow.toData() = Author(
     bylines = this.bylines.toSet(),
 )
 
-internal fun AuthorRow.newFromData(author: Author, outletRow: OutletRow) {
-    outlets = SizedCollection(outletRow)
+internal fun AuthorRow.newFromData(author: Author, hostRow: HostRow) {
+    outlets = SizedCollection(hostRow)
     bylines = author.bylines.toList()
 }

@@ -19,5 +19,9 @@ kotlin {
                 implementation(kotlin("test")) // Add Kotlin Test library for common code
             }
         }
+        val jvmTest by getting {
+            dependencies {
+            }
+        }
     }
 }

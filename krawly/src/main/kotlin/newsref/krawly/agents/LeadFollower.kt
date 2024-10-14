@@ -13,8 +13,8 @@ import kotlin.time.Duration.Companion.seconds
 class LeadFollower(
 	private val web: SpiderWeb,
 	private val leadMaker: LeadMaker,
-	private val outletAgent: OutletAgent,
-	private val sourceAgent: SourceAgent = SourceAgent(web, outletAgent),
+	private val hostAgent: HostAgent,
+	private val sourceAgent: SourceAgent = SourceAgent(web, hostAgent),
 	private val leadService: LeadService = LeadService()
 ) {
 	private val console = globalConsole.getHandle("LeadFollower", true)
@@ -31,20 +31,20 @@ class LeadFollower(
 	}
 
 	private suspend fun checkLeads() {
-		val jobs = leadService.getOpenJobs()
+		val jobs = leadService.getOpenLeads()
 		var leadCount = jobs.size
 		console.logTrace("found ${jobs.size} jobs", leadCount)
 		val hosts = mutableSetOf<String>()
 		for (job in jobs) {
-			if (hosts.contains(job.url.host)) { continue }
-			hosts.add(job.url.host)
+			if (hosts.contains(job.url.domain)) { continue }
+			hosts.add(job.url.domain)
 
 			console.logInfo(job.url.toString().toCyan(), --leadCount)
 
-			val sourceInfo = sourceAgent.read(job) ?: continue
+			val sourceInfo = sourceAgent.read(job)
 
 			val count = leadMaker.makeLeads(sourceInfo)
-			console.logInfo("found $count new leads from ${job.url.host}")
+			console.logInfo("found $count new leads from ${job.url.domain}")
 		}
 	}
 }

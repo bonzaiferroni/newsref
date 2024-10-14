@@ -2,15 +2,11 @@ package newsref.db.services
 
 import kotlinx.datetime.Clock
 import newsref.db.DbTest
-import newsref.db.tables.*
 import newsref.db.tables.LeadResultTable
 import newsref.db.tables.LeadTable
-import newsref.db.tables.OutletTable
+import newsref.db.tables.HostTable
 import newsref.db.utils.toLocalDateTimeUTC
 import newsref.model.data.ResultType
-import org.jetbrains.exposed.sql.QueryBuilder
-import org.jetbrains.exposed.sql.SqlExpressionBuilder.isNull
-import org.jetbrains.exposed.sql.and
 import org.jetbrains.exposed.sql.insert
 import org.jetbrains.exposed.sql.transactions.transaction
 import kotlin.test.BeforeTest
@@ -28,15 +24,15 @@ class LeadServiceTest : DbTest() {
 	@BeforeTest
 	fun initData() {
 		transaction {
-			val outletRow = OutletTable.insert {
+			val outletRow = HostTable.insert {
 				it[name] = "Axios"
 				it[disallowed] = emptyList()
-				it[urlParams] = emptyList()
+				it[junkParams] = emptyList()
 				it[domains] = listOf("axios.com")
 			}
 			LeadTable.insert { it[url] = "http://apnews.com/article_headline" }
 			val leadRow = LeadTable.insert {
-				it[outletId] = outletRow[OutletTable.id]
+				it[hostId] = outletRow[HostTable.id]
 				it[url] = "http://axios.com/article_headline"
 			}
 			resultMap.forEach { (resultType, count) ->
@@ -58,7 +54,7 @@ class LeadServiceTest : DbTest() {
 
 	@Test
 	fun `getOpenJobs returns leads`() = dbQuery {
-		val leads = LeadService().getOpenJobs()
+		val leads = LeadService().getOpenLeads()
 		assertEquals(2, leads.size)
 	}
 }

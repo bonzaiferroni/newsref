@@ -1,25 +1,17 @@
 package newsref.db.services
 
-import kotlinx.datetime.Clock
-import kotlinx.datetime.UtcOffset
-import kotlinx.datetime.toInstant
 import newsref.db.DbService
 import newsref.db.tables.*
-import newsref.db.utils.nowToLocalDateTimeUTC
-import newsref.db.utils.toCheckedFromDb
 import newsref.model.core.CheckedUrl
-import newsref.model.data.Lead
-import newsref.model.data.LeadInfo
-import newsref.model.data.Outlet
+import newsref.model.data.Host
 import newsref.model.data.ResultType
 import org.jetbrains.exposed.sql.SqlExpressionBuilder.isNull
 import org.jetbrains.exposed.sql.count
 import kotlin.time.Duration
-import kotlin.time.Duration.Companion.days
 
 class LeadService : DbService() {
 
-    suspend fun getOpenJobs() = dbQuery {
+    suspend fun getOpenLeads() = dbQuery {
         LeadTable.leftJoin(LeadJobTable).leftJoin(LeadResultTable)
             .select(leadInfoColumns + LeadResultTable.leadId.count())
             .where(LeadTable.targetId.isNull())
@@ -32,14 +24,14 @@ class LeadService : DbService() {
         leadRow.target = SourceRow[sourceId]
     }
 
-    suspend fun createIfFreshLead(url: CheckedUrl, outlet: Outlet) = dbQuery {
+    suspend fun createIfFreshLead(url: CheckedUrl, host: Host) = dbQuery {
         if (LeadRow.leadExists(url))
             throw IllegalArgumentException("Lead already exists: $url")
 
-        val outletRow = OutletRow.findById(outlet.id)
-            ?: throw IllegalArgumentException("Outlet missing: ${url.host}")
+        val hostRow = HostRow.findById(host.id)
+            ?: throw IllegalArgumentException("Host missing: ${url.domain}")
 
-        val leadRow = LeadRow.new { this.url = url.toString(); this.outlet = outletRow }
+        val leadRow = LeadRow.new { this.url = url.toString(); this.host = hostRow }
         leadRow.toData() // return
     }
 

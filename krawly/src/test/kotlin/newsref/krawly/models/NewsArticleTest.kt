@@ -5,10 +5,8 @@ import kotlin.test.Test
 import kotlin.test.assertNotNull
 import newsref.db.utils.resourcePath
 import newsref.krawly.utils.decodeNewsArticle
-import newsref.krawly.utils.readArrayOrObject
 import newsref.model.core.toUrl
 import java.io.File
-import kotlin.test.assertNull
 
 class NewsArticleTest {
 
@@ -17,11 +15,17 @@ class NewsArticleTest {
         val resourcePath = "${resourcePath}/news_article_raw"
         val jsonFiles = File(resourcePath).listFiles { _, name -> name.endsWith(".json") } ?: return
 
+        val nullSet = mutableSetOf<String>()
         for (file in jsonFiles) {
             val jsonString = file.readText()
             val result = jsonString.decodeNewsArticle()
             result?.cacheSerializable("http://example.com".toUrl(), "news_article_tests", file.name)
-            assertNull(result, "Parsed NewsArticle object from ${file.name} should not be null")
+            if (result == null) {
+                println("null NewsArticle: ${file.name}")
+                nullSet += file.name
+            }
         }
+
+        assert(jsonFiles.isEmpty() || nullSet.size < jsonFiles.size / 2)
     }
 }

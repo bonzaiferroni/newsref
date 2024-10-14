@@ -1,6 +1,6 @@
 package newsref.model.core
 
-import newsref.model.data.Outlet
+import newsref.model.data.Host
 
 class CheckedUrl internal constructor(
 	rawUrl: String,
@@ -30,12 +30,12 @@ fun String.toCheckedWithContextOrNull(
 	disallowedPaths: Set<String>?
 ) = tryParseUrl { this.toCheckedWithContext(context, junkParams, disallowedPaths) }
 
-fun String.toCheckedUrl(outlet: Outlet) = this.toCheckedUrl(outlet.junkParams, outlet.disallowed)
+fun String.toCheckedUrl(host: Host) = this.toCheckedUrl(host.junkParams, host.disallowed)
 
-fun String.toCheckedWithContext(outlet: Outlet, context: Url) =
-	this.toCheckedWithContext(context, outlet.junkParams, outlet.disallowed)
+fun String.toCheckedWithContext(host: Host, context: Url) =
+	this.toCheckedWithContext(context, host.junkParams, host.disallowed)
 
-fun String.toCheckedOrNull(outlet: Outlet) = this.toCheckedOrNull(outlet.junkParams, outlet.disallowed)
+fun String.toCheckedOrNull(host: Host) = this.toCheckedOrNull(host.junkParams, host.disallowed)
 
-fun String.toCheckedWithContextOrNull(outlet: Outlet, context: Url) =
-	this.toCheckedWithContextOrNull(context, outlet.junkParams, outlet.disallowed)
+fun String.toCheckedWithContextOrNull(host: Host, context: Url) =
+	this.toCheckedWithContextOrNull(context, host.junkParams, host.disallowed)

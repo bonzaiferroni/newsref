@@ -15,7 +15,7 @@ import org.jetbrains.exposed.sql.SizedCollection
 import org.jetbrains.exposed.sql.kotlin.datetime.datetime
 
 internal object SourceTable : LongIdTable("source") {
-    val outletId = reference("outlet_id", OutletTable)
+    val hostId = reference("outlet_id", HostTable)
     val url = text("url")
     val leadTitle = text("lead_title").nullable()
     val type = enumerationByName<SourceType>("source_type", 20)
@@ -25,7 +25,7 @@ internal object SourceTable : LongIdTable("source") {
 internal class SourceRow(id: EntityID<Long>) : LongEntity(id) {
     companion object : EntityClass<Long, SourceRow>(SourceTable)
 
-    var outlet by OutletRow referencedOn SourceTable.outletId
+    var outlet by HostRow referencedOn SourceTable.hostId
     var contents by ContentRow via SourceContentTable
 
     var url by SourceTable.url
@@ -45,8 +45,8 @@ internal fun SourceRow.toData() = Source(
     attemptedAt = this.attemptedAt.toInstant(UtcOffset.ZERO)
 )
 
-internal fun SourceRow.newFromData(source: Source, outletRow: OutletRow) {
-    outlet = outletRow
+internal fun SourceRow.newFromData(source: Source, hostRow: HostRow) {
+    outlet = hostRow
     url = source.url.toString()
     leadTitle = source.leadTitle
     type = source.type

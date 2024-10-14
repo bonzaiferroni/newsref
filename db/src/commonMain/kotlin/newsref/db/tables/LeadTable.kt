@@ -11,13 +11,12 @@ import org.jetbrains.exposed.dao.LongEntity
 import org.jetbrains.exposed.dao.id.EntityID
 import org.jetbrains.exposed.dao.id.LongIdTable
 import org.jetbrains.exposed.sql.*
-import org.jetbrains.exposed.sql.SqlExpressionBuilder.greaterEq
 import org.jetbrains.exposed.sql.kotlin.datetime.datetime
 import kotlin.time.Duration
 
 internal object LeadTable: LongIdTable("lead") {
     val url = text("url").uniqueIndex()
-    val outletId = reference("outlet_id", OutletTable)
+    val hostId = reference("outlet_id", HostTable)
     val targetId = reference("target_id", SourceTable).nullable()
 }
 
@@ -36,7 +35,7 @@ internal object LeadJobTable: LongIdTable("lead_job") {
 
 internal class LeadRow(id: EntityID<Long>): LongEntity(id) {
     companion object: EntityClass<Long, LeadRow>(LeadTable)
-    var outlet by OutletRow referencedOn LeadTable.outletId
+    var host by HostRow referencedOn LeadTable.hostId
     var target by SourceRow optionalReferencedOn LeadTable.targetId
     var url by LeadTable.url
 
@@ -61,7 +60,7 @@ internal val leadInfoColumns = listOf(
     LeadTable.id,
     LeadTable.url,
     LeadTable.targetId,
-    LeadTable.outletId,
+    LeadTable.hostId,
     LeadJobTable.headline, // attemptCount
     // LeadResultTable.leadId.count()
 )
@@ -71,7 +70,7 @@ internal fun Query.wrapLeadInfo() = this.map { row ->
         id = row[LeadTable.id].value,
         url = row[LeadTable.url].toCheckedFromDb(),
         targetId = row[LeadTable.targetId]?.value,
-        outletId = row[LeadTable.outletId].value, // Use getOrNull for nullable values
+        hostId = row[LeadTable.hostId].value, // Use getOrNull for nullable values
         feedHeadline = row.getOrNull(LeadJobTable.headline),       // Safely get the headline
         attemptCount = row[LeadResultTable.leadId.count()].toInt(), // count() usually returns 0 for nulls, but verify
         lastAttemptAt = row.getOrNull(LeadResultTable.attemptedAt)?.toInstant(UtcOffset.ZERO) // Handle nullable datetime
@@ -80,7 +79,7 @@ internal fun Query.wrapLeadInfo() = this.map { row ->
 
 internal fun LeadRow.toData() = Lead(
     id = this.id.value,
-    outletId = this.outlet.id.value,
+    outletId = this.host.id.value,
     targetId = this.target?.id?.value,
     url = this.url.toCheckedFromDb(),
 )
@@ -112,7 +111,7 @@ internal fun LeadJobRow.newFromData(leadJob: LeadJob, leadRow: LeadRow, feedRow:
 
 internal fun LeadRow.Companion.leadExists(checkedUrl: CheckedUrl): Boolean {
     val list = mutableListOf(checkedUrl.toString().lowercase())
-    if (checkedUrl.host.startsWith("www."))
+    if (checkedUrl.domain.startsWith("www."))
         list.add(checkedUrl.toString().replaceFirst("www.", "").lowercase())
     return this.find { LeadTable.url.lowerCase() inList list }.any()
 }
@@ -122,7 +121,7 @@ internal fun LeadRow.Companion.getOutletResults(outletId: Int, since: Duration):
     // println("Filtered time: $time")
     // println(query.prepareSQL(QueryBuilder(false)))
     return LeadTable.leftJoin(LeadResultTable).select(LeadResultTable.resultCount, LeadResultTable.result).where {
-        (LeadTable.outletId eq outletId) and (LeadResultTable.attemptedAt greaterEq time)
+        (LeadTable.hostId eq outletId) and (LeadResultTable.attemptedAt greaterEq time)
     }.groupBy(LeadResultTable.result).associate { resultRow ->
         resultRow[LeadResultTable.result] to resultRow[LeadResultTable.resultCount]
     }

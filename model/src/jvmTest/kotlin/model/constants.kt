@@ -1,4 +1,4 @@
-package newsref.model
+package model
 
 import newsref.model.core.toUrl
 import kotlin.test.Test

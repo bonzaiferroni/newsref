@@ -1,4 +1,4 @@
-package newsref.model.utils
+package model.utils
 
 import newsref.model.core.toCheckedUrl
 import newsref.model.core.toUrlWithContext
@@ -6,7 +6,7 @@ import newsref.model.core.toUrl
 import kotlin.test.Test
 import kotlin.test.assertEquals
 
-class SafeUrlTest {
+class CheckedUrlTest {
 
     @Test
     fun remove_query_parameters_test() {

@@ -13,24 +13,22 @@ import java.util.MissingResourceException
 
 class SourceService: DbService() {
 
-    suspend fun consume(fetchInfo: FetchInfo, leadInfo: LeadInfo): Long = dbQuery {
-        val outletId = fetchInfo.page?.outletId ?: leadInfo.outletId
-        // create or update Outlet
-        val outletRow = OutletRow.find { OutletTable.id eq outletId }.firstOrNull()
-            ?: throw MissingResourceException("Missing Outlet", "SourceService", outletId.toString())
-        val urlParams = outletRow.urlParams.toList()
-        val outletName = fetchInfo.page?.outletName
-        if (outletName != null) {
-            outletRow.name = outletName
-        }
+    suspend fun consume(fetch: FetchInfo): Long = dbQuery {
+        val hostId = fetch.page?.hostId ?: fetch.lead.hostId
+
+        // create or update host
+        val hostRow = HostRow.find { HostTable.id eq hostId }.firstOrNull()
+            ?: throw MissingResourceException("Missing Outlet", "SourceService", hostId.toString())
+        fetch.page?.junkParams?.let { hostRow.junkParams += it }
+        fetch.page?.hostName?.let { hostRow.name = it }
 
         // update or create source
-        val url = fetchInfo.source.url.toString()
+        val url = fetch.source.url.toString()
         val sourceRow = SourceRow.find { SourceTable.url.lowerCase() eq url.lowercase() }.firstOrNull()
-            ?: SourceRow.new { newFromData(fetchInfo.source, outletRow) }
+            ?: SourceRow.new { newFromData(fetch.source, hostRow) }
 
         // exit here if not news article
-        val document = fetchInfo.page
+        val document = fetch.page
         if (document == null || sourceRow.type != SourceType.ARTICLE)
             return@dbQuery sourceRow.id.value
 
@@ -38,8 +36,8 @@ class SourceService: DbService() {
         val authorRows = document.authors?.map { byLine ->
             val authorRows = AuthorRow.find { (stringParam(byLine) eq anyFrom(AuthorTable.bylines)) }
             authorRows.firstNotNullOfOrNull {
-                it.outlets.firstOrNull { it.id == outletRow.id }
-            } ?: AuthorRow.new { newFromData(Author(bylines = setOf(byLine)), outletRow) }
+                it.outlets.firstOrNull { it.id == hostRow.id }
+            } ?: AuthorRow.new { newFromData(Author(bylines = setOf(byLine)), hostRow) }
         }
 
         // create Content

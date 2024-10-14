@@ -13,8 +13,14 @@ fun String.decodeNewsArticle(): NewsArticle? {
 		is JsonObject -> {
 			val article = element.toNewsArticle()
 			if (article != null) return article
-			val graph = element["@graph"] as? JsonArray ?: return null
-			return graph.findType("NewsArticle", JsonObject::toNewsArticle)
+			element["@graph"]?.let {
+				when (it) {
+					is JsonObject -> return it.toNewsArticle()
+					is JsonArray -> return it.findType("NewsArticle", JsonObject::toNewsArticle)
+					else -> return null
+				}
+			}
+			return null
 		}
 		is JsonArray -> {
 			return element.findType("NewsArticle", JsonObject::toNewsArticle)

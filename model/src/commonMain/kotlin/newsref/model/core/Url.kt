@@ -5,15 +5,16 @@ open class Url internal constructor(
 	junkParams: Set<String>?,
 	disallowedPaths: Set<String>?,
 ) {
+	val apex: String
 	val scheme: String
-	val host: String
+	val domain: String
 	val path: String
 	val params: Map<String, String>
 	val fragment: String?
 	val isRobotAllowed: Boolean?
 	val href: String
 
-	val authority get() = "$scheme://$host"
+	val authority get() = "$scheme://$domain"
 	val length get() = toString().length
 
 	init {
@@ -27,7 +28,8 @@ open class Url internal constructor(
 
 		val (beforePath, afterPath) = afterScheme.deconstruct("/")
 		if (beforePath.contains('@')) throw IllegalArgumentException("URL contains user info: $rawHref")
-		host = beforePath
+		domain = beforePath
+		apex = beforePath.split(".").takeLast(2).joinToString(".")
 		val rawPath = afterPath?.let { "/$it" } ?: "/"
 
 		val (beforeParams, afterParams) = rawPath.deconstruct("?")
@@ -56,7 +58,14 @@ open class Url internal constructor(
 		return result
 	}
 
-	fun isSibling(other: Url) = path.split('/')[0].equals(other.path.split('/')[0], ignoreCase = true)
+	fun isMaybeSibling(other: Url): Boolean {
+		val split1 = path.split('/')
+		val root1 = split1.getOrNull(1) ?: return false
+		val split2 = other.path.split('/')
+		val root2 = split2.getOrNull(1) ?: return false
+		// first segment same length or both have 1 segment
+		return root1.length == root2.length || split1.size == 2 && split2.size == 2
+	}
 }
 
 internal fun <T: Url> tryParseUrl(block: () -> T): T? {
