@@ -65,7 +65,7 @@ internal fun ArticleRow.toData() = Article(
     modifiedAt = this.modifiedAt?.toInstant(UtcOffset.ZERO)
 )
 
-internal fun ArticleRow.newFromData(article: Article, sourceRow: SourceRow) {
+internal fun ArticleRow.fromData(article: Article, sourceRow: SourceRow) {
     source = sourceRow
     headline = article.headline
     description = article.description

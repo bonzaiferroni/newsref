@@ -18,7 +18,7 @@ internal object SourceTable : LongIdTable("source") {
     val hostId = reference("outlet_id", HostTable)
     val url = text("url")
     val leadTitle = text("lead_title").nullable()
-    val type = enumerationByName<SourceType>("source_type", 20)
+    val type = enumeration("source_type", SourceType::class).nullable()
     val attemptedAt = datetime("attempted_at")
 }
 
@@ -45,11 +45,11 @@ internal fun SourceRow.toData() = Source(
     attemptedAt = this.attemptedAt.toInstant(UtcOffset.ZERO)
 )
 
-internal fun SourceRow.newFromData(source: Source, hostRow: HostRow) {
+internal fun SourceRow.fromData(source: Source, hostRow: HostRow) {
     outlet = hostRow
     url = source.url.toString()
-    leadTitle = source.leadTitle
-    type = source.type
+    source.leadTitle?.let { leadTitle = it }
+    source.type?.let { type = it }
     attemptedAt = source.attemptedAt.toLocalDateTime(TimeZone.UTC)
 }
 

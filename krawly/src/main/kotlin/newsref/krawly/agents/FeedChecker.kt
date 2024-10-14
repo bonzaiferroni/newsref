@@ -7,8 +7,8 @@ import newsref.krawly.SpiderWeb
 import newsref.db.log.underline
 import newsref.krawly.utils.isLikelyAd
 import newsref.krawly.utils.tryGetHref
-import newsref.model.core.toCheckedUrl
 import newsref.model.core.toUrlOrNull
+import newsref.model.data.FeedJob
 import kotlin.time.Duration.Companion.minutes
 
 class FeedChecker(
@@ -50,7 +50,8 @@ class FeedChecker(
 				val url = href.toUrlOrNull() ?: continue
 				if (url.isLikelyAd()) continue
 				val (host, hostUrl) = hostAgent.getHost(url)
-				val newJob = leadMaker.makeLead(hostUrl, host, headline)
+				val job = FeedJob(feedId = feed.id, headline = headline)
+				val newJob = leadMaker.makeLead(hostUrl, host)
 				if (newJob != null) count++
 			}
 			console.logDebug("found $count feed leads from ${elements.size} elements")

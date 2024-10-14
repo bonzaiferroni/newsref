@@ -1,7 +1,6 @@
 package newsref.krawly.models
 
 import kotlinx.serialization.Serializable
-import newsref.krawly.serializers.*
 
 @Serializable
 data class NewsArticle(

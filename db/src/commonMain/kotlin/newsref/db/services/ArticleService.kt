@@ -1,7 +1,7 @@
 package newsref.db.services
 
 import newsref.db.DbService
-import newsref.model.dto.PageInfo
+import newsref.db.models.PageInfo
 
 class ArticleService() : DbService() {
 

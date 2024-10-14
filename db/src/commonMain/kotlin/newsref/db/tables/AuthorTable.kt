@@ -17,7 +17,7 @@ internal class AuthorRow(id: EntityID<Int>): IntEntity(id) {
 
     var bylines by AuthorTable.bylines
 
-    var outlets by HostRow via HostAuthorTable
+    var hosts by HostRow via HostAuthorTable
 }
 
 internal object HostAuthorTable : CompositeIdTable("outlet_author") {
@@ -31,7 +31,7 @@ internal fun AuthorRow.toData() = Author(
     bylines = this.bylines.toSet(),
 )
 
-internal fun AuthorRow.newFromData(author: Author, hostRow: HostRow) {
-    outlets = SizedCollection(hostRow)
+internal fun AuthorRow.fromData(author: Author, hostRow: HostRow) {
+    hosts = SizedCollection(hostRow)
     bylines = author.bylines.toList()
 }

@@ -3,6 +3,7 @@ package newsref.db.services
 import newsref.db.DbService
 import newsref.db.tables.*
 import newsref.model.core.CheckedUrl
+import newsref.model.data.FeedJob
 import newsref.model.data.Host
 import newsref.model.data.ResultType
 import org.jetbrains.exposed.sql.SqlExpressionBuilder.isNull
@@ -12,19 +13,14 @@ import kotlin.time.Duration
 class LeadService : DbService() {
 
     suspend fun getOpenLeads() = dbQuery {
-        LeadTable.leftJoin(LeadJobTable).leftJoin(LeadResultTable)
+        LeadTable.leftJoin(FeedJobTable).leftJoin(LeadResultTable)
             .select(leadInfoColumns + LeadResultTable.leadId.count())
             .where(LeadTable.targetId.isNull())
 			.groupBy(*leadInfoColumns.toTypedArray())
 			.wrapLeadInfo()
     }
 
-    suspend fun addSource(leadId: Long, sourceId: Long) = dbQuery {
-        val leadRow = LeadRow[leadId]
-        leadRow.target = SourceRow[sourceId]
-    }
-
-    suspend fun createIfFreshLead(url: CheckedUrl, host: Host) = dbQuery {
+    suspend fun createIfFreshLead(url: CheckedUrl, host: Host, feedJob: FeedJob?) = dbQuery {
         if (LeadRow.leadExists(url))
             throw IllegalArgumentException("Lead already exists: $url")
 
@@ -32,6 +28,11 @@ class LeadService : DbService() {
             ?: throw IllegalArgumentException("Host missing: ${url.domain}")
 
         val leadRow = LeadRow.new { this.url = url.toString(); this.host = hostRow }
+
+        feedJob?.let {
+            val feedRow = FeedRow[it.feedId]
+            FeedJobRow.new { fromData(feedJob, leadRow, feedRow) }
+        }
         leadRow.toData() // return
     }
 

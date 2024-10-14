@@ -7,15 +7,18 @@ import kotlinx.coroutines.launch
 import newsref.db.globalConsole
 import newsref.db.log.toCyan
 import newsref.db.services.LeadService
+import newsref.db.services.SourceService
 import newsref.krawly.SpiderWeb
+import java.awt.SystemColor.info
 import kotlin.time.Duration.Companion.seconds
 
 class LeadFollower(
 	private val web: SpiderWeb,
 	private val leadMaker: LeadMaker,
 	private val hostAgent: HostAgent,
-	private val sourceAgent: SourceAgent = SourceAgent(web, hostAgent),
-	private val leadService: LeadService = LeadService()
+	private val sourceReader: SourceReader = SourceReader(web, hostAgent),
+	private val leadService: LeadService = LeadService(),
+	private val sourceService: SourceService = SourceService(),
 ) {
 	private val console = globalConsole.getHandle("LeadFollower", true)
 
@@ -36,14 +39,17 @@ class LeadFollower(
 		console.logTrace("found ${jobs.size} jobs", leadCount)
 		val hosts = mutableSetOf<String>()
 		for (job in jobs) {
-			if (hosts.contains(job.url.domain)) { continue }
+			if (hosts.contains(job.url.domain)) {
+				continue
+			}
 			hosts.add(job.url.domain)
 
 			console.logInfo(job.url.toString().toCyan(), --leadCount)
 
-			val sourceInfo = sourceAgent.read(job)
+			val fetch = sourceReader.read(job)
+			sourceService.consume(fetch)
 
-			val count = leadMaker.makeLeads(sourceInfo)
+			val count = leadMaker.makeLeads(fetch)
 			console.logInfo("found $count new leads from ${job.url.domain}")
 		}
 	}

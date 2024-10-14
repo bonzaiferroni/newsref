@@ -1,16 +1,18 @@
-package newsref.model.dto
+package newsref.db.models
 
 import newsref.model.core.CheckedUrl
 import newsref.model.core.SourceType
 import newsref.model.data.Article
 import newsref.model.data.LeadInfo
+import newsref.model.data.ResultType
 import newsref.model.data.Source
 
 data class FetchInfo(
     val id: Long = 0,
     val source: Source,
 	val lead: LeadInfo,
-	val page: PageInfo?
+	val page: PageInfo?,
+	val resultType: ResultType
 )
 
 data class PageInfo(

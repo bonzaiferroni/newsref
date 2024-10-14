@@ -3,8 +3,8 @@ package newsref.krawly.utils
 import kotlinx.serialization.json.*
 import newsref.db.utils.jsonDecoder
 import newsref.krawly.models.Image
-import newsref.krawly.models.NewsAuthor
 import newsref.krawly.models.NewsArticle
+import newsref.krawly.models.NewsAuthor
 import newsref.krawly.models.Publisher
 
 fun String.decodeNewsArticle(): NewsArticle? {

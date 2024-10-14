@@ -3,7 +3,6 @@ package newsref.krawly.agents
 import kotlinx.datetime.Clock
 import newsref.db.globalConsole
 import newsref.db.services.LeadService
-import newsref.db.services.SourceService
 import newsref.db.utils.cacheResource
 import newsref.krawly.SpiderWeb
 import newsref.krawly.utils.WebResult
@@ -13,14 +12,14 @@ import newsref.model.core.Url
 import newsref.model.data.LeadInfo
 import newsref.model.data.ResultType
 import newsref.model.data.Source
-import newsref.model.dto.FetchInfo
+import newsref.db.models.FetchInfo
+import newsref.db.models.PageInfo
 import kotlin.time.Duration.Companion.days
 
-class SourceAgent(
+class SourceReader(
 	private val web: SpiderWeb,
 	private val hostAgent: HostAgent,
 	private val pageReader: PageReader = PageReader(hostAgent),
-	private val sourceService: SourceService = SourceService(),
 	private val leadService: LeadService = LeadService(),
 ) {
     private val console = globalConsole.getHandle("SourceAgent", true)
@@ -32,9 +31,10 @@ class SourceAgent(
         logResult(result, lead.url)
 
         val page = result?.let { pageReader.read(lead, it) }
+        val resultType = determineResultType(skipFetch, result, page)
 
         // parse strategies
-        val info = FetchInfo(
+        val fetch = FetchInfo(
             lead = lead,
             source = Source(
                 url = page?.pageUrl ?: lead.url,
@@ -43,15 +43,21 @@ class SourceAgent(
                 type = page?.type ?: SourceType.UNKNOWN
             ),
             page = page,
+            resultType = resultType
         )
-        console.logDebug("found SourceType ${info.source.type}")
-
-        val sourceId = sourceService.consume(info)                    //    SourceService ->
+        console.logDebug("found SourceType ${fetch.source.type}")
         // todo: if it is a news article, save a video of the endpoint
-        // leadService.addResult(lead.id, )
-        // leadService.addSource(job.leadId, sourceInfo.id)                    //    LeadService ->
 
-        return info.copy(id = sourceId)
+
+        return fetch
+    }
+
+    private fun determineResultType(skipFetch: Boolean, result: WebResult?, page: PageInfo?): ResultType {
+        if (skipFetch || result == null) return ResultType.SKIPPED
+        if (result.timeout) return ResultType.TIMEOUT
+        if (result.status in 400..499) return ResultType.UNAUTHORIZED
+        return if (page?.type == SourceType.ARTICLE) ResultType.RELEVANT
+        else ResultType.IRRELEVANT
     }
 
     private fun logResult(result: WebResult?, url: Url) {

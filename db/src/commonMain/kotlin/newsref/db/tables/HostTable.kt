@@ -51,7 +51,7 @@ internal fun HostRow.toData() = Host(
 	junkParams = this.junkParams.toSet(),
 )
 
-internal fun HostRow.newFromData(host: Host) {
+internal fun HostRow.fromData(host: Host) {
 	apex = host.apex
 	name = host.name
 	logo = host.logo

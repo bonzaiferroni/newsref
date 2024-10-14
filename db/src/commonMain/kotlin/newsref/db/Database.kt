@@ -28,7 +28,7 @@ val dbTables = listOf(
 	HostTable,
 	ArticleTable,
 	LeadTable,
-	LeadJobTable,
+	FeedJobTable,
 	LeadResultTable,
 	SourceContentTable,
 	ContentTable,

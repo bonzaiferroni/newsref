@@ -8,8 +8,8 @@ import newsref.db.utils.cacheResource
 import newsref.krawly.utils.*
 import newsref.model.core.*
 import newsref.model.data.*
-import newsref.model.dto.PageInfo
-import newsref.model.dto.LinkInfo
+import newsref.db.models.PageInfo
+import newsref.db.models.LinkInfo
 
 class PageReader(
 	private val hostAgent: HostAgent,

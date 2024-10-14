@@ -9,6 +9,6 @@ data class Source(
     val outletId: Int = 0,
     val url: CheckedUrl,
     val leadTitle: String? = null,
-    val type: SourceType = SourceType.UNKNOWN,
+    val type: SourceType? = null,
     val attemptedAt: Instant = Instant.DISTANT_PAST,
 )

@@ -1,6 +1,6 @@
 package newsref.krawly.utils
 
-import newsref.model.dto.PageInfo
+import newsref.db.models.PageInfo
 
 fun PageInfo.toMarkdown(): String {
     val contents = this.contents.joinToString("\n\n") { it }

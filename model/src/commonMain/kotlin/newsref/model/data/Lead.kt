@@ -4,23 +4,23 @@ import kotlinx.datetime.Instant
 import newsref.model.core.CheckedUrl
 
 data class Lead(
-    val id: Long,
-    val url: CheckedUrl,
-    val outletId: Int,
-    val targetId: Long? = null,
+	val id: Long = 0,
+	val url: CheckedUrl,
+	val hostId: Int = 0,
+	val targetId: Long? = null,
 )
 
 data class LeadResult(
     val id: Long = 0,
-    val leadId: Long,
+    val leadId: Long = 0,
     val result: ResultType,
     val attemptedAt: Instant,
 )
 
-data class LeadJob(
+data class FeedJob(
     val id: Long = 0,
-    val leadId: Long = 0,
-    val feedId: Int? = null,
+	val feedId: Int = 0,
+	val leadId: Long = 0,
     val headline: String? = null,
 )
 
@@ -36,6 +36,7 @@ data class LeadInfo(
 
 enum class ResultType {
     UNKNOWN,
+	SKIPPED,
     TIMEOUT,
     UNAUTHORIZED,
     BOT_DETECT,
