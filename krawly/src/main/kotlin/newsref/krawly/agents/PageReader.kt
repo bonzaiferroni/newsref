@@ -30,9 +30,10 @@ class PageReader(
 		console.logIfTrue("📜") { newsArticle != null }
 
 		val cannonHref = newsArticle?.url ?: doc.readCannonHref()
-		val cannonUrl = cannonHref?.toUrl()
+		val cannonUrl = cannonHref?.toUrlOrNull()
 
 		val contents = mutableSetOf<String>()
+		val linkHrefs = mutableSetOf<String>()
 		val links = mutableListOf<LinkInfo>()
 		// var newsArticle = this
 		var h1Title: String? = null
@@ -50,12 +51,16 @@ class PageReader(
 				wordCount += content.wordCount()
 				contents.add(content)
 				for ((text, href) in element.eachLink) {
+					if (linkHrefs.contains(href)) continue
+					linkHrefs.add(href)
+
 					val url = href.toUrlWithContextOrNull(pageUrl) ?: continue
 					if (url.isLikelyAd()) continue
 					if (url.isNotWebLink()) continue
+
 					val (linkHost, linkUrl) = hostAgent.getHost(url)
 					val isSibling = linkUrl.isMaybeSibling(pageUrl)
-					if (linkHost.apex == pageHost.apex && !isSibling) continue
+					if (linkHost.core == pageHost.core && !isSibling) continue
 					links.add(LinkInfo(url = linkUrl, anchorText = text, context = element.text))
 				}
 			}
@@ -72,7 +77,7 @@ class PageReader(
 		val sourceType = newsArticle?.let { SourceType.ARTICLE } ?: doc.readType() ?: SourceType.UNKNOWN
 		wordCount = newsArticle?.wordCount ?: wordCount
 		val externalLinkCount = links.count { link -> pageHost.domains.all { link.url.domain != it } }
-		val junkParams = cannonUrl?.takeIf { lead.url.apex == it.apex }
+		val junkParams = cannonUrl?.takeIf { lead.url.core == it.core }
 			?.let { lead.url.params.keys.toSet() - it.params.keys.toSet() }
 
 		junkParams?.takeIf { it.isNotEmpty() }?.let { console.logDebug("junk params: $junkParams") }

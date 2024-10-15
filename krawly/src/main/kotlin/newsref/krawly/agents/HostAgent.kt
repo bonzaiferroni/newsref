@@ -15,10 +15,10 @@ class HostAgent(
     private val console = globalConsole.getHandle("HostAgent")
 
     suspend fun getHost(url: Url): Pair<Host, CheckedUrl> {
-        val host = hostService.findByHost(url.domain) ?: return createHost(url)
+        val host = hostService.findByUrl(url) ?: return createHost(url)
         if (host.isRedirect == true) {
             val redirectUrl = fetchRedirectUrl(url)
-            if (redirectUrl != null && redirectUrl.apex != url.apex) {
+            if (redirectUrl != null && redirectUrl.core != url.core) {
                 return getHost(redirectUrl)
             }
         }
@@ -29,7 +29,8 @@ class HostAgent(
         console.logPartial(url.domain.toBlue())
 
         val redirectUrl = fetchRedirectUrl(url)
-        if (redirectUrl != null && redirectUrl.apex != url.apex) {
+        if (redirectUrl != null && redirectUrl.core != url.core) {
+            console.finishPartial("found redirect: \n${redirectUrl}")
             hostService.createHost(
                 url = url, robotsTxt = null, isRedirect = true, bannedPaths = emptySet()
             )
@@ -41,9 +42,9 @@ class HostAgent(
 
         val robotsTxt = result.let{ if (it.isSuccess()) it.doc?.text else null }
         val disallowed = robotsTxt?.let { parseRobotsTxt(it) } ?: emptySet()
-        console.logPartial("${disallowed.size} disallowed: ${disallowed.take(3)}")
+        console.finishPartial("${disallowed.size} disallowed: ${disallowed.take(3)}")
         val host = hostService.createHost(
-            url = url, robotsTxt = robotsTxt, isRedirect = true, bannedPaths = disallowed
+            url = url, robotsTxt = robotsTxt, isRedirect = false, bannedPaths = disallowed
         )
 
         return Pair(host, url.href.toCheckedUrl(host))

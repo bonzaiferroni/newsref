@@ -22,7 +22,7 @@ class LeadService : DbService() {
 
     suspend fun createIfFreshLead(url: CheckedUrl, host: Host, feedJob: FeedJob?) = dbQuery {
         if (LeadRow.leadExists(url))
-            throw IllegalArgumentException("Lead already exists: $url")
+            throw LeadExistsException(url)
 
         val hostRow = HostRow.findById(host.id)
             ?: throw IllegalArgumentException("Host missing: ${url.domain}")
@@ -36,18 +36,9 @@ class LeadService : DbService() {
         leadRow.toData() // return
     }
 
-    suspend fun addResult(leadId: Long, outletId: Int, result: ResultType) = dbQuery {
-//        LeadResultRow.new {
-//            lead = LeadRow[leadId]
-//            outlet = OutletRow[outletId]
-//            this.result = result
-//            attemptedAt = Clock.nowToLocalDateTimeUTC()
-//        }.toData()
-    }
-
-    suspend fun leadExists(checkedUrl: CheckedUrl) = dbQuery { LeadRow.leadExists(checkedUrl) }
-
     suspend fun getResultsByOutlet(outletId: Int, since: Duration) = dbQuery {
         LeadRow.getOutletResults(outletId, since)
     }
 }
+
+class LeadExistsException(url: CheckedUrl) : IllegalArgumentException("Lead already exists: $url")

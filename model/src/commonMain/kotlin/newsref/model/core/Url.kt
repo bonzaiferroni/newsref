@@ -5,7 +5,7 @@ open class Url internal constructor(
 	junkParams: Set<String>?,
 	disallowedPaths: Set<String>?,
 ) {
-	val apex: String
+	val core: String
 	val scheme: String
 	val domain: String
 	val path: String
@@ -29,7 +29,7 @@ open class Url internal constructor(
 		val (beforePath, afterPath) = afterScheme.deconstruct("/")
 		if (beforePath.contains('@')) throw IllegalArgumentException("URL contains user info: $rawHref")
 		domain = beforePath
-		apex = beforePath.split(".").takeLast(2).joinToString(".")
+		core = beforePath.removePrefix("www.")
 		val rawPath = afterPath?.let { "/$it" } ?: "/"
 
 		val (beforeParams, afterParams) = rawPath.deconstruct("?")

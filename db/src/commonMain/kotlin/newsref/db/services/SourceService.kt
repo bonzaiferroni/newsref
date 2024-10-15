@@ -23,8 +23,8 @@ class SourceService: DbService() {
         // find and update host
         val hostRow = HostRow.find { HostTable.id eq hostId }.firstOrNull()
             ?: throw MissingResourceException("Missing Outlet", "SourceService", hostId.toString())
-        if (hostRow.apex != fetch.source.url.apex)
-            throw IllegalArgumentException("mismatch apex: ${hostRow.apex} and ${fetch.source.url.apex}")
+        if (hostRow.core.lowercase() != fetch.source.url.core.lowercase())
+            throw IllegalArgumentException("mismatch core: ${hostRow.core} and ${fetch.source.url.core}")
         fetch.page?.junkParams?.let { hostRow.junkParams += it }
         fetch.page?.hostName?.let { hostRow.name = it }
 

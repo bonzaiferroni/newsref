@@ -63,18 +63,19 @@ fun pwFetchRedirect(url: Url, screenshot: Boolean = false): RedirectResult = use
         val requestOptions = RequestOptions.create().setMaxRedirects(0)
         val response = request.get(url.href, requestOptions)
         val headers = response.headers()
+        val status = response.status()
         RedirectResult(
-            status = response.status(),
-            redirectHref = headers["location"]
+            status = status,
+            redirectHref = headers["location"].takeIf { status == 301 }
         )
     }, {
         console.logError("Timeout: $url")
         RedirectResult(timeout = true)
     }, {
-        val message = it.message ?: "Unknown error"
-        message.fileLog("exceptions", "playwright")
-        // adventure mode throws these
-        console.logError("Unusual exception: $url\n$message")
+//        val message = it.message ?: "Unknown error"
+//        message.fileLog("exceptions", "playwright")
+//        // adventure mode throws these
+//        console.logError("Unusual exception: $url\n$message")
         RedirectResult()
     })
 }

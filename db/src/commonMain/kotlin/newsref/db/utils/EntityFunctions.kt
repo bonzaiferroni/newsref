@@ -28,3 +28,4 @@ fun <Id : Comparable<Id>, Ent : Entity<Id>> EntityClass<Id, Ent>.createOrUpdate(
 }
 
 fun Column<String>.sameAs(url: Url) = this.lowerCase() eq url.href.lowercase()
+fun Column<String>.sameAs(other: String) = this.lowerCase() eq other.lowercase()

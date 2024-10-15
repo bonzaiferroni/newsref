@@ -3,7 +3,7 @@ package newsref.db.log
 class LogHandle(
 	val name: String,
 	val showStatus: Boolean,
-	val console: LogConsole,
+	private val console: LogConsole,
 ) {
 	var status: String = ""
 	var level: LogLevel = LogLevel.INFO

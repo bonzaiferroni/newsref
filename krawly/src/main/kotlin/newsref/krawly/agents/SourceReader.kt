@@ -22,12 +22,12 @@ class SourceReader(
 	private val pageReader: PageReader = PageReader(hostAgent),
 	private val leadService: LeadService = LeadService(),
 ) {
-    private val console = globalConsole.getHandle("SourceAgent", true)
+    private val console = globalConsole.getHandle("SourceReader", true)
 
     suspend fun read(lead: LeadInfo): FetchInfo {
         val resultMap = leadService.getResultsByOutlet(lead.hostId, 1.days)
         val skipFetch = isExpectedFail(resultMap) && lead.url.isFile()
-        val result = if (skipFetch) { web.fetch(lead.url, true) } else { null }
+        val result = if (!skipFetch) { web.fetch(lead.url, true) } else { null }
         logResult(result, lead.url)
 
         val page = result?.let { pageReader.read(lead, it) }
@@ -47,7 +47,6 @@ class SourceReader(
         )
         console.logDebug("found SourceType ${fetch.source.type}")
         // todo: if it is a news article, save a video of the endpoint
-
 
         return fetch
     }

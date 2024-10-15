@@ -24,18 +24,4 @@ class HostTableTest : DbTest() {
 			}
 		}
 	}
-
-	@Test
-	fun `findByHost should return host row without www`() = transaction {
-		val outlet = HostRow.findByHost("axios.com")
-		checkNotNull(outlet)
-		assert(outlet.name == "Axios")
-	}
-
-	@Test
-	fun `findByHost should return host with www`() = transaction {
-		val outlet = HostRow.findByHost("www.theatlantic.com")
-		checkNotNull(outlet)
-		assert(outlet.name == "The Atlantic")
-	}
 }

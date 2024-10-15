@@ -11,14 +11,14 @@ import org.jetbrains.exposed.sql.or
 import org.jetbrains.exposed.sql.stringParam
 
 internal object HostTable : IntIdTable("host") {
-	val apex = text("apex")
+	val core = text("apex")
 	val name = text("name").nullable()
 	val logo = text("logo").nullable()
 	val robotsTxt = text("robots_txt").nullable()
 	val isRedirect = bool("is_redirect").nullable()
 	val disallowed = array<String>("disallowed")
 	val domains = array<String>("domains")
-	val junkParams = array<String>("url_params")
+	val junkParams = array<String>("junk_params")
 }
 
 internal class HostRow(id: EntityID<Int>) : IntEntity(id) {
@@ -26,7 +26,7 @@ internal class HostRow(id: EntityID<Int>) : IntEntity(id) {
 
 	var authors by AuthorRow via HostAuthorTable
 
-	var apex by HostTable.apex
+	var core by HostTable.core
 	var name by HostTable.name
 	var logo by HostTable.logo
 	var robotsTxt by HostTable.robotsTxt
@@ -41,28 +41,28 @@ internal class HostRow(id: EntityID<Int>) : IntEntity(id) {
 
 internal fun HostRow.toData() = Host(
 	id = this.id.value,
-	apex = this.apex,
+	core = this.core,
 	name = this.name,
 	logo = this.logo,
 	robotsTxt = this.robotsTxt,
 	isRedirect = this.isRedirect,
-	disallowed = this.bannedPaths.toSet(),
+	bannedPaths = this.bannedPaths.toSet(),
 	domains = this.domains.toSet(),
 	junkParams = this.junkParams.toSet(),
 )
 
 internal fun HostRow.fromData(host: Host) {
-	apex = host.apex
+	core = host.core
 	name = host.name
 	logo = host.logo
 	robotsTxt = host.robotsTxt
 	isRedirect = host.isRedirect
-	bannedPaths = host.disallowed.toList()
+	bannedPaths = host.bannedPaths.toList()
 	domains = host.domains.toList()
 	junkParams = host.junkParams.toList()
 }
 
-internal fun HostRow.Companion.findByHost(host: String): HostRow? {
+internal fun HostRow.Companion.findByDomain(host: String): HostRow? {
 	// Prepare host variants outside the query block
 	val queries = setOf(host, host.removePrefix("www."), "www.$host").map {
 		stringParam(it) eq anyFrom(HostTable.domains)

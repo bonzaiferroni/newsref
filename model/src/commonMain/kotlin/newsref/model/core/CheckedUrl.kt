@@ -30,12 +30,12 @@ fun String.toCheckedWithContextOrNull(
 	disallowedPaths: Set<String>?
 ) = tryParseUrl { this.toCheckedWithContext(context, junkParams, disallowedPaths) }
 
-fun String.toCheckedUrl(host: Host) = this.toCheckedUrl(host.junkParams, host.disallowed)
+fun String.toCheckedUrl(host: Host) = this.toCheckedUrl(host.junkParams, host.bannedPaths)
 
 fun String.toCheckedWithContext(host: Host, context: Url) =
-	this.toCheckedWithContext(context, host.junkParams, host.disallowed)
+	this.toCheckedWithContext(context, host.junkParams, host.bannedPaths)
 
-fun String.toCheckedOrNull(host: Host) = this.toCheckedOrNull(host.junkParams, host.disallowed)
+fun String.toCheckedOrNull(host: Host) = this.toCheckedOrNull(host.junkParams, host.bannedPaths)
 
 fun String.toCheckedWithContextOrNull(host: Host, context: Url) =
-	this.toCheckedWithContextOrNull(context, host.junkParams, host.disallowed)
+	this.toCheckedWithContextOrNull(context, host.junkParams, host.bannedPaths)
