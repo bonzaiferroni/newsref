@@ -5,6 +5,7 @@ import com.microsoft.playwright.options.RequestOptions
 import it.skrape.selects.Doc
 import newsref.db.globalConsole
 import newsref.db.utils.fileLog
+import newsref.krawly.HaltCrawlException
 import newsref.krawly.chromeLinuxAgent
 import newsref.model.core.Url
 
@@ -49,7 +50,7 @@ fun pwFetch(url: Url, screenshot: Boolean = false): WebResult = useChromiumPage 
         console.logError("Timeout: $url")
         WebResult(timeout = true)
     }, {
-        val message = it.message ?: "Unknown error"
+        val message = it.message?.take(100) ?: "Unknown error"
         message.fileLog("exceptions", "playwright")
         // adventure mode throws these
         console.logError("Unusual exception: $url\n$message")
@@ -57,7 +58,7 @@ fun pwFetch(url: Url, screenshot: Boolean = false): WebResult = useChromiumPage 
     })
 }
 
-fun pwFetchRedirect(url: Url, screenshot: Boolean = false): RedirectResult = useChromiumContext { context ->
+fun pwFetchRedirect(url: Url): RedirectResult = useChromiumContext { context ->
     tryNavigate({
         val request = context.request()
         val requestOptions = RequestOptions.create().setMaxRedirects(0)
@@ -72,10 +73,10 @@ fun pwFetchRedirect(url: Url, screenshot: Boolean = false): RedirectResult = use
         console.logError("Timeout: $url")
         RedirectResult(timeout = true)
     }, {
-//        val message = it.message ?: "Unknown error"
-//        message.fileLog("exceptions", "playwright")
-//        // adventure mode throws these
-//        console.logError("Unusual exception: $url\n$message")
+        val message = it.message?.take(100) ?: "Unknown error"
+        message.fileLog("exceptions", "playwright")
+        // adventure mode throws these
+        console.logError("Unusual exception: $url\n$message")
         RedirectResult()
     })
 }
@@ -114,6 +115,9 @@ private fun <T> tryNavigate(
             throw e
         }
     } catch (e: PlaywrightException) {
+        val message = e.message
+        if (message != null && message.contains("ERR_INTERNET_DISCONNECTED"))
+            throw HaltCrawlException("Internet disconnected")
         if (handleException != null) {
             handleException(e)
         } else {
