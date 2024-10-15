@@ -17,11 +17,12 @@ data class LeadResult(
     val attemptedAt: Instant,
 )
 
-data class FeedJob(
+data class LeadJob(
     val id: Long = 0,
-	val feedId: Int = 0,
 	val leadId: Long = 0,
-    val headline: String? = null,
+	val feedId: Int? = null,
+	val headline: String? = null,
+	val isExternal: Boolean
 )
 
 data class LeadInfo(
@@ -32,6 +33,7 @@ data class LeadInfo(
 	val feedHeadline: String?,
 	val attemptCount: Int,
 	val lastAttemptAt: Instant?,
+	val isExternal: Boolean
 )
 
 enum class ResultType {

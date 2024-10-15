@@ -17,6 +17,8 @@ fun initDb() {
 	transaction(db) {
 		// todo: add migration handling
 		SchemaUtils.create(*dbTables.toTypedArray())
+
+		// exec("CREATE INDEX IF NOT EXISTS idx_text_prefix ON content (SUBSTRING(text FROM 1 FOR 100))")
 	}
 }
 
@@ -28,7 +30,7 @@ val dbTables = listOf(
 	HostTable,
 	ArticleTable,
 	LeadTable,
-	FeedJobTable,
+	LeadJobTable,
 	LeadResultTable,
 	SourceContentTable,
 	ContentTable,

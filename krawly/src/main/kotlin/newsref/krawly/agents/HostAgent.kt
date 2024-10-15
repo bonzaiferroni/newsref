@@ -3,8 +3,6 @@ package newsref.krawly.agents
 import newsref.db.globalConsole
 import newsref.db.services.HostService
 import newsref.krawly.SpiderWeb
-import newsref.db.log.toBlue
-import newsref.krawly.utils.*
 import newsref.model.core.*
 import newsref.model.data.Host
 
@@ -26,25 +24,29 @@ class HostAgent(
     }
 
     private suspend fun createHost(url: Url): Pair<Host, CheckedUrl> {
-        console.logPartial(url.domain.toBlue())
+//        console.logPartial(url.domain.toBlue())
 
-        val redirectUrl = fetchRedirectUrl(url)
-        if (redirectUrl != null && redirectUrl.core != url.core) {
-            console.finishPartial("found redirect: \n${redirectUrl}")
-            hostService.createHost(
-                url = url, robotsTxt = null, isRedirect = true, bannedPaths = emptySet()
-            )
-            return createHost(redirectUrl)
-        }
+//        val redirectUrl = fetchRedirectUrl(url)
+//        if (redirectUrl != null && redirectUrl.core != url.core) {
+//            console.finishPartial("found redirect: \n${redirectUrl}")
+//            val host = hostService.findByUrl(url)
+//            if (host == null) {
+//                hostService.createHost(
+//                    url = url, robotsTxt = null, isRedirect = true, bannedPaths = emptySet()
+//                )
+//            }
+//            return createHost(redirectUrl)
+//        }
 
-        val robotsUrl = url.getRobotsTxtUrl()
-        val result = web.fetch(robotsUrl, false)
+//        val robotsUrl = url.getRobotsTxtUrl()
+//        val result = web.fetch(robotsUrl, false)
 
-        val robotsTxt = result.let{ if (it.isSuccess()) it.doc?.text else null }
-        val disallowed = robotsTxt?.let { parseRobotsTxt(it) } ?: emptySet()
-        console.finishPartial("${disallowed.size} disallowed: ${disallowed.take(3)}")
+//        val robotsTxt = result.let{ if (it.isSuccess()) it.doc?.text else null }
+//        val disallowed = robotsTxt?.let { parseRobotsTxt(it) } ?: emptySet()
+//        val everythingDisallowed = disallowed.contains("/")
+//        console.finishPartial("${disallowed.size} disallowed ${if (everythingDisallowed) "(everything)" else ""}")
         val host = hostService.createHost(
-            url = url, robotsTxt = robotsTxt, isRedirect = false, bannedPaths = disallowed
+            url = url, robotsTxt = null, isRedirect = false, bannedPaths = emptySet()
         )
 
         return Pair(host, url.href.toCheckedUrl(host))

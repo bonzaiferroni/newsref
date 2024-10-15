@@ -50,7 +50,7 @@ fun pwFetch(url: Url, screenshot: Boolean = false): WebResult = useChromiumPage 
         console.logError("Timeout: $url")
         WebResult(timeout = true)
     }, {
-        val message = it.message?.take(100) ?: "Unknown error"
+        val message = it.message?.take(200) ?: "Unknown error"
         message.fileLog("exceptions", "playwright")
         // adventure mode throws these
         console.logError("Unusual exception: $url\n$message")
@@ -73,7 +73,7 @@ fun pwFetchRedirect(url: Url): RedirectResult = useChromiumContext { context ->
         console.logError("Timeout: $url")
         RedirectResult(timeout = true)
     }, {
-        val message = it.message?.take(100) ?: "Unknown error"
+        val message = it.message?.take(200) ?: "Unknown error"
         message.fileLog("exceptions", "playwright")
         // adventure mode throws these
         console.logError("Unusual exception: $url\n$message")
@@ -116,8 +116,11 @@ private fun <T> tryNavigate(
         }
     } catch (e: PlaywrightException) {
         val message = e.message
-        if (message != null && message.contains("ERR_INTERNET_DISCONNECTED"))
-            throw HaltCrawlException("Internet disconnected")
+        if (message != null) {
+            if (message.contains("ERR_INTERNET_DISCONNECTED")) throw HaltCrawlException("Internet disconnected")
+            if (message.contains("Request timed out") && handleTimeout != null) return handleTimeout()
+        }
+
         if (handleException != null) {
             handleException(e)
         } else {

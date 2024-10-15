@@ -9,7 +9,6 @@ import newsref.db.log.toCyan
 import newsref.db.services.LeadService
 import newsref.db.services.SourceService
 import newsref.krawly.SpiderWeb
-import java.awt.SystemColor.info
 import kotlin.time.Duration.Companion.seconds
 
 class LeadFollower(
@@ -34,11 +33,16 @@ class LeadFollower(
 	}
 
 	private suspend fun checkLeads() {
-		val jobs = leadService.getOpenLeads()
-		var leadCount = jobs.size
-		console.logTrace("found ${jobs.size} jobs", leadCount)
+		val allLeads = leadService.getOpenLeads()
+		var leads = allLeads.filter { it.isExternal }
+		if (leads.isEmpty()) {
+			console.logInfo("No external leads available, following other leads")
+			leads = allLeads
+		}
+		var leadCount = leads.size
+		console.logTrace("found ${leads.size} jobs", leadCount)
 		val hosts = mutableSetOf<String>()
-		for (job in jobs) {
+		for (job in allLeads) {
 			if (hosts.contains(job.url.domain)) {
 				continue
 			}

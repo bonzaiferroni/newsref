@@ -28,8 +28,8 @@ open class Url internal constructor(
 
 		val (beforePath, afterPath) = afterScheme.deconstruct("/")
 		if (beforePath.contains('@')) throw IllegalArgumentException("URL contains user info: $rawHref")
-		domain = beforePath
-		core = beforePath.removePrefix("www.")
+		domain = beforePath.lowercase()
+		core = beforePath.removePrefix("www.").lowercase()
 		val rawPath = afterPath?.let { "/$it" } ?: "/"
 
 		val (beforeParams, afterParams) = rawPath.deconstruct("?")

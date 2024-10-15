@@ -10,7 +10,7 @@ import newsref.model.data.Host
 import newsref.db.models.FetchInfo
 import newsref.db.services.LeadExistsException
 import newsref.model.core.SourceType
-import newsref.model.data.FeedJob
+import newsref.model.data.LeadJob
 
 class LeadMaker(
 	val hostAgent: HostAgent,
@@ -18,9 +18,9 @@ class LeadMaker(
 ) {
 	private val console = globalConsole.getHandle("LeadMaker")
 
-	suspend fun makeLead(checkedUrl: CheckedUrl, host: Host, feedJob: FeedJob? = null): Lead? {
+	suspend fun makeLead(checkedUrl: CheckedUrl, host: Host, leadJob: LeadJob? = null): Lead? {
 		return try {
-			leadService.createIfFreshLead(checkedUrl, host, feedJob)
+			leadService.createIfFreshLead(checkedUrl, host, leadJob)
 		} catch(e: LeadExistsException) {
 			console.logTrace("lead exists: $checkedUrl")
 			null
@@ -39,7 +39,8 @@ class LeadMaker(
 		var leadCount = 0
 		for (link in links) {
 			val (host, checkedUrl) = hostAgent.getHost(link.url)
-			val lead = makeLead(checkedUrl, host)
+			val job = LeadJob(isExternal = true)
+			val lead = makeLead(checkedUrl, host, job)
 			if (lead != null) leadCount++
 		}
 		return leadCount

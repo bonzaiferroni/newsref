@@ -26,12 +26,16 @@ class SourceReader(
 
     suspend fun read(lead: LeadInfo): FetchInfo {
         val resultMap = leadService.getResultsByOutlet(lead.hostId, 1.days)
+        val relevantCount = resultMap.getResult(ResultType.RELEVANT)
+        val timeoutCount = resultMap.getResult(ResultType.TIMEOUT)
+        console.logInfo("relevant: $relevantCount timeout: $timeoutCount")
         val skipFetch = isExpectedFail(resultMap) && lead.url.isFile()
         val result = if (!skipFetch) { web.fetch(lead.url, true) } else { null }
-        logResult(result, lead.url)
 
         val page = result?.let { pageReader.read(lead, it) }
         val resultType = determineResultType(skipFetch, result, page)
+        if (resultType != ResultType.TIMEOUT && !skipFetch)
+            logResult(result, lead.url)
 
         // parse strategies
         val fetch = FetchInfo(

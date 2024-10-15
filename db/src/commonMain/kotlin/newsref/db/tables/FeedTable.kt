@@ -2,7 +2,7 @@ package newsref.db.tables
 
 import newsref.model.core.toUrl
 import newsref.model.data.Feed
-import newsref.model.data.FeedJob
+import newsref.model.data.LeadJob
 import org.jetbrains.exposed.dao.EntityClass
 import org.jetbrains.exposed.dao.IntEntity
 import org.jetbrains.exposed.dao.LongEntity
@@ -31,30 +31,4 @@ fun FeedRow.toData() = Feed(
 fun FeedRow.fromData(feed: Feed) {
     url = feed.url.toString()
     selector = feed.selector
-}
-
-internal object FeedJobTable: LongIdTable("lead_job") {
-    val feedId = reference("feed_id", FeedTable)
-    val leadId = reference("lead_id", LeadTable)
-    val headline = text("headline").nullable()
-}
-
-internal class FeedJobRow(id: EntityID<Long>): LongEntity(id) {
-    companion object: EntityClass<Long, FeedJobRow>(FeedJobTable)
-    var lead by LeadRow referencedOn FeedJobTable.leadId
-    var feed by FeedRow referencedOn FeedJobTable.feedId
-    var headline by FeedJobTable.headline
-}
-
-internal fun FeedJobRow.toData() = FeedJob(
-    id = this.id.value,
-    leadId = this.lead.id.value,
-    feedId = this.feed.id.value,
-    headline = this.headline,
-)
-
-internal fun FeedJobRow.fromData(feedJob: FeedJob, leadRow: LeadRow, feedRow: FeedRow) {
-    lead = leadRow
-    feed = feedRow
-    headline = feedJob.headline
 }

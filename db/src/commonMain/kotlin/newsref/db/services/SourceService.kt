@@ -90,7 +90,7 @@ class SourceService: DbService() {
             val existingSource = existingLeadRow?.target?.let { SourceRow[it.id] }
 
             // update or create links
-            val link = Link(url = info.url, text = info.anchorText)
+            val link = Link(url = info.url, text = info.anchorText, isExternal = info.isExternal)
             val contentRow = contentRows.first { it.text == info.context }
             val linkRow = LinkRow.find { (LinkTable.url.sameAs(info.url)) and
                     (LinkTable.urlText eq info.anchorText) and (LinkTable.sourceId eq sourceRow.id) }.firstOrNull()

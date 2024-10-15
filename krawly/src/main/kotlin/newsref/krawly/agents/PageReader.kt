@@ -10,6 +10,7 @@ import newsref.model.core.*
 import newsref.model.data.*
 import newsref.db.models.PageInfo
 import newsref.db.models.LinkInfo
+import kotlin.system.measureTimeMillis
 
 class PageReader(
 	private val hostAgent: HostAgent,
@@ -38,30 +39,40 @@ class PageReader(
 		// var newsArticle = this
 		var h1Title: String? = null
 		var wordCount = 0
-		for (element in doc.allElements) {
-			if (element.isLinkContent()) continue
-			if (element.isHeading()) {
-				if (h1Title == null && element.tagName == "h1") {
-					h1Title = element.text
+
+		val timeTaken = measureTimeMillis {
+			for (element in doc.allElements) {
+				if (element.isLinkContent()) continue
+				if (element.isHeading()) {
+					if (h1Title == null && element.tagName == "h1") {
+						h1Title = element.text
+					}
 				}
-			}
-			if (element.isContent()) {
-				val content = element.text
-				if (!contentService.isFresh(content)) continue
-				wordCount += content.wordCount()
-				contents.add(content)
-				for ((text, href) in element.eachLink) {
-					if (linkHrefs.contains(href)) continue
-					linkHrefs.add(href)
+				if (element.isContent()) {
+					val content = element.text
+					if (!contentService.isFresh(content)) continue
+					wordCount += content.wordCount()
+					contents.add(content)
+					for ((text, href) in element.eachLink) {
+						if (linkHrefs.contains(href)) continue
+						linkHrefs.add(href)
 
-					val url = href.toUrlWithContextOrNull(pageUrl) ?: continue
-					if (url.isLikelyAd()) continue
-					if (url.isNotWebLink()) continue
+						val url = href.toUrlWithContextOrNull(pageUrl) ?: continue
+						if (url.isLikelyAd()) continue
+						if (url.isNotWebLink()) continue
 
-					val (linkHost, linkUrl) = hostAgent.getHost(url)
-					val isSibling = linkUrl.isMaybeSibling(pageUrl)
-					if (linkHost.core == pageHost.core && !isSibling) continue
-					links.add(LinkInfo(url = linkUrl, anchorText = text, context = element.text))
+						val (linkHost, linkUrl) = hostAgent.getHost(url)
+						val isSibling = linkUrl.isMaybeSibling(pageUrl)
+						val isExternal = linkHost.core != pageHost.core
+						if (!isExternal && !isSibling) continue
+						val info = LinkInfo(
+							url = linkUrl,
+							anchorText = text,
+							context = element.text,
+							isExternal = !isExternal
+						)
+						links.add(info)
+					}
 				}
 			}
 		}
@@ -90,6 +101,7 @@ class PageReader(
 		console.logIfTrue("${wordCount.toString().toCyan()} words", 9)
 		console.logIfTrue("${links.size.toString().toCyan()} links", 9)
 		console.logIfTrue("${externalLinkCount.toString().toCyan()} ext", 9)
+		console.logIfTrue("${(timeTaken / 1000)} s")
 
 		if (sourceType == SourceType.ARTICLE) articleCount++
 		docCount++

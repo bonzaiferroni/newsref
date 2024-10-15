@@ -31,4 +31,5 @@ data class LinkInfo(
     val url: CheckedUrl,
     val anchorText: String,
     val context: String,
+	val isExternal: Boolean,
 )

@@ -20,13 +20,6 @@ internal object LeadTable: LongIdTable("lead") {
     val targetId = reference("target_id", SourceTable).nullable()
 }
 
-internal object LeadResultTable : LongIdTable("lead_result") {
-    val leadId = reference("lead_id", LeadTable)
-    val result = enumeration("result", ResultType::class)
-    val attemptedAt = datetime("attempted_at")
-    val resultCount = result.count().castTo(IntegerColumnType())
-}
-
 internal class LeadRow(id: EntityID<Long>): LongEntity(id) {
     companion object: EntityClass<Long, LeadRow>(LeadTable)
     var host by HostRow referencedOn LeadTable.hostId
@@ -36,34 +29,6 @@ internal class LeadRow(id: EntityID<Long>): LongEntity(id) {
     val results by LeadResultRow referrersOn LeadResultTable.leadId
 }
 
-internal class LeadResultRow(id: EntityID<Long>) : LongEntity(id) {
-    companion object : EntityClass<Long, LeadResultRow>(LeadResultTable)
-    var lead by LeadRow referencedOn LeadResultTable.leadId
-    var result by LeadResultTable.result
-    var attemptedAt by LeadResultTable.attemptedAt
-}
-
-internal val leadInfoColumns = listOf(
-    LeadTable.id,
-    LeadTable.url,
-    LeadTable.targetId,
-    LeadTable.hostId,
-    FeedJobTable.headline, // attemptCount
-    // LeadResultTable.leadId.count()
-)
-
-internal fun Query.wrapLeadInfo() = this.map { row ->
-    LeadInfo(
-        id = row[LeadTable.id].value,
-        url = row[LeadTable.url].toCheckedFromDb(),
-        targetId = row[LeadTable.targetId]?.value,
-        hostId = row[LeadTable.hostId].value, // Use getOrNull for nullable values
-        feedHeadline = row.getOrNull(FeedJobTable.headline),       // Safely get the headline
-        attemptCount = row[LeadResultTable.leadId.count()].toInt(), // count() usually returns 0 for nulls, but verify
-        lastAttemptAt = row.getOrNull(LeadResultTable.attemptedAt)?.toInstant(UtcOffset.ZERO) // Handle nullable datetime
-    )
-}
-
 internal fun LeadRow.toData() = Lead(
     id = this.id.value,
     hostId = this.host.id.value,
@@ -71,23 +36,10 @@ internal fun LeadRow.toData() = Lead(
     url = this.url.toCheckedFromDb(),
 )
 
-internal fun LeadResultRow.toData() = LeadResult(
-    id = this.id.value,
-    leadId = this.lead.id.value,
-    result = this.result,
-    attemptedAt = this.attemptedAt.toInstant(UtcOffset.ZERO)
-)
-
 internal fun LeadRow.fromData(lead: Lead, hostRow: HostRow, sourceRow: SourceRow? = null) {
     host = hostRow
     target = sourceRow
     url = lead.url.toString()
-}
-
-internal fun LeadResultRow.fromData(leadResult: LeadResult, leadRow: LeadRow) {
-    lead = leadRow
-    result = leadResult.result
-    attemptedAt = leadResult.attemptedAt.toLocalDateTimeUTC()
 }
 
 internal fun LeadRow.Companion.leadExists(checkedUrl: CheckedUrl): Boolean {
@@ -106,4 +58,87 @@ internal fun LeadRow.Companion.getOutletResults(outletId: Int, since: Duration):
     }.groupBy(LeadResultTable.result).associate { resultRow ->
         resultRow[LeadResultTable.result] to resultRow[LeadResultTable.resultCount]
     }
+}
+
+// lead result
+internal object LeadResultTable : LongIdTable("lead_result") {
+    val leadId = reference("lead_id", LeadTable)
+    val result = enumeration("result", ResultType::class)
+    val attemptedAt = datetime("attempted_at")
+    val resultCount = result.count().castTo(IntegerColumnType())
+}
+
+internal class LeadResultRow(id: EntityID<Long>) : LongEntity(id) {
+    companion object : EntityClass<Long, LeadResultRow>(LeadResultTable)
+    var lead by LeadRow referencedOn LeadResultTable.leadId
+    var result by LeadResultTable.result
+    var attemptedAt by LeadResultTable.attemptedAt
+}
+
+internal fun LeadResultRow.toData() = LeadResult(
+    id = this.id.value,
+    leadId = this.lead.id.value,
+    result = this.result,
+    attemptedAt = this.attemptedAt.toInstant(UtcOffset.ZERO)
+)
+
+internal fun LeadResultRow.fromData(leadResult: LeadResult, leadRow: LeadRow) {
+    lead = leadRow
+    result = leadResult.result
+    attemptedAt = leadResult.attemptedAt.toLocalDateTimeUTC()
+}
+
+// lead job
+internal object LeadJobTable: LongIdTable("lead_job") {
+    val feedId = reference("feed_id", FeedTable).nullable()
+    val leadId = reference("lead_id", LeadTable)
+    val headline = text("headline").nullable()
+    val isExternal = bool("is_external")
+}
+
+internal class LeadJobRow(id: EntityID<Long>): LongEntity(id) {
+    companion object: EntityClass<Long, LeadJobRow>(LeadJobTable)
+    var lead by LeadRow referencedOn LeadJobTable.leadId
+    var feed by FeedRow optionalReferencedOn LeadJobTable.feedId
+    var headline by LeadJobTable.headline
+    var isExternal by LeadJobTable.isExternal
+}
+
+internal fun LeadJobRow.toData() = LeadJob(
+    id = this.id.value,
+    leadId = this.lead.id.value,
+    feedId = this.feed?.id?.value,
+    headline = this.headline,
+    isExternal = this.isExternal
+)
+
+internal fun LeadJobRow.fromData(leadJob: LeadJob, leadRow: LeadRow, feedRow: FeedRow?) {
+    lead = leadRow
+    feed = feedRow
+    headline = leadJob.headline
+    isExternal = leadJob.isExternal
+}
+
+// lead info
+internal val leadInfoColumns = listOf(
+    LeadTable.id,
+    LeadTable.url,
+    LeadTable.targetId,
+    LeadTable.hostId,
+    LeadJobTable.headline, // attemptCount
+    LeadJobTable.isExternal
+    // LeadResultTable.leadId.count()
+)
+
+internal fun Query.wrapLeadInfo() = this.map { row ->
+    LeadInfo(
+        id = row[LeadTable.id].value,
+        url = row[LeadTable.url].toCheckedFromDb(),
+        targetId = row[LeadTable.targetId]?.value,
+        hostId = row[LeadTable.hostId].value,
+        feedHeadline = row.getOrNull(LeadJobTable.headline),
+        attemptCount = row[LeadResultTable.leadId.count()].toInt(),
+        lastAttemptAt = row.getOrNull(LeadResultTable.attemptedAt)?.toInstant(UtcOffset.ZERO),
+        isExternal = row[LeadJobTable.isExternal]
+    )
 }

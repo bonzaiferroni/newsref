@@ -13,6 +13,7 @@ internal object LinkTable: LongIdTable("link") {
     val contentId = reference("content_id", ContentTable)
     val url = text("url")
     val urlText = text("url_text")
+    val isExternal = bool("is_external")
 }
 
 internal class LinkRow(id: EntityID<Long>): LongEntity(id) {
@@ -24,6 +25,7 @@ internal class LinkRow(id: EntityID<Long>): LongEntity(id) {
 
     var url by LinkTable.url
     var urlText by LinkTable.urlText
+    var isExternal by LinkTable.isExternal
 }
 
 internal fun LinkRow.toData() = Link(
@@ -33,6 +35,7 @@ internal fun LinkRow.toData() = Link(
     contentId = this.content.id.value,
     url = this.url.toCheckedFromDb(),
     text = this.urlText,
+    isExternal = this.isExternal
 )
 
 internal fun LinkRow.fromData(data: Link, sourceRow: SourceRow, contentRow: ContentRow, targetRow: SourceRow?) {
@@ -41,4 +44,5 @@ internal fun LinkRow.fromData(data: Link, sourceRow: SourceRow, contentRow: Cont
     targetRow?.let { target = it }
     url = data.url.toString()
     urlText = data.text
+    isExternal = data.isExternal
 }

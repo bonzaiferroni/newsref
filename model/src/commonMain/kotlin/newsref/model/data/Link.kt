@@ -9,4 +9,5 @@ data class Link(
     val targetId: Long? = null,
     val url: CheckedUrl,
     val text: String,
+    val isExternal: Boolean,
 )
