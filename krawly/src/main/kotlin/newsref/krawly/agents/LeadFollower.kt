@@ -8,10 +8,14 @@ import kotlinx.datetime.Clock
 import kotlinx.datetime.Instant
 import newsref.db.globalConsole
 import newsref.db.log.toCyan
+import newsref.db.log.toPink
 import newsref.db.services.LeadService
 import newsref.db.services.SourceService
 import newsref.krawly.SpiderWeb
 import newsref.model.data.LeadInfo
+import kotlin.time.Duration
+import kotlin.time.Duration.Companion.days
+import kotlin.time.Duration.Companion.minutes
 import kotlin.time.Duration.Companion.seconds
 
 class LeadFollower(
@@ -20,7 +24,7 @@ class LeadFollower(
 	private val leadService: LeadService = LeadService(),
 	private val sourceService: SourceService = SourceService(),
 	private val leadMaker: LeadMaker = LeadMaker(hostAgent),
-	private val maxSpiders: Int = 10,
+	private val maxSpiders: Int = 3,
 ) {
 	private val console = globalConsole.getHandle("LeadFollower", true)
 
@@ -36,16 +40,17 @@ class LeadFollower(
 	}
 
 	private suspend fun checkLeads() {
-		val allLeads = leadService.getOpenLeads().shuffled()
+		val (freshSince, allLeads) = leadService.getOpenLeads().shuffled().filterByTimeStep()
 		val stack = ArrayDeque(allLeads.filter { it.isExternal })
 		if (stack.isEmpty()) {
 			console.logInfo("No external leads available, following other leads")
 			stack.addAll(allLeads)
 		}
 		var leadCount = stack.size
-		console.logTrace("found ${stack.size} jobs", leadCount)
+		console.logInfo("found ${stack.size} jobs, fresh since: $freshSince".toPink(), leadCount)
 		val hosts = mutableMapOf<String, Instant>()
 		val spiders = ArrayDeque((0 until maxSpiders).map { Spider(it) })
+		val started = Clock.System.now()
 		while (!stack.isEmpty()) {
 			delay(100)
 			val lead = stack.removeFirstOrNull() ?: break
@@ -54,13 +59,16 @@ class LeadFollower(
 			if (lastAttempt != null && now - lastAttempt < 30.seconds) {
 				if (stack.all { it.url.domain == lead.url.domain }) break
 				stack.addLast(lead)
+				console.status = "😇".padStart(leadCount.toString().length)
 				continue
 			}
 			hosts[lead.url.domain] = now
 
 			while (spiders.isEmpty()) {
+				console.status = "😪".padStart(leadCount.toString().length)
 				delay(1.seconds)
 			}
+			console.status = leadCount.toString().toCyan()
 
 			console.status = (--leadCount).toString()
 			val spider = spiders.removeFirst()
@@ -71,9 +79,16 @@ class LeadFollower(
 				sourceService.consume(fetch)
 
 				val count = leadMaker.makeLeads(fetch)
-				spider.console.logInfo("found $count new leads from ${lead.url.domain}")
+				// spider.console.logInfo("found $count new leads from ${lead.url.domain}")
 				spiders.add(spider)
 			}
+
+			if (now - started > 10.minutes) break
+		}
+
+		while (spiders.size < maxSpiders) {
+			console.status = "🥱"
+			delay(1.seconds)
 		}
 	}
 
@@ -90,3 +105,14 @@ class LeadFollower(
 		}
 	}
 }
+
+private fun List<LeadInfo>.filterByTimeStep() = this.takeIf { this.size < 1000 }?.let{ Pair(Duration.INFINITE, it) }
+	?: this.filterSince(1.days)
+	?: this.filterSince(7.days)
+	?: this.filterSince(30.days)
+	?: this.filterSince(365.days)
+	?: Pair(Duration.INFINITE, this)
+
+private fun List<LeadInfo>.filterSince(duration: Duration) =
+	this.filter { it.freshAt != null && Clock.System.now() - it.freshAt!! < duration }.takeIf { it.size > 100 }
+		?.let { Pair(duration, it) }

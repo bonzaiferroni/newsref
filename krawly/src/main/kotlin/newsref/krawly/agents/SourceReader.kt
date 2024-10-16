@@ -2,6 +2,7 @@ package newsref.krawly.agents
 
 import kotlinx.datetime.Clock
 import newsref.db.globalConsole
+import newsref.db.log.Justify
 import newsref.db.services.LeadService
 import newsref.db.utils.cacheResource
 import newsref.krawly.SpiderWeb
@@ -31,8 +32,9 @@ class SourceReader(
         val resultMap = leadService.getResultsByOutlet(lead.hostId, 1.hours)
         val relevantCount = resultMap.getResult(ResultType.RELEVANT)
         val timeoutCount = resultMap.getResult(ResultType.TIMEOUT)
-        console.logInfo("relevant: $relevantCount timeout: $timeoutCount")
         val skipFetch = isExpectedFail(resultMap) || lead.url.isFile()
+        console.cell(lead.url.domain, 29, Justify.LEFT).cell("relevant $relevantCount", 9)
+            .cell("timeout $timeoutCount", 9).cell("🐛") { !skipFetch }.row()
         val result = if (!skipFetch) { web.fetch(lead.url, true) } else { null }
 
         val page = result?.let { pageReader.read(lead, it) }
@@ -52,7 +54,6 @@ class SourceReader(
             page = page,
             resultType = resultType
         )
-        console.logDebug("found SourceType ${fetch.source.type}")
         // todo: if it is a news article, save a video of the endpoint
 
         if (page != null) {
@@ -85,7 +86,7 @@ class SourceReader(
         val accessCount = resultMap.getResult(ResultType.RELEVANT) + resultMap.getResult(ResultType.IRRELEVANT)
         if (accessCount > 0) return false
         if (resultMap.getResult(ResultType.BOT_DETECT) > 0) return true
-        return resultMap.getResult(ResultType.TIMEOUT) < 5
+        return resultMap.getResult(ResultType.TIMEOUT) > 5
     }
 }
 

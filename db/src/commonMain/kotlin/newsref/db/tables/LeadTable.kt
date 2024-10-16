@@ -94,6 +94,7 @@ internal object LeadJobTable: LongIdTable("lead_job") {
     val leadId = reference("lead_id", LeadTable)
     val headline = text("headline").nullable()
     val isExternal = bool("is_external")
+    val freshAt = datetime("fresh_at").nullable()
 }
 
 internal class LeadJobRow(id: EntityID<Long>): LongEntity(id) {
@@ -102,6 +103,7 @@ internal class LeadJobRow(id: EntityID<Long>): LongEntity(id) {
     var feed by FeedRow optionalReferencedOn LeadJobTable.feedId
     var headline by LeadJobTable.headline
     var isExternal by LeadJobTable.isExternal
+    var freshAt by LeadJobTable.freshAt
 }
 
 internal fun LeadJobRow.toData() = LeadJob(
@@ -109,7 +111,8 @@ internal fun LeadJobRow.toData() = LeadJob(
     leadId = this.lead.id.value,
     feedId = this.feed?.id?.value,
     headline = this.headline,
-    isExternal = this.isExternal
+    isExternal = this.isExternal,
+    freshAt = this.freshAt?.toInstant(UtcOffset.ZERO)
 )
 
 internal fun LeadJobRow.fromData(leadJob: LeadJob, leadRow: LeadRow, feedRow: FeedRow?) {
@@ -117,6 +120,7 @@ internal fun LeadJobRow.fromData(leadJob: LeadJob, leadRow: LeadRow, feedRow: Fe
     feed = feedRow
     headline = leadJob.headline
     isExternal = leadJob.isExternal
+    freshAt = leadJob.freshAt?.toLocalDateTimeUTC()
 }
 
 // lead info
@@ -125,8 +129,9 @@ internal val leadInfoColumns = listOf(
     LeadTable.url,
     LeadTable.targetId,
     LeadTable.hostId,
-    LeadJobTable.headline, // attemptCount
-    LeadJobTable.isExternal
+    LeadJobTable.headline,
+    LeadJobTable.isExternal,
+    LeadJobTable.freshAt,
     // LeadResultTable.leadId.count()
 )
 
@@ -139,6 +144,7 @@ internal fun Query.wrapLeadInfo() = this.map { row ->
         feedHeadline = row.getOrNull(LeadJobTable.headline),
         attemptCount = row[LeadResultTable.leadId.count()].toInt(),
         lastAttemptAt = row.getOrNull(LeadResultTable.attemptedAt)?.toInstant(UtcOffset.ZERO),
-        isExternal = row[LeadJobTable.isExternal]
+        isExternal = row[LeadJobTable.isExternal],
+        freshAt = row.getOrNull(LeadJobTable.freshAt)?.toInstant(UtcOffset.ZERO)
     )
 }

@@ -21,13 +21,25 @@ class LogHandle(
 		if (refresh) console.refreshLog()
 	}
 
-	fun logIfTrue(emoji: String, width: Int? = null, block: (() -> Boolean)? = null) {
+	fun cell(
+		emoji: String,
+		width: Int? = null,
+		justify: Justify = Justify.RIGHT,
+		block: (() -> Boolean)? = null
+	): LogHandle {
 		val partialMsg = if (block == null || block()) emoji else "💢"
-		val paddedMsg = width?.let { partialMsg.padStart(it).take(it) } ?: partialMsg
+		val paddedMsg = width?.let {
+			if (justify == Justify.RIGHT) {
+				partialMsg.padStart(it).takeLast(it)
+			} else {
+				partialMsg.padEnd(it).take(it)
+			}
+		} ?: partialMsg
 		logPartial(paddedMsg)
+		return this
 	}
 
-	fun finishPartial(message: String = "", level: LogLevel = LogLevel.INFO) {
+	fun row(message: String = "", level: LogLevel = LogLevel.INFO) {
 		logPartial(message)
 		val line = partialLine.build()
 		console.log(name, level, line)
@@ -39,3 +51,5 @@ class LogHandle(
 	fun logWarning(message: String, status: Any? = null) = log(message, status, LogLevel.WARNING)
 	fun logError(message: String, status: Any? = null) = log(message, status, LogLevel.ERROR)
 }
+
+enum class Justify {LEFT, RIGHT}

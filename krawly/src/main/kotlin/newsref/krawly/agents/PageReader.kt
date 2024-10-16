@@ -30,7 +30,7 @@ class PageReader(
 		val (pageHost, pageHostUrl) = pageUrl.let { hostAgent.getHost(it) }
 
 		val newsArticle = doc.getNewsArticle(pageUrl)
-		console.logIfTrue("📜") { newsArticle != null }
+		console.cell("📜") { newsArticle != null }
 
 		val cannonHref = newsArticle?.url ?: doc.readCannonHref()
 		val cannonUrl = cannonHref?.toUrlOrNull()
@@ -122,20 +122,17 @@ class PageReader(
 
 		junkParams?.takeIf { it.isNotEmpty() }?.let { console.logDebug("junk params: $junkParams") }
 
-		console.logIfTrue("🖼️") { imageUrl != null }
-		console.logIfTrue("📝") { description != null }
-		console.logIfTrue("📅") { publishedAt != null }
-		console.logIfTrue("🦦") { authors != null }
-		console.logIfTrue("$articleType", 4)
-		console.logIfTrue("$wordCount words", 9)
-		console.logIfTrue("$externalLinkCount/${links.size} links", 9)
-		console.logIfTrue("${(timeTaken / 1000)} s", 4)
+		console.cell("🌆") { imageUrl != null }.cell("📝") { description != null }
+			.cell("📅") { publishedAt != null }.cell("🦦") { authors != null }
+			.cell("$articleType", 4).cell("words $wordCount", 9)
+			.cell("links $externalLinkCount/${links.size}", 9)
+			//.cell("${(timeTaken / 1000)} s", 4)
+			.cell(sourceType.getEmoji())
+			.row()
 
 		if (sourceType == SourceType.ARTICLE) articleCount++
 		docCount++
 		console.status = "$articleCount/$docCount"
-
-		console.finishPartial()
 
 		val page = PageInfo(
 			pageUrl = pageHostUrl,
@@ -193,3 +190,12 @@ private val notParentTags = setOf(
 	"script", "style", "link", "meta", "svg", "embed"
 )
 private val lassoTags = setOf("body", "main", "article")
+
+private fun SourceType.getEmoji() = when (this) {
+	SourceType.ARTICLE -> "📜"
+	SourceType.WEBSITE -> "💾"
+	SourceType.IMAGE -> "🌆"
+	SourceType.BLOG_POST -> "📝"
+	SourceType.VIDEO -> "📼"
+	else -> "🧀"
+}

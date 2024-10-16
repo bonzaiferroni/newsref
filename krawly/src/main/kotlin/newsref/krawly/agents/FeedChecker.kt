@@ -1,6 +1,7 @@
 package newsref.krawly.agents
 
 import kotlinx.coroutines.*
+import kotlinx.datetime.Clock
 import newsref.db.globalConsole
 import newsref.db.services.FeedService
 import newsref.krawly.SpiderWeb
@@ -50,7 +51,12 @@ class FeedChecker(
 				val url = href.toUrlOrNull() ?: continue
 				if (url.isLikelyAd()) continue
 				val (host, hostUrl) = hostAgent.getHost(url)
-				val job = LeadJob(feedId = feed.id, headline = headline, isExternal = true)
+				val job = LeadJob(
+					feedId = feed.id,
+					headline = headline,
+					isExternal = true,
+					freshAt = Clock.System.now()
+				)
 				val newJob = leadMaker.makeLead(hostUrl, host, job)
 				if (newJob != null) count++
 			}

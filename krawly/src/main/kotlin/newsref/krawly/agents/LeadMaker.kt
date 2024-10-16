@@ -34,13 +34,13 @@ class LeadMaker(
 		}
 	}
 
-	suspend fun makeLeads(fetchInfo: FetchInfo): Int {
-		if (fetchInfo.source.type != SourceType.ARTICLE || fetchInfo.page?.articleType != ArticleType.NEWS) return 0
-		val links = fetchInfo.page?.links ?: return 0
+	suspend fun makeLeads(fetch: FetchInfo): Int {
+		if (fetch.source.type != SourceType.ARTICLE || fetch.page?.articleType != ArticleType.NEWS) return 0
+		val links = fetch.page?.links ?: return 0
 		var leadCount = 0
 		for (link in links) {
 			val (host, checkedUrl) = hostAgent.getHost(link.url)
-			val job = LeadJob(isExternal = true)
+			val job = LeadJob(isExternal = true, freshAt = fetch.page?.article?.publishedAt)
 			val lead = makeLead(checkedUrl, host, job)
 			if (lead != null) leadCount++
 		}
