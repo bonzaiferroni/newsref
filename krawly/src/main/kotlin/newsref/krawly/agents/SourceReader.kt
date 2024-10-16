@@ -14,6 +14,7 @@ import newsref.model.data.ResultType
 import newsref.model.data.Source
 import newsref.db.models.FetchInfo
 import newsref.db.models.PageInfo
+import newsref.krawly.utils.toMarkdown
 import kotlin.time.Duration.Companion.days
 
 class SourceReader(
@@ -52,6 +53,11 @@ class SourceReader(
         console.logDebug("found SourceType ${fetch.source.type}")
         // todo: if it is a news article, save a video of the endpoint
 
+        if (page != null) {
+            val md = fetch.toMarkdown()
+            md?.cacheResource(page.pageUrl.domain, "md")
+        }
+
         return fetch
     }
 
@@ -66,10 +72,10 @@ class SourceReader(
     private fun logResult(result: WebResult?, url: Url) {
         if (result == null || !result.isSuccess()) {
             console.logWarning("crawl fail (${result?.status}): $url")
-            result?.screenshot?.cacheResource(url, "png", "nav_fail")
+            result?.screenshot?.cacheResource(url.domain, "png", "nav_fail")
         }
-        result?.screenshot?.cacheResource(url, "png")
-        result?.doc?.html?.cacheResource(url, "html", "content")
+        result?.screenshot?.cacheResource(url.domain, "png")
+        result?.doc?.html?.cacheResource(url.domain, "html", "content")
     }
 
     private fun isExpectedFail(resultMap: Map<ResultType, Int>?): Boolean {

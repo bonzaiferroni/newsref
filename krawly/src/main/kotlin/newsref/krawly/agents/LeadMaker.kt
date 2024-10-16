@@ -9,6 +9,7 @@ import newsref.model.data.Lead
 import newsref.model.data.Host
 import newsref.db.models.FetchInfo
 import newsref.db.services.LeadExistsException
+import newsref.model.core.ArticleType
 import newsref.model.core.SourceType
 import newsref.model.data.LeadJob
 
@@ -34,7 +35,7 @@ class LeadMaker(
 	}
 
 	suspend fun makeLeads(fetchInfo: FetchInfo): Int {
-		if (fetchInfo.source.type != SourceType.ARTICLE) return 0
+		if (fetchInfo.source.type != SourceType.ARTICLE || fetchInfo.page?.articleType != ArticleType.NEWS) return 0
 		val links = fetchInfo.page?.links ?: return 0
 		var leadCount = 0
 		for (link in links) {

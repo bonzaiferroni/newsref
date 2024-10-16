@@ -29,4 +29,8 @@ enum class SourceType(
     }
 }
 
+enum class ArticleType {
+    UNKNOWN, NEWS, HELP, POLICY, JOURNAL
+}
+
 fun String.toSourceType(): SourceType = SourceType.fromMeta(this)

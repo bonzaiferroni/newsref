@@ -23,7 +23,7 @@ class LogHandle(
 
 	fun logIfTrue(emoji: String, width: Int? = null, block: (() -> Boolean)? = null) {
 		val partialMsg = if (block == null || block()) emoji else "💢"
-		val paddedMsg = width?.let { partialMsg.padStart(it) } ?: partialMsg
+		val paddedMsg = width?.let { partialMsg.padStart(it).take(it) } ?: partialMsg
 		logPartial(paddedMsg)
 	}
 

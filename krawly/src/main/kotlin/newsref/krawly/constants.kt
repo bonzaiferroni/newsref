@@ -17,4 +17,4 @@ val safariAgent = "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/6
 //private val lead = "https://www.wsj.com/world/middle-east/israel-brings-fight-to-beirut-still-assessing-whether-hezbollahsleader-is-dead-1bf0d098"
 
 const val MAX_URL_ATTEMPTS = 5
-const val MAX_URL_CHARS = 500
+const val MAX_URL_CHARS = 400

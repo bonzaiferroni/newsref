@@ -52,9 +52,9 @@ fun crawl(args: Array<String>) {
 fun test(href: String) {
 	val url = href.toUrl()
 	val result = pwFetch(url, true)
-	result?.screenshot?.cacheResource(url, "png", "test/${url.domain}")
-	result?.requestHeaders?.map { "${it.key}:\n${it.value}" }?.joinToString("\n\n")
-		?.cacheResource(url, "txt", "test/${url.domain}", "headers")
+//	result?.screenshot?.cacheResource(url, "png", "test/${url.domain}")
+//	result?.requestHeaders?.map { "${it.key}:\n${it.value}" }?.joinToString("\n\n")
+//		?.cacheResource(url.domain, "txt", "test/${url.domain}", "headers")
 }
 
 fun testHead(href: String) {

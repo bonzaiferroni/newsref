@@ -1,8 +1,9 @@
 package newsref.krawly.agents
 
+import it.skrape.selects.DocElement
 import kotlinx.datetime.Clock
+import kotlinx.serialization.json.JsonNull.content
 import newsref.db.globalConsole
-import newsref.db.log.toCyan
 import newsref.db.services.ContentService
 import newsref.db.utils.cacheResource
 import newsref.krawly.utils.*
@@ -10,10 +11,12 @@ import newsref.model.core.*
 import newsref.model.data.*
 import newsref.db.models.PageInfo
 import newsref.db.models.LinkInfo
+import newsref.krawly.models.NewsArticle
 import kotlin.system.measureTimeMillis
 
 class PageReader(
 	private val hostAgent: HostAgent,
+	private val elementReader: ElementReader = ElementReader(),
 	private val contentService: ContentService = ContentService(),
 	// private val articleService: ArticleService = ArticleService()
 ) {
@@ -39,40 +42,65 @@ class PageReader(
 		// var newsArticle = this
 		var h1Title: String? = null
 		var wordCount = 0
+		val typeSets = mutableMapOf(
+			ArticleType.NEWS to 0,
+			ArticleType.HELP to 0,
+			ArticleType.POLICY to 0,
+			ArticleType.JOURNAL to 0,
+		)
+		val stack = ArrayDeque<DocElement>()
+		stack.addAll(doc.children.reversed())
 
 		val timeTaken = measureTimeMillis {
-			for (element in doc.allElements) {
-				if (element.isLinkContent()) continue
+			while (stack.isNotEmpty()) {
+				val element = stack.removeLastOrNull() ?: break
+				val tag = element.tagName
+
+				if (tag in lassoTags) stack.clear()
+				if (element.children.isNotEmpty() && tag !in notParentTags) {
+					stack.addAll(element.children.reversed())
+					continue
+				}
+
 				if (element.isHeading()) {
 					if (h1Title == null && element.tagName == "h1") {
 						h1Title = element.text
 					}
 				}
-				if (element.isContent()) {
-					val content = element.text
-					if (!contentService.isFresh(content)) continue
-					wordCount += content.wordCount()
-					contents.add(content)
-					for ((text, href) in element.eachLink) {
-						if (linkHrefs.contains(href)) continue
-						linkHrefs.add(href)
 
-						val url = href.toUrlWithContextOrNull(pageUrl) ?: continue
-						if (url.isLikelyAd()) continue
-						if (url.isNotWebLink()) continue
+				if (tag !in contentTags) continue
 
-						val (linkHost, linkUrl) = hostAgent.getHost(url)
-						val isSibling = linkUrl.isMaybeSibling(pageUrl)
-						val isExternal = linkHost.core != pageHost.core
-						if (!isExternal && !isSibling) continue
-						val info = LinkInfo(
-							url = linkUrl,
-							anchorText = text,
-							context = element.text,
-							isExternal = !isExternal
-						)
-						links.add(info)
-					}
+				val content = elementReader.read(element) ?: continue
+				val cacheContent = content.text.length < 1000
+				if (cacheContent) {
+					contents.add(content.text)
+					if (!contentService.isFresh(content.text)) continue
+				}
+
+				wordCount += content.wordCount
+				for ((type, score) in typeSets) {
+					typeSets[type] = score + (content.typeSets[type] ?: 0)
+				}
+
+				for ((text, href) in element.eachLink) {
+					if (linkHrefs.contains(href)) continue
+					linkHrefs.add(href)
+
+					val url = href.toUrlWithContextOrNull(pageUrl) ?: continue
+					if (url.isLikelyAd()) continue
+					if (url.isNotWebLink()) continue
+
+					val (linkHost, linkUrl) = hostAgent.getHost(url)
+					val isSibling = linkUrl.isMaybeSibling(pageUrl)
+					val isExternal = linkHost.core != pageHost.core
+					if (!isExternal && !isSibling) continue
+					val info = LinkInfo(
+						url = linkUrl,
+						anchorText = text,
+						context = if (cacheContent) content.text else null,
+						isExternal = !isExternal
+					)
+					links.add(info)
 				}
 			}
 		}
@@ -85,8 +113,10 @@ class PageReader(
 		val publishedAt = newsArticle?.readPublishedAt() ?: doc.readPublishedAt()
 		val modifiedAt = newsArticle?.readModifiedAt() ?: doc.readModifiedAt()
 		val authors = (newsArticle?.readAuthor() ?: doc.readAuthor())?.let { setOf(it) }
-		val sourceType = newsArticle?.let { SourceType.ARTICLE } ?: doc.readType() ?: SourceType.UNKNOWN
+		val articleType = typeSets.maxByOrNull { it.value }?.key ?: ArticleType.UNKNOWN
+		val docType = doc.readType()
 		wordCount = newsArticle?.wordCount ?: wordCount
+		val sourceType = getSourceType(newsArticle, articleType, docType ?: SourceType.UNKNOWN, wordCount)
 		val externalLinkCount = links.count { link -> pageHost.domains.all { link.url.domain != it } }
 		val junkParams = cannonUrl?.takeIf { lead.url.core == it.core }
 			?.let { lead.url.params.keys.toSet() - it.params.keys.toSet() }
@@ -97,11 +127,10 @@ class PageReader(
 		console.logIfTrue("📝") { description != null }
 		console.logIfTrue("📅") { publishedAt != null }
 		console.logIfTrue("🦦") { authors != null }
-		console.logIfTrue("📰") { sourceType != SourceType.UNKNOWN }
-		console.logIfTrue("${wordCount.toString().toCyan()} words", 9)
-		console.logIfTrue("${links.size.toString().toCyan()} links", 9)
-		console.logIfTrue("${externalLinkCount.toString().toCyan()} ext", 9)
-		console.logIfTrue("${(timeTaken / 1000)} s")
+		console.logIfTrue("$articleType", 4)
+		console.logIfTrue("$wordCount words", 9)
+		console.logIfTrue("$externalLinkCount/${links.size} links", 9)
+		console.logIfTrue("${(timeTaken / 1000)} s", 4)
 
 		if (sourceType == SourceType.ARTICLE) articleCount++
 		docCount++
@@ -111,6 +140,7 @@ class PageReader(
 
 		val page = PageInfo(
 			pageUrl = pageHostUrl,
+			articleType = articleType,
 			hostId = pageHost.id,
 			hostName = hostName,
 			article = Article(
@@ -137,11 +167,32 @@ class PageReader(
 			junkParams = junkParams,
 		)
 
-		if (page.contents.isNotEmpty()) {
-			val md = page.toMarkdown()
-			md.cacheResource(pageUrl, "md")
-		}
-
 		return page
 	}
+
+	private fun getSourceType(
+		newsArticle: NewsArticle?,
+		articleType: ArticleType,
+		docType: SourceType,
+		wordCount: Int
+	): SourceType {
+		if (newsArticle != null) return SourceType.ARTICLE
+		if (wordCount < 50) return docType
+		val maybeArticle = setOf(SourceType.ARTICLE, SourceType.UNKNOWN)
+		if (maybeArticle.contains(docType) && articleType == ArticleType.NEWS)
+			return SourceType.ARTICLE
+		return docType
+	}
 }
+
+private val contentTags = setOf("p", "li", "span", "blockquote")
+private val notParentTags = setOf(
+	"p", "h1", "h2", "h3", "h4", "h5", "h6",
+	"span", "a", "img", "nav", "head", "header", "footer",
+	"form", "input", "button", "label", "textarea",
+	"table", "thead", "tbody", "tr", "td", "th",
+	"figure", "figcaption", "iframe", "aside",
+	"details", "summary", "fieldset", "legend",
+	"script", "style", "link", "meta", "svg", "embed"
+)
+private val lassoTags = setOf("body", "main", "article")

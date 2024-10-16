@@ -1,5 +1,6 @@
 package newsref.db.models
 
+import newsref.model.core.ArticleType
 import newsref.model.core.CheckedUrl
 import newsref.model.core.SourceType
 import newsref.model.data.Article
@@ -17,6 +18,7 @@ data class FetchInfo(
 
 data class PageInfo(
 	val article: Article,
+	val articleType: ArticleType,
 	val pageUrl: CheckedUrl,
 	val type: SourceType,
 	val hostId: Int,
@@ -30,6 +32,6 @@ data class PageInfo(
 data class LinkInfo(
     val url: CheckedUrl,
     val anchorText: String,
-    val context: String,
+    val context: String?,
 	val isExternal: Boolean,
 )

@@ -8,7 +8,9 @@ open class Url internal constructor(
 	val core: String
 	val scheme: String
 	val domain: String
+	val domainSegments: Int
 	val path: String
+	val pathSegments: Int
 	val params: Map<String, String>
 	val fragment: String?
 	val isRobotAllowed: Boolean?
@@ -29,6 +31,8 @@ open class Url internal constructor(
 		val (beforePath, afterPath) = afterScheme.deconstruct("/")
 		if (beforePath.contains('@')) throw IllegalArgumentException("URL contains user info: $rawHref")
 		domain = beforePath.lowercase()
+		if (domain.length > 100) throw IllegalArgumentException("Domain too long: $domain")
+		domainSegments = domain.split('.').size
 		core = beforePath.removePrefix("www.").lowercase()
 		val rawPath = afterPath?.let { "/$it" } ?: "/"
 
@@ -45,6 +49,7 @@ open class Url internal constructor(
 			Pair(key, value)
 		}?.toMap() ?: emptyMap()
 		path = beforeParams + requiredParamPath
+		pathSegments = path.split('/').filter { it.isNotEmpty() }.size
 		isRobotAllowed = disallowedPaths?.all { !path.startsWith(it) }
 		href = if (junkParams != null) "$authority$path${fragment?.let { "#$it" } ?: ""}"
 		else rawHref
@@ -64,7 +69,7 @@ open class Url internal constructor(
 		val split2 = other.path.split('/')
 		val root2 = split2.getOrNull(1) ?: return false
 		// first segment same length or both have 1 segment
-		return root1.length == root2.length || split1.size == 2 && split2.size == 2
+		return root1.length == root2.length || pathSegments == 1 && other.pathSegments == 1
 	}
 }
 

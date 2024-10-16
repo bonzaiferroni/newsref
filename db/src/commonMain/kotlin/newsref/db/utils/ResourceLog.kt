@@ -8,45 +8,48 @@ import java.io.File
 const val resourcePath = "../cache"
 
 fun String.cacheResource(
-    url: Url,
+    fileName: String,
     type: String,
     path: String = type,
-    fileName: String = url.domain
+    overwrite: Boolean = false,
 ): String {
     if (this.isBlank()) {
-        globalConsole.logDebug("cacheResource", "found blank $type string from ${url.domain}")
+        globalConsole.logDebug("cacheResource", "found blank $type string from $fileName")
         return this
     }
     val file = File("$resourcePath/$path/$fileName.$type")
-    file.parentFile?.mkdirs() // Create missing directories if they don't exist
-    file.writeText(this)
+    file.parentFile?.mkdirs()
+    if (!file.exists() || overwrite)
+        file.writeText(this)
     return this
 }
 
 fun ByteArray.cacheResource(
-    url: Url,
+    fileName: String,
     type: String,
     path: String = type,
-    fileName: String = url.domain
+    overwrite: Boolean = false,
 ): ByteArray {
     val file = File("$resourcePath/$path/$fileName.$type")
-    file.parentFile?.mkdirs() // Create missing directories if they don't exist
-    file.writeBytes(this)
+    file.parentFile?.mkdirs()
+    if (!file.exists() || overwrite)
+        file.writeBytes(this)
     return this
 }
 
 // General function to cache any serializable object
 inline fun <reified T> T.cacheSerializable(
-    url: Url,
+    fileName: String,
     path: String,
-    fileName: String = url.domain
+    overwrite: Boolean = false,
 ): T where T : Any {
     val file = File("$resourcePath/$path/$fileName.json")
-    file.parentFile?.mkdirs() // Create directories if they don't exist
+    file.parentFile?.mkdirs()
 
     // Serialize object to JSON
     val jsonString = prettyPrintJson.encodeToString(serializer(), this)
-    file.writeText(jsonString)
+    if (!file.exists() || overwrite)
+        file.writeText(jsonString)
 
     return this
 }
