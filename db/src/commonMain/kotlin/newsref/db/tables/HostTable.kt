@@ -11,7 +11,7 @@ import org.jetbrains.exposed.sql.or
 import org.jetbrains.exposed.sql.stringParam
 
 internal object HostTable : IntIdTable("host") {
-	val core = text("apex")
+	val core = text("apex").uniqueIndex()
 	val name = text("name").nullable()
 	val logo = text("logo").nullable()
 	val robotsTxt = text("robots_txt").nullable()

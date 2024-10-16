@@ -18,12 +18,13 @@ import newsref.krawly.utils.toMarkdown
 import kotlin.time.Duration.Companion.days
 
 class SourceReader(
+    spindex: Int,
 	private val web: SpiderWeb,
 	private val hostAgent: HostAgent,
-	private val pageReader: PageReader = PageReader(hostAgent),
+	private val pageReader: PageReader = PageReader(spindex, hostAgent),
 	private val leadService: LeadService = LeadService(),
 ) {
-    private val console = globalConsole.getHandle("SourceReader", true)
+    private val console = globalConsole.getHandle("Src $spindex", true)
 
     suspend fun read(lead: LeadInfo): FetchInfo {
         val resultMap = leadService.getResultsByOutlet(lead.hostId, 1.days)
@@ -83,7 +84,7 @@ class SourceReader(
         val accessCount = resultMap.getResult(ResultType.RELEVANT) + resultMap.getResult(ResultType.IRRELEVANT)
         if (accessCount > 0) return false
         if (resultMap.getResult(ResultType.BOT_DETECT) > 0) return true
-        return resultMap.getResult(ResultType.TIMEOUT) < 3
+        return resultMap.getResult(ResultType.TIMEOUT) < 5
     }
 }
 

@@ -14,7 +14,7 @@ import newsref.model.core.SourceType
 import newsref.model.data.LeadJob
 
 class LeadMaker(
-	val hostAgent: HostAgent,
+	private val hostAgent: HostAgent,
 	private val leadService: LeadService = LeadService()
 ) {
 	private val console = globalConsole.getHandle("LeadMaker")

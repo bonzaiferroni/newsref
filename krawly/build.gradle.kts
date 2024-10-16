@@ -40,6 +40,7 @@ tasks.register<JavaExec>("runWithInput") {
     mainClass.set("newsref.krawly.MainKt")
     classpath = sourceSets["main"].runtimeClasspath
     standardInput = System.`in`  // Attach the system input to the task
+    jvmArgs = listOf("-Dsun.java.command=Newsref")
 }
 
 tasks.withType<Jar> {

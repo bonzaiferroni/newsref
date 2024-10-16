@@ -2,10 +2,8 @@ package newsref.krawly.agents
 
 import it.skrape.selects.DocElement
 import kotlinx.datetime.Clock
-import kotlinx.serialization.json.JsonNull.content
 import newsref.db.globalConsole
 import newsref.db.services.ContentService
-import newsref.db.utils.cacheResource
 import newsref.krawly.utils.*
 import newsref.model.core.*
 import newsref.model.data.*
@@ -15,12 +13,13 @@ import newsref.krawly.models.NewsArticle
 import kotlin.system.measureTimeMillis
 
 class PageReader(
+	spindex: Int,
 	private val hostAgent: HostAgent,
 	private val elementReader: ElementReader = ElementReader(),
 	private val contentService: ContentService = ContentService(),
 	// private val articleService: ArticleService = ArticleService()
 ) {
-	private val console = globalConsole.getHandle("PageReader", true)
+	private val console = globalConsole.getHandle("Page $spindex", true)
 	private var docCount = 0
 	private var articleCount = 0
 
@@ -173,15 +172,13 @@ class PageReader(
 	private fun getSourceType(
 		newsArticle: NewsArticle?,
 		articleType: ArticleType,
-		docType: SourceType,
+		sourceType: SourceType,
 		wordCount: Int
 	): SourceType {
 		if (newsArticle != null) return SourceType.ARTICLE
-		if (wordCount < 50) return docType
-		val maybeArticle = setOf(SourceType.ARTICLE, SourceType.UNKNOWN)
-		if (maybeArticle.contains(docType) && articleType == ArticleType.NEWS)
-			return SourceType.ARTICLE
-		return docType
+		if (wordCount < 50 || sourceType != SourceType.ARTICLE) return sourceType
+		if (articleType == ArticleType.POLICY) return SourceType.WEBSITE
+		return sourceType
 	}
 }
 

@@ -26,7 +26,7 @@ fun crawl(args: Array<String>) {
 	val hostAgent = HostAgent(web)
 	val leadMaker = LeadMaker(hostAgent)
 	val feedChecker = FeedChecker(web, hostAgent, leadMaker)
-	val leadFollower = LeadFollower(web, leadMaker, hostAgent)
+	val leadFollower = LeadFollower(web = web, leadMaker = leadMaker, hostAgent = hostAgent)
 	globalConsole.addCommand("start") {
 		feedChecker.start()
 		leadFollower.start()
