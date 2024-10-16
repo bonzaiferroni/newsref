@@ -19,7 +19,7 @@ class PageReader(
 	private val contentService: ContentService = ContentService(),
 	// private val articleService: ArticleService = ArticleService()
 ) {
-	private val console = globalConsole.getHandle("Page $spindex", true)
+	private val console = globalConsole.getHandle("Page $spindex")
 	private var docCount = 0
 	private var articleCount = 0
 

@@ -20,7 +20,7 @@ class LeadFollower(
 	private val leadService: LeadService = LeadService(),
 	private val sourceService: SourceService = SourceService(),
 	private val leadMaker: LeadMaker = LeadMaker(hostAgent),
-	private val maxSpiders: Int = 5,
+	private val maxSpiders: Int = 10,
 ) {
 	private val console = globalConsole.getHandle("LeadFollower", true)
 
@@ -47,6 +47,7 @@ class LeadFollower(
 		val hosts = mutableMapOf<String, Instant>()
 		val spiders = ArrayDeque((0 until maxSpiders).map { Spider(it) })
 		while (!stack.isEmpty()) {
+			delay(100)
 			val lead = stack.removeFirstOrNull() ?: break
 			val now = Clock.System.now()
 			val lastAttempt = hosts[lead.url.domain]
@@ -61,9 +62,10 @@ class LeadFollower(
 				delay(1.seconds)
 			}
 
+			console.status = (--leadCount).toString()
 			val spider = spiders.removeFirst()
 			spider.crawl {
-				spider.console.logInfo(lead.url.toString().toCyan(), --leadCount)
+				spider.console.logInfo(lead.url.toString().toCyan())
 
 				val fetch = spider.sourceReader.read(lead)
 				sourceService.consume(fetch)

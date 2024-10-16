@@ -8,6 +8,7 @@ import newsref.db.services.HostService
 import newsref.krawly.SpiderWeb
 import newsref.model.core.*
 import newsref.model.data.Host
+import java.util.*
 import kotlin.time.Duration.Companion.seconds
 
 class HostAgent(
@@ -27,26 +28,21 @@ class HostAgent(
         return Pair(host, url.href.toCheckedUrl(host))
     }
 
-    private val mutex = Mutex()
-    private var creatingHost: String? = null
+    private val creatingHosts = Collections.synchronizedSet(mutableSetOf<String>())
     private suspend fun createHost(url: Url): Pair<Host, CheckedUrl> {
-        mutex.withLock {
-            if (url.domain == creatingHost) {
-                while (url.domain == creatingHost) {
-                    delay(1.seconds)
-                }
-                return getHost(url)
+        if (url.domain in creatingHosts) {
+            while (url.domain in creatingHosts) {
+                delay(1.seconds)
             }
-            creatingHost = url.domain
+            return getHost(url)
         }
+        creatingHosts.add(url.domain)
 
         val host = hostService.createHost(
             url = url, robotsTxt = null, isRedirect = false, bannedPaths = emptySet()
         )
 
-        mutex.withLock {
-            creatingHost = null
-        }
+        creatingHosts.remove(url.domain)
 
         return Pair(host, url.href.toCheckedUrl(host))
     }

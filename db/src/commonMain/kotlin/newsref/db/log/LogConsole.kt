@@ -1,5 +1,7 @@
 package newsref.db.log
 
+import java.util.*
+
 class LogConsole {
 	var config = ConsoleConfig()
 	var isActive = true
@@ -9,6 +11,7 @@ class LogConsole {
 	private val handles = mutableListOf<LogHandle>()
 	private var input = ""
 	private var commands = mutableMapOf<String, (List<String>?) -> String>()
+	private val queue = Collections.synchronizedList(mutableListOf<LogMessage>())
 
 	init {
 		addCommand("quit") { isActive = false; "Goodbye!" }
@@ -42,7 +45,11 @@ class LogConsole {
 		if (level.ordinal < config.minLevel.ordinal) return
 		val line = builder.bold().setForeground(level).writeLength(source, MAX_SOURCE_CHARS)
 			.defaultFormat().defaultForeground().write(" ").write(message).build()
-		renderLog(source, line)
+		queue.add(LogMessage(source, line))
+		while (queue.isNotEmpty()) {
+			val (qSource, qLine) = queue.removeFirstOrNull() ?: break
+			renderLog(qSource, qLine)
+		}
 	}
 
 	fun logTrace(source: String, message: String) = log(source, LogLevel.TRACE, message)
@@ -111,6 +118,8 @@ class LogConsole {
 }
 
 const val MAX_SOURCE_CHARS = 10
+
+private typealias LogMessage = Pair<String, String>
 
 enum class LogLevel {
 	TRACE,
