@@ -6,8 +6,8 @@ import org.jetbrains.exposed.sql.transactions.transaction
 import java.io.File
 
 fun generateMigrationScript() {
-	migrate("test", false)
-	migrate("apply", true)
+	migrate("../test", false)
+	migrate("", true)
 }
 
 @OptIn(ExperimentalDatabaseMigrationApi::class)
@@ -21,17 +21,21 @@ private fun migrate(protocol: String, applyMigration: Boolean) {
 	} ?: return
 
 	val name = file.name
-	file.delete()
 
 	val isBaseline = folder.listFiles()?.count { it.isFile && it.name.endsWith(".sql") } == 0
 	connectDb()
 
-	transaction {
-		MigrationUtils.generateMigrationScript(
-			*dbTables.toTypedArray(),
-			scriptDirectory = folder.absolutePath,
-			scriptName = name,
-		)
+	if (file.readText().isNotEmpty()) {
+		file.renameTo(File("${file.absolutePath}.sql"))
+	} else {
+		file.delete()
+		transaction {
+			MigrationUtils.generateMigrationScript(
+				*dbTables.toTypedArray(),
+				scriptDirectory = folder.absolutePath,
+				scriptName = name,
+			)
+		}
 	}
 
 	if (!applyMigration) return
@@ -44,4 +48,4 @@ private fun migrate(protocol: String, applyMigration: Boolean) {
 	flyway.migrate()
 }
 
-const val MIGRATIONS_DIRECTORY = "migrations" // Location of migration scripts
+const val MIGRATIONS_DIRECTORY = "migrations/apply" // Location of migration scripts

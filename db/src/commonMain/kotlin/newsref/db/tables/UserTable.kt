@@ -8,6 +8,7 @@ import org.jetbrains.exposed.dao.EntityClass
 import org.jetbrains.exposed.dao.id.EntityID
 import newsref.model.dto.UserInfo
 import newsref.db.models.User
+import newsref.model.core.UserRole.Companion.toUserRole
 import org.jetbrains.exposed.dao.UUIDEntity
 import org.jetbrains.exposed.dao.id.UUIDTable
 import org.jetbrains.exposed.sql.kotlin.datetime.datetime
@@ -19,7 +20,7 @@ object UserTable : UUIDTable("user") {
     val hashedPassword = text("hashed_password")
     val salt = text("salt")
     val email = text("email").nullable()
-    val roles = text("roles").default("user")
+    val roles = array<Int>("roles")
     val avatarUrl = text("avatar_url").nullable()
     val venmo = text("venmo").nullable()
     val createdAt = datetime("created_at")
@@ -48,7 +49,7 @@ fun UserRow.toData() = User(
     this.hashedPassword,
     this.salt,
     this.email,
-    this.roles,
+    this.roles.map { it.toUserRole() }.toSet(),
     this.avatarUrl,
     this.venmo,
     this.createdAt.toInstant(UtcOffset.ZERO),
@@ -61,7 +62,7 @@ fun UserRow.fromData(data: User) {
     hashedPassword = data.hashedPassword
     salt = data.salt
     email = data.email
-    roles = data.roles
+    roles = data.roles.map { it.ordinal }
     avatarUrl = data.avatarUrl
     venmo = data.venmo
     createdAt = data.createdAt.toLocalDateTime(TimeZone.UTC)
@@ -70,7 +71,7 @@ fun UserRow.fromData(data: User) {
 
 fun UserRow.toInfo() = UserInfo(
     this.username,
-    this.roles,
+    this.roles.map { it.toUserRole() }.toSet(),
     this.avatarUrl,
     this.venmo,
     this.createdAt.toInstant(UtcOffset.ZERO),

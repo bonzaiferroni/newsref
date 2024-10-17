@@ -2,6 +2,7 @@ package newsref.server.db
 
 import kotlinx.datetime.Clock
 import newsref.db.models.User
+import newsref.model.core.UserRole
 
 class VariableStore {
 
@@ -13,7 +14,7 @@ class VariableStore {
             hashedPassword = getHashedPassword(),
             salt = getEnvVariable("NEWSREF_ADMIN_SALT"),
             email = getEnvVariable("NEWSREF_ADMIN_EMAIL"),
-            roles = "admin",
+            roles = setOf(UserRole.ADMIN, UserRole.USER),
             createdAt = Clock.System.now(),
             updatedAt = Clock.System.now(),
         )

@@ -3,6 +3,8 @@ package newsref.db.models
 import kotlinx.datetime.Instant
 import kotlinx.serialization.Serializable
 import newsref.db.serializers.UUIDSerializer
+import newsref.model.core.RoleSet
+import newsref.model.core.UserRole
 import newsref.model.dto.PrivateInfo
 import java.util.*
 
@@ -15,7 +17,7 @@ data class User(
     val hashedPassword: String = "",
     val salt: String = "",
     val email: String? = null,
-    val roles: String = "",
+    val roles: RoleSet = emptySet(),
     val avatarUrl: String? = null,
     val venmo: String? = null,
     val createdAt: Instant = Instant.DISTANT_PAST,

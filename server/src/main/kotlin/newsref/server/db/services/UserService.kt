@@ -19,7 +19,7 @@ import newsref.db.tables.*
 import newsref.db.models.User
 import newsref.db.models.toPrivateInfo
 import newsref.db.utils.nowToLocalDateTimeUTC
-import newsref.server.plugins.ROLE_USER
+import newsref.model.core.UserRole
 import newsref.server.serverLog
 import java.util.*
 
@@ -64,7 +64,7 @@ class UserService : DataService<User, UUID, UserRow>(
             hashedPassword = hashPassword(info.password, salt),
             salt = salt.toBase64(),
             email = info.email,
-            roles = ROLE_USER,
+            roles = setOf(UserRole.USER),
             createdAt = Clock.System.now(),
             updatedAt = Clock.System.now(),
             avatarUrl = null,

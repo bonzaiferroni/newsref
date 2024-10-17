@@ -10,7 +10,6 @@ import newsref.model.Endpoint
 import newsref.db.DataService
 import newsref.server.extensions.getIdOrThrow
 import newsref.server.extensions.testRole
-import newsref.server.plugins.ROLE_ADMIN
 import newsref.server.plugins.authenticateJwt
 import org.jetbrains.exposed.dao.Entity
 

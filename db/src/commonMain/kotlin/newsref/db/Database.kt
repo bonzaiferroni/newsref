@@ -1,8 +1,9 @@
 package newsref.db
 
 import newsref.db.tables.*
-import org.jetbrains.exposed.sql.Database
-import org.jetbrains.exposed.sql.SchemaUtils
+import newsref.model.core.UserRole
+import org.jetbrains.exposed.sql.*
+import org.jetbrains.exposed.sql.SqlExpressionBuilder.eq
 import org.jetbrains.exposed.sql.transactions.transaction
 
 fun initDb() {
@@ -11,7 +12,6 @@ fun initDb() {
 	transaction(db) {
 		// todo: add migration handling
 		SchemaUtils.create(*dbTables.toTypedArray())
-
 		// exec("CREATE INDEX IF NOT EXISTS idx_text_prefix ON content (SUBSTRING(text FROM 1 FOR 100))")
 	}
 }

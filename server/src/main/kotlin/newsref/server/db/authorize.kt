@@ -9,6 +9,7 @@ import newsref.model.dto.AuthInfo
 import newsref.model.dto.LoginRequest
 import newsref.db.Log
 import newsref.db.models.SessionToken
+import newsref.model.core.RoleSet
 import newsref.model.utils.deobfuscate
 import newsref.server.db.services.SessionTokenService
 import newsref.server.db.services.UserService
@@ -53,7 +54,7 @@ suspend fun ApplicationCall.authorize() {
     this.respond(HttpStatusCode.Unauthorized, "Missing password or token")
 }
 
-suspend fun User.testPassword(username: String, password: String, roles: String): AuthInfo? {
+suspend fun User.testPassword(username: String, password: String, roles: RoleSet): AuthInfo? {
     val byteArray = this.salt.base64ToByteArray()
     val hashedPassword = hashPassword(password, byteArray)
     if (hashedPassword != this.hashedPassword) {
@@ -65,7 +66,7 @@ suspend fun User.testPassword(username: String, password: String, roles: String)
     return AuthInfo(jwt, sessionToken)
 }
 
-suspend fun User.testToken(username: String, sessionToken: String, roles: String): AuthInfo? {
+suspend fun User.testToken(username: String, sessionToken: String, roles: RoleSet): AuthInfo? {
     val service = SessionTokenService()
     val sessionTokenEntity = service.findByToken(sessionToken)
         ?: return null
@@ -113,12 +114,4 @@ fun ByteArray.toBase64(): String {
 
 fun String.base64ToByteArray(): ByteArray {
     return Base64.getDecoder().decode(this)
-}
-
-fun String.toSet(): Set<String> {
-    return this.split(",").map { it.trim() }.toSet()
-}
-
-fun Set<String>.setToString(): String {
-    return this.joinToString(",")
 }

@@ -24,7 +24,6 @@ backup.json
 /www/uploads
 /dump
 /cache
-/migrations
 
 **/.kotlin-js-store/
 
