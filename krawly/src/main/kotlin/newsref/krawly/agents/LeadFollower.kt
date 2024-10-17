@@ -41,7 +41,7 @@ class LeadFollower(
 
 	private suspend fun checkLeads() {
 		val (freshSince, allLeads) = leadService.getOpenLeads().shuffled().filterByTimeStep()
-		val stack = ArrayDeque(allLeads.filter { it.isExternal })
+		val stack = ArrayDeque(allLeads)
 		if (stack.isEmpty()) {
 			console.logInfo("No external leads available, following other leads")
 			stack.addAll(allLeads)
@@ -68,12 +68,11 @@ class LeadFollower(
 				console.status = "😪".padStart(leadCount.toString().length)
 				delay(1.seconds)
 			}
-			console.status = leadCount.toString().toCyan()
 
 			console.status = (--leadCount).toString()
 			val spider = spiders.removeFirst()
 			spider.crawl {
-				spider.console.logInfo(lead.url.toString().toCyan())
+				spider.console.logInfo(lead.url.toString().take(60).toCyan())
 
 				val fetch = spider.sourceReader.read(lead)
 				sourceService.consume(fetch)
@@ -106,13 +105,19 @@ class LeadFollower(
 	}
 }
 
-private fun List<LeadInfo>.filterByTimeStep() = this.takeIf { this.size < 1000 }?.let{ Pair(Duration.INFINITE, it) }
+private fun List<LeadInfo>.filterByTimeStep() = this.takeIf { this.size < 5000 }?.let{ Pair(Duration.INFINITE, it) }
+	?: this.filterExternal().filterSince(1.days)
 	?: this.filterSince(1.days)
+	?: this.filterExternal().filterSince(7.days)
 	?: this.filterSince(7.days)
+	?: this.filterExternal().filterSince(30.days)
 	?: this.filterSince(30.days)
+	?: this.filterExternal().filterSince(365.days)
 	?: this.filterSince(365.days)
 	?: Pair(Duration.INFINITE, this)
 
 private fun List<LeadInfo>.filterSince(duration: Duration) =
-	this.filter { it.freshAt != null && Clock.System.now() - it.freshAt!! < duration }.takeIf { it.size > 100 }
+	this.filter { it.freshAt != null && Clock.System.now() - it.freshAt!! < duration }.takeIf { it.size > 500 }
 		?.let { Pair(duration, it) }
+
+private fun List<LeadInfo>.filterExternal() = this.filter { it.isExternal }

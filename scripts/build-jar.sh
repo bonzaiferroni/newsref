@@ -8,6 +8,3 @@ set -e
 
 # Generate the JAR
 ./gradlew :krawly:jar
-
-# Run the generated JAR file
-java -jar krawly/build/libs/krawly.jar

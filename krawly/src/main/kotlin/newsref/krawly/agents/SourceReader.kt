@@ -3,6 +3,7 @@ package newsref.krawly.agents
 import kotlinx.datetime.Clock
 import newsref.db.globalConsole
 import newsref.db.log.Justify
+import newsref.db.log.deepspaceBlueBg
 import newsref.db.services.LeadService
 import newsref.db.utils.cacheResource
 import newsref.krawly.SpiderWeb
@@ -33,8 +34,8 @@ class SourceReader(
         val relevantCount = resultMap.getResult(ResultType.RELEVANT)
         val timeoutCount = resultMap.getResult(ResultType.TIMEOUT)
         val skipFetch = isExpectedFail(resultMap) || lead.url.isFile()
-        console.cell(lead.url.domain, 29, Justify.LEFT).cell("relevant $relevantCount", 9)
-            .cell("timeout $timeoutCount", 9).cell("🐛") { !skipFetch }.row()
+        console.cell(lead.url.domain, 29, justify = Justify.LEFT).cell("$relevantCount", 9, "relevant")
+            .cell("$timeoutCount", 9, "timeout").cell("🐛") { !skipFetch }.row(background = deepspaceBlueBg)
         val result = if (!skipFetch) { web.fetch(lead.url, true) } else { null }
 
         val page = result?.let { pageReader.read(lead, it) }
@@ -57,8 +58,8 @@ class SourceReader(
         // todo: if it is a news article, save a video of the endpoint
 
         if (page != null) {
-            val md = fetch.toMarkdown()
-            md?.cacheResource(page.pageUrl.domain, "md")
+//            val md = fetch.toMarkdown()
+//            md?.cacheResource(page.pageUrl.domain, "md")
         }
 
         return fetch
@@ -75,10 +76,10 @@ class SourceReader(
     private fun logResult(result: WebResult?, url: Url) {
         if (result == null || !result.isSuccess()) {
             console.logWarning("crawl fail (${result?.status}): $url")
-            result?.screenshot?.cacheResource(url.domain, "png", "nav_fail")
+//            result?.screenshot?.cacheResource(url.domain, "png", "nav_fail")
         }
-        result?.screenshot?.cacheResource(url.domain, "png")
-        result?.doc?.html?.cacheResource(url.domain, "html", "content")
+//        result?.screenshot?.cacheResource(url.domain, "png")
+//        result?.doc?.html?.cacheResource(url.domain, "html", "content")
     }
 
     private fun isExpectedFail(resultMap: Map<ResultType, Int>?): Boolean {

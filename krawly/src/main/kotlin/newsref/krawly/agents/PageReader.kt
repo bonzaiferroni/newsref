@@ -3,6 +3,7 @@ package newsref.krawly.agents
 import it.skrape.selects.DocElement
 import kotlinx.datetime.Clock
 import newsref.db.globalConsole
+import newsref.db.log.forestNightBg
 import newsref.db.services.ContentService
 import newsref.krawly.utils.*
 import newsref.model.core.*
@@ -50,57 +51,55 @@ class PageReader(
 		val stack = ArrayDeque<DocElement>()
 		stack.addAll(doc.children.reversed())
 
-		val timeTaken = measureTimeMillis {
-			while (stack.isNotEmpty()) {
-				val element = stack.removeLastOrNull() ?: break
-				val tag = element.tagName
+		while (stack.isNotEmpty()) {
+			val element = stack.removeLastOrNull() ?: break
+			val tag = element.tagName
 
-				if (tag in lassoTags) stack.clear()
-				if (element.children.isNotEmpty() && tag !in notParentTags) {
-					stack.addAll(element.children.reversed())
-					continue
+			if (tag in lassoTags) stack.clear()
+			if (element.children.isNotEmpty() && tag !in notParentTags) {
+				stack.addAll(element.children.reversed())
+				continue
+			}
+
+			if (element.isHeading()) {
+				if (h1Title == null && element.tagName == "h1") {
+					h1Title = element.text
 				}
+			}
 
-				if (element.isHeading()) {
-					if (h1Title == null && element.tagName == "h1") {
-						h1Title = element.text
-					}
-				}
+			if (tag !in contentTags) continue
 
-				if (tag !in contentTags) continue
+			val content = elementReader.read(element) ?: continue
+			val cacheContent = content.text.length < 1000
+			if (cacheContent) {
+				contents.add(content.text)
+				if (!contentService.isFresh(content.text)) continue
+			}
 
-				val content = elementReader.read(element) ?: continue
-				val cacheContent = content.text.length < 1000
-				if (cacheContent) {
-					contents.add(content.text)
-					if (!contentService.isFresh(content.text)) continue
-				}
+			wordCount += content.wordCount
+			for ((type, score) in typeSets) {
+				typeSets[type] = score + (content.typeSets[type] ?: 0)
+			}
 
-				wordCount += content.wordCount
-				for ((type, score) in typeSets) {
-					typeSets[type] = score + (content.typeSets[type] ?: 0)
-				}
+			for ((text, href) in element.eachLink) {
+				if (linkHrefs.contains(href)) continue
+				linkHrefs.add(href)
 
-				for ((text, href) in element.eachLink) {
-					if (linkHrefs.contains(href)) continue
-					linkHrefs.add(href)
+				val url = href.toUrlWithContextOrNull(pageUrl) ?: continue
+				if (url.isLikelyAd()) continue
+				if (url.isNotWebLink()) continue
 
-					val url = href.toUrlWithContextOrNull(pageUrl) ?: continue
-					if (url.isLikelyAd()) continue
-					if (url.isNotWebLink()) continue
-
-					val (linkHost, linkUrl) = hostAgent.getHost(url)
-					val isSibling = linkUrl.isMaybeSibling(pageUrl)
-					val isExternal = linkHost.core != pageHost.core
-					if (!isExternal && !isSibling) continue
-					val info = LinkInfo(
-						url = linkUrl,
-						anchorText = text,
-						context = if (cacheContent) content.text else null,
-						isExternal = !isExternal
-					)
-					links.add(info)
-				}
+				val (linkHost, linkUrl) = hostAgent.getHost(url)
+				val isSibling = linkUrl.isMaybeSibling(pageUrl)
+				val isExternal = linkHost.core != pageHost.core
+				if (!isExternal && !isSibling) continue
+				val info = LinkInfo(
+					url = linkUrl,
+					anchorText = text,
+					context = if (cacheContent) content.text else null,
+					isExternal = !isExternal
+				)
+				links.add(info)
 			}
 		}
 
@@ -124,11 +123,11 @@ class PageReader(
 
 		console.cell("🌆") { imageUrl != null }.cell("📝") { description != null }
 			.cell("📅") { publishedAt != null }.cell("🦦") { authors != null }
-			.cell("$articleType", 4).cell("words $wordCount", 9)
-			.cell("links $externalLinkCount/${links.size}", 9)
+			.cell(articleType, 4).cell(wordCount, 9, "words")
+			.cell("$externalLinkCount/${links.size}", 9, "links")
 			//.cell("${(timeTaken / 1000)} s", 4)
 			.cell(sourceType.getEmoji())
-			.row()
+			.row(background = forestNightBg)
 
 		if (sourceType == SourceType.ARTICLE) articleCount++
 		docCount++

@@ -19,7 +19,7 @@ class NewsArticleTest {
         for (file in jsonFiles) {
             val jsonString = file.readText()
             val result = jsonString.decodeNewsArticle()
-            result?.cacheSerializable(file.name, "news_article_tests")
+//            result?.cacheSerializable(file.name, "news_article_tests")
             if (result == null) {
                 println("null NewsArticle: ${file.name}")
                 nullSet += file.name

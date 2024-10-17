@@ -40,6 +40,7 @@ fun crawl(args: Array<String>) {
 	Runtime.getRuntime().exec(arrayOf("sh", "-c", "stty -icanon -echo min 1 time 0 < /dev/tty")).waitFor()
 	Runtime.getRuntime().addShutdownHook(Thread {
 		// Code to run on shutdown
+		// closePlaywright()
 		Runtime.getRuntime().exec(arrayOf("sh", "-c", "stty sane erase ^H < /dev/tty")).waitFor()
 	})
 

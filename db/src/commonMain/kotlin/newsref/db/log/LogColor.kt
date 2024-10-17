@@ -8,13 +8,14 @@ fun String.toPurple() = toColor(lavenderPurple)
 fun String.toYellow() = toColor(goldenYellow)
 fun String.toPink() = toColor("#FF69B4")
 fun String.toCyan() = toColor("#4AC7C7")
-
+fun String.dim() = "$dim$this$defaultForeground"
 
 fun String.toColorBg(hex: String) = "${hex.toAnsiBackground()}$this$defaultBackground"
+fun String.toColorBg(background: Background) = "$background$this$defaultBackground"
 fun String.toBlueBg() = toColorBg(deepspaceBlue)
 fun String.toGreenBg() = toColorBg(midnightGreen)
 fun String.toGrayBg() = toColorBg(charcoalGray)
-fun String.toPurpleBg() = toColorBg(darkPlum)
+fun String.toPurpleBg() = toColorBg(timberBrown)
 fun String.toForestBg() = toColorBg(forestNight)
 
 internal fun hexToRgb(hex: String): Triple<Int, Int, Int> {
@@ -39,7 +40,7 @@ internal fun String.toAnsiBackground(): Background {
 }
 
 internal val escapeChar = Char(27).toString()
-internal val defaultForeground = Foreground("\u001B[0m")
+internal val defaultForeground = Foreground("\u001B[39m")
 internal val defaultBackground = Background("\u001B[49m")
 internal val blackForeground = Foreground("\u001B[30m")
 internal val redForeground = Foreground("\u001B[31m")
@@ -73,15 +74,21 @@ internal val emeraldGreenFg = emeraldGreen.toAnsiForeground()
 internal val lavenderPurpleFg = lavenderPurple.toAnsiForeground()
 internal val goldenYellowFg = goldenYellow.toAnsiForeground()
 
-internal const val deepspaceBlue = "#000033"
-internal const val midnightGreen = "#004953"
-internal const val charcoalGray = "#36454F"
-internal const val darkPlum = "#4F2D7F"
-internal const val forestNight = "#253529"
+internal const val deepspaceBlue = "#183348"
+internal const val midnightGreen = "#004952"
+internal const val charcoalGray = "#1e2c2c"
+internal const val timberBrown = "#1c1711"
+internal const val forestNight = "#384337"
 internal val backgrounds = listOf(
 	deepspaceBlue,
 	midnightGreen,
 	charcoalGray,
-	darkPlum,
+	timberBrown,
 	forestNight
 )
+
+val deepspaceBlueBg = deepspaceBlue.toAnsiBackground()
+val midnightGreenBg = midnightGreen.toAnsiBackground()
+val charcoalGrayBg = charcoalGray.toAnsiBackground()
+val darkPlumBg = timberBrown.toAnsiBackground()
+val forestNightBg = forestNight.toAnsiBackground()

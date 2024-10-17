@@ -22,26 +22,40 @@ class LogHandle(
 	}
 
 	fun cell(
-		emoji: String,
+		value: Any,
 		width: Int? = null,
+		label: String? = null,
 		justify: Justify = Justify.RIGHT,
-		block: (() -> Boolean)? = null
+		isValid: (() -> Boolean)? = null
 	): LogHandle {
-		val partialMsg = if (block == null || block()) emoji else "💢"
-		val paddedMsg = width?.let {
-			if (justify == Justify.RIGHT) {
-				partialMsg.padStart(it).takeLast(it)
+		var content = if (isValid == null || isValid()) value.toString() else "💢"
+		content = width?.let {
+			val labelWidth = label?.let { minOf(width - content.length - 1, label.length) } ?: 0
+			val contentWidth = labelWidth.takeIf{ labelWidth > 0 }?.let { width - labelWidth - 1 } ?: width
+			val contentPart = if (justify == Justify.RIGHT) {
+				content.padStart(contentWidth).takeLast(contentWidth)
 			} else {
-				partialMsg.padEnd(it).take(it)
+				content.padEnd(contentWidth).take(contentWidth)
 			}
-		} ?: partialMsg
-		logPartial(paddedMsg)
+			if (labelWidth > 0 && label != null) {
+				val labelPart = label.take(labelWidth)
+				if (justify == Justify.RIGHT) {
+					"${labelPart.dim()} $contentPart"
+				} else {
+					"$contentPart ${labelPart.dim()}"
+				}
+			} else {
+				contentPart
+			}
+		} ?: content
+		logPartial(content)
 		return this
 	}
 
-	fun row(message: String = "", level: LogLevel = LogLevel.INFO) {
+	fun row(message: String = "", level: LogLevel = LogLevel.INFO, background: Background? = null) {
 		logPartial(message)
-		val line = partialLine.build()
+		var line = partialLine.build()
+		background?.let{ line = line.toColorBg(it) }
 		console.log(name, level, line)
 	}
 
