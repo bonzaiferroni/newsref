@@ -7,13 +7,7 @@ import org.jetbrains.exposed.sql.transactions.transaction
 
 fun initDb() {
 	println("initDb: initializing db")
-	val password = System.getenv("NEWSREF_PSQL_PW")
-	val db = Database.connect(
-		"jdbc:postgresql://localhost:5432/newsrefdb",
-		driver = "org.postgresql.Driver",
-		user = "newsref",
-		password = password
-	)
+	val db = connectDb()
 	transaction(db) {
 		// todo: add migration handling
 		SchemaUtils.create(*dbTables.toTypedArray())
@@ -23,8 +17,8 @@ fun initDb() {
 }
 
 val dbTables = listOf(
-	// UserTable
-	// SessionTokenTable
+	UserTable,
+	SessionTokenTable,
 	SourceTable,
 	LinkTable,
 	HostTable,
@@ -38,4 +32,15 @@ val dbTables = listOf(
 	AuthorTable,
 	ScoopTable,
 	FeedTable,
+)
+
+const val URL = "jdbc:postgresql://localhost:5432/newsrefdb"
+const val USER = "newsref"
+val PASSWORD: String = System.getenv("NEWSREF_PSQL_PW")
+
+fun connectDb() = Database.connect(
+	URL,
+	driver = "org.postgresql.Driver",
+	user = USER,
+	password = PASSWORD
 )

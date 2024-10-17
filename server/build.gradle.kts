@@ -13,7 +13,7 @@ group = "newsref.server"
 version = "0.0.1"
 
 application {
-    mainClass.set("io.ktor.server.netty.EngineMain")
+    mainClass.set("newsref.server.ApplicationKt")
 }
 
 repositories {

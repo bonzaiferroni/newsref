@@ -9,25 +9,23 @@ import newsref.krawly.models.Publisher
 
 fun String.decodeNewsArticle(): NewsArticle? {
 	val element = runCatching { jsonDecoder.decodeFromString<JsonElement>(this) }.getOrNull() ?: return null
-	when (element) {
-		is JsonObject -> {
-			val article = element.toNewsArticle()
-			if (article != null) return article
-			element["@graph"]?.let {
-				when (it) {
-					is JsonObject -> return it.toNewsArticle()
-					is JsonArray -> return it.findType("NewsArticle", JsonObject::toNewsArticle)
-					else -> return null
-				}
-			}
-			return null
-		}
-		is JsonArray -> {
-			return element.findType("NewsArticle", JsonObject::toNewsArticle)
-		}
-		else -> return null
-	}
+	return element.findNewsArticle()
 }
+
+fun JsonElement.findNewsArticle(): NewsArticle? = when (this) {
+	is JsonObject -> this.findNewsArticle()
+	is JsonArray -> this.findNewsArticle()
+	else -> null
+}
+
+fun JsonObject.findNewsArticle() = this.toNewsArticle()
+	?: this.values.firstNotNullOfOrNull { it.toNewsArticle() }
+	?: this.values.firstNotNullOfOrNull { it.findNewsArticle() }
+
+fun JsonArray.findNewsArticle() = this.firstNotNullOfOrNull { it.toNewsArticle() }
+	?: this.firstNotNullOfOrNull { it.findNewsArticle() }
+
+fun JsonElement.toNewsArticle() = if (this is JsonObject) this.toNewsArticle() else null
 
 fun JsonObject.toNewsArticle(): NewsArticle? {
 	if (this["@type"]?.toString()?.contains("NewsArticle") != true) return null

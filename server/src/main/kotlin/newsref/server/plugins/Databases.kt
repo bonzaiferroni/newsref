@@ -13,19 +13,4 @@ import newsref.server.utilities.DbBackup
 
 fun Application.configureDatabases() {
     initDb()
-
-    environment.monitor.subscribe(ApplicationStarted) {
-        launch {
-            val userCount = UserService().readAll().size
-            if (userCount == 0) {
-                println("empty db found, restoring from backup")
-                DbBackup.restore()
-                println("backup restored")
-            } else {
-                println("creating backup")
-                DbBackup.create()
-                println("backup created")
-            }
-        }
-    }
 }

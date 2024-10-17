@@ -41,6 +41,7 @@ fun crawl(args: Array<String>) {
 	Runtime.getRuntime().addShutdownHook(Thread {
 		// Code to run on shutdown
 		// closePlaywright()
+		println("returning terminal settings")
 		Runtime.getRuntime().exec(arrayOf("sh", "-c", "stty sane erase ^H < /dev/tty")).waitFor()
 	})
 

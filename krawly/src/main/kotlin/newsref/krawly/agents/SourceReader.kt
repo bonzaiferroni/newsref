@@ -58,8 +58,8 @@ class SourceReader(
         // todo: if it is a news article, save a video of the endpoint
 
         if (page != null) {
-//            val md = fetch.toMarkdown()
-//            md?.cacheResource(page.pageUrl.domain, "md")
+            val md = fetch.toMarkdown()
+            md?.cacheResource(page.pageUrl.domain, "md")
         }
 
         return fetch
@@ -76,10 +76,10 @@ class SourceReader(
     private fun logResult(result: WebResult?, url: Url) {
         if (result == null || !result.isSuccess()) {
             console.logWarning("crawl fail (${result?.status}): $url")
-//            result?.screenshot?.cacheResource(url.domain, "png", "nav_fail")
+            result?.screenshot?.cacheResource(url.domain, "png", "nav_fail")
         }
 //        result?.screenshot?.cacheResource(url.domain, "png")
-//        result?.doc?.html?.cacheResource(url.domain, "html", "content")
+        result?.doc?.html?.cacheResource(url.domain, "html", "content")
     }
 
     private fun isExpectedFail(resultMap: Map<ResultType, Int>?): Boolean {

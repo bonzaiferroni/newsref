@@ -19,8 +19,11 @@ kotlin {
                 implementation("org.jetbrains.exposed:exposed-jdbc:$exposed_version")
                 implementation("org.jetbrains.exposed:exposed-kotlin-datetime:$exposed_version")
                 implementation("org.jetbrains.exposed:exposed-json:$exposed_version")
+                implementation("org.jetbrains.exposed:exposed-migration:$exposed_version")
 
                 implementation("org.postgresql:postgresql:42.7.1")
+                implementation("org.flywaydb:flyway-core:10.20.0")
+                implementation("org.flywaydb:flyway-database-postgresql:10.20.0")
 
                 implementation("ch.qos.logback:logback-classic:$logback_version")
 

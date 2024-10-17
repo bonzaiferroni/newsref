@@ -2,11 +2,10 @@ package newsref.krawly.models
 
 import newsref.db.utils.cacheSerializable
 import kotlin.test.Test
-import kotlin.test.assertNotNull
 import newsref.db.utils.resourcePath
 import newsref.krawly.utils.decodeNewsArticle
-import newsref.model.core.toUrl
 import java.io.File
+import kotlin.system.measureTimeMillis
 
 class NewsArticleTest {
 
@@ -16,15 +15,19 @@ class NewsArticleTest {
         val jsonFiles = File(resourcePath).listFiles { _, name -> name.endsWith(".json") } ?: return
 
         val nullSet = mutableSetOf<String>()
-        for (file in jsonFiles) {
-            val jsonString = file.readText()
-            val result = jsonString.decodeNewsArticle()
-//            result?.cacheSerializable(file.name, "news_article_tests")
-            if (result == null) {
-                println("null NewsArticle: ${file.name}")
-                nullSet += file.name
+        val timeTaken = measureTimeMillis {
+            for (file in jsonFiles) {
+                val jsonString = file.readText()
+                val result = jsonString.decodeNewsArticle()
+                result?.cacheSerializable(file.name, "news_article_tests")
+                if (result == null) {
+                    println("null NewsArticle: ${file.name}")
+                    nullSet += file.name
+                }
             }
         }
+        val formattedSeconds = "%.1f".format(timeTaken / 1000.0)
+        println("files: ${jsonFiles.size}, null: ${nullSet.size}, time: $formattedSeconds seconds")
 
         assert(jsonFiles.isEmpty() || nullSet.size < jsonFiles.size / 2)
     }
