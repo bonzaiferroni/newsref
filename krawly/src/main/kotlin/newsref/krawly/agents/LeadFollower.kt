@@ -88,7 +88,7 @@ class LeadFollower(
 			hosts[lead.url.domain] = now
 
 			while (spiders.isEmpty()) {
-				console.status = "😪".padStart(leadCount.toString().length)
+				console.status = "🕷".padStart(leadCount.toString().length)
 				delay(1.seconds)
 			}
 
