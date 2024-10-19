@@ -27,7 +27,7 @@ class PageReader(
 	suspend fun read(lead: LeadInfo, result: WebResult): PageInfo? {
 		val doc = result.doc ?: return null
 
-		val pageUrl = result.pageHref?.toUrlOrNull() ?: throw IllegalArgumentException("pageUrl is null")
+		val pageUrl = result.pageHref?.toUrlOrNull() ?: return null
 		val (pageHost, pageHostUrl) = pageUrl.let { hostAgent.getHost(it) }
 
 		val newsArticle = doc.getNewsArticle(pageUrl)
@@ -97,7 +97,7 @@ class PageReader(
 					url = linkUrl,
 					anchorText = text,
 					context = if (cacheContent) content.text else null,
-					isExternal = !isExternal
+					isExternal = isExternal
 				)
 				links.add(info)
 			}
@@ -142,8 +142,8 @@ class PageReader(
 				headline = headline,
 				alternativeHeadline = newsArticle?.alternativeHeadline,
 				description = description,
-				cannonUrl = cannonUrl,
-				imageUrl = imageUrl,
+				cannonUrl = cannonUrl?.toString(),
+				imageUrl = imageUrl?.toString(),
 				section = newsArticle?.articleSection?.firstOrNull(),
 				keywords = newsArticle?.keywords,
 				wordCount = wordCount,

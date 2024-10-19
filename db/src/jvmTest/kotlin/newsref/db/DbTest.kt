@@ -7,16 +7,22 @@ import org.jetbrains.exposed.sql.transactions.experimental.newSuspendedTransacti
 import kotlin.test.AfterTest
 import kotlin.test.BeforeTest
 
-open class DbTest {
+open class DbTest(
+	var useRealDb: Boolean = false,
+) {
 	@BeforeTest
 	fun setup() {
-		TestDatabase.connect()
-		TestDatabase.initDatabase(*dbTables.toTypedArray())
+		if (useRealDb) {
+			connectDb()
+		} else {
+			TestDatabase.connect()
+			TestDatabase.initDatabase(*dbTables.toTypedArray())
+		}
 	}
 
 	@AfterTest
 	fun teardown() {
-		TestDatabase.cleanupDatabase(*dbTables.toTypedArray())
+		if (!useRealDb) TestDatabase.cleanupDatabase(*dbTables.toTypedArray())
 	}
 
 	protected fun <T> dbQuery(block: suspend Transaction.() -> T): T =

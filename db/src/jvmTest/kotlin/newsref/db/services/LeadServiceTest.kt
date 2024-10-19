@@ -24,7 +24,7 @@ class LeadServiceTest : DbTest() {
 	@BeforeTest
 	fun initData() {
 		transaction {
-			val outletRow = HostTable.insert {
+			val hostRow = HostTable.insert {
 				it[name] = "Axios"
 				it[disallowed] = emptyList()
 				it[junkParams] = emptyList()
@@ -32,7 +32,7 @@ class LeadServiceTest : DbTest() {
 			}
 			LeadTable.insert { it[url] = "http://apnews.com/article_headline" }
 			val leadRow = LeadTable.insert {
-				it[hostId] = outletRow[HostTable.id]
+				it[hostId] = hostRow[HostTable.id]
 				it[url] = "http://axios.com/article_headline"
 			}
 			resultMap.forEach { (resultType, count) ->

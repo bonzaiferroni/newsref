@@ -17,7 +17,6 @@ import newsref.model.data.Source
 import newsref.db.models.FetchInfo
 import newsref.db.models.PageInfo
 import newsref.krawly.utils.toMarkdown
-import kotlin.time.Duration.Companion.days
 import kotlin.time.Duration.Companion.hours
 
 class SourceReader(
@@ -30,7 +29,7 @@ class SourceReader(
     private val console = globalConsole.getHandle("Src $spindex")
 
     suspend fun read(lead: LeadInfo): FetchInfo {
-        val resultMap = leadService.getResultsByOutlet(lead.hostId, 1.hours)
+        val resultMap = leadService.getResultsByHost(lead.hostId, 1.hours)
         val relevantCount = resultMap.getResult(ResultType.RELEVANT)
         val timeoutCount = resultMap.getResult(ResultType.TIMEOUT)
         val skipFetch = isExpectedFail(resultMap) || lead.url.isFile()
@@ -49,7 +48,7 @@ class SourceReader(
             source = Source(
                 url = page?.pageUrl ?: lead.url,
                 leadTitle = lead.feedHeadline,
-                attemptedAt = Clock.System.now(),
+                seenAt = Clock.System.now(),
                 type = page?.type ?: SourceType.UNKNOWN
             ),
             page = page,

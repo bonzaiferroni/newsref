@@ -15,23 +15,23 @@ import org.jetbrains.exposed.sql.SizedCollection
 import org.jetbrains.exposed.sql.kotlin.datetime.datetime
 
 internal object SourceTable : LongIdTable("source") {
-    val hostId = reference("outlet_id", HostTable)
+    val hostId = reference("host_id", HostTable)
     val url = text("url")
     val leadTitle = text("lead_title").nullable()
     val type = enumeration("source_type", SourceType::class).nullable()
-    val attemptedAt = datetime("attempted_at")
+    val seenAt = datetime("seen_at")
 }
 
 internal class SourceRow(id: EntityID<Long>) : LongEntity(id) {
     companion object : EntityClass<Long, SourceRow>(SourceTable)
 
-    var outlet by HostRow referencedOn SourceTable.hostId
+    var host by HostRow referencedOn SourceTable.hostId
     var contents by ContentRow via SourceContentTable
 
     var url by SourceTable.url
     var leadTitle by SourceTable.leadTitle
     var type by SourceTable.type
-    var attemptedAt by SourceTable.attemptedAt
+    var seenAt by SourceTable.seenAt
 
     val links by LinkRow referrersOn LinkTable.sourceId
     val document by ArticleRow referrersOn ArticleTable.sourceId
@@ -42,15 +42,15 @@ internal fun SourceRow.toData() = Source(
     url = this.url.toCheckedFromDb(),
     leadTitle = this.leadTitle,
     type = this.type,
-    attemptedAt = this.attemptedAt.toInstant(UtcOffset.ZERO)
+    seenAt = this.seenAt.toInstant(UtcOffset.ZERO)
 )
 
 internal fun SourceRow.fromData(source: Source, hostRow: HostRow) {
-    outlet = hostRow
+    host = hostRow
     url = source.url.toString()
     source.leadTitle?.let { leadTitle = it }
     source.type?.let { type = it }
-    attemptedAt = source.attemptedAt.toLocalDateTime(TimeZone.UTC)
+    seenAt = source.seenAt.toLocalDateTime(TimeZone.UTC)
 }
 
 internal fun SourceRow.addContents(contentEntities: List<ContentRow>) {

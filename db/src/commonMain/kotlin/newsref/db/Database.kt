@@ -29,6 +29,7 @@ val dbTables = listOf(
 	SourceContentTable,
 	ContentTable,
 	HostAuthorTable,
+	SourceAuthorTable,
 	AuthorTable,
 	ScoopTable,
 	FeedTable,

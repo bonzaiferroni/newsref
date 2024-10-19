@@ -2,6 +2,7 @@ package newsref.db.tables
 
 import kotlinx.datetime.*
 import newsref.db.utils.toCheckedFromDb
+import newsref.model.core.toUrlOrNull
 import newsref.model.data.Article
 import org.jetbrains.exposed.dao.EntityClass
 import org.jetbrains.exposed.dao.LongEntity
@@ -12,9 +13,12 @@ import org.jetbrains.exposed.sql.kotlin.datetime.datetime
 // todo: make all tables and rows internal
 internal object ArticleTable: LongIdTable("article") {
     val sourceId = reference("source_id", SourceTable)
+
     val headline = text("headline")
+    val alternativeHeadline = text("alternative_headline").nullable()
     val description = text("description").nullable()
-    val imageUrl = text("image_url").nullable()                                 // unchecked
+    val cannonUrl = text("cannon_url").nullable()
+    val imageUrl = text("image_url").nullable()
     val section = text("section").nullable()
     val keywords = array<String>("keywords").nullable()
     val wordCount = integer("word_count").nullable()
@@ -33,8 +37,10 @@ internal class ArticleRow(id: EntityID<Long>) : LongEntity(id) {
     var source by SourceRow referencedOn ArticleTable.sourceId
 
     var headline by ArticleTable.headline
+    var alternativeHeadline by ArticleTable.alternativeHeadline
     var description by ArticleTable.description
-    var imageUrl by ArticleTable.imageUrl                                       // unchecked
+    var cannonUrl by ArticleTable.cannonUrl
+    var imageUrl by ArticleTable.imageUrl
     var section by ArticleTable.section
     var keywords by ArticleTable.keywords
     var wordCount by ArticleTable.wordCount
@@ -51,8 +57,10 @@ internal fun ArticleRow.toData() = Article(
     id = this.id.value,
     sourceId = this.source.id.value,
     headline = this.headline,
+    alternativeHeadline = this.alternativeHeadline,
     description = this.description,
-    imageUrl = this.imageUrl?.toCheckedFromDb(),
+    cannonUrl = this.cannonUrl,
+    imageUrl = this.imageUrl,
     section = this.section,
     keywords = this.keywords,
     wordCount = this.wordCount,
@@ -68,8 +76,10 @@ internal fun ArticleRow.toData() = Article(
 internal fun ArticleRow.fromData(article: Article, sourceRow: SourceRow) {
     source = sourceRow
     headline = article.headline
+    alternativeHeadline = article.alternativeHeadline
     description = article.description
-    imageUrl = article.imageUrl?.toString()
+    cannonUrl = article.cannonUrl
+    imageUrl = article.imageUrl
     section = article.section
     keywords = article.keywords
     wordCount = article.wordCount

@@ -8,9 +8,9 @@ data class Host(
 	val core: String,
 	val name: String? = null,
 	val logo: String? = null,
-	val robotsTxt: String?,
-	val isRedirect: Boolean?,
+	val robotsTxt: String? = null,
+	val isRedirect: Boolean? = null,
 	val domains: Set<String>,
-	val bannedPaths: Set<String>,
+	val bannedPaths: Set<String> = emptySet(),
 	val junkParams: Set<String> = emptySet(),
 )

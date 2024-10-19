@@ -10,6 +10,9 @@ object Api {
     // val location = Endpoint("/data/location")
     // val request = Endpoint("/data/request")
 
+    // content
+    val source = Endpoint("/source")
+
     // user
     val user = Endpoint("/user")
     val privateInfo = Endpoint("/user/private")

@@ -16,7 +16,7 @@ import kotlin.time.Duration
 
 internal object LeadTable: LongIdTable("lead") {
     val url = text("url").uniqueIndex()
-    val hostId = reference("outlet_id", HostTable)
+    val hostId = reference("host_id", HostTable)
     val targetId = reference("target_id", SourceTable).nullable()
 }
 
@@ -49,12 +49,12 @@ internal fun LeadRow.Companion.leadExists(checkedUrl: CheckedUrl): Boolean {
     return this.find { LeadTable.url.lowerCase() inList list }.any()
 }
 
-internal fun LeadRow.Companion.getOutletResults(outletId: Int, since: Duration): Map<ResultType, Int> {
+internal fun LeadRow.Companion.getHostResults(hostId: Int, since: Duration): Map<ResultType, Int> {
     val time = (Clock.System.now() - since).toLocalDateTimeUTC()
     // println("Filtered time: $time")
     // println(query.prepareSQL(QueryBuilder(false)))
     return LeadTable.leftJoin(LeadResultTable).select(LeadResultTable.resultCount, LeadResultTable.result).where {
-        (LeadTable.hostId eq outletId) and (LeadResultTable.attemptedAt greaterEq time)
+        (LeadTable.hostId eq hostId) and (LeadResultTable.attemptedAt greaterEq time)
     }.groupBy(LeadResultTable.result).associate { resultRow ->
         resultRow[LeadResultTable.result] to resultRow[LeadResultTable.resultCount]
     }
@@ -121,30 +121,4 @@ internal fun LeadJobRow.fromData(leadJob: LeadJob, leadRow: LeadRow, feedRow: Fe
     headline = leadJob.headline
     isExternal = leadJob.isExternal
     freshAt = leadJob.freshAt?.toLocalDateTimeUTC()
-}
-
-// lead info
-internal val leadInfoColumns = listOf(
-    LeadTable.id,
-    LeadTable.url,
-    LeadTable.targetId,
-    LeadTable.hostId,
-    LeadJobTable.headline,
-    LeadJobTable.isExternal,
-    LeadJobTable.freshAt,
-    // LeadResultTable.leadId.count()
-)
-
-internal fun Query.wrapLeadInfo() = this.map { row ->
-    LeadInfo(
-        id = row[LeadTable.id].value,
-        url = row[LeadTable.url].toCheckedFromDb(),
-        targetId = row[LeadTable.targetId]?.value,
-        hostId = row[LeadTable.hostId].value,
-        feedHeadline = row.getOrNull(LeadJobTable.headline),
-        attemptCount = row[LeadResultTable.leadId.count()].toInt(),
-        lastAttemptAt = row.getOrNull(LeadResultTable.attemptedAt)?.toInstant(UtcOffset.ZERO),
-        isExternal = row[LeadJobTable.isExternal],
-        freshAt = row.getOrNull(LeadJobTable.freshAt)?.toInstant(UtcOffset.ZERO)
-    )
 }

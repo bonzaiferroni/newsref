@@ -3,11 +3,8 @@ package newsref.db.utils
 import newsref.model.core.Url
 import org.jetbrains.exposed.dao.Entity
 import org.jetbrains.exposed.dao.EntityClass
-import org.jetbrains.exposed.sql.Column
-import org.jetbrains.exposed.sql.Op
-import org.jetbrains.exposed.sql.SqlExpressionBuilder
+import org.jetbrains.exposed.sql.*
 import org.jetbrains.exposed.sql.SqlExpressionBuilder.eq
-import org.jetbrains.exposed.sql.lowerCase
 
 fun <Id : Comparable<Id>, Ent : Entity<Id>> EntityClass<Id, Ent>.createOrUpdate(
 	find: Op<Boolean>,
@@ -29,3 +26,7 @@ fun <Id : Comparable<Id>, Ent : Entity<Id>> EntityClass<Id, Ent>.createOrUpdate(
 
 fun Column<String>.sameAs(url: Url) = this.lowerCase() eq url.href.lowercase()
 fun Column<String>.sameAs(other: String) = this.lowerCase() eq other.lowercase()
+
+operator fun <T> SizedIterable<T>.plus(item: T): SizedCollection<T> {
+	return SizedCollection(this.toList() + item)
+}

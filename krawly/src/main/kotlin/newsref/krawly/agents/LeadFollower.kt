@@ -7,12 +7,16 @@ import kotlinx.coroutines.launch
 import kotlinx.datetime.Clock
 import kotlinx.datetime.Instant
 import newsref.db.globalConsole
+import newsref.db.log.logIfTrue
 import newsref.db.log.toCyan
 import newsref.db.log.toPink
+import newsref.db.models.FetchInfo
 import newsref.db.services.LeadService
 import newsref.db.services.SourceService
 import newsref.krawly.SpiderWeb
 import newsref.model.data.LeadInfo
+import java.util.*
+import kotlin.collections.ArrayDeque
 import kotlin.time.Duration
 import kotlin.time.Duration.Companion.days
 import kotlin.time.Duration.Companion.minutes
@@ -40,25 +44,44 @@ class LeadFollower(
 	}
 
 	private suspend fun checkLeads() {
-		val (freshSince, allLeads) = leadService.getOpenLeads().shuffled().filterByTimeStep()
-		val stack = ArrayDeque(allLeads)
-		if (stack.isEmpty()) {
-			console.logInfo("No external leads available, following other leads")
-			stack.addAll(allLeads)
+		val leads = ArrayDeque<LeadInfo>()
+		var refreshed = Instant.DISTANT_PAST
+		var leadCount = 0
+
+		suspend fun refreshLeads() {
+			leads.clear()
+			val (freshSince, isExternal, allLeads) = leadService.getOpenLeads().shuffled().filterByTimeStep()
+			leads.addAll(allLeads)
+			leadCount = leads.size
+			refreshed = Clock.System.now()
+			val message = "found $leadCount ${isExternal.logIfTrue("(isExternal) ")}leads, fresh since: $freshSince"
+			console.logInfo(message.toPink(), leadCount)
 		}
-		var leadCount = stack.size
-		console.logInfo("found ${stack.size} jobs, fresh since: $freshSince".toPink(), leadCount)
+
+		val spiders = ((0 until maxSpiders).map { Spider(it) }).toMutableList()
+		val fetches = Collections.synchronizedList(mutableListOf<FetchInfo>())
 		val hosts = mutableMapOf<String, Instant>()
-		val spiders = ArrayDeque((0 until maxSpiders).map { Spider(it) })
-		val started = Clock.System.now()
-		while (!stack.isEmpty()) {
-			delay(100)
-			val lead = stack.removeFirstOrNull() ?: break
+
+		refreshLeads()
+
+		while (!leads.isEmpty()) {
+
+			while (fetches.isNotEmpty()) {
+				val fetch = fetches.removeLast()
+				sourceService.consume(fetch)
+				leadMaker.makeLeads(fetch)
+			}
+
 			val now = Clock.System.now()
+			if (now - refreshed > 2.minutes)  {
+				refreshLeads()
+			}
+
+			val lead = leads.removeFirstOrNull() ?: break
 			val lastAttempt = hosts[lead.url.domain]
 			if (lastAttempt != null && now - lastAttempt < 30.seconds) {
-				if (stack.all { it.url.domain == lead.url.domain }) break
-				stack.addLast(lead)
+				if (leads.all { it.url.domain == lead.url.domain }) break
+				leads.addLast(lead)
 				console.status = "😇".padStart(leadCount.toString().length)
 				continue
 			}
@@ -70,19 +93,15 @@ class LeadFollower(
 			}
 
 			console.status = (--leadCount).toString()
-			val spider = spiders.removeFirst()
+			val spider = spiders.removeLast()
 			spider.crawl {
 				spider.console.logInfo(lead.url.toString().take(60).toCyan())
 
 				val fetch = spider.sourceReader.read(lead)
-				sourceService.consume(fetch)
-
-				val count = leadMaker.makeLeads(fetch)
-				// spider.console.logInfo("found $count new leads from ${lead.url.domain}")
+				fetches.add(fetch)
 				spiders.add(spider)
 			}
-
-			if (now - started > 10.minutes) break
+			delay(100)
 		}
 
 		while (spiders.size < maxSpiders) {
@@ -99,25 +118,30 @@ class LeadFollower(
 
 		fun crawl(block: suspend () -> Unit) {
 			CoroutineScope(Dispatchers.Default).launch {
-				block()
+				try {
+					block()
+				} catch (e: Exception) {
+					console.logError("Spider found exception:\n${e}")
+				}
 			}
 		}
 	}
 }
 
-private fun List<LeadInfo>.filterByTimeStep() = this.takeIf { this.size < 5000 }?.let{ Pair(Duration.INFINITE, it) }
-	?: this.filterExternal().filterSince(1.days)
-	?: this.filterSince(1.days)
-	?: this.filterExternal().filterSince(7.days)
-	?: this.filterSince(7.days)
-	?: this.filterExternal().filterSince(30.days)
-	?: this.filterSince(30.days)
-	?: this.filterExternal().filterSince(365.days)
-	?: this.filterSince(365.days)
-	?: Pair(Duration.INFINITE, this)
+private fun List<LeadInfo>.filterByTimeStep() =
+	this.takeIf { this.size < 2000 }?.let{ Triple(Duration.INFINITE, false, it) }
+	?: this.filterSince(1.days, true)
+	?: this.filterSince(1.days, false)
+	?: this.filterSince(7.days, true)
+	?: this.filterSince(7.days, false)
+	?: this.filterSince(30.days, true)
+	?: this.filterSince(30.days, false)
+	?: this.filterSince(365.days, true)
+	?: this.filterSince(365.days, false)
+	?: Triple(Duration.INFINITE, false, this)
 
-private fun List<LeadInfo>.filterSince(duration: Duration) =
-	this.filter { it.freshAt != null && Clock.System.now() - it.freshAt!! < duration }.takeIf { it.size > 500 }
-		?.let { Pair(duration, it) }
-
-private fun List<LeadInfo>.filterExternal() = this.filter { it.isExternal }
+private fun List<LeadInfo>.filterSince(duration: Duration, isExternal: Boolean) =
+	this.filter { it.freshAt != null && Clock.System.now() - it.freshAt!! < duration }
+		.filter{ if (isExternal) it.isExternal else true }
+		.takeIf { it.size > 200 }
+		?.let { Triple(duration, isExternal, it) }

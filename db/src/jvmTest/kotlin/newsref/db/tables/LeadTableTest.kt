@@ -22,14 +22,14 @@ class LeadTableTest : DbTest() {
 	@BeforeTest
 	fun initData() {
 		transaction {
-			val outletRow = HostTable.insert {
+			val hostRow = HostTable.insert {
 				it[name] = "Axios"
 				it[disallowed] = emptyList()
 				it[junkParams] = emptyList()
 				it[domains] = listOf("axios.com")
 			}
 			val leadRow = LeadTable.insert {
-				it[hostId] = outletRow[HostTable.id]
+				it[hostId] = hostRow[HostTable.id]
 				it[url] = "http://axios.com/article_headline"
 			}
 			resultMap.forEach { (resultType, count) ->
@@ -50,8 +50,8 @@ class LeadTableTest : DbTest() {
 	}
 
 	@Test
-	fun `getOutletResults returns mapped Results`() = transaction {
-		val map = LeadRow.getOutletResults(1, 1.days)
+	fun `getHostResults returns mapped Results`() = transaction {
+		val map = LeadRow.getHostResults(1, 1.days)
 		assertEquals(resultMap, map)
 	}
 }

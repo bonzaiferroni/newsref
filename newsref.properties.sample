@@ -1,0 +1,9 @@
+NEWSREF_ADMIN_EMAIL=admin@example.com
+NEWSREF_ADMIN_NAME=Admin Name
+NEWSREF_ADMIN_PASSWORD=supersecret
+NEWSREF_ADMIN_SALT=saltvalue
+NEWSREF_ADMIN_USERNAME=adminuser
+NEWSREF_APP_SECRET=appsecretvalue
+NEWSREF_INIT_FEED_SELECTOR=feedselector
+NEWSREF_INIT_FEED_URL=http://example.com/feed
+NEWSREF_PSQL_PW=postgrespassword

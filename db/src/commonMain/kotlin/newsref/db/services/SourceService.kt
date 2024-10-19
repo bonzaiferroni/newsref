@@ -8,10 +8,10 @@ import newsref.model.data.*
 import newsref.db.models.FetchInfo
 import newsref.db.utils.createOrUpdate
 import newsref.db.utils.sameAs
+import newsref.db.utils.plus
+import newsref.model.data.Lead
+import org.jetbrains.exposed.sql.*
 import org.jetbrains.exposed.sql.SqlExpressionBuilder.eq
-import org.jetbrains.exposed.sql.and
-import org.jetbrains.exposed.sql.anyFrom
-import org.jetbrains.exposed.sql.stringParam
 import java.util.MissingResourceException
 
 class SourceService: DbService() {
@@ -22,7 +22,7 @@ class SourceService: DbService() {
 
         // find and update host
         val hostRow = HostRow.find { HostTable.id eq hostId }.firstOrNull()
-            ?: throw MissingResourceException("Missing Outlet", "SourceService", hostId.toString())
+            ?: throw MissingResourceException("Missing Host", "SourceService", hostId.toString())
         if (hostRow.core.lowercase() != fetch.source.url.core.lowercase())
             throw IllegalArgumentException("mismatch core: ${hostRow.core} and ${fetch.source.url.core}")
         fetch.page?.junkParams?.let { hostRow.junkParams += it }
@@ -67,11 +67,16 @@ class SourceService: DbService() {
 
         // create author
         val authorRows = page.authors?.map { byLine ->
-            val author = Author(bylines = setOf(byLine))
-            val authorRows = AuthorRow.find { stringParam(byLine) eq anyFrom(AuthorTable.bylines) }
-            authorRows.firstNotNullOfOrNull { row ->
-                row.hosts.firstOrNull { it.id == hostRow.id }
-            } ?: AuthorRow.new { fromData(author, hostRow) }
+            val author = Author(name = byLine,  bylines = setOf(byLine))
+            AuthorRow.find { stringParam(byLine) eq anyFrom(AuthorTable.bylines) }
+                .firstOrNull { authorRow -> authorRow.hosts.any { it.id == hostRow.id } }
+                ?: AuthorRow.new { fromData(author, hostRow, sourceRow) }
+        }
+        authorRows?.forEach { authorRow ->
+            if (!authorRow.hosts.any { it.id != hostRow.id })
+                authorRow.hosts += hostRow
+            if (!authorRow.sources.any { it.id != sourceRow.id })
+                authorRow.sources += sourceRow
         }
 
         // create Content
@@ -101,3 +106,4 @@ class SourceService: DbService() {
         sourceRow.id.value // return
     }
 }
+

@@ -21,6 +21,7 @@ test.mv.db
 test.mv.db.backup
 test.trace.db
 backup.json
+newsref.properties
 /www/uploads
 /dump
 /cache
