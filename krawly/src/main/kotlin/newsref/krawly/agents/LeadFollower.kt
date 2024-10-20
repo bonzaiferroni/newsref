@@ -21,6 +21,7 @@ import kotlin.time.Duration
 import kotlin.time.Duration.Companion.days
 import kotlin.time.Duration.Companion.minutes
 import kotlin.time.Duration.Companion.seconds
+import kotlin.time.DurationUnit
 
 class LeadFollower(
 	private val web: SpiderWeb,
@@ -35,9 +36,9 @@ class LeadFollower(
 	fun start() {
 		CoroutineScope(Dispatchers.Default).launch {
 			while (true) {
-				console.logTrace("checking leads", "🕷  ")
+				console.logTrace("checking leads", "🕷 ")
 				checkLeads()
-				console.logTrace("sleeping", "zzz")
+				console.logTrace("sleeping", "zz")
 				delay((10..15).random().seconds)
 			}
 		}
@@ -50,11 +51,18 @@ class LeadFollower(
 
 		suspend fun refreshLeads() {
 			leads.clear()
-			val (freshSince, isExternal, allLeads) = leadService.getOpenLeads().shuffled().filterByTimeStep()
+			val now = Clock.System.now()
+			val allLeads = leadService.getOpenLeads().shuffled().sortedByDescending { lead ->
+				lead.freshAt?.let { if (lead.isExternal) it else it - 7.days } ?: (now - 7.days)
+			}
 			leads.addAll(allLeads)
+			val sample = leads.take(200)
+			val avgDaysAgo = sample.sumOf {
+				lead -> lead.freshAt?.let { (now - it).toDouble(DurationUnit.DAYS) } ?: 7.0
+			} / sample.size
 			leadCount = leads.size
 			refreshed = Clock.System.now()
-			val message = "found $leadCount ${isExternal.logIfTrue("(isExternal) ")}leads, fresh since: $freshSince"
+			val message = "found leads $leadCount, sample ~${avgDaysAgo.format("%.1f")} days ago"
 			console.logInfo(message.toPink(), leadCount)
 		}
 
@@ -79,16 +87,16 @@ class LeadFollower(
 
 			val lead = leads.removeFirstOrNull() ?: break
 			val lastAttempt = hosts[lead.url.domain]
-			if (lastAttempt != null && now - lastAttempt < 30.seconds) {
+			if (lastAttempt != null && now - lastAttempt < 1.minutes) {
 				if (leads.all { it.url.domain == lead.url.domain }) break
 				leads.addLast(lead)
-				console.status = "😇".padStart(leadCount.toString().length)
+				console.status = "⌚ ".padStart(leadCount.toString().length)
 				continue
 			}
 			hosts[lead.url.domain] = now
 
 			while (spiders.isEmpty()) {
-				console.status = "🕷".padStart(leadCount.toString().length)
+				console.status = "🕷 ".padStart(leadCount.toString().length)
 				delay(1.seconds)
 			}
 
@@ -145,3 +153,5 @@ private fun List<LeadInfo>.filterSince(duration: Duration, isExternal: Boolean) 
 		.filter{ if (isExternal) it.isExternal else true }
 		.takeIf { it.size > 200 }
 		?.let { Triple(duration, isExternal, it) }
+
+fun Double.format(format: String) = format.format(this)

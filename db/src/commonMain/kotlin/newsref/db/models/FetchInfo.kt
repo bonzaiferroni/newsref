@@ -24,12 +24,12 @@ data class PageInfo(
 	val hostId: Int,
 	val hostName: String?,
 	val contents: Set<String>,
-	val links: List<LinkInfo>,
+	val links: List<FetchLinkInfo>,
 	val authors: Set<String>?,
 	val junkParams: Set<String>?,
 )
 
-data class LinkInfo(
+data class FetchLinkInfo(
     val url: CheckedUrl,
     val anchorText: String,
     val context: String?,

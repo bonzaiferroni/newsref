@@ -68,6 +68,6 @@ var FlexPanel.gap: Int
         this.setStyle("gap", "${value}px")
     }
 
-fun Match.getUrlId(): Int? {
-    return (this.data["id"] as? String)?.toIntOrNull()
+fun Match.getUrlId(): String? {
+    return this.data["id"] as? String
 }

@@ -10,13 +10,16 @@ import io.kvision.html.p
 import io.kvision.state.ObservableValue
 import io.kvision.state.bind
 import io.kvision.state.bindTo
+import newsref.web.core.AppContext
+import newsref.web.core.Pages
 import newsref.web.core.PortalEvents
+import newsref.web.core.navigate
 import newsref.web.ui.components.col
 import newsref.web.ui.components.renderStore
 import newsref.web.ui.components.row
 import newsref.web.ui.models.HomeModel
 
-fun Container.homePage(): PortalEvents? {
+fun Container.homePage(context: AppContext): PortalEvents? {
     val model = HomeModel()
     col {
         p("Hello World!")
@@ -25,7 +28,11 @@ fun Container.homePage(): PortalEvents? {
                 val title = source.article?.headline ?: source.leadTitle ?: source.url
                 row {
                     div(source.citationCount.toString())
-                    link(title, source.url)
+                    button("") {
+                        link(title)
+                    }.onClick {
+                        context.navigate(Pages.source, source.id)
+                    }
                 }
             }
         }

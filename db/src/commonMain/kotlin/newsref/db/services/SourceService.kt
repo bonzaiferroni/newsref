@@ -60,10 +60,16 @@ class SourceService: DbService() {
             }
         }
 
+        // exit here if no page
+        val page = fetch.page ?: return@dbQuery sourceRow.id.value
+
+        // create or update document
+        val articleRow = ArticleRow.createOrUpdate(ArticleTable.sourceId eq sourceRow.id) {
+            fromData(page.article, sourceRow)
+        }
+
         // exit here if not news article
-        val page = fetch.page
-        if (page == null || sourceRow.type != SourceType.ARTICLE)
-            return@dbQuery sourceRow.id.value
+        if (sourceRow.type != SourceType.ARTICLE) return@dbQuery sourceRow.id.value
 
         // create author
         val authorRows = page.authors?.map { byLine ->
@@ -83,11 +89,6 @@ class SourceService: DbService() {
         val contentRows = page.contents.map { content ->
             ContentRow.find { ContentTable.text eq content }.firstOrNull()
                 ?:ContentRow.new { fromData(content) } // return@map
-        }
-
-        // create or update document
-        val articleRow = ArticleRow.createOrUpdate(ArticleTable.sourceId eq sourceRow.id) {
-            fromData(page.article, sourceRow)
         }
 
         val linkRows = page.links.map { info ->

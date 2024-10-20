@@ -61,7 +61,7 @@ class ApiClient(
         request<T>(HttpMethod.GET, endpoint.path)
     }.data
 
-    suspend inline fun <reified T : Any> get(endpoint: Endpoint, id: Int): T = authRequest(::login) {
+    suspend inline fun <reified T : Any> get(endpoint: Endpoint, id: Any): T = authRequest(::login) {
         request<T>(HttpMethod.GET, endpoint.replaceClientId(id))
     }.data
 

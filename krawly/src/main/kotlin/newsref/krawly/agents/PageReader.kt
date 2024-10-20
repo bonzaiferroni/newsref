@@ -9,9 +9,8 @@ import newsref.krawly.utils.*
 import newsref.model.core.*
 import newsref.model.data.*
 import newsref.db.models.PageInfo
-import newsref.db.models.LinkInfo
+import newsref.db.models.FetchLinkInfo
 import newsref.krawly.models.NewsArticle
-import kotlin.system.measureTimeMillis
 
 class PageReader(
 	spindex: Int,
@@ -38,7 +37,7 @@ class PageReader(
 
 		val contents = mutableSetOf<String>()
 		val linkHrefs = mutableSetOf<String>()
-		val links = mutableListOf<LinkInfo>()
+		val links = mutableListOf<FetchLinkInfo>()
 		// var newsArticle = this
 		var h1Title: String? = null
 		var wordCount = 0
@@ -93,7 +92,7 @@ class PageReader(
 				val isSibling = linkUrl.isMaybeSibling(pageUrl)
 				val isExternal = linkHost.core != pageHost.core
 				if (!isExternal && !isSibling) continue
-				val info = LinkInfo(
+				val info = FetchLinkInfo(
 					url = linkUrl,
 					anchorText = text,
 					context = if (cacheContent) content.text else null,

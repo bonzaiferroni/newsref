@@ -1,5 +1,6 @@
 package newsref.krawly.agents
 
+import kotlinx.datetime.Clock
 import newsref.db.globalConsole
 import newsref.db.services.LeadService
 import newsref.db.log.toPink
@@ -12,6 +13,7 @@ import newsref.db.services.LeadExistsException
 import newsref.model.core.ArticleType
 import newsref.model.core.SourceType
 import newsref.model.data.LeadJob
+import kotlin.time.Duration.Companion.days
 
 class LeadMaker(
 	private val hostAgent: HostAgent,
@@ -35,7 +37,10 @@ class LeadMaker(
 	}
 
 	suspend fun makeLeads(fetch: FetchInfo): Int {
-		if (fetch.source.type != SourceType.ARTICLE || fetch.page?.articleType != ArticleType.NEWS) return 0
+		val page = fetch.page ?: return 0
+		if (fetch.source.type != SourceType.ARTICLE || page.articleType != ArticleType.NEWS) return 0
+		val publishedAt = page.article.publishedAt
+		if (publishedAt != null && publishedAt < (Clock.System.now() - 30.days)) return 0
 		val links = fetch.page?.links ?: return 0
 		var leadCount = 0
 		for (link in links) {

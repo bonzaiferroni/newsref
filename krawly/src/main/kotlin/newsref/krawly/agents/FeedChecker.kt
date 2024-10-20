@@ -2,6 +2,7 @@ package newsref.krawly.agents
 
 import kotlinx.coroutines.*
 import kotlinx.datetime.Clock
+import kotlinx.datetime.Instant
 import newsref.db.globalConsole
 import newsref.db.services.FeedService
 import newsref.krawly.SpiderWeb
@@ -10,6 +11,7 @@ import newsref.krawly.utils.isLikelyAd
 import newsref.krawly.utils.tryGetHref
 import newsref.model.core.toUrlOrNull
 import newsref.model.data.LeadJob
+import kotlin.time.Duration.Companion.hours
 import kotlin.time.Duration.Companion.minutes
 
 class FeedChecker(
@@ -19,6 +21,7 @@ class FeedChecker(
 	private val feedService: FeedService = FeedService(),
 ) {
 	private val console = globalConsole.getHandle("FeedChecker")
+	private val delayMap: MutableMap<Int, Instant> = mutableMapOf()
 
 	fun start() {
 		CoroutineScope(Dispatchers.Default).launch {
@@ -34,7 +37,11 @@ class FeedChecker(
 
 	private suspend fun checkFeeds() {
 		val feeds = feedService.readAll()
+		val now = Clock.System.now()
 		for (feed in feeds) {
+			val delay = delayMap[feed.id]
+			if (delay != null && delay > now) continue
+
 			var count = 0
 			console.logDebug("checking feed: ${feed.url}")
 			val webResult = web.fetch(feed.url)
@@ -61,6 +68,7 @@ class FeedChecker(
 				if (newJob != null) count++
 			}
 			console.logDebug("found $count feed leads from ${elements.size} elements")
+			if (count == 0) delayMap[feed.id] = now + 1.hours
 		}
 	}
 }

@@ -4,7 +4,6 @@ import kotlinx.datetime.Instant
 import kotlinx.serialization.Serializable
 import newsref.model.core.SourceType
 import newsref.model.data.Article
-import newsref.model.data.Host
 
 @Serializable
 data class SourceInfo(
@@ -16,15 +15,21 @@ data class SourceInfo(
 	val hostCore: String,
 	val hostName: String? = null,
 	val hostLogo: String? = null,
-	val citationCount: Int,
+	val citationCount: Int? = null,
 	val article: Article? = null,
-)
+	val inLinks: List<LinkInfo>? = null,
+	val outLinks: List<LinkInfo>? = null,
+) {
+	val bestTitle get() = article?.headline ?: leadTitle ?: url
+}
 
 @Serializable
-data class CitationInfo(
-	val targetId: Long = 0,
+data class LinkInfo(
+	val targetId: Long? = null,
 	val sourceId: Long = 0,
 	val url: String,
 	val urlText: String,
-	val contentId: Long?,
+	val context: String?,
+	val sourceUrl: String,
+	val seenAt: Instant
 )

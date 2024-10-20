@@ -11,7 +11,7 @@ data class PageConfig(
 ) {
     val linkRoute: String get() = "#$routeBeforeId"
     val routeBeforeId: String get() = route.substringBefore("/:")
-    fun getIdRoute(id: Int) = route.replace(":id", id.toString())
+    fun getIdRoute(id: Any) = route.replace(":id", id.toString())
 }
 
 abstract class PageBuilder {
@@ -22,9 +22,8 @@ data class CachedPageBuilder(
 ) : PageBuilder()
 
 data class IdPageBuilder(
-    val content: Container.(AppContext, Int) -> PortalEvents?
-) : PageBuilder() {
-}
+    val content: Container.(AppContext, String) -> PortalEvents?
+) : PageBuilder()
 
 data class TransientPageBuilder(
     val content: Container.(AppContext) -> PortalEvents?
@@ -37,4 +36,4 @@ data class PortalEvents(
 
 fun PageConfig.navigate(context: AppContext) = context.routing.navigate(route)
 fun AppContext.navigate(config: PageConfig) = routing.navigate(config.route)
-fun AppContext.navigate(config: PageConfig, id: Int) = routing.navigate(config.getIdRoute(id))
+fun AppContext.navigate(config: PageConfig, id: Any) = routing.navigate(config.getIdRoute(id))

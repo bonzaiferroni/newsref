@@ -9,4 +9,5 @@ class SourceStore(
 	private val client: ApiClient = globalApiClient,
 ) {
 	suspend fun getSources(): List<SourceInfo> = client.get(Api.source)
+	suspend fun getSource(id: Long): SourceInfo = client.get(Api.source, id)
 }

@@ -28,5 +28,5 @@ data class Endpoint(
     val path = "$apiPrefix$base"
     val clientIdTemplate: String get() = "$path/:id"
     val serverIdTemplate: String get() = "$path/{id}"
-    fun replaceClientId(id: Int) = this.clientIdTemplate.replace(":id", id.toString())
+    fun replaceClientId(id: Any) = this.clientIdTemplate.replace(":id", id.toString())
 }
