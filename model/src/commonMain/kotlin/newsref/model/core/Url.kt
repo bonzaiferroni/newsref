@@ -32,8 +32,9 @@ open class Url internal constructor(
 		if (beforePath.contains('@')) throw IllegalArgumentException("URL contains user info: $rawHref")
 		domain = beforePath.lowercase()
 		if (domain.length > 100) throw IllegalArgumentException("Domain too long: $domain")
-		domainSegments = domain.split('.').size
 		core = beforePath.removePrefix("www.").lowercase()
+		domainSegments = core.split('.').size
+		if (domainSegments < 2) throw IllegalArgumentException("Invalid domain: $domain")
 		val rawPath = afterPath?.let { "/$it" } ?: "/"
 
 		val (beforeParams, afterParams) = rawPath.deconstruct("?")

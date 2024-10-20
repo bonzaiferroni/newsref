@@ -27,7 +27,7 @@ class FeedChecker(
 		CoroutineScope(Dispatchers.Default).launch {
 			feedService.init()
 			while (true) {
-				console.log("checking feeds", "🕷  ")
+				console.log("checking feeds", "🕷 ")
 				checkFeeds()
 				console.log("sleeping", "zzz")
 				delay((10..15).random().minutes)

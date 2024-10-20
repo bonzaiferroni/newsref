@@ -2,7 +2,7 @@ package newsref.krawly.models
 
 import newsref.db.utils.cacheSerializable
 import kotlin.test.Test
-import newsref.db.utils.resourcePath
+import newsref.db.utils.RESOURCE_PATH
 import newsref.krawly.utils.decodeNewsArticle
 import java.io.File
 import kotlin.system.measureTimeMillis
@@ -11,7 +11,7 @@ class NewsArticleTest {
 
     @Test
     fun `test decode real-world NewsArticle JSON`() {
-        val resourcePath = "${resourcePath}/news_article_raw"
+        val resourcePath = "${RESOURCE_PATH}/news_article_raw"
         val jsonFiles = File(resourcePath).listFiles { _, name -> name.endsWith(".json") } ?: return
 
         val nullSet = mutableSetOf<String>()

@@ -23,6 +23,7 @@ fun main(args: Array<String>) {
 fun crawl(args: Array<String>) {
 	initDb()
 	val web = SpiderWeb()
+	val nexusFinder = NexusFinder()
 	val hostAgent = HostAgent(web)
 	val leadMaker = LeadMaker(hostAgent)
 	val feedChecker = FeedChecker(web, hostAgent, leadMaker)
@@ -30,6 +31,7 @@ fun crawl(args: Array<String>) {
 	globalConsole.addCommand("start") {
 		feedChecker.start()
 		leadFollower.start()
+		// nexusFinder.start()
 		"Starting spider 🕷"
 	}
 	args.map { it.split('=') }

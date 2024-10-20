@@ -90,13 +90,13 @@ class LeadFollower(
 			if (lastAttempt != null && now - lastAttempt < 1.minutes) {
 				if (leads.all { it.url.domain == lead.url.domain }) break
 				leads.addLast(lead)
-				console.status = "⌚ ".padStart(leadCount.toString().length)
+				console.status = "⌚".padStart(leadCount.toString().length)
 				continue
 			}
 			hosts[lead.url.domain] = now
 
 			while (spiders.isEmpty()) {
-				console.status = "🕷 ".padStart(leadCount.toString().length)
+				console.status = "🕷".padStart(leadCount.toString().length)
 				delay(1.seconds)
 			}
 

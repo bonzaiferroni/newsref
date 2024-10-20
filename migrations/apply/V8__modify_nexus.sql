@@ -1,0 +1,2 @@
+ALTER TABLE host DROP CONSTRAINT fk_host_nexus_id__id;
+ALTER TABLE host ADD CONSTRAINT fk_host_nexus_id__id FOREIGN KEY (nexus_id) REFERENCES nexus(id) ON DELETE SET NULL ON UPDATE RESTRICT;
