@@ -33,10 +33,10 @@ class SourceReader(
         val relevantCount = resultMap.getResult(ResultType.RELEVANT)
         val timeoutCount = resultMap.getResult(ResultType.TIMEOUT)
         val skipFetch = isExpectedFail(resultMap) || lead.url.isFile()
-        console.cell(lead.url.domain, 29, justify = Justify.LEFT).cell("$relevantCount", 9, "relevant")
-            .cell("$timeoutCount", 9, "timeout").cell("🐛") { !skipFetch }.row(background = deepspaceBlueBg)
         val result = if (!skipFetch) { web.fetch(lead.url, true) } else { null }
 
+        console.cell(lead.url.domain, 29, justify = Justify.LEFT).cell("$relevantCount", 9, "relevant")
+            .cell("$timeoutCount", 9, "timeout").cell("🐛") { !skipFetch }.row(background = deepspaceBlueBg)
         val page = result?.let { pageReader.read(lead, it) }
         val resultType = determineResultType(skipFetch, result, page)
         if (resultType != ResultType.TIMEOUT && !skipFetch)

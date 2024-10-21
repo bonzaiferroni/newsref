@@ -11,7 +11,7 @@ import org.jetbrains.exposed.sql.ReferenceOption
 internal object HostTable : IntIdTable("host") {
 	val nexusId = reference("nexus_id", NexusTable, ReferenceOption.SET_NULL).nullable()
 
-	val core = text("apex").uniqueIndex()
+	val core = text("core").uniqueIndex()
 	val name = text("name").nullable()
 	val logo = text("logo").nullable()
 	val robotsTxt = text("robots_txt").nullable()

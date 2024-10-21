@@ -116,6 +116,7 @@ class PageReader(
 		wordCount = newsArticle?.wordCount ?: wordCount
 		val sourceType = getSourceType(newsArticle, articleType, docType ?: SourceType.UNKNOWN, wordCount)
 		val externalLinkCount = links.count { link -> pageHost.domains.all { link.url.domain != it } }
+		val language = newsArticle?.inLanguage ?: doc.readLanguage()
 		val junkParams = cannonUrl?.takeIf { lead.url.core == it.core }
 			?.let { lead.url.params.keys.toSet() - it.params.keys.toSet() }
 
@@ -138,6 +139,8 @@ class PageReader(
 			articleType = articleType,
 			hostId = pageHost.id,
 			hostName = hostName,
+			language = language,
+			foundNewsArticle = newsArticle != null,
 			article = Article(
 				headline = headline,
 				alternativeHeadline = newsArticle?.alternativeHeadline,

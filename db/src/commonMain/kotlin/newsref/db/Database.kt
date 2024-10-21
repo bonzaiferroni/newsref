@@ -21,6 +21,7 @@ val dbTables = listOf(
 	SessionTokenTable,
 	SourceTable,
 	LinkTable,
+	LinkScoreTable,
 	HostTable,
 	ArticleTable,
 	LeadTable,

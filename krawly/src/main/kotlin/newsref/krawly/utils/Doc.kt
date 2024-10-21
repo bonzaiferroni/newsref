@@ -3,6 +3,7 @@ package newsref.krawly.utils
 import it.skrape.selects.Doc
 import it.skrape.selects.DocElement
 import it.skrape.selects.ElementNotFoundException
+import it.skrape.selects.html5.html
 import kotlinx.serialization.SerializationException
 import kotlinx.serialization.json.JsonArray
 import kotlinx.serialization.json.JsonObject
@@ -29,6 +30,8 @@ fun Doc.readType() = this.readMetaContent("type", "og:type")?.toSourceType()
 fun Doc.readAuthor() = this.readMetaContent("author", "article:author", "og:article:author")
 fun Doc.readPublishedAt() = this.readMetaContent("date", "article:published_time")?.tryParseInstantOrNull()
 fun Doc.readModifiedAt() = this.readMetaContent("last-modified", "article:modified_time")?.tryParseInstantOrNull()
+fun Doc.readLanguage() = this.readMetaContent("language", "og:locale")
+    ?: this.findFirstOrNull("html")?.attributes?.get("lang")
 
 fun Doc.findFirstOrNull(cssSelector: String): DocElement? = try {
     this.findFirst(cssSelector)

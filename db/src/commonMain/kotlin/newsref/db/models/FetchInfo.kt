@@ -23,6 +23,8 @@ data class PageInfo(
 	val type: SourceType,
 	val hostId: Int,
 	val hostName: String?,
+	val language: String?,
+	val foundNewsArticle: Boolean,
 	val contents: Set<String>,
 	val links: List<FetchLinkInfo>,
 	val authors: Set<String>?,

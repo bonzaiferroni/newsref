@@ -88,7 +88,7 @@ class LeadFollower(
 			val lead = leads.removeFirstOrNull() ?: break
 			val lastAttempt = hosts[lead.url.domain]
 			if (lastAttempt != null && now - lastAttempt < 1.minutes) {
-				if (leads.all { it.url.domain == lead.url.domain }) break
+				delay(10)
 				leads.addLast(lead)
 				console.status = "⌚".padStart(leadCount.toString().length)
 				continue

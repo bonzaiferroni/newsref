@@ -5,22 +5,20 @@ import newsref.db.DbService
 import newsref.db.tables.*
 import newsref.db.tables.ArticleTable
 import newsref.db.tables.HostTable
-import newsref.db.tables.LinkScoreTable.scoredAt
 import newsref.db.tables.LinkTable
 import newsref.db.tables.SourceTable
 import newsref.db.utils.toLocalDateTimeUTC
-import newsref.model.data.Link
+import org.jetbrains.exposed.sql.JoinType
 import org.jetbrains.exposed.sql.and
-import org.jetbrains.exposed.sql.kotlin.datetime.time
 import org.jetbrains.exposed.sql.or
-import org.jetbrains.exposed.sql.update
 import kotlin.time.Duration
 
 class ScoreFinderService : DbService() {
 	suspend fun findNewLinksSince(duration: Duration) = dbQuery {
 		val time = (Clock.System.now() - duration).toLocalDateTimeUTC()
 
-		SourceTable.leftJoin(ArticleTable).leftJoin(LinkTable).leftJoin(HostTable)
+		SourceTable.leftJoin(ArticleTable).leftJoin(HostTable)
+			.join(LinkTable, JoinType.LEFT, SourceTable.id, LinkTable.sourceId)
 			.select(LinkTable.columns + HostTable.core)
 			.where {
 				SourceTable.seenAt.greaterEq(time) and

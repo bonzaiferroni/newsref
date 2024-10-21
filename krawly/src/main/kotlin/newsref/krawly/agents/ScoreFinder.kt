@@ -8,6 +8,7 @@ import newsref.db.globalConsole
 import newsref.db.services.NexusService
 import newsref.db.services.ScoreFinderService
 import kotlin.time.Duration.Companion.days
+import kotlin.time.Duration.Companion.minutes
 import kotlin.time.Duration.Companion.seconds
 
 class ScoreFinder(
@@ -19,10 +20,10 @@ class ScoreFinder(
 	fun start() {
 		CoroutineScope(Dispatchers.Default).launch {
 			while (true) {
-				console.logTrace("checking leads", "🕷 ")
+				console.logTrace("finding scores", "🕷 ")
 				findScores()
 				console.logTrace("sleeping", "zz")
-				delay((10..15).random().seconds)
+				delay((4..6).random().minutes)
 			}
 		}
 	}
