@@ -90,7 +90,8 @@ class PageReader(
 
 				val (linkHost, linkUrl) = hostAgent.getHost(url)
 				val isSibling = linkUrl.isMaybeSibling(pageUrl)
-				val isExternal = linkHost.core != pageHost.core
+				val isExternal = linkHost.core != pageHost.core &&
+						(linkHost.nexusId == null || linkHost.nexusId != pageHost.nexusId)
 				if (!isExternal && !isSibling) continue
 				val info = FetchLinkInfo(
 					url = linkUrl,

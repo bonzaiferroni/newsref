@@ -6,6 +6,7 @@ import org.jetbrains.exposed.dao.LongEntity
 import org.jetbrains.exposed.dao.LongEntityClass
 import org.jetbrains.exposed.dao.id.EntityID
 import org.jetbrains.exposed.dao.id.LongIdTable
+import org.jetbrains.exposed.sql.ResultRow
 import org.jetbrains.exposed.sql.count
 
 internal object LinkTable: LongIdTable("link") {
@@ -37,6 +38,16 @@ internal fun LinkRow.toData() = Link(
     url = this.url.toCheckedFromDb(),
     text = this.urlText,
     isExternal = this.isExternal
+)
+
+internal fun ResultRow.toLink() = Link(
+    id = this[LinkTable.id].value,
+    sourceId = this[LinkTable.sourceId].value,
+    targetId = this[LinkTable.targetId]?.value,
+    contentId = this[LinkTable.contentId]?.value,
+    url = this[LinkTable.url].toCheckedFromDb(),
+    text = this[LinkTable.urlText],
+    isExternal = this[LinkTable.isExternal]
 )
 
 internal fun LinkRow.fromData(data: Link, sourceRow: SourceRow, contentRow: ContentRow?, targetRow: SourceRow?) {

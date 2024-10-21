@@ -11,6 +11,7 @@ import org.jetbrains.exposed.dao.EntityClass
 import org.jetbrains.exposed.dao.LongEntity
 import org.jetbrains.exposed.dao.id.EntityID
 import org.jetbrains.exposed.dao.id.LongIdTable
+import org.jetbrains.exposed.sql.ResultRow
 import org.jetbrains.exposed.sql.SizedCollection
 import org.jetbrains.exposed.sql.kotlin.datetime.datetime
 
@@ -35,6 +36,7 @@ internal class SourceRow(id: EntityID<Long>) : LongEntity(id) {
 
     val links by LinkRow referrersOn LinkTable.sourceId
     val document by ArticleRow referrersOn ArticleTable.sourceId
+    val linkScores by LinkScoreRow referrersOn LinkScoreTable.sourceId
 }
 
 internal fun SourceRow.toData() = Source(
@@ -43,6 +45,14 @@ internal fun SourceRow.toData() = Source(
     leadTitle = this.leadTitle,
     type = this.type,
     seenAt = this.seenAt.toInstant(UtcOffset.ZERO)
+)
+
+internal fun ResultRow.toSource() = Source(
+    id = this[SourceTable.id].value,
+    url = this[SourceTable.url].toCheckedFromDb(),
+    leadTitle = this[SourceTable.leadTitle],
+    type = this[SourceTable.type],
+    seenAt = this[SourceTable.seenAt].toInstant(UtcOffset.ZERO)
 )
 
 internal fun SourceRow.fromData(source: Source, hostRow: HostRow) {
