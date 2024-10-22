@@ -7,17 +7,17 @@ import kotlinx.coroutines.launch
 import kotlinx.datetime.Clock
 import kotlinx.datetime.Instant
 import newsref.db.globalConsole
-import newsref.db.log.logIfTrue
-import newsref.db.log.toCyan
-import newsref.db.log.toPink
+import newsref.db.log.*
 import newsref.db.models.FetchInfo
 import newsref.db.services.LeadService
 import newsref.db.services.SourceService
 import newsref.krawly.SpiderWeb
+import newsref.krawly.utils.TallyMap
+import newsref.krawly.utils.getCount
 import newsref.model.data.LeadInfo
+import newsref.model.data.ResultType
 import java.util.*
 import kotlin.collections.ArrayDeque
-import kotlin.time.Duration
 import kotlin.time.Duration.Companion.days
 import kotlin.time.Duration.Companion.minutes
 import kotlin.time.Duration.Companion.seconds
@@ -29,7 +29,7 @@ class LeadFollower(
 	private val leadService: LeadService = LeadService(),
 	private val sourceService: SourceService = SourceService(),
 	private val leadMaker: LeadMaker = LeadMaker(hostAgent),
-	private val maxSpiders: Int = 3,
+	private val maxSpiders: Int = 5,
 ) {
 	private val console = globalConsole.getHandle("LeadFollower", true)
 
@@ -57,8 +57,8 @@ class LeadFollower(
 			}
 			leads.addAll(allLeads)
 			val sample = leads.take(200)
-			val avgDaysAgo = sample.sumOf {
-				lead -> lead.freshAt?.let { (now - it).toDouble(DurationUnit.DAYS) } ?: 7.0
+			val avgDaysAgo = sample.sumOf { lead ->
+				lead.freshAt?.let { (now - it).toDouble(DurationUnit.DAYS) } ?: 7.0
 			} / sample.size
 			leadCount = leads.size
 			refreshed = Clock.System.now()
@@ -67,46 +67,39 @@ class LeadFollower(
 		}
 
 		val spiders = ((0 until maxSpiders).map { Spider(it) }).toMutableList()
-		val fetches = Collections.synchronizedList(mutableListOf<FetchInfo>())
+		val fetched = Collections.synchronizedList(mutableListOf<FetchInfo>())
 		val hosts = mutableMapOf<String, Instant>()
 
 		refreshLeads()
 
+		startConsumeFetched(fetched)
+
 		while (!leads.isEmpty()) {
-
-			while (fetches.isNotEmpty()) {
-				val fetch = fetches.removeLast()
-				sourceService.consume(fetch)
-				leadMaker.makeLeads(fetch)
-			}
-
 			val now = Clock.System.now()
-			if (now - refreshed > 2.minutes)  {
+			if (now - refreshed > 2.minutes) {
 				refreshLeads()
 			}
 
 			val lead = leads.removeFirstOrNull() ?: break
-			val lastAttempt = hosts[lead.url.domain]
-			if (lastAttempt != null && now - lastAttempt < 1.minutes) {
+			val nextAttempt = hosts[lead.url.domain]
+			if (nextAttempt != null && now < nextAttempt) {
 				delay(10)
 				leads.addLast(lead)
-				console.status = "⌚".padStart(leadCount.toString().length)
+				console.status = "⌚".padStart(leadCount.toString().length - 1)
 				continue
 			}
-			hosts[lead.url.domain] = now
+			hosts[lead.url.domain] = now + 30.seconds + (0..30).random().seconds
 
 			while (spiders.isEmpty()) {
-				console.status = "🕷".padStart(leadCount.toString().length)
+				console.status = "🕷".padStart(leadCount.toString().length - 1)
 				delay(1.seconds)
 			}
 
 			console.status = (--leadCount).toString()
 			val spider = spiders.removeLast()
 			spider.crawl {
-				spider.console.logInfo(lead.url.toString().take(60).toCyan())
-
-				val fetch = spider.sourceReader.read(lead)
-				fetches.add(fetch)
+				val newFetch = spider.sourceReader.read(lead)
+				fetched.add(newFetch)
 				spiders.add(spider)
 			}
 			delay(100)
@@ -115,6 +108,20 @@ class LeadFollower(
 		while (spiders.size < maxSpiders) {
 			console.status = "🥱"
 			delay(1.seconds)
+		}
+	}
+
+	private fun startConsumeFetched(fetched: MutableList<FetchInfo>) {
+		CoroutineScope(Dispatchers.Default).launch {
+			while (true) {
+				val fetch = fetched.removeLastOrNull()
+				if (fetch != null) {
+					sourceService.consume(fetch)
+					val resultMap = leadMaker.makeLeads(fetch)
+					logFetch(fetch, resultMap)
+				}
+				delay(100)
+			}
 		}
 	}
 
@@ -134,24 +141,77 @@ class LeadFollower(
 			}
 		}
 	}
+
+	private var alternateBg = false
+
+	private fun logFetch(fetch: FetchInfo, tally: TallyMap<CreateLeadResult>) {
+		val resultMap = fetch.resultMap
+		val lead = fetch.lead
+		val resultType = fetch.resultType
+		val rowWidth = 64
+		val createdLeads = tally.getCount(CreateLeadResult.CREATED)
+
+		val urlMsg = "${lead.url.toString().take(rowWidth - 1)}${(lead.url.length > rowWidth - 1).logIfTrue("~")}".let {
+			return@let when (fetch.statusOk) {
+				true -> it.toCyan()
+				false -> it.toOrange()
+				null -> it.dim()
+			}
+		}
+
+		val background = alternateBg.also { alternateBg = !alternateBg }.let {
+			if (it) forestNightBg else deepspaceBlueBg
+		}
+		console.row(urlMsg, background = background, width = rowWidth)
+
+		val page = fetch.page
+		if (page == null) {
+			console.cell("", justify = Justify.LEFT, width = 46)
+				.cell(
+					"${resultMap.getResult(ResultType.RELEVANT)}", 5, "relevant",
+					highlight = resultType == ResultType.RELEVANT
+				)
+				.cell(
+					"${resultMap.getResult(ResultType.IRRELEVANT)}", 5, "irrelevant",
+					highlight = resultType == ResultType.IRRELEVANT
+				)
+				.cell(
+					"${resultMap.getResult(ResultType.TIMEOUT)}", 5, "timeout",
+					highlight = resultType == ResultType.TIMEOUT
+				)
+				.row(background = background, width = rowWidth)
+			return
+		}
+
+		val title = fetch.page?.article?.headline ?: fetch.lead.feedHeadline ?: ""
+		console.cell(title, rowWidth, justify = Justify.LEFT)
+			.row(background = background, width = rowWidth)
+
+		val externalLinkCount = page.links.count { it.isExternal }
+		console
+			.cell(fetch.source.type?.getEmoji() ?: "💢")
+			.cell("📰") { page.foundNewsArticle }
+			.cell("🌆") { page.article.imageUrl != null }
+			.cell("📝") { page.article.description != null }
+			.cell("📅") { page.article.publishedAt != null }
+			.cell("🦦") { page.authors != null }
+			.cell("", justify = Justify.LEFT, width = 9)
+			.cell(page.article.wordCount.toString(), 7, "words")
+			.cell("$createdLeads/$externalLinkCount/${page.links.size}", 10, "links")
+			.cell(
+				"${resultMap.getResult(ResultType.RELEVANT)}", 5, "relevant",
+				highlight = resultType == ResultType.RELEVANT
+			)
+			.cell(
+				"${resultMap.getResult(ResultType.IRRELEVANT)}", 5, "irrelevant",
+				highlight = resultType == ResultType.IRRELEVANT
+			)
+			.cell(
+				"${resultMap.getResult(ResultType.TIMEOUT)}", 5, "timeout",
+				highlight = resultType == ResultType.TIMEOUT
+			)
+			.row(background = background, width = rowWidth)
+	}
 }
-
-private fun List<LeadInfo>.filterByTimeStep() =
-	this.takeIf { this.size < 2000 }?.let{ Triple(Duration.INFINITE, false, it) }
-	?: this.filterSince(1.days, true)
-	?: this.filterSince(1.days, false)
-	?: this.filterSince(7.days, true)
-	?: this.filterSince(7.days, false)
-	?: this.filterSince(30.days, true)
-	?: this.filterSince(30.days, false)
-	?: this.filterSince(365.days, true)
-	?: this.filterSince(365.days, false)
-	?: Triple(Duration.INFINITE, false, this)
-
-private fun List<LeadInfo>.filterSince(duration: Duration, isExternal: Boolean) =
-	this.filter { it.freshAt != null && Clock.System.now() - it.freshAt!! < duration }
-		.filter{ if (isExternal) it.isExternal else true }
-		.takeIf { it.size > 200 }
-		?.let { Triple(duration, isExternal, it) }
 
 fun Double.format(format: String) = format.format(this)

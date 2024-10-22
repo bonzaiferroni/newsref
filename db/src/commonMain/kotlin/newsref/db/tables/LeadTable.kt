@@ -90,7 +90,7 @@ internal fun LeadResultRow.fromData(leadResult: LeadResult, leadRow: LeadRow) {
 
 // lead job
 internal object LeadJobTable: LongIdTable("lead_job") {
-    val feedId = reference("feed_id", FeedTable).nullable()
+    val feedId = reference("feed_id", FeedTable, ReferenceOption.SET_NULL).nullable()
     val leadId = reference("lead_id", LeadTable).index()
     val headline = text("headline").nullable()
     val isExternal = bool("is_external")

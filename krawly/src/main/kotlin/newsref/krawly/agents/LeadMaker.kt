@@ -10,9 +10,12 @@ import newsref.model.data.Lead
 import newsref.model.data.Host
 import newsref.db.models.FetchInfo
 import newsref.db.services.LeadExistsException
+import newsref.krawly.utils.TallyMap
+import newsref.krawly.utils.increment
 import newsref.model.core.ArticleType
 import newsref.model.core.SourceType
 import newsref.model.data.LeadJob
+import newsref.model.data.ResultType
 import kotlin.time.Duration.Companion.days
 
 class LeadMaker(
@@ -21,36 +24,46 @@ class LeadMaker(
 ) {
 	private val console = globalConsole.getHandle("LeadMaker")
 
-	suspend fun makeLead(checkedUrl: CheckedUrl, host: Host, leadJob: LeadJob? = null): Lead? {
+	suspend fun makeLead(checkedUrl: CheckedUrl, host: Host, leadJob: LeadJob? = null): CreateLeadResult {
 		return try {
 			leadService.createIfFreshLead(checkedUrl, host, leadJob)
+			CreateLeadResult.CREATED
 		} catch(e: LeadExistsException) {
 			console.logTrace("lead exists: $checkedUrl")
-			null
+			CreateLeadResult.AFFIRMED
 		} catch (e: IllegalArgumentException) {
 			val urlString = checkedUrl.toString().toYellow()
 			console.logWarning(e.message?.let {
 				"Error creating job: ${checkedUrl.domain}\n${it.toPink()}"
 			} ?: "Error creating job: $urlString")
-			null
+			CreateLeadResult.ERROR
 		}
 	}
 
-	suspend fun makeLeads(fetch: FetchInfo): Int {
-		val page = fetch.page ?: return 0
-		if (fetch.source.type != SourceType.ARTICLE || page.articleType != ArticleType.NEWS
-			|| page.language?.startsWith("en") != true) return 0
+	suspend fun makeLeads(fetch: FetchInfo): TallyMap<CreateLeadResult> {
+		val resultMap = mutableMapOf<CreateLeadResult, Int>()
+		val page = fetch.page ?: return resultMap
+		if (fetch.resultType == ResultType.IRRELEVANT) return resultMap
 		val publishedAt = page.article.publishedAt
-		if (publishedAt != null && publishedAt < (Clock.System.now() - 30.days)) return 0
-		val links = fetch.page?.links ?: return 0
-		var leadCount = 0
+		if (publishedAt != null && publishedAt < (Clock.System.now() - 30.days)) return resultMap
+		val links = fetch.page?.links ?: return resultMap
 		for (link in links) {
-			if (!link.isExternal && !page.foundNewsArticle) continue
+			if (!link.isExternal && !page.foundNewsArticle) {
+				resultMap.increment(CreateLeadResult.IRRELEVANT)
+				continue
+			}
 			val (host, checkedUrl) = hostAgent.getHost(link.url)
 			val job = LeadJob(isExternal = link.isExternal, freshAt = fetch.page?.article?.publishedAt)
-			val lead = makeLead(checkedUrl, host, job)
-			if (lead != null) leadCount++
+			val result = makeLead(checkedUrl, host, job)
+			resultMap.increment(result)
 		}
-		return leadCount
+		return resultMap
 	}
+}
+
+enum class CreateLeadResult {
+	CREATED,
+	AFFIRMED,
+	ERROR,
+	IRRELEVANT
 }

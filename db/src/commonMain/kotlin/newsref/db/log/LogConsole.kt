@@ -12,6 +12,7 @@ class LogConsole {
 	private var input = ""
 	private var commands = mutableMapOf<String, (List<String>?) -> String>()
 	private val queue = Collections.synchronizedList(mutableListOf<LogMessage>())
+	private var lastSource = ""
 
 	init {
 		addCommand("quit") { isActive = false; "Goodbye!" }
@@ -43,12 +44,15 @@ class LogConsole {
 		}
 
 		if (level.ordinal < config.minLevel.ordinal) return
-		val line = builder.bold().setForeground(level).writeLength(source, MAX_SOURCE_CHARS)
-			.defaultFormat().defaultForeground().write(" ").write(message).build()
-		queue.add(LogMessage(source, line))
+
+		queue.add(LogMessage(source, message))
 		while (queue.isNotEmpty()) {
-			val (qSource, qLine) = queue.removeFirstOrNull() ?: break
-			renderLog(qSource, qLine)
+			val (qSource, qMessage) = queue.removeFirstOrNull() ?: break
+			val sourcePart = if (lastSource == source) "" else source
+			val line = builder.bold().setForeground(level).writeLength(sourcePart, MAX_SOURCE_CHARS)
+				.defaultFormat().defaultForeground().write(" ").write(qMessage).build()
+			lastSource = source
+			renderLog(qSource, line)
 		}
 	}
 
@@ -117,7 +121,7 @@ class LogConsole {
 	}
 }
 
-const val MAX_SOURCE_CHARS = 10
+const val MAX_SOURCE_CHARS = 8
 
 private typealias LogMessage = Pair<String, String>
 
@@ -134,3 +138,20 @@ data class ConsoleConfig(
 	val minLevel: LogLevel = LogLevel.DEBUG,
 	val writer: LogWriter? = null
 )
+
+fun String.displayLength(): Int {
+	var length = 0
+	var inAnsiCode = false
+
+	for (char in this) {
+		if (char == '\u001B') {
+			inAnsiCode = true // Start of an ANSI escape sequence
+		} else if (inAnsiCode && char == 'm') {
+			inAnsiCode = false // End of an ANSI escape sequence
+		} else if (!inAnsiCode) {
+			length++ // Count the character if not in an ANSI code
+		}
+	}
+
+	return length
+}

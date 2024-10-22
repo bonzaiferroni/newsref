@@ -43,7 +43,7 @@ open class Url internal constructor(
 		params = afterParams?.split("&")?.mapNotNull { param ->
 			val (key, value) = param.deconstruct("=")
 			if (value == null) return@mapNotNull null
-			if (junkParams != null && key in junkParams) return@mapNotNull null
+			if (key.startsWith("utm_") || junkParams != null && key in junkParams) return@mapNotNull null
 
 			requiredParamPath += if (requiredParamPath.isEmpty()) "?" else "&"
 			requiredParamPath += param

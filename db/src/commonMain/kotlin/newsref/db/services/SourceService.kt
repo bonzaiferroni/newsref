@@ -2,6 +2,7 @@ package newsref.db.services
 
 import kotlinx.datetime.Clock
 import newsref.db.DbService
+import newsref.db.globalConsole
 import newsref.db.tables.*
 import newsref.model.core.SourceType
 import newsref.model.data.*
@@ -12,7 +13,10 @@ import newsref.db.utils.plus
 import newsref.model.data.Lead
 import org.jetbrains.exposed.sql.*
 import org.jetbrains.exposed.sql.SqlExpressionBuilder.eq
+import org.jetbrains.exposed.sql.SqlExpressionBuilder.isNull
 import java.util.MissingResourceException
+
+private val console = globalConsole.getHandle("SourceService")
 
 class SourceService: DbService() {
 
@@ -42,7 +46,8 @@ class SourceService: DbService() {
         LeadResultRow.new { fromData(leadResult, leadRow) }
 
         // update link targets that pointed to source
-        LinkRow.find(LinkTable.url.sameAs(fetch.source.url)).forEach {
+        LinkRow.find(LinkTable.targetId.isNull() and LinkTable.url.sameAs(fetch.source.url)).forEach {
+            // if (it.isExternal) console.log("sewing link: ${it.id.value} to ${sourceRow.id.value}")
             it.target = sourceRow
         }
 
@@ -52,10 +57,10 @@ class SourceService: DbService() {
             val row = LeadRow.createOrUpdate(LeadTable.url.sameAs(fetch.source.url)) {
                 fromData(lead, hostRow, sourceRow)
             }
-            LeadResultRow.new { fromData(leadResult, row) }
 
             // update links that pointed to lead
-            LinkRow.find { LinkTable.url.sameAs(fetch.lead.url) }.forEach {
+            LinkRow.find { LinkTable.targetId.isNull() and LinkTable.url.sameAs(fetch.lead.url) }.forEach {
+                // if (it.isExternal) console.log("sewing link: ${it.id.value} to ${sourceRow.id.value}")
                 it.target = sourceRow
             }
         }
@@ -93,7 +98,10 @@ class SourceService: DbService() {
 
         val linkRows = page.links.map { info ->
             val existingLeadRow = LeadRow.find { LeadTable.url.sameAs(info.url) }.firstOrNull()
-            val existingSource = existingLeadRow?.target?.let { SourceRow[it.id] }
+            val existingSource = existingLeadRow?.target?.let {
+                SourceRow[it.id]
+            } ?: SourceRow.find { SourceTable.url.sameAs(info.url) }.firstOrNull()
+            // if (existingSource != null && info.isExternal) console.log("back sew: ${existingSource.id.value}")
 
             // update or create links
             val link = Link(url = info.url, text = info.anchorText, isExternal = info.isExternal)

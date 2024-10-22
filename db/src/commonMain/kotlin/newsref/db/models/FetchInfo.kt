@@ -13,7 +13,9 @@ data class FetchInfo(
     val source: Source,
 	val lead: LeadInfo,
 	val page: PageInfo?,
-	val resultType: ResultType
+	val resultType: ResultType,
+	val resultMap: Map<ResultType, Int>,
+	val statusOk: Boolean?
 )
 
 data class PageInfo(

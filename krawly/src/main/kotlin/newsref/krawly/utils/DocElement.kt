@@ -2,8 +2,9 @@ package newsref.krawly.utils
 
 import it.skrape.selects.DocElement
 
-fun DocElement.tryGetHref(): Pair<String, String>? =
+fun DocElement.tryGetHrefOrParent(steps: Int = 3): Pair<String, String>? =
     this.eachLink.entries.firstOrNull()?.let { Pair(it.key, it.value) }
+        ?: if (steps > 0) this.parent.tryGetHrefOrParent(steps - 1) else null
 
 private val headingTags = setOf("h1", "h2", "h3", "h4", "h5", "h6")
 

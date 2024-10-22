@@ -2,8 +2,6 @@ package newsref.krawly.agents
 
 import kotlinx.datetime.Clock
 import newsref.db.globalConsole
-import newsref.db.log.Justify
-import newsref.db.log.deepspaceBlueBg
 import newsref.db.services.LeadService
 import newsref.db.utils.cacheResource
 import newsref.krawly.SpiderWeb
@@ -30,17 +28,14 @@ class SourceReader(
 
     suspend fun read(lead: LeadInfo): FetchInfo {
         val resultMap = leadService.getResultsByHost(lead.hostId, 1.hours)
-        val relevantCount = resultMap.getResult(ResultType.RELEVANT)
-        val timeoutCount = resultMap.getResult(ResultType.TIMEOUT)
+
         val skipFetch = isExpectedFail(resultMap) || lead.url.isFile()
         val result = if (!skipFetch) { web.fetch(lead.url, true) } else { null }
 
-        console.cell(lead.url.domain, 29, justify = Justify.LEFT).cell("$relevantCount", 9, "relevant")
-            .cell("$timeoutCount", 9, "timeout").cell("🐛") { !skipFetch }.row(background = deepspaceBlueBg)
         val page = result?.let { pageReader.read(lead, it) }
         val resultType = determineResultType(skipFetch, result, page)
         if (resultType != ResultType.TIMEOUT && !skipFetch)
-            logResult(result, lead.url)
+            cacheResult(result, lead.url)
 
         // parse strategies
         val fetch = FetchInfo(
@@ -52,7 +47,9 @@ class SourceReader(
                 type = page?.type ?: SourceType.UNKNOWN
             ),
             page = page,
-            resultType = resultType
+            resultType = resultType,
+            resultMap = resultMap.toMutableMap().also { it[resultType] = it.getResult(resultType) + 1 },
+            statusOk = result?.isSuccess()
         )
         // todo: if it is a news article, save a video of the endpoint
 
@@ -65,20 +62,25 @@ class SourceReader(
     }
 
     private fun determineResultType(skipFetch: Boolean, result: WebResult?, page: PageInfo?): ResultType {
-        if (skipFetch || result == null) return ResultType.SKIPPED
+        if (skipFetch) return ResultType.SKIPPED
+        if (result == null) return ResultType.UNKNOWN
         if (result.timeout) return ResultType.TIMEOUT
         if (result.status in 400..499) return ResultType.UNAUTHORIZED
-        return if (page?.type == SourceType.ARTICLE) ResultType.RELEVANT
-        else ResultType.IRRELEVANT
+        // todo: support other languages
+        if (page?.language?.startsWith("en") != true) ResultType.IRRELEVANT
+        if (page?.type == SourceType.ARTICLE) {
+            if (page.foundNewsArticle) return ResultType.RELEVANT
+            // todo: add more relevance indicators
+        }
+        return ResultType.IRRELEVANT
     }
 
-    private fun logResult(result: WebResult?, url: Url) {
+    private fun cacheResult(result: WebResult?, url: Url) {
         if (result == null || !result.isSuccess()) {
-            console.logWarning("crawl fail (${result?.status}): $url")
             result?.screenshot?.cacheResource(url.domain, "png", "nav_fail")
         }
 //        result?.screenshot?.cacheResource(url.domain, "png")
-        result?.doc?.html?.cacheResource(url.domain, "html", "content")
+        result?.doc?.html?.cacheResource(url.domain, "html", "html")
     }
 
     private fun isExpectedFail(resultMap: Map<ResultType, Int>?): Boolean {
@@ -90,5 +92,5 @@ class SourceReader(
     }
 }
 
-private fun Map<ResultType, Int>.getResult(resultType: ResultType) = this[resultType] ?: 0
+fun Map<ResultType, Int>.getResult(resultType: ResultType) = this[resultType] ?: 0
 

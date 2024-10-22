@@ -30,7 +30,6 @@ class PageReader(
 		val (pageHost, pageHostUrl) = pageUrl.let { hostAgent.getHost(it) }
 
 		val newsArticle = doc.getNewsArticle(pageUrl)
-		console.cell("📜") { newsArticle != null }
 
 		val cannonHref = newsArticle?.url ?: doc.readCannonHref()
 		val cannonUrl = cannonHref?.toUrlOrNull()
@@ -115,20 +114,11 @@ class PageReader(
 		val docType = doc.readType()
 		wordCount = newsArticle?.wordCount ?: wordCount
 		val sourceType = getSourceType(newsArticle, articleType, docType ?: SourceType.UNKNOWN, wordCount)
-		val externalLinkCount = links.count { link -> pageHost.domains.all { link.url.domain != it } }
 		val language = newsArticle?.inLanguage ?: doc.readLanguage()
 		val junkParams = cannonUrl?.takeIf { lead.url.core == it.core }
 			?.let { lead.url.params.keys.toSet() - it.params.keys.toSet() }
 
 		junkParams?.takeIf { it.isNotEmpty() }?.let { console.logDebug("junk params: $junkParams") }
-
-		console.cell("🌆") { imageUrl != null }.cell("📝") { description != null }
-			.cell("📅") { publishedAt != null }.cell("🦦") { authors != null }
-			.cell(articleType, 4).cell(wordCount, 9, "words")
-			.cell("$externalLinkCount/${links.size}", 9, "links")
-			//.cell("${(timeTaken / 1000)} s", 4)
-			.cell(sourceType.getEmoji())
-			.row(background = forestNightBg)
 
 		if (sourceType == SourceType.ARTICLE) articleCount++
 		docCount++
@@ -193,11 +183,12 @@ private val notParentTags = setOf(
 )
 private val lassoTags = setOf("body", "main", "article")
 
-private fun SourceType.getEmoji() = when (this) {
+fun SourceType.getEmoji() = when (this) {
 	SourceType.ARTICLE -> "📜"
-	SourceType.WEBSITE -> "💾"
+	SourceType.WEBSITE -> "🥱"
 	SourceType.IMAGE -> "🌆"
 	SourceType.BLOG_POST -> "📝"
 	SourceType.VIDEO -> "📼"
+	SourceType.SOCIAL_POST -> "👯"
 	else -> "🧀"
 }

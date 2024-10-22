@@ -17,7 +17,7 @@ class LogHandle(
 
 	fun logPartial(message: String, refresh: Boolean = false) {
 		if (partialLine.isEmpty) partialLine.write(message)
-		else partialLine.setForeground(dim).write(" | ").defaultForeground().write(message)
+		else partialLine.setForeground(dark).write("┃").defaultForeground().write(message)
 		if (refresh) console.refreshLog()
 	}
 
@@ -26,9 +26,11 @@ class LogHandle(
 		width: Int? = null,
 		label: String? = null,
 		justify: Justify = Justify.RIGHT,
-		isValid: (() -> Boolean)? = null
+		highlight: Boolean = false,
+		isValid: (() -> Boolean?)? = null
 	): LogHandle {
-		var content = if (isValid == null || isValid()) value.toString() else "💢"
+		val showValue = isValid == null || isValid() == true
+		var content = if (showValue) value.toString() else "💢"
 		content = width?.let {
 			val labelWidth = label?.let { minOf(width - content.length - 1, label.length) } ?: 0
 			val contentWidth = labelWidth.takeIf{ labelWidth > 0 }?.let { width - labelWidth - 1 } ?: width
@@ -36,7 +38,7 @@ class LogHandle(
 				content.padStart(contentWidth).takeLast(contentWidth)
 			} else {
 				content.padEnd(contentWidth).take(contentWidth)
-			}
+			}.let { if (highlight) it.toCyan() else it }
 			if (labelWidth > 0 && label != null) {
 				val labelPart = label.take(labelWidth)
 				if (justify == Justify.RIGHT) {
@@ -52,9 +54,19 @@ class LogHandle(
 		return this
 	}
 
-	fun row(message: String = "", level: LogLevel = LogLevel.INFO, background: Background? = null) {
-		logPartial(message)
-		var line = partialLine.build()
+	fun row(
+		message: String? = null,
+		level: LogLevel = LogLevel.INFO,
+		background: Background? = null,
+		width: Int? = null,
+	) {
+		message?.let { logPartial(it) }
+		var line = partialLine.build().let { line ->
+			if (width == null) return@let line
+			val displayLength = line.displayLength()
+			if (displayLength >= width) return@let line
+			return@let "$line${"".padEnd(width - displayLength, ' ')}"
+		}
 		background?.let{ line = line.toColorBg(it) }
 		console.log(name, level, line)
 	}

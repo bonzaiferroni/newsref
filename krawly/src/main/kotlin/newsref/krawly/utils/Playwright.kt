@@ -47,13 +47,13 @@ fun pwFetch(url: Url, screenshot: Boolean = false): WebResult = useChromiumPage 
             requestHeaders = headers
         )
     }, {
-        console.logError("Timeout: $url")
+        console.logTrace("Timeout: $url")
         WebResult(timeout = true)
     }, {
         val message = it.message?.take(200) ?: "Unknown error"
         message.fileLog("exceptions", "playwright")
         // adventure mode throws these
-        console.logError("Unusual exception: $url\n$message")
+        console.logTrace("Unusual exception: $url\n$message")
         WebResult()
     })
 }
@@ -70,13 +70,13 @@ fun pwFetchRedirect(url: Url): RedirectResult = useChromiumContext { context ->
             redirectHref = headers["location"].takeIf { status == 301 }
         )
     }, {
-        console.logError("Timeout: $url")
+        console.logTrace("Timeout: $url")
         RedirectResult(timeout = true)
     }, {
         val message = it.message?.take(200) ?: "Unknown error"
         message.fileLog("exceptions", "playwright")
         // adventure mode throws these
-        console.logError("Unusual exception: $url\n$message")
+        console.logTrace("Unusual exception: $url\n$message")
         RedirectResult()
     })
 }

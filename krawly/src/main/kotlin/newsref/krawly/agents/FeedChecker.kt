@@ -8,7 +8,7 @@ import newsref.db.services.FeedService
 import newsref.krawly.SpiderWeb
 import newsref.db.log.underline
 import newsref.krawly.utils.isLikelyAd
-import newsref.krawly.utils.tryGetHref
+import newsref.krawly.utils.tryGetHrefOrParent
 import newsref.model.core.toUrlOrNull
 import newsref.model.data.LeadJob
 import kotlin.time.Duration.Companion.hours
@@ -30,7 +30,7 @@ class FeedChecker(
 				console.log("checking feeds", "🕷 ")
 				checkFeeds()
 				console.log("sleeping", "zzz")
-				delay((10..15).random().minutes)
+				delay(10.minutes)
 			}
 		}
 	}
@@ -43,7 +43,8 @@ class FeedChecker(
 			if (delay != null && delay > now) continue
 
 			var count = 0
-			console.logDebug("checking feed: ${feed.url}")
+			var links = 0
+			console.logTrace("checking feed: ${feed.url} with selector ${feed.selector.underline()}")
 			val webResult = web.fetch(feed.url)
 			if (!webResult.isSuccess() || webResult.doc == null) {
 				console.logError("feed error: ${feed.url}")
@@ -51,10 +52,8 @@ class FeedChecker(
 			}
 			val doc = webResult.doc
 			val elements = doc.findAll(feed.selector)
-			console.logDebug("found ${elements.size} elements at ${
-				feed.url.domain.underline()} with selector ${feed.selector.underline()}")
 			for (docElement in doc.findAll(feed.selector)) {
-				val (headline, href) = docElement.tryGetHref() ?: continue
+				val (headline, href) = docElement.tryGetHrefOrParent() ?: continue
 				val url = href.toUrlOrNull() ?: continue
 				if (url.isLikelyAd()) continue
 				val (host, hostUrl) = hostAgent.getHost(url)
@@ -64,10 +63,11 @@ class FeedChecker(
 					isExternal = true,
 					freshAt = Clock.System.now()
 				)
+				links++
 				val newJob = leadMaker.makeLead(hostUrl, host, job)
-				if (newJob != null) count++
+				if (newJob == CreateLeadResult.CREATED) count++
 			}
-			console.logDebug("found $count feed leads from ${elements.size} elements")
+			console.logInfo("${feed.url.domain.underline()}: $count leads from $links links / ${elements.size} elements")
 			if (count == 0) delayMap[feed.id] = now + 1.hours
 		}
 	}

@@ -17,7 +17,7 @@ import org.jetbrains.exposed.sql.kotlin.datetime.datetime
 
 internal object SourceTable : LongIdTable("source") {
     val hostId = reference("host_id", HostTable)
-    val url = text("url")
+    val url = text("url").uniqueIndex()
     val leadTitle = text("lead_title").nullable()
     val type = enumeration("source_type", SourceType::class).nullable()
     val seenAt = datetime("seen_at")
