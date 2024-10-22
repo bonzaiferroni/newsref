@@ -28,6 +28,20 @@ class ScoreFinderService : DbService() {
 			.map { Pair(it.toLink(), it[HostTable.core]) }
 	}
 
+	suspend fun findNewLinksSince2(duration: Duration) = dbQuery {
+		val time = (Clock.System.now() - duration).toLocalDateTimeUTC()
+
+		SourceTable.leftJoin(ArticleTable).leftJoin(HostTable)
+			.join(LinkTable, JoinType.LEFT, SourceTable.id, LinkTable.sourceId)
+			.select(LinkTable.columns + HostTable.core)
+			.where {
+				SourceTable.seenAt.greaterEq(time) and
+						(ArticleTable.publishedAt.isNull() or ArticleTable.publishedAt.greaterEq(time)) and
+						LinkTable.targetId.isNotNull() and LinkTable.isExternal.eq(true)
+			}
+			.map { Pair(it.toLink(), it[HostTable.core]) }
+	}
+
 	suspend fun setInternal(linkId: Long) = dbQuery {
 		val linkRow = LinkRow.findById(linkId) ?: return@dbQuery false
 		linkRow.isExternal = false

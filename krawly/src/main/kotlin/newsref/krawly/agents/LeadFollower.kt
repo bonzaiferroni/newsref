@@ -63,6 +63,9 @@ class LeadFollower(
 			leadCount = leads.size
 			refreshed = Clock.System.now()
 			val message = "found leads $leadCount, sample ~${avgDaysAgo.format("%.1f")} days ago"
+			allLeads.groupBy { it.url.domain }.toList().sortedByDescending { it.second.size }.take(10).forEach {
+				(core, values) -> console.log("${values.size.toString().padStart(4, ' ')}: ${core}")
+			}
 			console.logInfo(message.toPink(), leadCount)
 		}
 

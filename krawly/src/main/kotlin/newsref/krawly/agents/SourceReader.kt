@@ -67,7 +67,7 @@ class SourceReader(
         if (result.timeout) return ResultType.TIMEOUT
         if (result.status in 400..499) return ResultType.UNAUTHORIZED
         // todo: support other languages
-        if (page?.language?.startsWith("en") != true) ResultType.IRRELEVANT
+        if (page?.language?.startsWith("en") != true) return ResultType.IRRELEVANT
         if (page?.type == SourceType.ARTICLE) {
             if (page.foundNewsArticle) return ResultType.RELEVANT
             // todo: add more relevance indicators
