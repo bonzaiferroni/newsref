@@ -5,6 +5,8 @@ open class Url internal constructor(
 	junkParams: Set<String>?,
 	disallowedPaths: Set<String>?,
 ) {
+	val href: String
+
 	val core: String
 	val scheme: String
 	val domain: String
@@ -12,9 +14,9 @@ open class Url internal constructor(
 	val path: String
 	val pathSegments: Int
 	val params: Map<String, String>
+	val paramPath: String
 	val fragment: String?
 	val isRobotAllowed: Boolean?
-	val href: String
 
 	val authority get() = "$scheme://$domain"
 	val length get() = toString().length
@@ -22,38 +24,43 @@ open class Url internal constructor(
 	init {
 		if (!rawHref.startsWith("http"))
 			throw IllegalArgumentException("Url must begin with http: $rawHref")
-		val (beforeFragment, afterFragment) = rawHref.deconstruct("#")
-		fragment = afterFragment
-		val (beforeScheme, afterScheme) = beforeFragment.deconstruct("://")
+		val (beforeFragmentMarker, afterFragmentMarker) = rawHref.deconstruct("#")
+		fragment = afterFragmentMarker
+		val (beforeScheme, afterScheme) = beforeFragmentMarker.deconstruct("://")
 		requireNotNull(afterScheme) { "Invalid Url: $rawHref" }
 		scheme = beforeScheme
 
-		val (beforePath, afterPath) = afterScheme.deconstruct("/")
-		if (beforePath.contains('@')) throw IllegalArgumentException("URL contains user info: $rawHref")
-		domain = beforePath.lowercase()
+		val (beforePathMarker, afterPathMarker) = afterScheme.deconstruct("/")
+		if (beforePathMarker.contains('@')) throw IllegalArgumentException("URL contains user info: $rawHref")
+		domain = beforePathMarker.lowercase()
 		if (domain.length > 100) throw IllegalArgumentException("Domain too long: $domain")
-		core = beforePath.removePrefix("www.").lowercase()
+		core = beforePathMarker.removePrefix("www.").lowercase()
 		domainSegments = core.split('.').size
 		if (domainSegments < 2) throw IllegalArgumentException("Invalid domain: $domain")
-		val rawPath = afterPath?.let { "/$it" } ?: "/"
+		val rawPath = afterPathMarker?.let { "/$it" } ?: "/"
 
-		val (beforeParams, afterParams) = rawPath.deconstruct("?")
+		val (beforeParamMarker, afterParamMarker) = rawPath.deconstruct("?")
+		path = beforeParamMarker
+		pathSegments = path.split('/').filter { it.isNotEmpty() }.size
 		var requiredParamPath = ""
 
-		params = afterParams?.split("&")?.mapNotNull { param ->
+		params = afterParamMarker?.split("&")?.mapNotNull { param ->
 			val (key, value) = param.deconstruct("=")
-			if (value == null) return@mapNotNull null
+			if (value == null) {
+				if (requiredParamPath.isEmpty() && !afterParamMarker.contains('&')) {
+					requiredParamPath += "?$key" // some sites use ? like a fragment marker (c-span)
+				}
+				return@mapNotNull null
+			}
 			if (key.startsWith("utm_") || junkParams != null && key in junkParams) return@mapNotNull null
 
 			requiredParamPath += if (requiredParamPath.isEmpty()) "?" else "&"
 			requiredParamPath += param
 			Pair(key, value)
 		}?.toMap() ?: emptyMap()
-		path = beforeParams + requiredParamPath
-		pathSegments = path.split('/').filter { it.isNotEmpty() }.size
+		paramPath = requiredParamPath
 		isRobotAllowed = disallowedPaths?.all { !path.startsWith(it) }
-		href = if (junkParams != null) "$authority$path${fragment?.let { "#$it" } ?: ""}"
-		else rawHref
+		href = "$authority$path$paramPath${fragment?.let { "#$it" } ?: ""}"
 	}
 
 	override fun toString() = href
@@ -74,8 +81,12 @@ open class Url internal constructor(
 	}
 }
 
-internal fun <T: Url> tryParseUrl(block: () -> T): T? {
-	return try { block() } catch (e: IllegalArgumentException) { null }
+internal fun <T : Url> tryParseUrl(block: () -> T): T? {
+	return try {
+		block()
+	} catch (e: IllegalArgumentException) {
+		null
+	}
 }
 
 private fun String.deconstruct(delimiter: String): Pair<String, String?> =

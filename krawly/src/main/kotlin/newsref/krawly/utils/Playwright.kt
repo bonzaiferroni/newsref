@@ -4,24 +4,13 @@ import com.microsoft.playwright.*
 import com.microsoft.playwright.options.RequestOptions
 import it.skrape.selects.Doc
 import newsref.db.globalConsole
+import newsref.db.models.WebResult
 import newsref.db.utils.fileLog
 import newsref.krawly.HaltCrawlException
 import newsref.krawly.chromeLinuxAgent
 import newsref.model.core.Url
 
 private val console = globalConsole.getHandle("Playwright")
-
-data class WebResult(
-    val pageHref: String? = null,
-    val status: Int? = null,
-    val doc: Doc? = null,
-    val screenshot: ByteArray? = null,
-    val requestHeaders: Map<String, String>? = null,
-    val timeout: Boolean = false,
-    val redirectUrl: String? = null
-) {
-    fun isSuccess() = status in 200..299
-}
 
 data class RedirectResult(
     val redirectHref: String? = null,
@@ -32,19 +21,14 @@ data class RedirectResult(
 }
 
 fun pwFetch(url: Url, screenshot: Boolean = false): WebResult = useChromiumPage { page ->
-    var headers: Map<String, String>? = null
-    page.onRequest { request ->
-        headers = request.headers()
-    }
     tryNavigate({
         val response = page.navigate(url.toString())
         val bytes = if (screenshot) page.screenshot(screenshotOptions) else null
         WebResult(
             status = response.status(),
-            doc = page.content().contentToDoc(),
+            content = page.content(),
             screenshot = bytes,
             pageHref = page.url(),
-            requestHeaders = headers
         )
     }, {
         console.logTrace("Timeout: $url")
@@ -54,7 +38,29 @@ fun pwFetch(url: Url, screenshot: Boolean = false): WebResult = useChromiumPage 
         message.fileLog("exceptions", "playwright")
         // adventure mode throws these
         console.logTrace("Unusual exception: $url\n$message")
-        WebResult()
+        WebResult(exception = message)
+    })
+}
+
+fun pwFetchRequest(url: Url): WebResult = useChromiumContext { context ->
+    tryNavigate({
+        val request = context.request()
+        val requestOptions = RequestOptions.create()
+        val response = request.get(url.href, requestOptions)
+        WebResult(
+            status = response.status(),
+            content = response.text(),
+            pageHref = response.url()
+        )
+    }, {
+        console.logTrace("Timeout: $url")
+        WebResult(timeout = true)
+    }, {
+        val message = it.message?.take(200) ?: "Unknown error"
+        message.fileLog("exceptions", "playwright")
+        // adventure mode throws these
+        console.logTrace("Unusual exception: $url\n$message")
+        WebResult(exception = message)
     })
 }
 
@@ -131,7 +137,7 @@ private fun <T> tryNavigate(
 
 private val contextOptions = Browser.NewContextOptions().apply { userAgent = chromeLinuxAgent }
 private val launchOptions = BrowserType.LaunchOptions().apply { setHeadless(false) }
-private val extraHeaders = mutableMapOf(
+val extraHeaders = mutableMapOf(
     "priority" to "u=0, i",
     "dnt" to "1",
     "accept-language" to "en-US,en;q=0.9",

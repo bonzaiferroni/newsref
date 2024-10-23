@@ -19,6 +19,7 @@ internal object HostTable : IntIdTable("host") {
 	val disallowed = array<String>("disallowed")
 	val domains = array<String>("domains")
 	val junkParams = array<String>("junk_params")
+	val navParams = array<String>("nav_params")
 }
 
 internal class HostRow(id: EntityID<Int>) : IntEntity(id) {
@@ -34,6 +35,7 @@ internal class HostRow(id: EntityID<Int>) : IntEntity(id) {
 	var bannedPaths by HostTable.disallowed
 	var domains by HostTable.domains
 	var junkParams by HostTable.junkParams
+	var navParams by HostTable.navParams
 
 	var authors by AuthorRow via HostAuthorTable
 	val sources by SourceRow referrersOn SourceTable.hostId
@@ -51,6 +53,7 @@ internal fun HostRow.toData() = Host(
 	bannedPaths = this.bannedPaths.toSet(),
 	domains = this.domains.toSet(),
 	junkParams = this.junkParams.toSet(),
+	navParams = this.navParams.toSet(),
 )
 
 internal fun HostRow.fromData(host: Host, nexusRow: NexusRow? = null) {
@@ -63,6 +66,7 @@ internal fun HostRow.fromData(host: Host, nexusRow: NexusRow? = null) {
 	bannedPaths = host.bannedPaths.toList()
 	domains = host.domains.toList()
 	junkParams = host.junkParams.toList()
+	navParams = host.navParams.toList()
 }
 
 internal fun HostRow.Companion.findByCore(core: String): HostRow? {

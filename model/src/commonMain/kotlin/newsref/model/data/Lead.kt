@@ -11,10 +11,11 @@ data class Lead(
 )
 
 data class LeadResult(
-    val id: Long = 0,
-    val leadId: Long = 0,
-    val result: ResultType,
-    val attemptedAt: Instant,
+	val id: Long = 0,
+	val leadId: Long = 0,
+	val result: FetchResult,
+	val attemptedAt: Instant,
+	val strategy: FetchStrategy?,
 )
 
 data class LeadJob(
@@ -38,12 +39,18 @@ data class LeadInfo(
 	val freshAt: Instant?,
 )
 
-enum class ResultType {
+enum class FetchResult {
     UNKNOWN,
+	ERROR,
 	SKIPPED,
     TIMEOUT,
     UNAUTHORIZED,
-    BOT_DETECT,
+    CAPTCHA,
     IRRELEVANT,
     RELEVANT
+}
+
+enum class FetchStrategy {
+	BASIC,
+	BROWSER,
 }

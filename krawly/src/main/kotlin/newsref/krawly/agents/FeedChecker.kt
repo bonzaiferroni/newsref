@@ -7,6 +7,7 @@ import newsref.db.globalConsole
 import newsref.db.services.FeedService
 import newsref.krawly.SpiderWeb
 import newsref.db.log.underline
+import newsref.krawly.utils.contentToDoc
 import newsref.krawly.utils.isLikelyAd
 import newsref.krawly.utils.tryGetHrefOrParent
 import newsref.model.core.toUrlOrNull
@@ -46,11 +47,12 @@ class FeedChecker(
 			var links = 0
 			console.logTrace("checking feed: ${feed.url} with selector ${feed.selector.underline()}")
 			val webResult = web.fetch(feed.url)
-			if (!webResult.isSuccess() || webResult.doc == null) {
+			val content = webResult.content
+			if (content == null) {
 				console.logError("feed error: ${feed.url}")
 				continue
 			}
-			val doc = webResult.doc
+			val doc = content.contentToDoc()
 			val elements = doc.findAll(feed.selector)
 			for (docElement in doc.findAll(feed.selector)) {
 				val (headline, href) = docElement.tryGetHrefOrParent() ?: continue

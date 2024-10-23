@@ -10,17 +10,20 @@ plugins {
 }
 
 dependencies {
-    implementation("it.skrape:skrapeit:1.2.2")
+    implementation("it.skrape:skrapeit:1.3.0-alpha.2")
+    implementation("com.squareup.okhttp3:okhttp:4.12.0")
+    implementation("io.ktor:ktor-client-cio:$ktor_version")
+    implementation("io.ktor:ktor-client-encoding:$ktor_version")
     implementation("org.jline:jline:3.21.0")
 
     implementation("com.microsoft.playwright:playwright:1.41.0")
     implementation("com.aallam.openai:openai-client:3.8.2")
-    implementation("io.ktor:ktor-client-okhttp:$ktor_version")
 
     implementation(project(":model"))
     implementation(project(":db"))
 
     implementation(libs.kotlinx.datetime)
+    implementation("io.ktor:ktor-client-okhttp-jvm:2.3.11")
 
     // Add dependencies for unit testing
     testImplementation(kotlin("test"))

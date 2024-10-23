@@ -9,7 +9,7 @@ class LogHandle(
 	var level: LogLevel = LogLevel.INFO
 	var partialLine = LineBuilder()
 
-	fun log(message: String, status: Any? = null, level: LogLevel = LogLevel.INFO) {
+	fun log(message: Any?, status: Any? = null, level: LogLevel = LogLevel.INFO) {
 		if (status != null) this.status = status.toString()
 		this.level = level
 		console.log(name, level, message)

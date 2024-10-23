@@ -6,16 +6,13 @@ import newsref.db.services.LeadService
 import newsref.db.log.toPink
 import newsref.db.log.toYellow
 import newsref.model.core.CheckedUrl
-import newsref.model.data.Lead
 import newsref.model.data.Host
-import newsref.db.models.FetchInfo
+import newsref.db.models.CrawlInfo
 import newsref.db.services.LeadExistsException
 import newsref.krawly.utils.TallyMap
 import newsref.krawly.utils.increment
-import newsref.model.core.ArticleType
-import newsref.model.core.SourceType
 import newsref.model.data.LeadJob
-import newsref.model.data.ResultType
+import newsref.model.data.FetchResult
 import kotlin.time.Duration.Companion.days
 
 class LeadMaker(
@@ -40,10 +37,10 @@ class LeadMaker(
 		}
 	}
 
-	suspend fun makeLeads(fetch: FetchInfo): TallyMap<CreateLeadResult> {
+	suspend fun makeLeads(fetch: CrawlInfo): TallyMap<CreateLeadResult> {
 		val resultMap = mutableMapOf<CreateLeadResult, Int>()
 		val page = fetch.page ?: return resultMap
-		if (fetch.resultType == ResultType.IRRELEVANT) return resultMap
+		if (fetch.fetchResult == FetchResult.IRRELEVANT) return resultMap
 		val publishedAt = page.article.publishedAt
 		if (publishedAt != null && publishedAt < (Clock.System.now() - 30.days)) return resultMap
 		val links = fetch.page?.links ?: return resultMap

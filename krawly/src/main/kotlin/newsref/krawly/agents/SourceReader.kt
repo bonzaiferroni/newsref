@@ -2,95 +2,89 @@ package newsref.krawly.agents
 
 import kotlinx.datetime.Clock
 import newsref.db.globalConsole
-import newsref.db.services.LeadService
 import newsref.db.utils.cacheResource
-import newsref.krawly.SpiderWeb
-import newsref.krawly.utils.WebResult
-import newsref.krawly.utils.isFile
-import newsref.model.core.SourceType
-import newsref.model.core.Url
-import newsref.model.data.LeadInfo
-import newsref.model.data.ResultType
-import newsref.model.data.Source
+import newsref.db.models.CrawlInfo
 import newsref.db.models.FetchInfo
 import newsref.db.models.PageInfo
+import newsref.db.models.WebResult
 import newsref.krawly.utils.toMarkdown
-import kotlin.time.Duration.Companion.hours
+import newsref.model.core.*
+import newsref.model.data.*
 
 class SourceReader(
-    spindex: Int,
-	private val web: SpiderWeb,
-	private val hostAgent: HostAgent,
-	private val pageReader: PageReader = PageReader(spindex, hostAgent),
-	private val leadService: LeadService = LeadService(),
+    private val hostAgent: HostAgent,
+	private val pageReader: PageReader = PageReader(hostAgent),
 ) {
-    private val console = globalConsole.getHandle("Src $spindex")
+    private val console = globalConsole.getHandle("SourceReader")
 
-    suspend fun read(lead: LeadInfo): FetchInfo {
-        val resultMap = leadService.getResultsByHost(lead.hostId, 1.hours)
+    suspend fun read(fetch: FetchInfo): CrawlInfo {
+        val (pageHost, pageUrl) = fetch.result?.pageHref?.let { hostAgent.getHost(it.toUrl()) }
+            ?: Pair(null, null)
+        val page = fetch.result?.takeIf { it.isOk && it.pageHref != null }?.let {
+            pageReader.read(it, pageUrl, pageHost)
+        }
+        val resultType = determineResultType(fetch.skipFetch, fetch.result, page)
+        if (resultType != FetchResult.TIMEOUT && !fetch.skipFetch)
+            cacheResult(fetch.result, fetch.lead.url)
 
-        val skipFetch = isExpectedFail(resultMap) || lead.url.isFile()
-        val result = if (!skipFetch) { web.fetch(lead.url, true) } else { null }
+        val junkParams = page?.article?.cannonUrl?.toUrlOrNull()?.takeIf { fetch.lead.url.core == it.core }
+            ?.let { fetch.lead.url.params.keys.toSet() - it.params.keys.toSet() }
 
-        val page = result?.let { pageReader.read(lead, it) }
-        val resultType = determineResultType(skipFetch, result, page)
-        if (resultType != ResultType.TIMEOUT && !skipFetch)
-            cacheResult(result, lead.url)
+        junkParams?.takeIf { it.isNotEmpty() }?.let { console.logDebug("junk params: $junkParams") }
 
         // parse strategies
-        val fetch = FetchInfo(
-            lead = lead,
-            source = Source(
-                url = page?.pageUrl ?: lead.url,
-                leadTitle = lead.feedHeadline,
-                seenAt = Clock.System.now(),
-                type = page?.type ?: SourceType.UNKNOWN
-            ),
+        val crawl = CrawlInfo(
             page = page,
-            resultType = resultType,
-            resultMap = resultMap.toMutableMap().also { it[resultType] = it.getResult(resultType) + 1 },
-            statusOk = result?.isSuccess()
+            fetchResult = resultType,
+            fetch = fetch,
+            cannonJunkParams = junkParams
         )
         // todo: if it is a news article, save a video of the endpoint
 
         if (page != null) {
-            val md = fetch.toMarkdown()
-            md?.cacheResource(page.pageUrl.domain, "md")
+            val md = crawl.toMarkdown()
+            md?.cacheResource(page.pageUrl.core, "md")
         }
 
-        return fetch
+        return crawl
     }
 
-    private fun determineResultType(skipFetch: Boolean, result: WebResult?, page: PageInfo?): ResultType {
-        if (skipFetch) return ResultType.SKIPPED
-        if (result == null) return ResultType.UNKNOWN
-        if (result.timeout) return ResultType.TIMEOUT
-        if (result.status in 400..499) return ResultType.UNAUTHORIZED
+    private fun determineResultType(skipFetch: Boolean, result: WebResult?, page: PageInfo?): FetchResult {
+        if (skipFetch) return FetchResult.SKIPPED
+        if (result == null) return FetchResult.UNKNOWN
+        if (result.timeout) return FetchResult.TIMEOUT
+        if (result.status in 400..499) return FetchResult.UNAUTHORIZED
         // todo: support other languages
-        if (page?.language?.startsWith("en") != true) return ResultType.IRRELEVANT
-        if (page?.type == SourceType.ARTICLE) {
-            if (page.foundNewsArticle) return ResultType.RELEVANT
+        if (page?.language?.startsWith("en") != true) return FetchResult.IRRELEVANT
+        if (page.type == SourceType.ARTICLE) {
+            if (page.foundNewsArticle) return FetchResult.RELEVANT
             // todo: add more relevance indicators
         }
-        return ResultType.IRRELEVANT
+        return FetchResult.IRRELEVANT
     }
 
     private fun cacheResult(result: WebResult?, url: Url) {
-        if (result == null || !result.isSuccess()) {
-            result?.screenshot?.cacheResource(url.domain, "png", "nav_fail")
+        if (result == null || !result.isOk) {
+            result?.screenshot?.cacheResource(url.core, "png", "nav_fail")
         }
 //        result?.screenshot?.cacheResource(url.domain, "png")
-        result?.doc?.html?.cacheResource(url.domain, "html", "html")
-    }
-
-    private fun isExpectedFail(resultMap: Map<ResultType, Int>?): Boolean {
-        if (resultMap == null) return false
-        val accessCount = resultMap.getResult(ResultType.RELEVANT) + resultMap.getResult(ResultType.IRRELEVANT)
-        if (accessCount > 0) return false
-        if (resultMap.getResult(ResultType.BOT_DETECT) > 0) return true
-        return resultMap.getResult(ResultType.TIMEOUT) > 5
+        result?.content?.cacheResource(url.core, "html", "html")
     }
 }
 
-fun Map<ResultType, Int>.getResult(resultType: ResultType) = this[resultType] ?: 0
+fun Map<FetchResult, Int>.getResult(fetchResult: FetchResult) = this[fetchResult] ?: 0
+fun <T, V> Map<T, List<V>>.getTally(key: T) = this[key]?.size ?: 0
+fun <T, V> Map<T, List<V>>.getTally(key: T, tallyIf: (V) -> Boolean) = this[key]?.count(tallyIf) ?: 0
+fun <T, V> Map<T, List<V>>.getSum(key: T, sumIf: (V) -> Int) = this[key]?.sumOf(sumIf) ?: 0
+
+val FetchResult.ok get() = when (this) {
+    FetchResult.UNKNOWN -> false
+    FetchResult.ERROR -> false
+    FetchResult.SKIPPED -> false
+    FetchResult.TIMEOUT -> false
+    FetchResult.UNAUTHORIZED -> false
+    FetchResult.CAPTCHA -> false
+    FetchResult.IRRELEVANT -> true
+    FetchResult.RELEVANT -> true
+}
 

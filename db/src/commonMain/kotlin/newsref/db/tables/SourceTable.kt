@@ -42,7 +42,7 @@ internal class SourceRow(id: EntityID<Long>) : LongEntity(id) {
 internal fun SourceRow.toData() = Source(
     id = this.id.value,
     url = this.url.toCheckedFromDb(),
-    leadTitle = this.leadTitle,
+    title = this.leadTitle,
     type = this.type,
     seenAt = this.seenAt.toInstant(UtcOffset.ZERO)
 )
@@ -50,7 +50,7 @@ internal fun SourceRow.toData() = Source(
 internal fun ResultRow.toSource() = Source(
     id = this[SourceTable.id].value,
     url = this[SourceTable.url].toCheckedFromDb(),
-    leadTitle = this[SourceTable.leadTitle],
+    title = this[SourceTable.leadTitle],
     type = this[SourceTable.type],
     seenAt = this[SourceTable.seenAt].toInstant(UtcOffset.ZERO)
 )
@@ -58,7 +58,7 @@ internal fun ResultRow.toSource() = Source(
 internal fun SourceRow.fromData(source: Source, hostRow: HostRow) {
     host = hostRow
     url = source.url.toString()
-    source.leadTitle?.let { leadTitle = it }
+    source.title?.let { leadTitle = it }
     source.type?.let { type = it }
     seenAt = source.seenAt.toLocalDateTime(TimeZone.UTC)
 }

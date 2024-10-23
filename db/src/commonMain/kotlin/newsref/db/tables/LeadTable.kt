@@ -49,22 +49,21 @@ internal fun LeadRow.Companion.leadExists(checkedUrl: CheckedUrl): Boolean {
     return this.find { LeadTable.url.lowerCase() inList list }.any()
 }
 
-internal fun LeadRow.Companion.getHostResults(hostId: Int, since: Duration): Map<ResultType, Int> {
-    val time = (Clock.System.now() - since).toLocalDateTimeUTC()
-    // println("Filtered time: $time")
-    // println(query.prepareSQL(QueryBuilder(false)))
-    return LeadTable.leftJoin(LeadResultTable).select(LeadResultTable.resultCount, LeadResultTable.result).where {
-        (LeadTable.hostId eq hostId) and (LeadResultTable.attemptedAt greaterEq time)
-    }.groupBy(LeadResultTable.result).associate { resultRow ->
-        resultRow[LeadResultTable.result] to resultRow[LeadResultTable.resultCount]
-    }
+internal fun LeadResultRow.Companion.getHostResults(hostId: Int, limit: Int): List<LeadResult> {
+    return LeadResultTable.leftJoin(LeadTable)
+        .select(LeadResultTable.columns)
+        .where { LeadTable.hostId eq hostId }
+        .limit(limit)
+        .wrapLeadResults()
 }
 
 // lead result
 internal object LeadResultTable : LongIdTable("lead_result") {
     val leadId = reference("lead_id", LeadTable)
-    val result = enumeration("result", ResultType::class)
+    val result = enumeration("result", FetchResult::class)
     val attemptedAt = datetime("attempted_at")
+    val strategy = enumeration("strategy", FetchStrategy::class).nullable()
+
     val resultCount = result.count().castTo(IntegerColumnType())
 }
 
@@ -73,19 +72,32 @@ internal class LeadResultRow(id: EntityID<Long>) : LongEntity(id) {
     var lead by LeadRow referencedOn LeadResultTable.leadId
     var result by LeadResultTable.result
     var attemptedAt by LeadResultTable.attemptedAt
+    var strategy by LeadResultTable.strategy
 }
 
 internal fun LeadResultRow.toData() = LeadResult(
     id = this.id.value,
     leadId = this.lead.id.value,
     result = this.result,
-    attemptedAt = this.attemptedAt.toInstant(UtcOffset.ZERO)
+    attemptedAt = this.attemptedAt.toInstant(UtcOffset.ZERO),
+    strategy = this.strategy,
 )
+
+internal fun Query.wrapLeadResults() = this.map { row ->
+    LeadResult(
+        id = row[LeadResultTable.id].value,
+        leadId = row[LeadResultTable.leadId].value,
+        result = row[LeadResultTable.result],
+        attemptedAt = row[LeadResultTable.attemptedAt].toInstant(UtcOffset.ZERO),
+        strategy = row[LeadResultTable.strategy],
+    )
+}
 
 internal fun LeadResultRow.fromData(leadResult: LeadResult, leadRow: LeadRow) {
     lead = leadRow
     result = leadResult.result
     attemptedAt = leadResult.attemptedAt.toLocalDateTimeUTC()
+    strategy = leadResult.strategy
 }
 
 // lead job

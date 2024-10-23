@@ -5,30 +5,30 @@ import newsref.model.data.Host
 class CheckedUrl internal constructor(
 	rawUrl: String,
 	junkParams: Set<String>?,
-	disallowedPaths: Set<String>?,
-) : Url(rawUrl, junkParams, disallowedPaths)
+	bannedPaths: Set<String>?,
+) : Url(rawUrl, junkParams, bannedPaths)
 
 fun String.toCheckedUrl(
 	junkParams: Set<String>,
-	disallowedPaths: Set<String>?
-) = CheckedUrl(this, junkParams, disallowedPaths)
+	bannedPaths: Set<String>?
+) = CheckedUrl(this, junkParams, bannedPaths)
 
 fun String.toCheckedWithContext(
 	context: Url,
 	junkParams: Set<String>,
-	disallowedPaths: Set<String>?
-) = CheckedUrl(this.maybeCombine(context), junkParams, disallowedPaths)
+	bannedPaths: Set<String>?
+) = CheckedUrl(this.maybeCombine(context), junkParams, bannedPaths)
 
 fun String.toCheckedOrNull(
 	junkParams: Set<String>,
-	disallowedPaths: Set<String>?
-) = tryParseUrl { this.toCheckedUrl(junkParams, disallowedPaths) }
+	bannedPaths: Set<String>?
+) = tryParseUrl { this.toCheckedUrl(junkParams, bannedPaths) }
 
 fun String.toCheckedWithContextOrNull(
 	context: Url,
 	junkParams: Set<String>,
-	disallowedPaths: Set<String>?
-) = tryParseUrl { this.toCheckedWithContext(context, junkParams, disallowedPaths) }
+	bannedPaths: Set<String>?
+) = tryParseUrl { this.toCheckedWithContext(context, junkParams, bannedPaths) }
 
 fun String.toCheckedUrl(host: Host) = this.toCheckedUrl(host.junkParams, host.bannedPaths)
 

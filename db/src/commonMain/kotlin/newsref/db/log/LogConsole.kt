@@ -38,14 +38,15 @@ class LogConsole {
 
 	fun log(message: String) = log("", LogLevel.INFO, message)
 
-	fun log(source: String, level: LogLevel, message: String) {
+	fun log(source: String, level: LogLevel, message: Any?) {
+		val msg = message.toString()
 		config.writer?.let { writer ->
-			if (level.ordinal >= writer.minLevel.ordinal) writer.writeLine(source, level, message)
+			if (level.ordinal >= writer.minLevel.ordinal) writer.writeLine(source, level, msg)
 		}
 
 		if (level.ordinal < config.minLevel.ordinal) return
 
-		queue.add(LogMessage(source, message))
+		queue.add(LogMessage(source, msg))
 		while (queue.isNotEmpty()) {
 			val (qSource, qMessage) = queue.removeFirstOrNull() ?: break
 			val sourcePart = if (lastSource == source) "" else source

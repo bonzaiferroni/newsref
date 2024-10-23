@@ -43,13 +43,13 @@ fun Doc.findFirstOrNull(cssSelector: String): DocElement? = try {
 fun Doc.getNewsArticle(cacheId: Url): NewsArticle? {
     val innerHtml = this.findFirstOrNull("script#json-schema")?.html ?: this.scanTagsForNewsArticle() ?: return null
     val json = innerHtml.trimCData()
-//    json.cacheResource(cacheId.domain, "json", "news_article_raw")
+//    json.cacheResource(cacheId.core, "json", "news_article_raw")
     try {
         val article = json.decodeNewsArticle()
-//        article?.cacheSerializable(cacheId.domain, "news_article_parsed")
+//        article?.cacheSerializable(cacheId.core, "news_article_parsed")
         return article // return
     } catch (e: Exception) {
-//        json.cacheResource(cacheId.domain, "json", "news_article_error")
+        json.cacheResource(cacheId.core, "json", "news_article_error")
         return null
     }
 

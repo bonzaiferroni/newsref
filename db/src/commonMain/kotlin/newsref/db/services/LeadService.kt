@@ -43,8 +43,8 @@ class LeadService : DbService() {
         leadRow.toData() // return
     }
 
-    suspend fun getResultsByHost(hostId: Int, since: Duration) = dbQuery {
-        LeadRow.getHostResults(hostId, since)
+    suspend fun getResultsByHost(hostId: Int, limit: Int) = dbQuery {
+        LeadResultRow.getHostResults(hostId, limit)
     }
 }
 

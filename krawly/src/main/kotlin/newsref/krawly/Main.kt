@@ -3,7 +3,6 @@ package newsref.krawly
 import newsref.db.globalConsole
 import newsref.db.initDb
 import newsref.db.log.ConsoleConfig
-import newsref.db.utils.cacheResource
 import newsref.krawly.agents.*
 import newsref.krawly.utils.pwFetch
 import newsref.krawly.utils.pwFetchRedirect

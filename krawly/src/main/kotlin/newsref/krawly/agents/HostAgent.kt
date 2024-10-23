@@ -17,6 +17,10 @@ class HostAgent(
 ) {
     private val console = globalConsole.getHandle("HostAgnt")
 
+    suspend fun getHost(hostId: Int): Host {
+        return hostService.findById(hostId)
+    }
+
     suspend fun getHost(url: Url): Pair<Host, CheckedUrl> {
         val host = hostService.findByUrl(url) ?: return createHost(url)
         if (host.isRedirect == true) {
@@ -30,19 +34,19 @@ class HostAgent(
 
     private val creatingHosts = Collections.synchronizedSet(mutableSetOf<String>())
     private suspend fun createHost(url: Url): Pair<Host, CheckedUrl> {
-        if (url.domain in creatingHosts) {
-            while (url.domain in creatingHosts) {
+        if (url.core in creatingHosts) {
+            while (url.core in creatingHosts) {
                 delay(1.seconds)
             }
             return getHost(url)
         }
-        creatingHosts.add(url.domain)
+        creatingHosts.add(url.core)
 
         val host = hostService.createHost(
             url = url, robotsTxt = null, isRedirect = false, bannedPaths = emptySet()
         )
 
-        creatingHosts.remove(url.domain)
+        creatingHosts.remove(url.core)
 
         return Pair(host, url.href.toCheckedUrl(host))
     }

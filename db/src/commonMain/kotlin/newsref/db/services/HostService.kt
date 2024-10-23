@@ -8,10 +8,16 @@ import newsref.db.tables.toData
 import newsref.db.utils.sameAs
 import newsref.model.core.Url
 import newsref.model.data.Host
+import org.jetbrains.exposed.sql.SqlExpressionBuilder.eq
 
 class HostService : DbService() {
 	suspend fun findByUrl(url: Url): Host? = dbQuery {
 		HostRow.find { HostTable.core.sameAs(url.core) }.firstOrNull()?.toData()
+	}
+
+	suspend fun findById(hostId: Int) = dbQuery {
+		HostRow.find( HostTable.id eq hostId).firstOrNull()?.toData()
+			?: throw IllegalArgumentException("Host $hostId not found")
 	}
 
 	suspend fun createHost(

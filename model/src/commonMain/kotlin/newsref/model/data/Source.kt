@@ -5,10 +5,10 @@ import newsref.model.core.CheckedUrl
 import newsref.model.core.SourceType
 
 data class Source(
-    val id: Long = 0,
-    val hostId: Int = 0,
-    val url: CheckedUrl,
-    val leadTitle: String? = null,
-    val type: SourceType? = null,
-    val seenAt: Instant,
+	val id: Long = 0,
+	val hostId: Int = 0,
+	val url: CheckedUrl,
+	val title: String? = null,
+	val type: SourceType? = null,
+	val seenAt: Instant,
 )

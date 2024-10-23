@@ -14,6 +14,8 @@ data class Host(
 	val domains: Set<String>,
 	val bannedPaths: Set<String> = emptySet(),
 	val junkParams: Set<String> = emptySet(),
+	val navParams: Set<String> = emptySet(),
 ) {
 	fun hasNexus(other: Host) = nexusId == other.nexusId
+	fun isExternalTo(other: Host) = !hasNexus(other) && !core.contains(other.core) && !other.core.contains(core)
 }

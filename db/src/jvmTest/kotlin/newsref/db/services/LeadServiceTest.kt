@@ -1,29 +1,23 @@
 package newsref.db.services
 
-import kotlinx.datetime.Clock
 import newsref.db.DbTest
 import newsref.db.tables.LeadResultTable
 import newsref.db.tables.LeadTable
-import newsref.db.tables.HostTable
 import newsref.db.tables.LeadJobTable
-import newsref.db.utils.toLocalDateTimeUTC
-import newsref.model.data.ResultType
+import newsref.model.data.FetchResult
 import org.jetbrains.exposed.sql.QueryBuilder
 import org.jetbrains.exposed.sql.SortOrder
 import org.jetbrains.exposed.sql.SqlExpressionBuilder.isNull
 import org.jetbrains.exposed.sql.count
-import org.jetbrains.exposed.sql.insert
-import org.jetbrains.exposed.sql.transactions.transaction
 import kotlin.test.BeforeTest
 import kotlin.test.Test
 import kotlin.test.assertEquals
-import kotlin.time.Duration.Companion.days
 
 class LeadServiceTest : DbTest() {
 	private val resultMap = mapOf(
-		ResultType.RELEVANT to 2,
-		ResultType.IRRELEVANT to 1,
-		ResultType.TIMEOUT to 1
+		FetchResult.RELEVANT to 2,
+		FetchResult.IRRELEVANT to 1,
+		FetchResult.TIMEOUT to 1
 	)
 
 	@BeforeTest
@@ -41,18 +35,18 @@ class LeadServiceTest : DbTest() {
 //				it[hostId] = hostRow[HostTable.id]
 //				it[url] = "http://axios.com/article_headline"
 //			}
-//			resultMap.forEach { (resultType, count) ->
+//			resultMap.forEach { (fetchResult, count) ->
 //				repeat(count) {
 //					LeadResultTable.insert {
 //						it[leadId] = leadRow[LeadTable.id]
-//						it[result] = resultType
+//						it[result] = fetchResult
 //						it[attemptedAt] = (Clock.System.now() - 1.days).toLocalDateTimeUTC()
 //					}
 //				}
 //			}
 //			LeadResultTable.insert {
 //				it[leadId] = leadRow[LeadTable.id]
-//				it[result] = ResultType.RELEVANT
+//				it[result] = FetchResult.RELEVANT
 //				it[attemptedAt] = (Clock.System.now() - 3.days).toLocalDateTimeUTC()
 //			}
 //		}
