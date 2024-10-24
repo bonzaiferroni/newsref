@@ -38,7 +38,7 @@ class LogHandle(
 				content.padStart(contentWidth).takeLast(contentWidth)
 			} else {
 				content.padEnd(contentWidth).take(contentWidth)
-			}.let { if (highlight) it.toCyan() else it }
+			}.let { if (highlight) it.toGreen() else it }
 			if (labelWidth > 0 && label != null) {
 				val labelPart = label.take(labelWidth)
 				if (justify == Justify.RIGHT) {

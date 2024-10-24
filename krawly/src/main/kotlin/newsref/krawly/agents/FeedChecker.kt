@@ -11,6 +11,7 @@ import newsref.krawly.utils.contentToDoc
 import newsref.krawly.utils.isLikelyAd
 import newsref.krawly.utils.tryGetHrefOrParent
 import newsref.model.core.toUrlOrNull
+import newsref.model.core.toUrlWithContextOrNull
 import newsref.model.data.LeadJob
 import kotlin.time.Duration.Companion.hours
 import kotlin.time.Duration.Companion.minutes
@@ -53,10 +54,16 @@ class FeedChecker(
 				continue
 			}
 			val doc = content.contentToDoc()
-			val elements = doc.findAll(feed.selector)
-			for (docElement in doc.findAll(feed.selector)) {
+
+			val elements = try {
+				doc.findAll(feed.selector)
+			} catch (e: Exception) {
+				console.logWarning("no leads with selector: ${feed.selector}\n${feed.url}")
+				emptyList()
+			}
+			for (docElement in elements) {
 				val (headline, href) = docElement.tryGetHrefOrParent() ?: continue
-				val url = href.toUrlOrNull() ?: continue
+				val url = href.toUrlWithContextOrNull(feed.url) ?: continue
 				if (url.isLikelyAd()) continue
 				val (host, hostUrl) = hostAgent.getHost(url)
 				val job = LeadJob(

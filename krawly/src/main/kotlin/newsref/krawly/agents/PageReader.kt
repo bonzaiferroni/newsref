@@ -42,17 +42,28 @@ class PageReader(
 			ArticleType.POLICY to 0,
 			ArticleType.JOURNAL to 0,
 		)
-		val stack = ArrayDeque<DocElement>()
+		val stack = mutableListOf<DocElement>()
 		stack.addAll(doc.children.reversed())
+		val dropped = mutableListOf<DocElement>()
 
 		while (stack.isNotEmpty()) {
 			val element = stack.removeLastOrNull() ?: break
 			val tag = element.tagName
 
-			if (tag in lassoTags) stack.clear()
+			if (tag in lassoTags) {
+				if (tag == "article") {
+					dropped.addAll(stack)
+				}
+				stack.clear()
+			}
 			if (element.children.isNotEmpty() && tag !in notParentTags) {
 				stack.addAll(element.children.reversed())
 				continue
+			}
+
+			if (stack.isEmpty() && contentWordCount == 0) {
+				stack.addAll(dropped)
+				dropped.clear()
 			}
 
 			if (element.isHeading()) {

@@ -33,7 +33,7 @@ class LeadFollower(
 	private val leadService: LeadService = LeadService(),
 	private val sourceService: SourceService = SourceService(),
 ) {
-	private val maxSpiders: Int = 5
+	private val maxSpiders: Int = 10
 	private val console = globalConsole.getHandle("LeadFollower", true)
 
 	fun start() {
@@ -93,11 +93,11 @@ class LeadFollower(
 				console.status = "⌚".padStart(leadCount.toString().length - 1)
 				continue
 			}
-			hosts[lead.url.domain] = now + 30.seconds + (0..30).random().seconds
+			hosts[lead.url.domain] = now + 45.seconds + (0..30).random().seconds
 			console.status = (--leadCount).toString()
 
 			val pastResults = leadService.getResultsByHost(lead.hostId, 100)
-			val host = hostAgent.getHost(lead.hostId)
+			val (host, url) = hostAgent.getHost(lead.url)
 
 			while (nest.isEmpty()) {
 				console.status = "🕷".padStart(leadCount.toString().length - 1)
@@ -106,7 +106,7 @@ class LeadFollower(
 
 			val spider = nest.removeLast()
 			spider.crawl {
-				val newFetch = spider.sourceFetcher.fetch(lead, host, pastResults)
+				val newFetch = spider.sourceFetcher.fetch(lead, url, host, pastResults)
 				fetched.add(newFetch)
 				nest.add(spider) // return home, spidey
 			}
@@ -160,7 +160,7 @@ class LeadFollower(
 		val rowWidth = 64
 		val createdLeads = tally.getCount(CreateLeadResult.CREATED)
 		val strategyMsg = crawl.fetch.failedStrategy?.let {
-			"${it.toString().take(2)}⇒${crawl.fetch.strategy.toString().take(2)}"
+			"${it.toString().take(2)}~${crawl.fetch.strategy.toString().take(2)}"
 		} ?: crawl.fetch.strategy?.toString() ?: "SKIP"
 
 		val urlMsg = "${lead.url.toString().take(rowWidth - 1)}${(lead.url.length > rowWidth - 1).logIfTrue("~")}".let {
@@ -178,18 +178,27 @@ class LeadFollower(
 
 		val page = crawl.page
 		if (page == null) {
-			console.cell("", justify = Justify.LEFT, width = 40)
+			console.cell("", justify = Justify.LEFT, width = 22)
+				.cell(resultMap.getResult(FetchResult.SKIPPED), 5, "skip",
+					highlight = resultType == FetchResult.SKIPPED
+				)
+				.cell(resultMap.getResult(FetchResult.UNKNOWN), 5, "unknown",
+					highlight = resultType == FetchResult.UNKNOWN
+				)
+				.cell(resultMap.getResult(FetchResult.ERROR), 5, "error",
+					highlight = resultType == FetchResult.ERROR
+				)
 				.cell(strategyMsg, 5, justify = Justify.LEFT)
 				.cell(
-					"${resultMap.getResult(FetchResult.RELEVANT)}", 5, "relevant",
+					resultMap.getResult(FetchResult.RELEVANT), 5, "relevant",
 					highlight = resultType == FetchResult.RELEVANT
 				)
 				.cell(
-					"${resultMap.getResult(FetchResult.IRRELEVANT)}", 5, "irrelevant",
+					resultMap.getResult(FetchResult.IRRELEVANT), 5, "irrelevant",
 					highlight = resultType == FetchResult.IRRELEVANT
 				)
 				.cell(
-					"${resultMap.getResult(FetchResult.TIMEOUT)}", 5, "timeout",
+					resultMap.getResult(FetchResult.TIMEOUT), 5, "timeout",
 					highlight = resultType == FetchResult.TIMEOUT
 				)
 				.row(background = background, width = rowWidth)

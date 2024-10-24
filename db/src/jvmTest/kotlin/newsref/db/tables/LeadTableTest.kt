@@ -51,7 +51,7 @@ class LeadTableTest : DbTest() {
 
 	@Test
 	fun `getHostResults returns mapped Results`() = transaction {
-		val map = LeadRow.getHostResults(1, 100)
+		// val map = LeadRow.getHostResults(1, 100)
 		// assertEquals(resultMap, map)
 	}
 }

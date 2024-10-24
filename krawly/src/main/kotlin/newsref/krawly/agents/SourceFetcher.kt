@@ -6,6 +6,8 @@ import newsref.db.globalConsole
 import newsref.db.models.FetchInfo
 import newsref.krawly.SpiderWeb
 import newsref.krawly.utils.isFile
+import newsref.model.core.CheckedUrl
+import newsref.model.core.Url
 import newsref.model.core.toCheckedUrl
 import newsref.model.data.*
 import newsref.model.data.FetchStrategy.BASIC
@@ -19,32 +21,31 @@ class SourceFetcher(
 ) {
 	private val console = globalConsole.getHandle("$spindex SrcFetcher")
 
-	suspend fun fetch(lead: LeadInfo, leadHost: Host, pastResults: List<LeadResult>): FetchInfo {
-		if (lead.url.isFile() || decideSkipFetch(pastResults))
+	suspend fun fetch(lead: LeadInfo, leadUrl: CheckedUrl, leadHost: Host, pastResults: List<LeadResult>): FetchInfo {
+		if (leadUrl.isFile() || decideSkipFetch(pastResults))
 			return FetchInfo(lead = lead, leadHost = leadHost, pastResults = pastResults, skipFetch = true)
 
-		val newParams = lead.url.params.map { it.key }.toSet() - leadHost.navParams
+		val newParams = leadUrl.params.map { it.key }.toSet() - leadHost.navParams - safeParams
 		var fetchUrl = newParams.takeIf { it.isNotEmpty() }
-			?.let { lead.url.href.toCheckedUrl(newParams, leadHost.bannedPaths) }
-			?: lead.url
+			?.let { leadUrl.href.toCheckedUrl(newParams, leadHost.bannedPaths) }
+			?: leadUrl
 
-		if (fetchUrl != lead.url) {
+		if (fetchUrl != leadUrl) {
 			// handle param experiments
 			var navParams: Set<String>? = null
 			var junkParams: Set<String>? = null
 			var result = web.fetch(fetchUrl, BROWSER)
 			if (result.isNotFound) {
-				console.logDebug("result without params failed\n${lead.url}")
 				delay(10.seconds)
-				fetchUrl = lead.url
+				fetchUrl = leadUrl
 				result = web.fetch(fetchUrl, BROWSER)
 				if (result.isOk) {
 					navParams = newParams
-					console.logDebug("found navParams: $navParams\n${lead.url}")
+					console.logDebug("found navParams: $navParams")
 				}
 			} else if (result.isOk) {
 				junkParams = newParams
-				console.logDebug("found junkParams: $junkParams\n${lead.url}")
+				console.logDebug("found junkParams: $junkParams")
 			}
 			return FetchInfo(
 				lead = lead,
@@ -59,13 +60,13 @@ class SourceFetcher(
 			// handle strategy swap
 			var strategy = decideStrategy(pastResults)
 			var failedStrategy: FetchStrategy? = null
-			var result = web.fetch(lead.url, strategy)
+			var result = web.fetch(leadUrl, strategy)
 			if (!result.isOk && pastResults.size < 10) {
-				console.logDebug("$strategy strategy failed, swapping\n${lead.url}")
+				console.logTrace("$strategy strategy failed, swapping\n${leadUrl}")
 				delay(10.seconds)
 				failedStrategy = strategy
 				strategy = if (strategy == BASIC) BROWSER else BASIC
-				result = web.fetch(lead.url, strategy)
+				result = web.fetch(leadUrl, strategy)
 			}
 			return FetchInfo(
 				lead = lead,
@@ -101,3 +102,5 @@ class SourceFetcher(
 		return BASIC
 	}
 }
+
+val safeParams = setOf("v", "id", "index", "releaseid")

@@ -1,6 +1,11 @@
 package newsref.db.log
 
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
 import java.util.*
+import kotlin.coroutines.CoroutineContext
 
 class LogConsole {
 	var config = ConsoleConfig()
@@ -16,6 +21,25 @@ class LogConsole {
 
 	init {
 		addCommand("quit") { isActive = false; "Goodbye!" }
+		startQueueConsumer()
+	}
+
+	private fun startQueueConsumer() {
+		CoroutineScope(Dispatchers.Default).launch {
+			while (true) {
+				while (queue.isNotEmpty()) {
+					val (level, source, message) = queue.removeFirstOrNull() ?: break
+					val sourcePart = if (lastSource == source) "" else source
+					val line = builder.bold().setForeground(level).writeLength(sourcePart, MAX_SOURCE_CHARS)
+						.defaultFormat().defaultForeground().write(" ").write(message).build()
+					lastSource = source
+					renderLog(source, line)
+					if (queue.size < 20)
+						delay(50)
+				}
+				delay(10) // don't spin yer gears
+			}
+		}
 	}
 
 	fun addCommand(name: String, action: (List<String>?) -> String) {
@@ -46,15 +70,7 @@ class LogConsole {
 
 		if (level.ordinal < config.minLevel.ordinal) return
 
-		queue.add(LogMessage(source, msg))
-		while (queue.isNotEmpty()) {
-			val (qSource, qMessage) = queue.removeFirstOrNull() ?: break
-			val sourcePart = if (lastSource == source) "" else source
-			val line = builder.bold().setForeground(level).writeLength(sourcePart, MAX_SOURCE_CHARS)
-				.defaultFormat().defaultForeground().write(" ").write(qMessage).build()
-			lastSource = source
-			renderLog(qSource, line)
-		}
+		queue.add(LogMessage(level, source, msg))
 	}
 
 	fun logTrace(source: String, message: String) = log(source, LogLevel.TRACE, message)
@@ -86,7 +102,7 @@ class LogConsole {
 				if (partial.isNotEmpty()) {
 					val partialLine = partialBuilder.setForeground(dim).writeLength(handle.name, MAX_SOURCE_CHARS - 2)
 						.defaultForeground().write(" > ").write(partial.takeLast(80)).build()
-					println(partialLine) 										// reserved line
+					println(partialLine)                                        // reserved line
 				} else {
 					println()
 				}
@@ -98,8 +114,8 @@ class LogConsole {
 				builder.write("]")
 			}
 			val statusLine = builder.build()
-			println(statusLine) 												// reserved line
-			print("> $input") 													// prompt
+			println(statusLine)                                                // reserved line
+			print("> $input")                                                    // prompt
 		}
 	}
 
@@ -111,7 +127,7 @@ class LogConsole {
 			val command = array.firstOrNull()
 			if (command != null) sendCommand(command, array.drop(1))
 			input = ""
-		} else if(char == '\b') {
+		} else if (char == '\b') {
 			if (input.isNotEmpty()) {
 				input = input.dropLast(1)
 			}
@@ -124,7 +140,7 @@ class LogConsole {
 
 const val MAX_SOURCE_CHARS = 8
 
-private typealias LogMessage = Pair<String, String>
+private typealias LogMessage = Triple<LogLevel, String, String>
 
 enum class LogLevel {
 	TRACE,

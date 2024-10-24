@@ -36,7 +36,11 @@ class SourceReader(
         val crawl = CrawlInfo(
             page = page,
             fetchResult = resultType,
-            fetch = fetch,
+            fetch = fetch.copy(
+                pastResults = fetch.pastResults.toMutableList().also { it.add(
+                    LeadResult(result = resultType, attemptedAt = Clock.System.now(), strategy = fetch.strategy)
+                )}
+            ),
             cannonJunkParams = junkParams
         )
         // todo: if it is a news article, save a video of the endpoint
@@ -54,10 +58,15 @@ class SourceReader(
         if (result == null) return FetchResult.UNKNOWN
         if (result.timeout) return FetchResult.TIMEOUT
         if (result.status in 400..499) return FetchResult.UNAUTHORIZED
+        if (result.exception != null) return FetchResult.ERROR
+        if (page == null) return FetchResult.UNKNOWN
         // todo: support other languages
         if (page?.language?.startsWith("en") != true) return FetchResult.IRRELEVANT
         if (page.type == SourceType.ARTICLE) {
             if (page.foundNewsArticle) return FetchResult.RELEVANT
+            val wordCount = page.article.wordCount ?: 0
+            val maybeUseful = page.article.publishedAt != null && page.links.any { it.isExternal } && wordCount > 100
+            if (maybeUseful) return FetchResult.RELEVANT
             // todo: add more relevance indicators
         }
         return FetchResult.IRRELEVANT

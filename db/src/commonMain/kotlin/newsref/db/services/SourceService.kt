@@ -78,9 +78,9 @@ class SourceService : DbService() {
 
 		// update host with found data
 		if (hostRow.core == page.pageHost.core) {
-			crawl.cannonJunkParams?.let { hostRow.junkParams += it }
-			fetch.junkParams?.let { hostRow.junkParams += it }
-			fetch.navParams?.let { hostRow.navParams += it }
+			crawl.cannonJunkParams?.let { hostRow.junkParams = it.smoosh(hostRow.junkParams) }
+			fetch.junkParams?.let { hostRow.junkParams = it.smoosh(hostRow.junkParams) }
+			fetch.navParams?.let { hostRow.navParams = it.smoosh(hostRow.navParams) }
 			page.hostName?.let { hostRow.name = it }
 		}
 
@@ -148,3 +148,4 @@ class SourceService : DbService() {
 	}
 }
 
+private fun <T> Set<T>.smoosh(list: List<T>) = this.toMutableSet().also { set -> set.addAll(list) }.toList()
