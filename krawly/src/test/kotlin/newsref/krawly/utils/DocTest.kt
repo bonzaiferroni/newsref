@@ -15,13 +15,6 @@ class DocTest {
 
 	@Test
 	fun `explore code`() {
-		val results = mutableMapOf<String, Int>()
-		for (doc in docs) {
-			val result = doc.findFirstOrNull("html")?.attributes?.get("lang").toString()
-			results[result] = results.getOrPut(result) { 0 } + 1
-		}
-		for ((result, count) in results) {
-			println("$result: $count")
-		}
+		
 	}
 }

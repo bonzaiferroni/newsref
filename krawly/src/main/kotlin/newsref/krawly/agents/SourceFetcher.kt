@@ -41,7 +41,7 @@ class SourceFetcher(
 					lead = lead,
 					leadHost = leadHost,
 					pastResults = pastResults,
-					failedStrategy = BROWSER,
+					strategy = BROWSER,
 					result = originalResult,
 					navParams = newParams
 				)

@@ -77,6 +77,7 @@ class SourceService : DbService() {
 		val page = crawl.page ?: return@dbQuery sourceRow.id.value
 
 		// update host with found data
+
 		if (hostRow.core == page.pageHost.core) {
 			crawl.cannonJunkParams?.let { hostRow.junkParams = it.smoosh(hostRow.junkParams) }
 			fetch.junkParams?.let { hostRow.junkParams = it.smoosh(hostRow.junkParams) }
