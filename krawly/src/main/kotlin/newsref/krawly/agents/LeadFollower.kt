@@ -12,6 +12,7 @@ import newsref.db.models.CrawlInfo
 import newsref.db.models.FetchInfo
 import newsref.db.services.LeadService
 import newsref.db.services.SourceService
+import newsref.krawly.HaltCrawlException
 import newsref.krawly.SpiderWeb
 import newsref.krawly.utils.TallyMap
 import newsref.krawly.utils.getCount
@@ -106,8 +107,13 @@ class LeadFollower(
 
 			val spider = nest.removeLast()
 			spider.crawl {
-				val newFetch = spider.sourceFetcher.fetch(lead, url, host, pastResults)
-				fetched.add(newFetch)
+				try {
+					val newFetch = spider.sourceFetcher.fetch(lead, url, host, pastResults)
+					fetched.add(newFetch)
+				} catch (e:HaltCrawlException) {
+					console.logError("Beware the kraken! (internet lost)\n$url\n$e")
+					delay(30.seconds)
+				}
 				nest.add(spider) // return home, spidey
 			}
 			delay(100)

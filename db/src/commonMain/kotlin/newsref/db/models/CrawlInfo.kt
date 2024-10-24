@@ -3,7 +3,6 @@ package newsref.db.models
 import newsref.model.core.ArticleType
 import newsref.model.core.CheckedUrl
 import newsref.model.core.SourceType
-import newsref.model.core.Url
 import newsref.model.data.*
 
 data class CrawlInfo(

@@ -8,11 +8,14 @@ import io.ktor.client.plugins.compression.*
 import io.ktor.client.request.*
 import io.ktor.client.statement.*
 import io.ktor.http.*
+import io.ktor.util.network.*
 import kotlinx.coroutines.runBlocking
 import newsref.db.globalConsole
 import newsref.db.models.WebResult
+import newsref.krawly.HaltCrawlException
 import newsref.krawly.chromeLinuxAgent
 import newsref.model.core.Url
+import java.net.NoRouteToHostException
 
 private var console = globalConsole.getHandle("ktor")
 
@@ -51,6 +54,10 @@ suspend fun ktorFetchAsync(url: Url): WebResult {
 		console.logTrace("Arrr! The request timed out!")
 		WebResult(timeout = true, exception = e.message)
 	} catch (e: Exception) {
+		when (e) {
+			// todo: handle is UnresolvedAddressException,
+			is NoRouteToHostException -> throw HaltCrawlException(e.message ?: "No internet access, halt crawl\n$url")
+		}
 		console.logTrace("arr! unknown excpetion!\n$e")
 		WebResult(exception = e.message)
 	}

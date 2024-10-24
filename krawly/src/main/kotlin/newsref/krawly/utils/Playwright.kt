@@ -123,7 +123,9 @@ private fun <T> tryNavigate(
     } catch (e: PlaywrightException) {
         val message = e.message
         if (message != null) {
-            if (message.contains("ERR_INTERNET_DISCONNECTED")) throw HaltCrawlException("Internet disconnected")
+            // todo: handle message.contains("ERR_NAME_NOT_RESOLVED")
+            if (message.contains("ERR_INTERNET_DISCONNECTED"))
+                throw HaltCrawlException(message)
             if (message.contains("Request timed out") && handleTimeout != null) return handleTimeout()
         }
 

@@ -5,9 +5,9 @@ import kotlinx.datetime.Clock
 import newsref.db.globalConsole
 import newsref.db.models.FetchInfo
 import newsref.krawly.SpiderWeb
+import newsref.krawly.utils.contentToDoc
 import newsref.krawly.utils.isFile
 import newsref.model.core.CheckedUrl
-import newsref.model.core.Url
 import newsref.model.core.toCheckedUrl
 import newsref.model.data.*
 import newsref.model.data.FetchStrategy.BASIC
@@ -25,36 +25,50 @@ class SourceFetcher(
 		if (leadUrl.isFile() || decideSkipFetch(pastResults))
 			return FetchInfo(lead = lead, leadHost = leadHost, pastResults = pastResults, skipFetch = true)
 
-		val newParams = leadUrl.params.map { it.key }.toSet() - leadHost.navParams - safeParams
-		var fetchUrl = newParams.takeIf { it.isNotEmpty() }
-			?.let { leadUrl.href.toCheckedUrl(newParams, leadHost.bannedPaths) }
+		val newParams = leadUrl.params.map { it.key }.toSet() - leadHost.navParams
+		val firstParam = newParams.takeIf { it.isNotEmpty() }?.let { setOf(it.first()) } ?: emptySet()
+		val strippedUrl = firstParam.takeIf { it.isNotEmpty() }
+			?.let { leadUrl.href.toCheckedUrl(firstParam, leadHost.bannedPaths) }
 			?: leadUrl
 
-		if (fetchUrl != leadUrl) {
+		if (strippedUrl != leadUrl) {
 			// handle param experiments
-			var navParams: Set<String>? = null
-			var junkParams: Set<String>? = null
-			var result = web.fetch(fetchUrl, BROWSER)
-			if (result.isNotFound) {
-				delay(10.seconds)
-				fetchUrl = leadUrl
-				result = web.fetch(fetchUrl, BROWSER)
-				if (result.isOk) {
+			val originalResult = web.fetch(leadUrl, BROWSER)
+			val originalTitle = originalResult.content?.contentToDoc()?.titleText
+			if (!originalResult.isOk || originalTitle == null) {
+				console.logDebug("failed experiment with params:$newParams\n$leadUrl")
+				return FetchInfo(
+					lead = lead,
+					leadHost = leadHost,
+					pastResults = pastResults,
+					failedStrategy = BROWSER,
+					result = originalResult,
 					navParams = newParams
-					console.logDebug("found navParams: $navParams")
-				}
-			} else if (result.isOk) {
-				junkParams = newParams
-				console.logDebug("found junkParams: $junkParams")
+				)
 			}
+			delay(60.seconds)
+			val newResult = web.fetch(strippedUrl, BROWSER)
+			val newTitle = newResult.content?.contentToDoc()?.titleText
+
+			if (!newResult.isOk || newTitle != originalTitle) {
+				console.logDebug("found navParam: $firstParam")
+				return FetchInfo(
+					lead = lead,
+					leadHost = leadHost,
+					pastResults = pastResults,
+					result = originalResult,
+					strategy = BROWSER,
+					navParams = firstParam,
+				)
+			}
+			console.logDebug("found junkParam: $firstParam")
 			return FetchInfo(
 				lead = lead,
 				leadHost = leadHost,
 				pastResults = pastResults,
-				result = result,
+				result = newResult,
 				strategy = BROWSER,
-				navParams = navParams,
-				junkParams = junkParams,
+				junkParams = firstParam,
 			)
 		} else {
 			// handle strategy swap
@@ -63,7 +77,7 @@ class SourceFetcher(
 			var result = web.fetch(leadUrl, strategy)
 			if (!result.isOk && pastResults.size < 10) {
 				console.logTrace("$strategy strategy failed, swapping\n${leadUrl}")
-				delay(10.seconds)
+				delay(30.seconds)
 				failedStrategy = strategy
 				strategy = if (strategy == BASIC) BROWSER else BASIC
 				result = web.fetch(leadUrl, strategy)
