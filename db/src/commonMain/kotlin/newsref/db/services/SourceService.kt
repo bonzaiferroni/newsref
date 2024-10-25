@@ -10,11 +10,8 @@ import newsref.db.models.CrawlInfo
 import newsref.db.utils.createOrUpdate
 import newsref.db.utils.sameAs
 import newsref.db.utils.plus
-import newsref.model.core.toCheckedUrl
-import newsref.model.data.Lead
 import org.jetbrains.exposed.sql.*
 import org.jetbrains.exposed.sql.SqlExpressionBuilder.eq
-import org.jetbrains.exposed.sql.SqlExpressionBuilder.isNull
 import java.util.MissingResourceException
 
 private val console = globalConsole.getHandle("SourceService")
@@ -43,7 +40,7 @@ class SourceService : DbService() {
 
 		// update lead
 		val leadRow = LeadRow[lead.id]
-		leadRow.target = sourceRow
+		leadRow.source = sourceRow // should have been associated with link at creation
 
 		// create leadResult
 		LeadResultRow.new {
@@ -67,36 +64,21 @@ class SourceService : DbService() {
 			}
 		}
 
-		// update link targets that pointed to source
-		LinkRow.find(LinkTable.targetId.isNull() and LinkTable.url.sameAs(lead.url)).forEach {
-			// if (it.isExternal) console.log("sewing link: ${it.id.value} to ${sourceRow.id.value}")
-			it.target = sourceRow
-		}
-
 		// exit here if no page
 		val page = crawl.page ?: return@dbQuery sourceRow.id.value
 
-		// update host with found data
+		if (lead.url.href =="theprince.princeton.edu" || lead.url.href == "clicks.trx-hub.com") {
+			// console.log("debug!")
+		}
 
+		// update host with found data
 		if (hostRow.core == page.pageHost.core) {
-			crawl.cannonJunkParams?.let { hostRow.junkParams = it.smoosh(hostRow.junkParams) }
-			fetch.junkParams?.let { hostRow.junkParams = it.smoosh(hostRow.junkParams) }
-			fetch.navParams?.let { hostRow.navParams = it.smoosh(hostRow.navParams) }
 			page.hostName?.let { hostRow.name = it }
 		}
 
 		// create or update lead for page url
 		if (page.pageUrl != lead.url) {
-			val pageLead = Lead(url = page.pageUrl)
-			val row = LeadRow.createOrUpdate(LeadTable.url.sameAs(page.pageUrl)) {
-				fromData(pageLead, hostRow, sourceRow)
-			}
-
-			// update links that pointed to lead
-			LinkRow.find { LinkTable.targetId.isNull() and LinkTable.url.sameAs(pageLead.url) }.forEach {
-				// if (it.isExternal) console.log("sewing link: ${it.id.value} to ${sourceRow.id.value}")
-				it.target = sourceRow
-			}
+			LeadRow.createOrUpdateAndLink(page.pageUrl, sourceRow)
 		}
 
 		// create or update document
@@ -128,11 +110,6 @@ class SourceService : DbService() {
 		}
 
 		val linkRows = page.links.map { info ->
-			val existingLeadRow = LeadRow.find { LeadTable.url.sameAs(info.url) }.firstOrNull()
-			val existingSource = existingLeadRow?.target?.let {
-				SourceRow[it.id]
-			} ?: SourceRow.find { SourceTable.url.sameAs(info.url) }.firstOrNull()
-			// if (existingSource != null && info.isExternal) console.log("back sew: ${existingSource.id.value}")
 
 			// update or create links
 			val link = Link(url = info.url, text = info.anchorText, isExternal = info.isExternal)
@@ -141,12 +118,10 @@ class SourceService : DbService() {
 				(LinkTable.url.sameAs(info.url)) and
 						(LinkTable.urlText eq info.anchorText) and (LinkTable.sourceId eq sourceRow.id)
 			}.firstOrNull()
-				?: LinkRow.new { fromData(link, sourceRow, contentRow, existingSource) }
+				?: LinkRow.new { fromData(link, sourceRow, contentRow) }
 			linkRow // return@map
 		}
 
 		sourceRow.id.value // return
 	}
 }
-
-private fun <T> Set<T>.smoosh(list: List<T>) = this.toMutableSet().also { set -> set.addAll(list) }.toList()

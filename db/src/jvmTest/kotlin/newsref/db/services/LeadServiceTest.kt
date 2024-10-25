@@ -63,7 +63,7 @@ class LeadServiceTest : DbTest() {
 		val limit = 2000
 		LeadTable.leftJoin(LeadJobTable).leftJoin(LeadResultTable)
 			.select(leadInfoColumns + LeadResultTable.leadId.count())
-			.where(LeadTable.targetId.isNull())
+			.where(LeadTable.sourceId.isNull())
 			.orderBy(LeadJobTable.freshAt, SortOrder.DESC_NULLS_LAST)
 			.limit(limit)
 			.groupBy(*leadInfoColumns.toTypedArray())

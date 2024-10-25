@@ -7,34 +7,45 @@ import newsref.db.tables.*
 import newsref.db.utils.toCheckedFromDb
 import newsref.model.core.CheckedUrl
 import newsref.model.data.LeadJob
-import newsref.model.data.Host
 import newsref.model.data.LeadInfo
 import org.jetbrains.exposed.sql.Query
 import org.jetbrains.exposed.sql.SortOrder
 import org.jetbrains.exposed.sql.SqlExpressionBuilder.isNull
+import org.jetbrains.exposed.sql.alias
 import org.jetbrains.exposed.sql.count
-import kotlin.time.Duration
+import org.postgresql.jdbc.PgResultSet.toInt
 
 class LeadService : DbService() {
 
     suspend fun getOpenLeads(limit: Int = 20000) = dbQuery {
-        LeadTable.leftJoin(LeadJobTable).leftJoin(LeadResultTable)
-            .select(leadInfoColumns + LeadResultTable.leadId.count())
-            .where(LeadTable.targetId.isNull())
+        val linkCountAlias = LinkTable.leadId.count().alias("linkCount")
+        LeadTable.leftJoin(LinkTable).leftJoin(LeadJobTable)
+            .select(leadInfoColumns + linkCountAlias)
+            .where(LeadTable.sourceId.isNull())
+            .orderBy(linkCountAlias, SortOrder.DESC)
             .orderBy(LeadJobTable.freshAt, SortOrder.DESC_NULLS_LAST)
             .limit(limit)
 			.groupBy(*leadInfoColumns.toTypedArray())
-			.wrapLeadInfo()
+            .map { row ->
+                LeadInfo(
+                    id = row[LeadTable.id].value,
+                    url = row[LeadTable.url].toCheckedFromDb(),
+                    targetId = row[LeadTable.sourceId]?.value,
+                    hostId = row[LeadTable.hostId].value,
+                    feedHeadline = row.getOrNull(LeadJobTable.headline),
+                    lastAttemptAt = row.getOrNull(LeadResultTable.attemptedAt)?.toInstant(UtcOffset.ZERO),
+                    isExternal = row[LeadJobTable.isExternal],
+                    freshAt = row.getOrNull(LeadJobTable.freshAt)?.toInstant(UtcOffset.ZERO),
+                    linkCount = row.getOrNull(linkCountAlias)?.toInt() ?: 0
+                )
+            }
     }
 
-    suspend fun createIfFreshLead(url: CheckedUrl, host: Host, leadJob: LeadJob?) = dbQuery {
+    suspend fun createIfFreshLead(url: CheckedUrl, leadJob: LeadJob?) = dbQuery {
         if (LeadRow.leadExists(url))
             throw LeadExistsException(url)
 
-        val hostRow = HostRow.findById(host.id)
-            ?: throw IllegalArgumentException("Host missing: ${url.domain}")
-
-        val leadRow = LeadRow.new { this.url = url.toString(); this.host = hostRow }
+        val leadRow = LeadRow.createOrUpdateAndLink(url)
 
         leadJob?.let { job ->
             val feedRow = job.feedId?.let { FeedRow[it] }
@@ -54,24 +65,23 @@ class LeadExistsException(url: CheckedUrl) : IllegalArgumentException("Lead alre
 internal val leadInfoColumns = listOf(
     LeadTable.id,
     LeadTable.url,
-    LeadTable.targetId,
+    LeadTable.sourceId,
     LeadTable.hostId,
     LeadJobTable.headline,
     LeadJobTable.isExternal,
     LeadJobTable.freshAt,
-    // LeadResultTable.leadId.count()
 )
 
 internal fun Query.wrapLeadInfo() = this.map { row ->
     LeadInfo(
         id = row[LeadTable.id].value,
         url = row[LeadTable.url].toCheckedFromDb(),
-        targetId = row[LeadTable.targetId]?.value,
+        targetId = row[LeadTable.sourceId]?.value,
         hostId = row[LeadTable.hostId].value,
         feedHeadline = row.getOrNull(LeadJobTable.headline),
-        attemptCount = row[LeadResultTable.leadId.count()].toInt(),
         lastAttemptAt = row.getOrNull(LeadResultTable.attemptedAt)?.toInstant(UtcOffset.ZERO),
         isExternal = row[LeadJobTable.isExternal],
-        freshAt = row.getOrNull(LeadJobTable.freshAt)?.toInstant(UtcOffset.ZERO)
+        freshAt = row.getOrNull(LeadJobTable.freshAt)?.toInstant(UtcOffset.ZERO),
+        linkCount = row[LinkTable.leadId.count()].toInt()
     )
 }

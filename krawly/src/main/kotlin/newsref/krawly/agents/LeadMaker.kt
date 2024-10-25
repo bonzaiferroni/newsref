@@ -9,6 +9,7 @@ import newsref.model.core.CheckedUrl
 import newsref.model.data.Host
 import newsref.db.models.CrawlInfo
 import newsref.db.services.LeadExistsException
+import newsref.db.services.NexusService
 import newsref.krawly.utils.TallyMap
 import newsref.krawly.utils.increment
 import newsref.model.data.LeadJob
@@ -17,13 +18,14 @@ import kotlin.time.Duration.Companion.days
 
 class LeadMaker(
 	private val hostAgent: HostAgent,
-	private val leadService: LeadService = LeadService()
+	private val leadService: LeadService = LeadService(),
+	private val nexusService: NexusService = NexusService()
 ) {
 	private val console = globalConsole.getHandle("LeadMaker")
 
-	suspend fun makeLead(checkedUrl: CheckedUrl, host: Host, leadJob: LeadJob? = null): CreateLeadResult {
+	suspend fun makeLead(checkedUrl: CheckedUrl, leadJob: LeadJob? = null): CreateLeadResult {
 		return try {
-			leadService.createIfFreshLead(checkedUrl, host, leadJob)
+			leadService.createIfFreshLead(checkedUrl, leadJob)
 			CreateLeadResult.CREATED
 		} catch(e: LeadExistsException) {
 			console.logTrace("lead exists: $checkedUrl")
@@ -49,9 +51,9 @@ class LeadMaker(
 				resultMap.increment(CreateLeadResult.IRRELEVANT)
 				continue
 			}
-			val (host, checkedUrl) = hostAgent.getHost(link.url)
+			val (linkHost, checkedUrl) = hostAgent.getHost(link.url)
 			val job = LeadJob(isExternal = link.isExternal, freshAt = fetch.page?.article?.publishedAt)
-			val result = makeLead(checkedUrl, host, job)
+			val result = makeLead(checkedUrl, job)
 			resultMap.increment(result)
 		}
 		return resultMap

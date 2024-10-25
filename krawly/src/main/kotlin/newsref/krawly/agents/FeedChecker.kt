@@ -4,6 +4,7 @@ import kotlinx.coroutines.*
 import kotlinx.datetime.Clock
 import kotlinx.datetime.Instant
 import newsref.db.globalConsole
+import newsref.db.log.toBlue
 import newsref.db.services.FeedService
 import newsref.krawly.SpiderWeb
 import newsref.db.log.underline
@@ -73,10 +74,10 @@ class FeedChecker(
 					freshAt = Clock.System.now()
 				)
 				links++
-				val newJob = leadMaker.makeLead(hostUrl, host, job)
+				val newJob = leadMaker.makeLead(hostUrl, job)
 				if (newJob == CreateLeadResult.CREATED) count++
 			}
-			console.logInfo("${feed.url.domain.underline()}: $count leads from $links links / ${elements.size} elements")
+			console.logInfo("${feed.url.domain.underline()}: $count leads from $links links / ${elements.size} elements".toBlue())
 			if (count == 0) delayMap[feed.id] = now + 1.hours
 		}
 	}

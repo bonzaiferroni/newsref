@@ -41,6 +41,7 @@ data class PageInfo(
 	val articleType: ArticleType,
 	val pageUrl: CheckedUrl,
 	val pageHost: Host,
+	val pageTitle: String,
 	val type: SourceType,
 	val hostName: String?,
 	val language: String?,

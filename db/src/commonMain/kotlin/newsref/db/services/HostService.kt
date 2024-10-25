@@ -38,4 +38,14 @@ class HostService : DbService() {
 		)
 		HostRow.new { fromData(host) }.toData()
 	}
+
+	suspend fun updateParameters(host: Host, junkParams: Set<String>?, navParams: Set<String>?) = dbQuery {
+		val hostRow = HostRow.find( HostTable.id eq host.id).firstOrNull()
+			?: throw IllegalArgumentException("Host ${host.core} not found")
+		junkParams?.let { hostRow.junkParams = it.smoosh(hostRow.junkParams) }
+		navParams?.let { hostRow.navParams = it.smoosh(hostRow.navParams) }
+		hostRow.toData()
+	}
 }
+
+private fun <T> Set<T>.smoosh(list: List<T>) = this.toMutableSet().also { set -> set.addAll(list) }.toList()

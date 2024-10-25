@@ -7,7 +7,7 @@ data class Lead(
 	val id: Long = 0,
 	val url: CheckedUrl,
 	val hostId: Int = 0,
-	val targetId: Long? = null,
+	val sourceId: Long? = null,
 )
 
 data class LeadResult(
@@ -33,10 +33,10 @@ data class LeadInfo(
 	val hostId: Int,
 	val targetId: Long?,
 	val feedHeadline: String?,
-	val attemptCount: Int,
 	val lastAttemptAt: Instant?,
 	val isExternal: Boolean,
 	val freshAt: Instant?,
+	val linkCount: Int,
 )
 
 enum class FetchResult {

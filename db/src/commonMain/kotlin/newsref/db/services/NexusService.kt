@@ -36,6 +36,12 @@ class NexusService : DbService() {
 		HostTable.select(HostTable.core).map { it[HostTable.core] }.toSet()
 	}
 
+	suspend fun createNexus(host: Host, other: Host) = dbQuery {
+		//if (host.id == other.id) return@dbQuery false
+
+
+	}
+
 	suspend fun createNexus(hostCore: String, otherCore: String) = dbQuery {
 		val host = HostRow.findByCore(hostCore) ?: return@dbQuery null
 		val other = HostRow.findByCore(otherCore) ?: return@dbQuery null
@@ -71,5 +77,11 @@ class NexusService : DbService() {
 				.replaceFirst(" ❤ ${host.core}", "")
 		}
 		true
+	}
+
+	suspend fun setInternal(linkId: Long) = dbQuery {
+		val linkRow = LinkRow.findById(linkId) ?: return@dbQuery false
+		linkRow.isExternal = false
+		true // return
 	}
 }

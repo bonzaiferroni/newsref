@@ -21,7 +21,6 @@ import newsref.model.data.FetchResult
 import java.util.*
 import kotlin.collections.ArrayDeque
 import kotlin.time.Duration.Companion.days
-import kotlin.time.Duration.Companion.hours
 import kotlin.time.Duration.Companion.minutes
 import kotlin.time.Duration.Companion.seconds
 import kotlin.time.DurationUnit
@@ -36,6 +35,7 @@ class LeadFollower(
 ) {
 	private val maxSpiders: Int = 10
 	private val console = globalConsole.getHandle("LeadFollower", true)
+	private val fetched = Collections.synchronizedList(mutableListOf<FetchInfo>())
 
 	fun start() {
 		CoroutineScope(Dispatchers.Default).launch {
@@ -46,6 +46,7 @@ class LeadFollower(
 				delay((10..15).random().seconds)
 			}
 		}
+		startConsumeFetched()
 	}
 
 	private suspend fun checkLeads() {
@@ -76,9 +77,7 @@ class LeadFollower(
 		refreshLeads()
 
 		val nest = ((0 until maxSpiders).map { Spider(it) }).toMutableList()
-		val fetched = Collections.synchronizedList(mutableListOf<FetchInfo>())
 		val hosts = mutableMapOf<String, Instant>()
-		startConsumeFetched(fetched)
 
 		while (!leads.isEmpty()) {
 			val now = Clock.System.now()
@@ -101,7 +100,7 @@ class LeadFollower(
 			val (host, url) = hostAgent.getHost(lead.url)
 
 			while (nest.isEmpty()) {
-				console.status = "🕷".padStart(leadCount.toString().length - 1)
+				console.status = "🕷 ".padStart(leadCount.toString().length - 1)
 				delay(1.seconds)
 			}
 
@@ -125,15 +124,26 @@ class LeadFollower(
 		}
 	}
 
-	private fun startConsumeFetched(fetched: MutableList<FetchInfo>) {
+	private fun startConsumeFetched() {
 		CoroutineScope(Dispatchers.Default).launch {
 			while (true) {
 				val fetch = fetched.removeLastOrNull()
 				if (fetch != null) {
-					val crawl = sourceReader.read(fetch)
-					sourceService.consume(crawl)
-					val resultMap = leadMaker.makeLeads(crawl)
-					logFetch(crawl, resultMap)
+					try {
+						hostAgent.updateParameters(fetch.leadHost, fetch.junkParams, fetch.navParams)
+						val crawl = sourceReader.read(fetch)
+						val pageHost = crawl.page?.pageHost
+						val junkParams = crawl.cannonJunkParams
+						if (pageHost != null && junkParams != null)
+							hostAgent.updateParameters(pageHost, null, junkParams)
+
+						// consume source
+						sourceService.consume(crawl)
+						val resultMap = leadMaker.makeLeads(crawl)
+						logFetch(crawl, resultMap)
+					} catch (e: Exception) {
+						console.logError("Error consuming fetch:\n$fetch\n$e")
+					}
 				}
 				delay(100)
 			}

@@ -1,6 +1,8 @@
 package newsref.db.services
 
 import kotlinx.datetime.Clock
+import kotlinx.datetime.TimeZone
+import kotlinx.datetime.toInstant
 import newsref.db.DbService
 import newsref.db.tables.*
 import newsref.db.tables.ArticleTable
@@ -8,24 +10,32 @@ import newsref.db.tables.HostTable
 import newsref.db.tables.LinkTable
 import newsref.db.tables.SourceTable
 import newsref.db.utils.toLocalDateTimeUTC
-import org.jetbrains.exposed.sql.JoinType
-import org.jetbrains.exposed.sql.and
-import org.jetbrains.exposed.sql.or
+import newsref.model.data.Link
+import org.jetbrains.exposed.sql.*
 import kotlin.time.Duration
+import kotlin.time.Duration.Companion.hours
 
 class ScoreFinderService : DbService() {
 	suspend fun findNewLinksSince(duration: Duration) = dbQuery {
 		val time = (Clock.System.now() - duration).toLocalDateTimeUTC()
 
-		SourceTable.leftJoin(ArticleTable).leftJoin(HostTable)
-			.join(LinkTable, JoinType.LEFT, SourceTable.id, LinkTable.sourceId)
-			.select(LinkTable.columns + HostTable.core)
+		LeadTable.leftJoin(LinkTable)
+			.join(SourceTable, JoinType.LEFT, LinkTable.sourceId, SourceTable.id)
+			.leftJoin(ArticleTable)
+			.select(LinkTable.columns + LeadTable.sourceId + SourceTable.hostId)
 			.where {
 				SourceTable.seenAt.greaterEq(time) and
 						(ArticleTable.publishedAt.isNull() or ArticleTable.publishedAt.greaterEq(time)) and
-						LinkTable.targetId.isNotNull() and LinkTable.isExternal.eq(true)
+						LinkTable.isExternal.eq(true) and LeadTable.sourceId.isNotNull()
 			}
-			.map { Pair(it.toLink(), it[HostTable.core]) }
+			// .also { println(it.prepareSQL(QueryBuilder(false))) }
+			.map {
+				LinkItem(
+					link = it.toLink(),
+					sourceId = it.getOrNull(LeadTable.sourceId)!!.value,
+					hostId = it[SourceTable.hostId].value,
+				)
+			}
 	}
 
 	suspend fun findNewLinksSince2(duration: Duration) = dbQuery {
@@ -37,22 +47,28 @@ class ScoreFinderService : DbService() {
 			.where {
 				SourceTable.seenAt.greaterEq(time) and
 						(ArticleTable.publishedAt.isNull() or ArticleTable.publishedAt.greaterEq(time)) and
-						LinkTable.targetId.isNotNull() and LinkTable.isExternal.eq(true)
+						LinkTable.leadId.isNotNull() and LinkTable.isExternal.eq(true)
 			}
 			.map { Pair(it.toLink(), it[HostTable.core]) }
 	}
 
-	suspend fun setInternal(linkId: Long) = dbQuery {
-		val linkRow = LinkRow.findById(linkId) ?: return@dbQuery false
-		linkRow.isExternal = false
-		true // return
-	}
-
-	suspend fun addScores(scores: List<Pair<Long, Int>>) = dbQuery {
+	suspend fun addScores(scores: List<ScoreGroup>) = dbQuery {
 		for ((sourceId, score) in scores) {
-			val sourceRow = SourceRow.findById(sourceId) ?: throw IllegalArgumentException("source not found: $sourceId")
-			val linkScore = LinkScore(score = score, scoredAt = Clock.System.now())
+			val now = Clock.System.now()
+			val sourceRow =
+				SourceRow.findById(sourceId) ?: throw IllegalArgumentException("source not found: $sourceId")
+			val lastScore = LinkScoreRow.find { LinkScoreTable.sourceId eq sourceId }.maxByOrNull { LinkScoreTable.id }
+			if (lastScore != null && lastScore.score == score
+				&& lastScore.scoredAt.toInstant(TimeZone.UTC) - now < SAME_SCORE_TIME_THRESHOLD)
+				continue
+
+			val linkScore = LinkScore(score = score, scoredAt = now)
 			LinkScoreRow.new { fromData(linkScore, sourceRow) }
 		}
 	}
 }
+
+data class LinkItem(val link: Link, val sourceId: Long, val hostId: Int)
+data class ScoreGroup(val sourceId: Long, val count: Int)
+
+val SAME_SCORE_TIME_THRESHOLD = 1.hours

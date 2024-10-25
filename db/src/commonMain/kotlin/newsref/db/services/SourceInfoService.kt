@@ -19,27 +19,27 @@ import org.jetbrains.exposed.sql.SqlExpressionBuilder.greaterEq
 import kotlin.time.Duration
 
 class SourceInfoService : DbService() {
-	suspend fun getTopSources(quantity: Int, duration: Duration) = dbQuery {
-		val time = (Clock.System.now() - duration).toLocalDateTimeUTC()
-		val sinceDuration = SourceTable.seenAt greaterEq time
-		val isExternal = LinkTable.isExternal eq true
-		val topSources = SourceTable.join(LinkTable, JoinType.LEFT, SourceTable.id, LinkTable.targetId)
-			.select(SourceTable.id, LinkTable.targetId.count())
-			.where(sinceDuration and isExternal)
-			.orderBy(LinkTable.targetId.count(), SortOrder.DESC)
-			.groupBy(SourceTable.id)
-			.limit(quantity)
-			.associate { it[SourceTable.id].value to it[LinkTable.targetId.count()] }
-		val topIds = topSources.keys
+//	suspend fun getTopSources(quantity: Int, duration: Duration) = dbQuery {
+//		val time = (Clock.System.now() - duration).toLocalDateTimeUTC()
+//		val sinceDuration = SourceTable.seenAt greaterEq time
+//		val isExternal = LinkTable.isExternal eq true
+//		val topSources = SourceTable.join(LinkTable, JoinType.LEFT, SourceTable.id, LinkTable.targetId)
+//			.select(SourceTable.id, LinkTable.targetId.count())
+//			.where(sinceDuration and isExternal)
+//			.orderBy(LinkTable.targetId.count(), SortOrder.DESC)
+//			.groupBy(SourceTable.id)
+//			.limit(quantity)
+//			.associate { it[SourceTable.id].value to it[LinkTable.targetId.count()] }
+//		val topIds = topSources.keys
+//
+//		SourceTable.getSourceInfosByIds(topIds, topSources)
+//	}
 
-		SourceTable.getSourceInfosByIds(topIds, topSources)
-	}
-
-	suspend fun getSourceById(id: Long) = dbQuery {
-		val inLinks = LinkTable.getInLinksByTarget(id)
-		val outLinks = LinkTable.getOutLinksBySource(id)
-		SourceTable.getSourceInfoById(id, inLinks, outLinks)
-	}
+//	suspend fun getSourceById(id: Long) = dbQuery {
+//		val inLinks = LinkTable.getInLinksByTarget(id)
+//		val outLinks = LinkTable.getOutLinksBySource(id)
+//		SourceTable.getSourceInfoById(id, inLinks, outLinks)
+//	}
 }
 
 internal fun SourceTable.getSourceInfoById(
@@ -110,38 +110,38 @@ internal fun Query.wrapSourceInfo(
 	)
 }
 
-internal fun LinkTable.getInLinksByTarget(targetId: Long) =
-	this.join(SourceTable, JoinType.LEFT, SourceTable.id, this.sourceId).leftJoin(ContentTable)
-		.select(linkInfoColumns)
-		.where { LinkTable.targetId eq targetId }
-		.wrapLinkInfo()
+//internal fun LinkTable.getInLinksByTarget(targetId: Long) =
+//	this.join(SourceTable, JoinType.LEFT, SourceTable.id, this.sourceId).leftJoin(ContentTable)
+//		.select(linkInfoColumns)
+//		.where { LinkTable.targetId eq targetId }
+//		.wrapLinkInfo()
 
-internal fun LinkTable.getOutLinksBySource(sourceId: Long) =
-	this.join(SourceTable, JoinType.LEFT, SourceTable.id, this.targetId).leftJoin(ContentTable)
-		.select(linkInfoColumns)
-		.where { LinkTable.sourceId eq sourceId }
-		// .also { println(it.prepareSQL(QueryBuilder(false))) }
-		.wrapLinkInfo()
+//internal fun LinkTable.getOutLinksBySource(sourceId: Long) =
+//	this.join(SourceTable, JoinType.LEFT, SourceTable.id, this.targetId).leftJoin(ContentTable)
+//		.select(linkInfoColumns)
+//		.where { LinkTable.sourceId eq sourceId }
+//		// .also { println(it.prepareSQL(QueryBuilder(false))) }
+//		.wrapLinkInfo()
 
-internal val linkInfoColumns = listOf(
-	LinkTable.targetId,
-	LinkTable.sourceId,
-	LinkTable.url,
-	LinkTable.urlText,
-	LinkTable.isExternal,
-	ContentTable.text,
-	SourceTable.url,
-	SourceTable.seenAt,
-)
+//internal val linkInfoColumns = listOf(
+//	LinkTable.targetId,
+//	LinkTable.sourceId,
+//	LinkTable.url,
+//	LinkTable.urlText,
+//	LinkTable.isExternal,
+//	ContentTable.text,
+//	SourceTable.url,
+//	SourceTable.seenAt,
+//)
 
-internal fun Query.wrapLinkInfo() = this.map { row ->
-	LinkInfo(
-		targetId = row[LinkTable.targetId]?.value,
-		sourceId = row[LinkTable.sourceId].value,
-		url = row[LinkTable.url],
-		urlText = row[LinkTable.urlText],
-		context = row.getOrNull(ContentTable.text),
-		sourceUrl = row[SourceTable.url],
-		seenAt = row[SourceTable.seenAt].toInstant(TimeZone.UTC)
-	)
-}
+//internal fun Query.wrapLinkInfo() = this.map { row ->
+//	LinkInfo(
+//		targetId = row[LinkTable.targetId]?.value,
+//		sourceId = row[LinkTable.sourceId].value,
+//		url = row[LinkTable.url],
+//		urlText = row[LinkTable.urlText],
+//		context = row.getOrNull(ContentTable.text),
+//		sourceUrl = row[SourceTable.url],
+//		seenAt = row[SourceTable.seenAt].toInstant(TimeZone.UTC)
+//	)
+//}

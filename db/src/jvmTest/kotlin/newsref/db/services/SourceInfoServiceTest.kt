@@ -24,27 +24,7 @@ import kotlin.time.Duration.Companion.days
 class SourceInfoServiceTest : DbTest(true) {
 	@Test
 	fun `explore code`() = dbQuery {
-		val duration = 1.days
-		val quantity = 25
-		val time = (Clock.System.now() - duration).toLocalDateTimeUTC()
-		val sinceDuration = SourceTable.seenAt greaterEq time
-		val isExternal = LinkTable.isExternal eq true
-		val topSources = SourceTable.join(LinkTable, JoinType.LEFT, SourceTable.id, LinkTable.targetId)
-			.select(SourceTable.id, LinkTable.targetId.count())
-			.where(sinceDuration and isExternal)
-			.orderBy(LinkTable.targetId.count(), SortOrder.DESC)
-			.groupBy(SourceTable.id)
-			.limit(quantity)
-			.associate { it[SourceTable.id].value to it[LinkTable.targetId.count()] }
-		val topIds = topSources.keys
 
-		val sources = SourceTable.leftJoin(ArticleTable).leftJoin(HostTable)
-			.select(sourceInfoColumns)
-			.where { SourceTable.id inList topIds }
-			.wrapSourceInfo(topSources)
-
-		// println(query.prepareSQL(QueryBuilder(false)))
-		println(sources.size)
 	}
 
 	@Test

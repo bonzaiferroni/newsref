@@ -51,9 +51,15 @@ class HostAgent(
         return Pair(host, url.href.toCheckedUrl(host))
     }
 
+    suspend fun updateParameters(host: Host, navParams: Set<String>?, junkParams: Set<String>?): Host {
+        if (navParams == null && junkParams == null) return host
+        return hostService.updateParameters(host, navParams, junkParams)
+    }
+
     private fun fetchRedirectUrl(url: Url) =
         web.fetchRedirect(url).takeIf { it.isRedirect() }?.redirectHref?.toUrlOrNull()
 }
+
 
 //        console.logPartial(url.domain.toBlue())
 

@@ -12,6 +12,7 @@ open class Url internal constructor(
 	val domain: String
 	val domainSegments: Int
 	val path: String
+	val fullPath: String
 	val pathSegments: Int
 	val params: Map<String, String>
 	val paramPath: String
@@ -59,8 +60,9 @@ open class Url internal constructor(
 			Pair(key, value)
 		}?.toMap() ?: emptyMap()
 		paramPath = requiredParamPath
+		fullPath = "$path$paramPath${fragment?.let { "#$it" } ?: ""}"
+		href = "$authority$fullPath"
 		isRobotAllowed = disallowedPaths?.all { !path.startsWith(it) }
-		href = "$authority$path$paramPath${fragment?.let { "#$it" } ?: ""}"
 	}
 
 	override fun toString() = href

@@ -128,6 +128,7 @@ class PageReader(
 		val page = PageInfo(
 			pageUrl = pageUrl,
 			pageHost = pageHost,
+			pageTitle = doc.titleText,
 			articleType = articleType,
 			hostName = hostName,
 			language = language,

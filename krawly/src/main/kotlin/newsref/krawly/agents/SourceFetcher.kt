@@ -9,6 +9,7 @@ import newsref.krawly.utils.contentToDoc
 import newsref.krawly.utils.isFile
 import newsref.model.core.CheckedUrl
 import newsref.model.core.toCheckedUrl
+import newsref.model.core.toUrlOrNull
 import newsref.model.data.*
 import newsref.model.data.FetchStrategy.BASIC
 import newsref.model.data.FetchStrategy.BROWSER
@@ -34,9 +35,11 @@ class SourceFetcher(
 		if (strippedUrl != leadUrl) {
 			// handle param experiments
 			val originalResult = web.fetch(leadUrl, BROWSER)
+			val resultPageUrl = originalResult.pageHref?.toUrlOrNull()
 			val originalTitle = originalResult.content?.contentToDoc()?.titleText
-			if (!originalResult.isOk || originalTitle == null) {
-				console.logDebug("failed experiment with params:$newParams\n$leadUrl")
+			if (!originalResult.isOk || originalTitle == null
+				|| resultPageUrl == null || resultPageUrl.core != leadUrl.core) {
+				console.logTrace("safe params: ${leadUrl.core} $newParams")
 				return FetchInfo(
 					lead = lead,
 					leadHost = leadHost,
@@ -51,7 +54,7 @@ class SourceFetcher(
 			val newTitle = newResult.content?.contentToDoc()?.titleText
 
 			if (!newResult.isOk || newTitle != originalTitle) {
-				console.logDebug("found navParam: $firstParam")
+				console.logTrace("nav Param ${lead.url.core} $firstParam")
 				return FetchInfo(
 					lead = lead,
 					leadHost = leadHost,
@@ -61,7 +64,7 @@ class SourceFetcher(
 					navParams = firstParam,
 				)
 			}
-			console.logDebug("found junkParam: $firstParam")
+			console.logTrace("junk param ${lead.url.core} $firstParam")
 			return FetchInfo(
 				lead = lead,
 				leadHost = leadHost,
@@ -96,9 +99,9 @@ class SourceFetcher(
 	private fun decideSkipFetch(pastResults: List<LeadResult>): Boolean {
 		val now = Clock.System.now()
 		val resultMap = pastResults.filter { it.attemptedAt > now - 1.hours }.groupBy { it.result }
+		if (resultMap.getTally(FetchResult.CAPTCHA) > 0) return true
 		val accessCount = resultMap.getTally(FetchResult.RELEVANT) + resultMap.getTally(FetchResult.IRRELEVANT)
 		if (accessCount > 0) return false
-		if (resultMap.getTally(FetchResult.CAPTCHA) > 0) return true
 		return resultMap.getTally(FetchResult.TIMEOUT) > 5
 	}
 

@@ -41,8 +41,8 @@ class NexusFinder(
 			for (other in cores) {
 				if (core == other) continue
 				if (!other.endsWith(".${core}")) continue
-				val nexus = nexusService.createNexus(core, other)
-				console.log("Nexus created: ${nexus?.name}")
+				val created = nexusService.createNexus(core, other)
+				//if (created) console.log("Nexus created: $other ❤ $other")
 			}
 		}
 	}

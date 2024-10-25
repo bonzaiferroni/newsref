@@ -11,7 +11,7 @@ import org.jetbrains.exposed.sql.count
 
 internal object LinkTable: LongIdTable("link") {
     val sourceId = reference("source_id", SourceTable)
-    val targetId = reference("target_id", SourceTable).nullable()
+    val leadId = reference("lead_id", LeadTable).nullable()
     val contentId = reference("content_id", ContentTable).nullable()
     val url = text("url")
     val urlText = text("url_text")
@@ -22,7 +22,7 @@ internal class LinkRow(id: EntityID<Long>): LongEntity(id) {
     companion object: LongEntityClass<LinkRow>(LinkTable)
 
     var source by SourceRow referencedOn LinkTable.sourceId
-    var target by SourceRow optionalReferencedOn LinkTable.targetId
+    var lead by LeadRow optionalReferencedOn LinkTable.leadId
     var content by ContentRow optionalReferencedOn LinkTable.contentId
 
     var url by LinkTable.url
@@ -33,7 +33,7 @@ internal class LinkRow(id: EntityID<Long>): LongEntity(id) {
 internal fun LinkRow.toData() = Link(
     id = this.id.value,
     sourceId = this.source.id.value,
-    targetId = this.target?.id?.value,
+    leadId = this.lead?.id?.value,
     contentId = this.content?.id?.value,
     url = this.url.toCheckedFromDb(),
     text = this.urlText,
@@ -43,17 +43,16 @@ internal fun LinkRow.toData() = Link(
 internal fun ResultRow.toLink() = Link(
     id = this[LinkTable.id].value,
     sourceId = this[LinkTable.sourceId].value,
-    targetId = this[LinkTable.targetId]?.value,
+    leadId = this[LinkTable.leadId]?.value,
     contentId = this[LinkTable.contentId]?.value,
     url = this[LinkTable.url].toCheckedFromDb(),
     text = this[LinkTable.urlText],
     isExternal = this[LinkTable.isExternal]
 )
 
-internal fun LinkRow.fromData(data: Link, sourceRow: SourceRow, contentRow: ContentRow?, targetRow: SourceRow?) {
+internal fun LinkRow.fromData(data: Link, sourceRow: SourceRow, contentRow: ContentRow?) {
     source = sourceRow
     content = contentRow
-    targetRow?.let { target = it }
     url = data.url.toString()
     urlText = data.text
     isExternal = data.isExternal
