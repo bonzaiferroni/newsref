@@ -1,13 +1,15 @@
 package newsref.db.tables
 
+import newsref.db.utils.sameUrl
 import newsref.db.utils.toCheckedFromDb
+import newsref.model.core.CheckedUrl
 import newsref.model.data.Link
 import org.jetbrains.exposed.dao.LongEntity
 import org.jetbrains.exposed.dao.LongEntityClass
 import org.jetbrains.exposed.dao.id.EntityID
 import org.jetbrains.exposed.dao.id.LongIdTable
 import org.jetbrains.exposed.sql.ResultRow
-import org.jetbrains.exposed.sql.count
+import org.jetbrains.exposed.sql.and
 
 internal object LinkTable: LongIdTable("link") {
     val sourceId = reference("source_id", SourceTable)
@@ -56,4 +58,10 @@ internal fun LinkRow.fromData(data: Link, sourceRow: SourceRow, contentRow: Cont
     url = data.url.toString()
     urlText = data.text
     isExternal = data.isExternal
+}
+
+internal fun LinkRow.Companion.setLeadOnSameLinks(url: CheckedUrl, leadRow: LeadRow) {
+    LinkRow.find { LinkTable.url.sameUrl(url) and LinkTable.leadId.isNull() }.forEach {
+        it.lead = leadRow
+    }
 }

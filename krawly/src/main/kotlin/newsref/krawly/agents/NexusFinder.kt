@@ -1,55 +1,43 @@
 package newsref.krawly.agents
 
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.delay
-import kotlinx.coroutines.launch
 import newsref.db.globalConsole
+import newsref.db.models.CrawlInfo
+import newsref.db.models.PageLink
+import newsref.db.services.HostService
 import newsref.db.services.NexusService
-import kotlin.time.Duration.Companion.hours
+import newsref.model.dto.LinkInfo
 import kotlin.time.measureTime
 
 class NexusFinder(
 	private val nexusService: NexusService = NexusService(),
+	private val hostService: HostService = HostService(),
 ) {
 	private val console = globalConsole.getHandle("NexusFinder")
 
-	fun start() {
-		CoroutineScope(Dispatchers.Default).launch {
-			try {
-				while (true) {
-					console.log("finding nexuses")
-					findNexuses()
-					console.log("finished nexus quest")
-					delay(1.hours)
-				}
-			} catch (e: Exception) {
-				console.logError("NexusFinder error: ${e.message}\n${e.stackTraceToString()}")
-			}
-		}
-	}
-
-	private suspend fun findNexuses() {
-		val cores = printTime("getHostLinkMap", console::log) {
-			nexusService.getHostCores()
-		}
-		for (core in cores) {
-			if (core.split('.').size < 2) {
-				console.log("invalid domain: $core")
+	suspend fun findNexuses(crawl: CrawlInfo): CrawlInfo {
+		val page = crawl.page ?: return crawl
+		val pageHost = page.pageHost
+		val links = mutableListOf<PageLink>()
+		for (link in page.links) {
+			if (!link.isExternal) {
+				links.add(link)
 				continue
 			}
-			for (other in cores) {
-				if (core == other) continue
-				if (!other.endsWith(".${core}")) continue
-				val created = nexusService.createNexus(core, other)
-				//if (created) console.log("Nexus created: $other ❤ $other")
+			val linkHost = hostService.findByUrl(link.url) ?: continue
+			if (pageHost.core.contains(linkHost.core)) {
+				// console.log("ey!")
+			}
+			val nexus = nexusService.updateNexus(pageHost, linkHost)
+			if (nexus != null) {
+				console.log("Nexus: ${nexus.name}")
+				links.add(link.copy(isExternal = false))
+			} else {
+				links.add(link)
 			}
 		}
+		return crawl.copy(page = crawl.page!!.copy(links = links))
 	}
 }
-
-const val NEXUS_THRESHOLD = .25
-const val NEXUS_SUM_THRESHOLD = 100
 
 suspend fun <T> printTime(name: String, console: (String) -> Unit = { println(it) }, block: suspend () -> T): T {
 	var value: T

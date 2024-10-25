@@ -25,11 +25,13 @@ class LeadMaker(
 
 	suspend fun makeLead(checkedUrl: CheckedUrl, leadJob: LeadJob? = null): CreateLeadResult {
 		return try {
-			leadService.createIfFreshLead(checkedUrl, leadJob)
-			CreateLeadResult.CREATED
-		} catch(e: LeadExistsException) {
-			console.logTrace("lead exists: $checkedUrl")
-			CreateLeadResult.AFFIRMED
+			val lead = leadService.createIfFreshLead(checkedUrl, leadJob)
+			if (lead == null) {
+				console.logTrace("lead exists: $checkedUrl")
+				CreateLeadResult.AFFIRMED
+			} else {
+				CreateLeadResult.CREATED
+			}
 		} catch (e: IllegalArgumentException) {
 			val urlString = checkedUrl.toString().toYellow()
 			console.logWarning(e.message?.let {
@@ -47,10 +49,6 @@ class LeadMaker(
 		if (publishedAt != null && publishedAt < (Clock.System.now() - 30.days)) return resultMap
 		val links = fetch.page?.links ?: return resultMap
 		for (link in links) {
-			if (!link.isExternal && !page.foundNewsArticle) {
-				resultMap.increment(CreateLeadResult.IRRELEVANT)
-				continue
-			}
 			val (linkHost, checkedUrl) = hostAgent.getHost(link.url)
 			val job = LeadJob(isExternal = link.isExternal, freshAt = fetch.page?.article?.publishedAt)
 			val result = makeLead(checkedUrl, job)

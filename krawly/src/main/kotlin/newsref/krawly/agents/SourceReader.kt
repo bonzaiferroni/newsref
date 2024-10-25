@@ -7,7 +7,6 @@ import newsref.db.models.CrawlInfo
 import newsref.db.models.FetchInfo
 import newsref.db.models.PageInfo
 import newsref.db.models.WebResult
-import newsref.db.services.NexusService
 import newsref.krawly.utils.toMarkdown
 import newsref.model.core.*
 import newsref.model.data.*
@@ -19,8 +18,8 @@ class SourceReader(
     private val console = globalConsole.getHandle("SourceReader")
 
     suspend fun read(fetch: FetchInfo): CrawlInfo {
-        val (pageHost, pageUrl) = fetch.result?.pageHref?.toUrlOrNull()?.let { hostAgent.getHost(it) }
-            ?: Pair(null, null)
+        val (pageHost, pageUrl) = fetch.result?.takeIf{ it.isOk}?.pageHref?.toUrlOrNull()
+            ?.let { hostAgent.getHost(it) } ?: Pair(null, null)
         val page = fetch.result?.takeIf { it.isOk && it.pageHref != null }?.let {
             pageReader.read(it, pageUrl, pageHost)
         }

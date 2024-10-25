@@ -2,10 +2,8 @@ package newsref.db.tables
 
 import kotlinx.datetime.*
 import newsref.db.globalConsole
-import newsref.db.utils.createOrUpdate
-import newsref.db.utils.sameAs
+import newsref.db.utils.*
 import newsref.db.utils.toCheckedFromDb
-import newsref.db.utils.toLocalDateTimeUTC
 import newsref.model.core.CheckedUrl
 import newsref.model.core.Url
 import newsref.model.data.*
@@ -51,21 +49,7 @@ internal fun LeadRow.fromData(lead: Lead, hostRow: HostRow, sourceRow: SourceRow
 }
 
 internal fun LeadRow.Companion.leadExists(checkedUrl: CheckedUrl): Boolean {
-	val list = mutableListOf(checkedUrl.toString().lowercase())
-	if (checkedUrl.domain.startsWith("www."))
-		list.add(checkedUrl.toString().replaceFirst("www.", "").lowercase())
-	return this.find { leadExistsOp(checkedUrl) }.any()
-}
-
-internal fun leadExistsOp(url: Url): Op<Boolean> {
-	val list = mutableListOf(url.href.lowercase())
-	if (url.domain.startsWith("www."))
-		list.add(url.href.replaceFirst("www.", "").lowercase())
-	else {
-		val variation = "${url.scheme}://www.${url.domain}${url.fullPath}".lowercase()
-		list.add(variation)
-	}
-	return LeadTable.url.lowerCase() inList list
+	return this.find { LeadTable.url.sameUrl(checkedUrl) }.any()
 }
 
 internal fun LeadResultRow.Companion.getHostResults(hostId: Int, limit: Int): List<LeadResult> {
@@ -78,16 +62,12 @@ internal fun LeadResultRow.Companion.getHostResults(hostId: Int, limit: Int): Li
 
 internal fun LeadRow.Companion.createOrUpdateAndLink(url: CheckedUrl, source: SourceRow? = null): LeadRow {
 	val hostRow = HostRow.findByCore(url.core) ?: throw IllegalArgumentException("Host missing: ${url.core}")
-	val lead = LeadRow.createOrUpdate(leadExistsOp(url)) {
+	val lead = LeadRow.createOrUpdate(LeadTable.url.sameUrl(url)) {
 		this.url = url.href
 		this.host = hostRow
 		source?.let { this.source = it }
 	}
-	LinkRow.find { LinkTable.url.sameAs(url) and LinkTable.leadId.isNull() }.forEach {
-		// val sourceUrl = it.source.url.toCheckedFromDb()
-		// if (it.isExternal) console.log("sewing lead: ${sourceUrl.core} -> ${url.core}")
-		it.lead = lead
-	}
+	LinkRow.setLeadOnSameLinks(url, lead)
 	return lead
 }
 

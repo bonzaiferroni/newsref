@@ -35,6 +35,7 @@ open class Url internal constructor(
 		if (beforePathMarker.contains('@')) throw IllegalArgumentException("URL contains user info: $rawHref")
 		domain = beforePathMarker.lowercase()
 		if (domain.length > 100) throw IllegalArgumentException("Domain too long: $domain")
+		if (domain.contains(":")) throw IllegalArgumentException("No ports allowed here sir")
 		core = beforePathMarker.removePrefix("www.").lowercase()
 		domainSegments = core.split('.').size
 		if (domainSegments < 2) throw IllegalArgumentException("Invalid domain: $domain")

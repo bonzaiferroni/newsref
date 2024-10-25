@@ -17,5 +17,5 @@ data class Host(
 	val navParams: Set<String> = emptySet(),
 ) {
 	fun hasNexus(other: Host) = nexusId != null && nexusId == other.nexusId
-	fun isExternalTo(other: Host) = !hasNexus(other) && !core.contains(other.core) && !other.core.contains(core)
+	fun isExternalTo(other: Host) = !hasNexus(other) && core != other.core
 }

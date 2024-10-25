@@ -8,7 +8,7 @@ import newsref.model.core.SourceType
 import newsref.model.data.*
 import newsref.db.models.CrawlInfo
 import newsref.db.utils.createOrUpdate
-import newsref.db.utils.sameAs
+import newsref.db.utils.sameUrl
 import newsref.db.utils.plus
 import org.jetbrains.exposed.sql.*
 import org.jetbrains.exposed.sql.SqlExpressionBuilder.eq
@@ -34,13 +34,12 @@ class SourceService : DbService() {
 			?: throw MissingResourceException("Missing Host", "SourceService", source.url.core)
 
 		// update or create source
-		val sourceRow = SourceRow.createOrUpdate(SourceTable.url.sameAs(source.url)) {
+		val sourceRow = SourceRow.createOrUpdate(SourceTable.url.sameUrl(source.url)) {
 			fromData(source, hostRow)
 		}
 
 		// update lead
-		val leadRow = LeadRow[lead.id]
-		leadRow.source = sourceRow // should have been associated with link at creation
+		val leadRow = LeadRow.createOrUpdateAndLink(lead.url, sourceRow)
 
 		// create leadResult
 		LeadResultRow.new {
@@ -66,10 +65,6 @@ class SourceService : DbService() {
 
 		// exit here if no page
 		val page = crawl.page ?: return@dbQuery sourceRow.id.value
-
-		if (lead.url.href =="theprince.princeton.edu" || lead.url.href == "clicks.trx-hub.com") {
-			// console.log("debug!")
-		}
 
 		// update host with found data
 		if (hostRow.core == page.pageHost.core) {
@@ -115,7 +110,7 @@ class SourceService : DbService() {
 			val link = Link(url = info.url, text = info.anchorText, isExternal = info.isExternal)
 			val contentRow = contentRows.firstOrNull { it.text == info.context }
 			val linkRow = LinkRow.find {
-				(LinkTable.url.sameAs(info.url)) and
+				(LinkTable.url.sameUrl(info.url)) and
 						(LinkTable.urlText eq info.anchorText) and (LinkTable.sourceId eq sourceRow.id)
 			}.firstOrNull()
 				?: LinkRow.new { fromData(link, sourceRow, contentRow) }

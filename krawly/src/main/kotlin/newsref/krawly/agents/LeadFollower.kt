@@ -30,6 +30,7 @@ class LeadFollower(
 	private val hostAgent: HostAgent,
 	private val leadMaker: LeadMaker = LeadMaker(hostAgent),
 	private val sourceReader: SourceReader = SourceReader(hostAgent),
+	private val nexusFinder: NexusFinder = NexusFinder(),
 	private val leadService: LeadService = LeadService(),
 	private val sourceService: SourceService = SourceService(),
 ) {
@@ -57,10 +58,9 @@ class LeadFollower(
 		suspend fun refreshLeads() {
 			leads.clear()
 			val now = Clock.System.now()
-			val allLeads = leadService.getOpenLeads().shuffled().sortedByDescending { lead ->
-				lead.freshAt?.let { if (lead.isExternal) it else it - 7.days } ?: (now - 7.days)
-			}
+			val allLeads = leadService.getOpenLeads()
 			leads.addAll(allLeads)
+			if (allLeads.isEmpty()) return
 			val sample = leads.take(1000)
 			val avgDaysAgo = sample.sumOf { lead ->
 				lead.freshAt?.let { (now - it).toDouble(DurationUnit.DAYS) } ?: 7.0
@@ -68,10 +68,12 @@ class LeadFollower(
 			leadCount = leads.size
 			refreshed = Clock.System.now()
 			val message = "found leads $leadCount, sample ~${avgDaysAgo.format("%.1f")} days ago"
+			console.logInfo(message.toPink(), leadCount)
+			val top = allLeads.first()
+			console.log("top: ${top.linkCount} links, isExternal ${top.isExternal}\n${top.url}".toGreenBg())
 			allLeads.groupBy { it.url.domain }.toList().sortedByDescending { it.second.size }.take(10).forEach {
 				(core, values) -> console.log("${values.size.toString().padStart(4, ' ')}: $core")
 			}
-			console.logInfo(message.toPink(), leadCount)
 		}
 
 		refreshLeads()
@@ -94,7 +96,6 @@ class LeadFollower(
 				continue
 			}
 			hosts[lead.url.domain] = now + 45.seconds + (0..30).random().seconds
-			console.status = (--leadCount).toString()
 
 			val pastResults = leadService.getResultsByHost(lead.hostId, 100)
 			val (host, url) = hostAgent.getHost(lead.url)
@@ -103,6 +104,7 @@ class LeadFollower(
 				console.status = "🕷 ".padStart(leadCount.toString().length - 1)
 				delay(1.seconds)
 			}
+			console.status = (--leadCount).toString()
 
 			val spider = nest.removeLast()
 			spider.crawl {
@@ -131,11 +133,12 @@ class LeadFollower(
 				if (fetch != null) {
 					try {
 						hostAgent.updateParameters(fetch.leadHost, fetch.junkParams, fetch.navParams)
-						val crawl = sourceReader.read(fetch)
+						var crawl = sourceReader.read(fetch)
 						val pageHost = crawl.page?.pageHost
 						val junkParams = crawl.cannonJunkParams
 						if (pageHost != null && junkParams != null)
 							hostAgent.updateParameters(pageHost, null, junkParams)
+						crawl = nexusFinder.findNexuses(crawl)
 
 						// consume source
 						sourceService.consume(crawl)

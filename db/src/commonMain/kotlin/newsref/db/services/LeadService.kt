@@ -4,15 +4,13 @@ import kotlinx.datetime.UtcOffset
 import kotlinx.datetime.toInstant
 import newsref.db.DbService
 import newsref.db.tables.*
+import newsref.db.utils.sameUrl
 import newsref.db.utils.toCheckedFromDb
 import newsref.model.core.CheckedUrl
 import newsref.model.data.LeadJob
 import newsref.model.data.LeadInfo
-import org.jetbrains.exposed.sql.Query
-import org.jetbrains.exposed.sql.SortOrder
+import org.jetbrains.exposed.sql.*
 import org.jetbrains.exposed.sql.SqlExpressionBuilder.isNull
-import org.jetbrains.exposed.sql.alias
-import org.jetbrains.exposed.sql.count
 import org.postgresql.jdbc.PgResultSet.toInt
 
 class LeadService : DbService() {
@@ -23,9 +21,11 @@ class LeadService : DbService() {
             .select(leadInfoColumns + linkCountAlias)
             .where(LeadTable.sourceId.isNull())
             .orderBy(linkCountAlias, SortOrder.DESC)
+            .orderBy(LeadJobTable.isExternal, SortOrder.DESC)
             .orderBy(LeadJobTable.freshAt, SortOrder.DESC_NULLS_LAST)
             .limit(limit)
 			.groupBy(*leadInfoColumns.toTypedArray())
+            // .also { println(it.prepareSQL(QueryBuilder(false))) }
             .map { row ->
                 LeadInfo(
                     id = row[LeadTable.id].value,
@@ -42,10 +42,13 @@ class LeadService : DbService() {
     }
 
     suspend fun createIfFreshLead(url: CheckedUrl, leadJob: LeadJob?) = dbQuery {
-        if (LeadRow.leadExists(url))
-            throw LeadExistsException(url)
+       var leadRow = LeadRow.find(LeadTable.url.sameUrl(url)).firstOrNull()
+        if (leadRow != null) {
+            LinkRow.setLeadOnSameLinks(url, leadRow)
+            return@dbQuery null
+        }
 
-        val leadRow = LeadRow.createOrUpdateAndLink(url)
+        leadRow = LeadRow.createOrUpdateAndLink(url)
 
         leadJob?.let { job ->
             val feedRow = job.feedId?.let { FeedRow[it] }

@@ -13,34 +13,6 @@ import org.jetbrains.exposed.sql.JoinType
 import org.jetbrains.exposed.sql.and
 
 class NexusService : DbService() {
-	suspend fun getHostLinkMap(sumThreshold: Int): Map<Host, Map<Host, Int>> = dbQuery {
-		val hosts = HostRow.all().map { it.toData() }
-		val hostMap = mutableMapOf<Host, Map<Host, Int>>()
-		for (host in hosts) {
-			val linkUrls = SourceTable.join(LinkTable, JoinType.LEFT, SourceTable.id, LinkTable.sourceId)
-				.select(LinkTable.url)
-				.where { (SourceTable.hostId eq host.id) and (LinkTable.isExternal eq true) }
-				.map { it[LinkTable.url].toUrl() }
-
-			val linkMap = mutableMapOf<Host, Int>()
-			for (url in linkUrls) {
-				val other = hosts.firstOrNull() { it.core == url.core } ?: continue
-				linkMap[other] = linkMap.getOrPut(other) { 0 } + 1
-			}
-			hostMap[host] = linkMap
-		}
-		hostMap // return
-	}
-
-	suspend fun getHostCores(): Set<String> = dbQuery {
-		HostTable.select(HostTable.core).map { it[HostTable.core] }.toSet()
-	}
-
-	suspend fun createNexus(host: Host, other: Host) = dbQuery {
-		//if (host.id == other.id) return@dbQuery false
-
-
-	}
 
 	suspend fun createNexus(hostCore: String, otherCore: String) = dbQuery {
 		val host = HostRow.findByCore(hostCore) ?: return@dbQuery null
@@ -56,32 +28,30 @@ class NexusService : DbService() {
 
 	private fun combineNexus(first: HostRow, second: HostRow): Nexus? {
 		val nexus = first.nexus ?: return null
-		if (nexus == second.nexus) return nexus.toData()
-		// todo: combine nexuses
-		if (second.nexus != null) return null
+		if (nexus == second.nexus) return null
+		if (second.nexus != null) return null // todo: combine two existing nexuses
 		second.nexus = nexus
 		nexus.name = "${nexus.name} ❤ ${second.core}"
 		return nexus.toData()
 	}
 
-	suspend fun removeNexus(hostId: Int, nexusId: Int) = dbQuery {
-		val host = HostRow.findById(hostId) ?: return@dbQuery false
-		if (host.nexus?.id?.value != nexusId) return@dbQuery false
-		val nexus = NexusRow.findById(nexusId) ?: return@dbQuery false
-		host.nexus = null
-		flushCache()
-		if (nexus.hosts.count() == 1L) {
-			nexus.delete()
+	suspend fun updateNexus(pageHost: Host, linkHost: Host) = dbQuery {
+		val host = HostRow.findByCore(pageHost.core) ?: return@dbQuery null
+		val other = HostRow.findByCore(linkHost.core) ?: return@dbQuery null
+		if (host.nexus?.id?.value != null && host.nexus?.id?.value == other.nexus?.id?.value) return@dbQuery null
+		val hostSet = getHostCoreSet(pageHost)
+		val linkSet = getHostCoreSet(linkHost)
+		if (hostSet.any { hostCore ->
+				linkSet.any { linkCore -> hostCore.contains(linkCore) || linkCore.contains(hostCore) }
+			}) {
+			createNexus(pageHost.core, linkHost.core)
 		} else {
-			nexus.name = nexus.name.replaceFirst("${host.core} ❤ ", "")
-				.replaceFirst(" ❤ ${host.core}", "")
+			null
 		}
-		true
 	}
 
-	suspend fun setInternal(linkId: Long) = dbQuery {
-		val linkRow = LinkRow.findById(linkId) ?: return@dbQuery false
-		linkRow.isExternal = false
-		true // return
+	private suspend fun getHostCoreSet(host: Host) = dbQuery {
+		host.nexusId?.let { HostRow.find { HostTable.nexusId eq it } }?.map { it.core }?.toSet()
+			?: setOf(host.core)
 	}
 }
