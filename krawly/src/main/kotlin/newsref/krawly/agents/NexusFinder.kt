@@ -5,7 +5,6 @@ import newsref.db.models.CrawlInfo
 import newsref.db.models.PageLink
 import newsref.db.services.HostService
 import newsref.db.services.NexusService
-import newsref.model.dto.LinkInfo
 import kotlin.time.measureTime
 
 class NexusFinder(

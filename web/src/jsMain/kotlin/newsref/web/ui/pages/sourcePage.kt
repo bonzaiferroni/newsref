@@ -15,38 +15,38 @@ import web.html.HTML.s
 fun Container.sourcePage(context: AppContext, id: Long): PortalEvents? {
 	val model = SourceModel(id)
 	renderStore(model.state, {it.source}) { state ->
-		val source = state.source
-		if (source == null) {
-			p("Source id not found: $id")
-			return@renderStore
-		}
-		h1(source.bestTitle)
-		val article = source.article
-		if (article != null) {
-			p(article.description)
-		}
-		val inLinks = state.source.inLinks
-		if (inLinks != null) {
-			h2("Inbound Links")
-			for (link in inLinks) {
-				val text = link.context ?: link.urlText
-				p(text)
-				link(link.sourceUrl, link.sourceUrl)
-			}
-		} else {
-			p("no inbound links")
-		}
-		val outLinks = state.source.outLinks
-		if (outLinks != null) {
-			h2("Outbound Links")
-			for (link in outLinks) {
-				val text = link.context ?: link.urlText
-				p(text)
-				link(link.url, link.url)
-			}
-		} else {
-			p("no outbound links")
-		}
+//		val source = state.source
+//		if (source == null) {
+//			p("Source id not found: $id")
+//			return@renderStore
+//		}
+//		h1(source.title)
+//		val article = source.article
+//		if (article != null) {
+//			p(article.description)
+//		}
+//		val inLinks = state.source.inLinks
+//		if (inLinks != null) {
+//			h2("Inbound Links")
+//			for (link in inLinks) {
+//				val text = link.context ?: link.urlText
+//				p(text)
+//				link(link.sourceUrl, link.sourceUrl)
+//			}
+//		} else {
+//			p("no inbound links")
+//		}
+//		val outLinks = state.source.outLinks
+//		if (outLinks != null) {
+//			h2("Outbound Links")
+//			for (link in outLinks) {
+//				val text = link.context ?: link.urlText
+//				p(text)
+//				link(link.url, link.url)
+//			}
+//		} else {
+//			p("no outbound links")
+//		}
 	}
 	return null
 }

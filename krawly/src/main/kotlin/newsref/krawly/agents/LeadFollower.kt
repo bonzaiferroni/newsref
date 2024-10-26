@@ -10,6 +10,7 @@ import newsref.db.globalConsole
 import newsref.db.log.*
 import newsref.db.models.CrawlInfo
 import newsref.db.models.FetchInfo
+import newsref.db.services.CreateLeadResult
 import newsref.db.services.LeadService
 import newsref.db.services.SourceService
 import newsref.krawly.HaltCrawlException
@@ -67,7 +68,6 @@ class LeadFollower(
 	}
 
 	private suspend fun refreshLeads() {
-		console.log("")
 		leads.clear()
 		val now = Clock.System.now()
 		val allLeads = leadService.getOpenLeads()
@@ -198,6 +198,7 @@ class LeadFollower(
 		val resultType = crawl.fetchResult
 		val rowWidth = 64
 		val createdLeads = tally.getCount(CreateLeadResult.CREATED)
+		val affirmedLeads = tally.getCount(CreateLeadResult.AFFIRMED)
 		val strategyMsg = crawl.fetch.failedStrategy?.let {
 			"${it.toString().take(2)}~${crawl.fetch.strategy.toString().take(2)}"
 		} ?: crawl.fetch.strategy?.toString() ?: "SKIP"
@@ -256,9 +257,10 @@ class LeadFollower(
 			.cell("📝") { page.article.description != null }
 			.cell("📅") { page.article.publishedAt != null }
 			.cell("🦦") { page.authors != null }
-			.cell("", justify = Justify.LEFT, width = 3)
+			.cell("🍓") { page.isFresh }
 			.cell(page.article.wordCount.toString(), 7, "words")
-			.cell("$createdLeads-$externalLinkCount-${page.links.size}", 10, "links")
+			.cell("$createdLeads/$affirmedLeads", 5, "leads")
+			.cell("$externalLinkCount/${page.links.size}", 5, "links")
 			.cell(strategyMsg, 5, justify = Justify.LEFT)
 			.cell(
 				"${resultMap.getResult(FetchResult.RELEVANT)}", 5, "relevant",

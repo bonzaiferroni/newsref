@@ -2,7 +2,7 @@ package newsref.web.ui.models
 
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
-import newsref.model.dto.SourceInfo
+import newsref.model.data.FeedSource
 import newsref.web.core.StateModel
 import newsref.web.io.stores.SourceStore
 import kotlin.time.Duration.Companion.minutes
@@ -28,5 +28,5 @@ class HomeModel(
 }
 
 data class HomeState(
-	val sources: List<SourceInfo> = emptyList()
+	val sources: List<FeedSource> = emptyList()
 )

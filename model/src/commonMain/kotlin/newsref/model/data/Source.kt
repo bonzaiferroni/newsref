@@ -12,3 +12,9 @@ data class Source(
 	val type: SourceType? = null,
 	val seenAt: Instant,
 )
+
+data class SourceScore(
+	val sourceId: Long,
+	val score: Int,
+	val scoredAt: Instant
+)

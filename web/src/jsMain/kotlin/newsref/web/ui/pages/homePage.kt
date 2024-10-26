@@ -25,15 +25,15 @@ fun Container.homePage(context: AppContext): PortalEvents? {
         p("Hello World!")
         renderStore(model.state, {it.sources}) { state ->
             for (source in state.sources) {
-                val title = source.article?.headline ?: source.leadTitle ?: source.url
-                row {
-                    div(source.citationCount.toString())
-                    button("") {
-                        link(title)
-                    }.onClick {
-                        context.navigate(Pages.source, source.id)
-                    }
-                }
+//                val title = source.article?.headline ?: source.leadTitle ?: source.url
+//                row {
+//                    div(source.citationCount.toString())
+//                    button("") {
+//                        link(title)
+//                    }.onClick {
+//                        context.navigate(Pages.source, source.id)
+//                    }
+//                }
             }
         }
     }

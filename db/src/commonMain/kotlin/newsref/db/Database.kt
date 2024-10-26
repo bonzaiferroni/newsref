@@ -20,8 +20,8 @@ val dbTables = listOf(
 	UserTable,
 	SessionTokenTable,
 	SourceTable,
+	SourceScoreTable,
 	LinkTable,
-	LinkScoreTable,
 	HostTable,
 	ArticleTable,
 	LeadTable,
@@ -35,6 +35,7 @@ val dbTables = listOf(
 	ScoopTable,
 	FeedTable,
 	NexusTable,
+	FeedSourceTable,
 )
 
 const val URL = "jdbc:postgresql://localhost:5432/newsrefdb"

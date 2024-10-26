@@ -60,8 +60,10 @@ internal fun LinkRow.fromData(data: Link, sourceRow: SourceRow, contentRow: Cont
     isExternal = data.isExternal
 }
 
-internal fun LinkRow.Companion.setLeadOnSameLinks(url: CheckedUrl, leadRow: LeadRow) {
-    LinkRow.find { LinkTable.url.sameUrl(url) and LinkTable.leadId.isNull() }.forEach {
+internal fun LinkRow.Companion.setLeadOnSameLinks(url: CheckedUrl, leadRow: LeadRow): Boolean {
+    val rows = LinkRow.find { LinkTable.url.sameUrl(url) and LinkTable.leadId.isNull() }
+    rows.forEach {
         it.lead = leadRow
     }
+    return rows.count() > 0
 }

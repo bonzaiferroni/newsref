@@ -6,9 +6,8 @@ import newsref.db.services.LeadService
 import newsref.db.log.toPink
 import newsref.db.log.toYellow
 import newsref.model.core.CheckedUrl
-import newsref.model.data.Host
 import newsref.db.models.CrawlInfo
-import newsref.db.services.LeadExistsException
+import newsref.db.services.CreateLeadResult
 import newsref.db.services.NexusService
 import newsref.krawly.utils.TallyMap
 import newsref.krawly.utils.increment
@@ -23,44 +22,30 @@ class LeadMaker(
 ) {
 	private val console = globalConsole.getHandle("LeadMaker")
 
-	suspend fun makeLead(checkedUrl: CheckedUrl, leadJob: LeadJob? = null): CreateLeadResult {
+	suspend fun makeLead(checkedUrl: CheckedUrl, leadJob: LeadJob? = null, createIfFresh: Boolean): CreateLeadResult {
 		return try {
-			val lead = leadService.createIfFreshLead(checkedUrl, leadJob)
-			if (lead == null) {
-				console.logTrace("lead exists: $checkedUrl")
-				CreateLeadResult.AFFIRMED
-			} else {
-				CreateLeadResult.CREATED
-			}
+			leadService.createOrLinkLead(checkedUrl, leadJob, createIfFresh)
 		} catch (e: IllegalArgumentException) {
 			val urlString = checkedUrl.toString().toYellow()
 			console.logWarning(e.message?.let {
-				"Error creating job: ${checkedUrl.domain}\n${it.toPink()}"
+				"Error creating job: ${checkedUrl.core}\n${it.toPink()}"
 			} ?: "Error creating job: $urlString")
-			CreateLeadResult.ERROR
+			CreateLeadResult.ERROR // return
 		}
 	}
 
 	suspend fun makeLeads(fetch: CrawlInfo): TallyMap<CreateLeadResult> {
 		val resultMap = mutableMapOf<CreateLeadResult, Int>()
 		val page = fetch.page ?: return resultMap
-		if (fetch.fetchResult == FetchResult.IRRELEVANT) return resultMap
-		val publishedAt = page.article.publishedAt
-		if (publishedAt != null && publishedAt < (Clock.System.now() - 30.days)) return resultMap
 		val links = fetch.page?.links ?: return resultMap
 		for (link in links) {
-			val (linkHost, checkedUrl) = hostAgent.getHost(link.url)
+			val publishedAt = page.article.publishedAt
+			val freshSource = publishedAt == null || publishedAt > (Clock.System.now() - 30.days)
+			val createIfFresh = fetch.fetchResult == FetchResult.RELEVANT && freshSource
 			val job = LeadJob(isExternal = link.isExternal, freshAt = fetch.page?.article?.publishedAt)
-			val result = makeLead(checkedUrl, job)
+			val result = makeLead(link.url, job, createIfFresh)
 			resultMap.increment(result)
 		}
 		return resultMap
 	}
-}
-
-enum class CreateLeadResult {
-	CREATED,
-	AFFIRMED,
-	ERROR,
-	IRRELEVANT
 }

@@ -21,7 +21,7 @@ import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.time.Duration.Companion.days
 
-class SourceInfoServiceTest : DbTest(true) {
+class FeedSourceServiceTest : DbTest(true) {
 	@Test
 	fun `explore code`() = dbQuery {
 

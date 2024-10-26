@@ -36,7 +36,7 @@ internal class SourceRow(id: EntityID<Long>) : LongEntity(id) {
 
     val links by LinkRow referrersOn LinkTable.sourceId
     val document by ArticleRow referrersOn ArticleTable.sourceId
-    val linkScores by LinkScoreRow referrersOn LinkScoreTable.sourceId
+    val scores by SourceScoreRow referrersOn SourceScoreTable.sourceId
 }
 
 internal fun SourceRow.toData() = Source(
@@ -66,3 +66,24 @@ internal fun SourceRow.fromData(source: Source, hostRow: HostRow) {
 internal fun SourceRow.addContents(contentEntities: List<ContentRow>) {
     contents = SizedCollection(contentEntities)
 }
+
+// source score
+internal object SourceScoreTable : LongIdTable("source_score") {
+    val sourceId = reference("source_id", SourceTable)
+    val score = integer("score")
+    val scoredAt = datetime("scored_at")
+}
+
+internal class SourceScoreRow(id: EntityID<Long>) : LongEntity(id) {
+    companion object : EntityClass<Long, SourceScoreRow>(SourceScoreTable)
+
+    var source by SourceRow referencedOn SourceScoreTable.sourceId
+    var score by SourceScoreTable.score
+    var scoredAt by SourceScoreTable.scoredAt
+}
+
+internal fun SourceScoreRow.toData() = newsref.model.data.SourceScore(
+    sourceId = this.source.id.value,
+    score = this.score,
+    scoredAt = this.scoredAt.toInstant(UtcOffset.ZERO)
+)

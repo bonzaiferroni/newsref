@@ -1,9 +1,12 @@
 package newsref.db.models
 
+import kotlinx.datetime.Clock
+import kotlinx.datetime.Instant
 import newsref.model.core.ArticleType
 import newsref.model.core.CheckedUrl
 import newsref.model.core.SourceType
 import newsref.model.data.*
+import kotlin.time.Duration.Companion.days
 
 data class CrawlInfo(
 	val page: PageInfo?,
@@ -50,7 +53,9 @@ data class PageInfo(
 	val contents: Set<String>,
 	val links: List<PageLink>,
 	val authors: Set<String>?,
-)
+) {
+	val isFresh get() = article.publishedAt.isFresh
+}
 
 data class PageLink(
     val url: CheckedUrl,
@@ -58,3 +63,5 @@ data class PageLink(
     val context: String?,
 	val isExternal: Boolean,
 )
+
+private val Instant?.isFresh get() = this == null || this > (Clock.System.now() - 30.days)

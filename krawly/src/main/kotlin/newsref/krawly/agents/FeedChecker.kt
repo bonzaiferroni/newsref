@@ -6,14 +6,13 @@ import kotlinx.datetime.Instant
 import newsref.db.globalConsole
 import newsref.db.log.Justify
 import newsref.db.log.darkPlumBg
-import newsref.db.log.toBlue
 import newsref.db.services.FeedService
 import newsref.krawly.SpiderWeb
 import newsref.db.log.underline
+import newsref.db.services.CreateLeadResult
 import newsref.krawly.utils.contentToDoc
 import newsref.krawly.utils.isLikelyAd
 import newsref.krawly.utils.tryGetHrefOrParent
-import newsref.model.core.toUrlOrNull
 import newsref.model.core.toUrlWithContextOrNull
 import newsref.model.data.LeadJob
 import kotlin.time.Duration.Companion.hours
@@ -80,8 +79,8 @@ class FeedChecker(
 					freshAt = Clock.System.now()
 				)
 				links++
-				val newJob = leadMaker.makeLead(hostUrl, job)
-				if (newJob == CreateLeadResult.CREATED) count++
+				val result = leadMaker.makeLead(hostUrl, job, true)
+				if (result == CreateLeadResult.CREATED) count++
 			}
 			messages.add(ConsoleMessage(feed.url.core, count, links, elements.size))
 			if (count == 0) delayMap[feed.id] = now + 1.hours
