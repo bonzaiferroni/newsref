@@ -10,9 +10,8 @@ import kotlin.coroutines.CoroutineContext
 class LogConsole {
 	var config = ConsoleConfig()
 	var isActive = true
-	private var reservedLines = 1
+	private val statusBuilder = LineBuilder()
 	private val builder = LineBuilder()
-	private val partialBuilder = LineBuilder()
 	private val handles = mutableListOf<LogHandle>()
 	private var input = ""
 	private var commands = mutableMapOf<String, (List<String>?) -> String>()
@@ -22,24 +21,6 @@ class LogConsole {
 	init {
 		addCommand("quit") { isActive = false; "Goodbye!" }
 		startQueueConsumer()
-	}
-
-	private fun startQueueConsumer() {
-		CoroutineScope(Dispatchers.Default).launch {
-			while (true) {
-				while (queue.isNotEmpty()) {
-					val (level, source, message) = queue.removeFirstOrNull() ?: break
-					val sourcePart = if (lastSource == source) "" else source
-					val line = builder.bold().setForeground(level).writeLength(sourcePart, MAX_SOURCE_CHARS)
-						.defaultFormat().defaultForeground().write(" ").write(message).build()
-					lastSource = source
-					renderLog(source, line)
-					if (queue.size < 20)
-						delay(50)
-				}
-				delay(10) // don't spin yer gears
-			}
-		}
 	}
 
 	fun addCommand(name: String, action: (List<String>?) -> String) {
@@ -54,7 +35,6 @@ class LogConsole {
 	}
 
 	fun getHandle(name: String, showStatus: Boolean = false): LogHandle {
-		if (showStatus) reservedLines++
 		val handle = LogHandle(name, showStatus, this)
 		handles.add(handle)
 		return handle
@@ -81,12 +61,28 @@ class LogConsole {
 
 	fun refreshLog() = renderLog(null, null)
 
+	private fun startQueueConsumer() {
+		CoroutineScope(Dispatchers.Default).launch {
+			while (true) {
+				while (queue.isNotEmpty()) {
+					val (level, source, message) = queue.removeFirstOrNull() ?: break
+					val sourcePart = if (lastSource == source) "" else source
+					val line = builder.bold().setForeground(level).writeLength(sourcePart, MAX_SOURCE_CHARS)
+						.defaultFormat().defaultForeground().write(" ").write(message).build()
+					lastSource = source
+					renderLog(source, line)
+					if (queue.size < 20)
+						delay(50)
+				}
+				delay(10) // don't spin yer gears
+			}
+		}
+	}
+
 	private fun renderLog(source: String?, newLine: String?) {
 		if (config.showStatus) {
-			repeat(reservedLines) {
-				print(moveCursorBackLines(1))
-				print(clearLine)
-			}
+			print(moveCursorToBeginningOfLine)
+			print(clearLine)
 		}
 
 		if (newLine != null) {
@@ -96,32 +92,19 @@ class LogConsole {
 		if (config.showStatus) {
 			for (handle in handles) {
 				if (!handle.showStatus) continue
-				// render partial lines
-				print(clearLine)
-				val partial = handle.partialLine.current()
-				if (partial.isNotEmpty()) {
-					val partialLine = partialBuilder.setForeground(dim).writeLength(handle.name, MAX_SOURCE_CHARS - 2)
-						.defaultForeground().write(" > ").write(partial.takeLast(80)).build()
-					println(partialLine)                                        // reserved line
-				} else {
-					println()
-				}
 				// add to status bar
-				builder.write("[").setForeground(handle.level)
-				if (handle.name == source) builder.underscore()
-				builder.write(handle.name).defaultFormat().defaultForeground()
-				if (handle.status.isNotBlank()) builder.write(" ").write(handle.status)
-				builder.write("]")
+				statusBuilder.write("[").setForeground(handle.level)
+				if (handle.name == source) statusBuilder.underscore()
+				statusBuilder.write(handle.name).defaultFormat().defaultForeground()
+				if (handle.status.isNotBlank()) statusBuilder.write(" ").write(handle.status)
+				statusBuilder.write("]")
 			}
-			val statusLine = builder.build()
-			println(statusLine)                                                // reserved line
-			print("> $input")                                                    // prompt
+			val statusLine = statusBuilder.build()
+			print(statusLine)
 		}
 	}
 
 	fun addInput(char: Char) {
-		print(moveCursorToBeginningOfLine)
-		print(clearLine)
 		if (char == '\n') {
 			val array = input.split(' ')
 			val command = array.firstOrNull()
@@ -134,7 +117,6 @@ class LogConsole {
 		} else {
 			input += char
 		}
-		print("> $input")
 	}
 }
 

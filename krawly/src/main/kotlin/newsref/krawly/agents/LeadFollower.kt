@@ -34,7 +34,7 @@ class LeadFollower(
 	private val leadService: LeadService = LeadService(),
 	private val sourceService: SourceService = SourceService(),
 ) {
-	private val maxSpiders: Int = 10
+	private val maxSpiders: Int = 20
 	private val console = globalConsole.getHandle("LeadFollower", true)
 	private val fetched = Collections.synchronizedList(mutableListOf<FetchInfo>())
 
@@ -102,7 +102,7 @@ class LeadFollower(
 
 			while (nest.isEmpty()) {
 				console.status = "🕷 ".padStart(leadCount.toString().length - 1)
-				delay(1.seconds)
+				delay(10)
 			}
 			console.status = (--leadCount).toString()
 

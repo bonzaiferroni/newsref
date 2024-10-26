@@ -29,7 +29,7 @@ class NexusFinder(
 			}
 			val nexus = nexusService.updateNexus(pageHost, linkHost)
 			if (nexus != null) {
-				console.log("Nexus: ${nexus.name}")
+				console.logTrace("Nexus: ${nexus.name}")
 				links.add(link.copy(isExternal = false))
 			} else {
 				links.add(link)

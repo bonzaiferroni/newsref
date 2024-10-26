@@ -4,6 +4,8 @@ import kotlinx.coroutines.*
 import kotlinx.datetime.Clock
 import kotlinx.datetime.Instant
 import newsref.db.globalConsole
+import newsref.db.log.Justify
+import newsref.db.log.darkPlumBg
 import newsref.db.log.toBlue
 import newsref.db.services.FeedService
 import newsref.krawly.SpiderWeb
@@ -39,8 +41,10 @@ class FeedChecker(
 	}
 
 	private suspend fun checkFeeds() {
-		val feeds = feedService.readAll()
+		val feeds = feedService.readAll().shuffled()
 		val now = Clock.System.now()
+		data class ConsoleMessage(val core: String, val count: Int, val links: Int, val elements: Int)
+		val messages = mutableListOf<ConsoleMessage>()
 		for (feed in feeds) {
 			val delay = delayMap[feed.id]
 			if (delay != null && delay > now) continue
@@ -66,6 +70,8 @@ class FeedChecker(
 				val (headline, href) = docElement.tryGetHrefOrParent() ?: continue
 				val url = href.toUrlWithContextOrNull(feed.url) ?: continue
 				if (url.isLikelyAd()) continue
+				if (feed.external && url.core == feed.url.core) continue
+				if (!feed.external && url.core != feed.url.core) continue
 				val (host, hostUrl) = hostAgent.getHost(url)
 				val job = LeadJob(
 					feedId = feed.id,
@@ -77,8 +83,12 @@ class FeedChecker(
 				val newJob = leadMaker.makeLead(hostUrl, job)
 				if (newJob == CreateLeadResult.CREATED) count++
 			}
-			console.logInfo("${feed.url.domain.underline()}: $count leads from $links links / ${elements.size} elements".toBlue())
+			messages.add(ConsoleMessage(feed.url.core, count, links, elements.size))
 			if (count == 0) delayMap[feed.id] = now + 1.hours
+		}
+		messages.forEach {
+			console.cell(it.core, 20, "core", Justify.LEFT).cell(it.count, 5, "count").cell(it.links, 5, "links")
+				.cell(it.elements, 5, "elements").row(background = darkPlumBg)
 		}
 	}
 }

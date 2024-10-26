@@ -6,4 +6,5 @@ data class Feed(
     val id: Int,
     val url: Url,
     val selector: String,
+    val external: Boolean,
 )

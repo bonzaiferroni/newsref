@@ -42,7 +42,8 @@ class NexusService : DbService() {
 		val hostSet = getHostCoreSet(pageHost)
 		val linkSet = getHostCoreSet(linkHost)
 		if (hostSet.any { hostCore ->
-				linkSet.any { linkCore -> hostCore.contains(linkCore) || linkCore.contains(hostCore) }
+				linkSet.any { linkCore -> hostCore.endsWith(".${linkCore}")
+						|| linkCore.endsWith(".${hostCore}") }
 			}) {
 			createNexus(pageHost.core, linkHost.core)
 		} else {

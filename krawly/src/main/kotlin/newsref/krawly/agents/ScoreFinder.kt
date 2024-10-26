@@ -21,7 +21,7 @@ class ScoreFinder(
 	fun start() {
 		CoroutineScope(Dispatchers.Default).launch {
 			while (true) {
-				console.logDebug("finding scores", "🕷 ")
+				console.logTrace("finding scores", "🕷 ")
 				try {
 					findScores()
 				} catch (e: Exception) {
@@ -41,7 +41,7 @@ class ScoreFinder(
 			ScoreGroup(sourceId, score)
 		}.filter { it.count >= LINK_SCORE_MINIMUM }
 		scoreFinderService.addScores(scores)
-		val top = scores.takeIf{ it.isNotEmpty()}?.sortedByDescending { it.count }?.take(5)
+		val top = scores.takeIf{ it.isNotEmpty()}?.sortedByDescending { it.count }?.take(10)
 		console.log("looked at ${items.size} links, added ${scores.size} scores, top: ${top?.firstOrNull()?.count ?: 0}".toGreen())
 		top?.forEach { (id, score) -> items.firstOrNull { it.sourceId == id }.let {
 			console.log("${score}: ${it?.link?.url.toString()}")

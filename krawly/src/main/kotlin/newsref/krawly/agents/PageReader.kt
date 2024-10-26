@@ -68,7 +68,7 @@ class PageReader(
 
 			if (element.isHeading()) {
 				if (h1Title == null && element.tagName == "h1") {
-					h1Title = element.text
+					h1Title = element.text.stripHtmlTags().replace("\n", "")
 				}
 			}
 
@@ -193,4 +193,8 @@ fun SourceType.getEmoji() = when (this) {
 	SourceType.VIDEO -> "📼"
 	SourceType.SOCIAL_POST -> "👯"
 	else -> "🧀"
+}
+
+private fun String.stripHtmlTags(): String {
+	return this.replace(Regex("<.*?>"), "")
 }

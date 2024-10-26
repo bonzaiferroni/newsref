@@ -13,7 +13,7 @@ fun String.cacheResource(
     overwrite: Boolean = false,
 ): String {
     if (this.isBlank()) {
-        globalConsole.logDebug("cacheResource", "found blank $type string from $fileName")
+        globalConsole.logTrace("cacheResource", "found blank $type string from $fileName")
         return this
     }
     val file = File("$RESOURCE_PATH/$path/$fileName.$type")

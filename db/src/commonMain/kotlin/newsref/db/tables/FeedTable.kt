@@ -13,6 +13,7 @@ import org.jetbrains.exposed.dao.id.LongIdTable
 internal object FeedTable : IntIdTable("feed") {
     val url = text("url")
     val selector = text("selector")
+    val external = bool("external")
 }
 
 class FeedRow(id: EntityID<Int>): IntEntity(id) {
@@ -20,15 +21,18 @@ class FeedRow(id: EntityID<Int>): IntEntity(id) {
 
     var url by FeedTable.url
     var selector by FeedTable.selector
+    var external by FeedTable.external
 }
 
 fun FeedRow.toData() = Feed(
     id = this.id.value,
     url = this.url.toUrl(),
     selector = this.selector,
+    external = this.external,
 )
 
 fun FeedRow.fromData(feed: Feed) {
     url = feed.url.toString()
     selector = feed.selector
+    external = feed.external
 }
