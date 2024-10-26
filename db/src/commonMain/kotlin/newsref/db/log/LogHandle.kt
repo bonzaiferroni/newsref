@@ -42,9 +42,9 @@ class LogHandle(
 			if (labelWidth > 0 && label != null) {
 				val labelPart = label.take(labelWidth)
 				if (justify == Justify.RIGHT) {
-					"${labelPart.dim()} $contentPart"
+					"${labelPart.dark()} $contentPart"
 				} else {
-					"$contentPart ${labelPart.dim()}"
+					"$contentPart ${labelPart.dark()}"
 				}
 			} else {
 				contentPart

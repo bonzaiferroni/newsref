@@ -12,7 +12,7 @@ class LogConsole {
 	var isActive = true
 	private val statusBuilder = LineBuilder()
 	private val builder = LineBuilder()
-	private val handles = mutableListOf<LogHandle>()
+	private val handles = Collections.synchronizedList(mutableListOf<LogHandle>())
 	private var input = ""
 	private var commands = mutableMapOf<String, (List<String>?) -> String>()
 	private val queue = Collections.synchronizedList(mutableListOf<LogMessage>())

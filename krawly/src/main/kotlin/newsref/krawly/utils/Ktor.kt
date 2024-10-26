@@ -2,6 +2,7 @@ package newsref.krawly.utils
 
 import io.ktor.client.*
 import io.ktor.client.call.*
+import io.ktor.client.engine.apache.*
 import io.ktor.client.engine.cio.*
 import io.ktor.client.plugins.*
 import io.ktor.client.plugins.compression.*
@@ -20,9 +21,19 @@ import java.net.NoRouteToHostException
 private var console = globalConsole.getHandle("ktor")
 
 private val client = HttpClient(CIO) {
-	install (HttpTimeout) {
-		requestTimeoutMillis = 30000
-	}
+//	engine {
+//		followRedirects = true
+//		socketTimeout = 30000
+//		connectTimeout = 30000
+//		connectionRequestTimeout = 30000
+//		customizeClient {
+//			setMaxConnTotal(1000)
+//			setMaxConnPerRoute(100)
+//		}
+//		customizeRequest {
+//			// TODO: request transformations
+//		}
+//	}
 	defaultRequest {
 		headers {
 			set(HttpHeaders.UserAgent, chromeLinuxAgent)
@@ -54,10 +65,10 @@ suspend fun ktorFetchAsync(url: Url): WebResult {
 		console.logTrace("Arrr! The request timed out!")
 		WebResult(timeout = true, exception = e.message)
 	} catch (e: Exception) {
-		when (e) {
-			// todo: handle is UnresolvedAddressException,
-			is NoRouteToHostException -> throw HaltCrawlException(e.message ?: "No internet access, halt crawl\n$url")
-		}
+//		when (e) {
+//			// todo: handle is UnresolvedAddressException,
+//			is NoRouteToHostException -> throw HaltCrawlException(e.message ?: "No internet access, halt crawl\n$url")
+//		}
 		console.logTrace("arr! unknown excpetion!\n$e")
 		WebResult(exception = e.message)
 	}

@@ -1,0 +1,96 @@
+SELECT 
+    link.id, 
+    link.source_id, 
+    link.lead_id, 
+    link.content_id, 
+    link.url, 
+    link.url_text, 
+    link.is_external, 
+    lead.source_id, 
+    "source".host_id
+FROM 
+    lead
+    LEFT JOIN link ON lead.id = link.lead_id
+    LEFT JOIN "source" ON link.source_id = "source".id
+    LEFT JOIN article ON "source".id = article.source_id
+WHERE 
+    ("source".seen_at >= '2024-10-22T17:47:36')
+    AND (
+        (article.published_at IS NULL) 
+        OR (article.published_at >= '2024-10-22T17:47:36')
+    )
+    AND (link.is_external = TRUE)
+    AND (lead.source_id IS NOT NULL)
+
+
+SELECT 
+    lead.id, 
+    lead.url, 
+    lead.source_id, 
+    lead.host_id, 
+    lead_job.headline, 
+    lead_job.is_external, 
+    lead_job.fresh_at, 
+    COUNT(link.lead_id) AS linkCount
+FROM 
+    lead
+    LEFT JOIN link ON lead.id = link.lead_id
+    LEFT JOIN lead_job ON lead.id = lead_job.lead_id
+WHERE 
+    lead.source_id IS NULL
+GROUP BY 
+    lead.id, 
+    lead.url, 
+    lead.source_id, 
+    lead.host_id, 
+    lead_job.headline, 
+    lead_job.is_external, 
+    lead_job.fresh_at
+ORDER BY 
+    linkCount DESC, 
+    lead_job.fresh_at DESC NULLS LAST
+LIMIT 
+    20000
+
+
+SELECT  
+    lead.url,      
+    COUNT(link.lead_id) AS linkCount
+FROM 
+    lead
+    LEFT JOIN link ON lead.id = link.lead_id
+GROUP BY 
+    lead.url, 
+ORDER BY 
+    linkCount DESC, 
+    lead_job.fresh_at DESC NULLS LAST
+LIMIT 
+    20000
+
+
+SELECT  
+    link.url,      
+    COUNT(link.url)
+FROM 
+    link
+GROUP BY 
+    link.url
+ORDER BY 
+    COUNT(link.url) DESC
+LIMIT 
+    100
+
+
+SELECT
+    link.url,
+    source.url,
+    link.lead_id
+FROM
+    link
+        LEFT JOIN source ON link.source_id = source.id
+WHERE
+    link.url = 'https://www.nytimes.com/2024/10/22/us/politics/john-kelly-trump-fitness-character.html'
+LIMIT
+    100
+
+

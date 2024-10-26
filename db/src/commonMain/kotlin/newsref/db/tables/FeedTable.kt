@@ -13,7 +13,7 @@ import org.jetbrains.exposed.dao.id.LongIdTable
 internal object FeedTable : IntIdTable("feed") {
     val url = text("url")
     val selector = text("selector")
-    val external = bool("external")
+    val external = bool("external").default(false)
 }
 
 class FeedRow(id: EntityID<Int>): IntEntity(id) {

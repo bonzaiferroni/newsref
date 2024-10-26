@@ -20,7 +20,6 @@ import newsref.model.data.LeadInfo
 import newsref.model.data.FetchResult
 import java.util.*
 import kotlin.collections.ArrayDeque
-import kotlin.time.Duration.Companion.days
 import kotlin.time.Duration.Companion.minutes
 import kotlin.time.Duration.Companion.seconds
 import kotlin.time.DurationUnit
@@ -37,74 +36,95 @@ class LeadFollower(
 	private val maxSpiders: Int = 20
 	private val console = globalConsole.getHandle("LeadFollower", true)
 	private val fetched = Collections.synchronizedList(mutableListOf<FetchInfo>())
+	private val nest = Collections.synchronizedList(((0 until maxSpiders).map { Spider(it) }).toMutableList())
+	private val leads = LinkedList<LeadInfo>()
+	private val hosts = mutableMapOf<String, Instant>()
+	private var refreshed = Instant.DISTANT_PAST
+	private var followCount = 0
+
+	private var _leadCount = 0
+	private var leadCount
+		get() = _leadCount
+		set(value) { _leadCount = value; refreshStatus() }
+	private var _icon = "🙈"
+	private var icon
+		get() = _icon
+		set(value) { _icon = value; refreshStatus() }
+	private val statusLine get() =
+		"${leadCount.toString().padStart(5)} $icon ${nest.size.toString().padStart(2)}/$maxSpiders"
+	private fun refreshStatus() { console.status = statusLine }
 
 	fun start() {
 		CoroutineScope(Dispatchers.Default).launch {
 			while (true) {
-				console.logTrace("checking leads", "🕷 ")
+				console.logTrace("checking leads")
 				checkLeads()
-				console.logTrace("sleeping", "zz")
+				console.logTrace("sleeping")
 				delay((10..15).random().seconds)
 			}
 		}
 		startConsumeFetched()
 	}
 
-	private suspend fun checkLeads() {
-		val leads = ArrayDeque<LeadInfo>()
-		var refreshed = Instant.DISTANT_PAST
-		var leadCount = 0
-
-		suspend fun refreshLeads() {
-			leads.clear()
-			val now = Clock.System.now()
-			val allLeads = leadService.getOpenLeads()
-			leads.addAll(allLeads)
-			if (allLeads.isEmpty()) return
-			val sample = leads.take(1000)
-			val avgDaysAgo = sample.sumOf { lead ->
-				lead.freshAt?.let { (now - it).toDouble(DurationUnit.DAYS) } ?: 7.0
-			} / sample.size
-			leadCount = leads.size
-			refreshed = Clock.System.now()
-			val message = "found leads $leadCount, sample ~${avgDaysAgo.format("%.1f")} days ago"
-			console.logInfo(message.toPink(), leadCount)
-			val top = allLeads.first()
-			console.log("top: ${top.linkCount} links, isExternal ${top.isExternal}\n${top.url}".toGreenBg())
-			allLeads.groupBy { it.url.domain }.toList().sortedByDescending { it.second.size }.take(10).forEach {
+	private suspend fun refreshLeads() {
+		console.log("")
+		leads.clear()
+		val now = Clock.System.now()
+		val allLeads = leadService.getOpenLeads()
+		leads.addAll(allLeads)
+		if (allLeads.isEmpty()) return
+		val sample = leads.take(1000)
+		val avgDaysAgo = sample.sumOf { lead ->
+			lead.freshAt?.let { (now - it).toDouble(DurationUnit.DAYS) } ?: 7.0
+		} / sample.size
+		leadCount = leads.size
+		refreshed = Clock.System.now()
+		val message = "followed $followCount, found $leadCount, sample ~${avgDaysAgo.format("%.1f")} days ago"
+		followCount = 0
+		console.logInfo(message.toPink(), leadCount)
+		val top = allLeads.first()
+		console.log("top: ${top.linkCount} links, isExternal ${top.isExternal}\n${top.url}".toGreenBg())
+		allLeads.groupBy { it.url.domain }.toList().sortedByDescending { it.second.size }.take(10).forEach {
 				(core, values) -> console.log("${values.size.toString().padStart(4, ' ')}: $core")
-			}
 		}
+	}
 
+	private fun getNextLead(): LeadInfo? {
+		val now = Clock.System.now()
+		for ((index, lead) in leads.withIndex()) {
+			val nextAttempt = hosts[lead.url.domain]
+			if (nextAttempt != null && now < nextAttempt) continue
+			hosts[lead.url.domain] = now + 45.seconds + (0..30).random().seconds
+			leads.removeAt(index)
+			return lead
+		}
+		return null
+	}
+
+	private suspend fun checkLeads() {
 		refreshLeads()
-
-		val nest = ((0 until maxSpiders).map { Spider(it) }).toMutableList()
-		val hosts = mutableMapOf<String, Instant>()
-
-		while (!leads.isEmpty()) {
+		while (leads.isNotEmpty()) {
 			val now = Clock.System.now()
 			if (now - refreshed > 2.minutes) {
 				refreshLeads()
 			}
 
-			val lead = leads.removeFirstOrNull() ?: break
-			val nextAttempt = hosts[lead.url.domain]
-			if (nextAttempt != null && now < nextAttempt) {
-				delay(10)
-				leads.addLast(lead)
-				console.status = "⌚".padStart(leadCount.toString().length - 1)
+			val lead = getNextLead()
+			if (lead == null) {
+				icon = "🍃"
+				delay(100)
 				continue
 			}
-			hosts[lead.url.domain] = now + 45.seconds + (0..30).random().seconds
 
 			val pastResults = leadService.getResultsByHost(lead.hostId, 100)
 			val (host, url) = hostAgent.getHost(lead.url)
 
 			while (nest.isEmpty()) {
-				console.status = "🕷 ".padStart(leadCount.toString().length - 1)
+				icon = "🐛"
 				delay(10)
 			}
-			console.status = (--leadCount).toString()
+			--leadCount; icon = "👾"
+			followCount++
 
 			val spider = nest.removeLast()
 			spider.crawl {
@@ -121,8 +141,8 @@ class LeadFollower(
 		}
 
 		while (nest.size < maxSpiders) {
-			console.status = "🥱"
-			delay(1.seconds)
+			icon = "🥱"
+			delay(10)
 		}
 	}
 
@@ -238,7 +258,7 @@ class LeadFollower(
 			.cell("🦦") { page.authors != null }
 			.cell("", justify = Justify.LEFT, width = 3)
 			.cell(page.article.wordCount.toString(), 7, "words")
-			.cell("$createdLeads/$externalLinkCount/${page.links.size}", 10, "links")
+			.cell("$createdLeads-$externalLinkCount-${page.links.size}", 10, "links")
 			.cell(strategyMsg, 5, justify = Justify.LEFT)
 			.cell(
 				"${resultMap.getResult(FetchResult.RELEVANT)}", 5, "relevant",
