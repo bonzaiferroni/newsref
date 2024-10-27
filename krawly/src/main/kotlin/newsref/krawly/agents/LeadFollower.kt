@@ -73,7 +73,7 @@ class LeadFollower(
 		val allLeads = leadService.getOpenLeads()
 		leads.addAll(allLeads)
 		if (allLeads.isEmpty()) return
-		val sample = leads.take(1000)
+		val sample = leads.take(200)
 		val avgDaysAgo = sample.sumOf { lead ->
 			lead.freshAt?.let { (now - it).toDouble(DurationUnit.DAYS) } ?: 7.0
 		} / sample.size
@@ -84,6 +84,7 @@ class LeadFollower(
 		console.logInfo(message.toPink(), leadCount)
 		val top = allLeads.first()
 		console.log("top: ${top.linkCount} links, isExternal ${top.isExternal}\n${top.url}".toGreenBg())
+		val msg = "\n"
 		allLeads.groupBy { it.url.domain }.toList().sortedByDescending { it.second.size }.take(10).forEach {
 				(core, values) -> console.log("${values.size.toString().padStart(4, ' ')}: $core")
 		}
@@ -147,7 +148,7 @@ class LeadFollower(
 	}
 
 	private fun startConsumeFetched() {
-		CoroutineScope(Dispatchers.Default).launch {
+		CoroutineScope(Dispatchers.IO).launch {
 			while (true) {
 				val fetch = fetched.removeLastOrNull()
 				if (fetch != null) {
@@ -165,7 +166,7 @@ class LeadFollower(
 						val resultMap = leadMaker.makeLeads(crawl)
 						logFetch(crawl, resultMap)
 					} catch (e: Exception) {
-						console.logError("Error consuming fetch:\n$fetch\n$e")
+						console.logError("Error consuming fetch:\n${fetch.lead.url}\n$e")
 					}
 				}
 				delay(100)

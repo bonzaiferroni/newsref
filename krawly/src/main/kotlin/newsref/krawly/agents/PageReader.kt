@@ -77,8 +77,13 @@ class PageReader(
 			val content = elementReader.read(element) ?: continue
 			val cacheContent = content.text.length < 1000
 			if (cacheContent) {
-				contents.add(content.text)
-				if (!contentService.isFresh(content.text)) continue
+				try {
+					if (!contentService.isFresh(content.text)) continue
+					contents.add(content.text)
+				} catch (e: Exception) {
+					console.logError("Exception caching content:\n$pageUrl\n${e.message}")
+					continue
+				}
 			}
 
 			contentWordCount += content.wordCount

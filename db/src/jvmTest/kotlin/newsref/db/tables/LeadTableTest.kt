@@ -2,13 +2,12 @@ package newsref.db.tables
 
 import kotlinx.datetime.Clock
 import newsref.db.DbTest
-import newsref.db.utils.toLocalDateTimeUTC
+import newsref.db.utils.toLocalDateTimeUtc
 import newsref.model.data.FetchResult
 import org.jetbrains.exposed.sql.insert
 import org.jetbrains.exposed.sql.transactions.transaction
 import kotlin.test.BeforeTest
 import kotlin.test.Test
-import kotlin.test.assertEquals
 import kotlin.time.Duration.Companion.days
 
 class LeadTableTest : DbTest() {
@@ -37,14 +36,14 @@ class LeadTableTest : DbTest() {
 					LeadResultTable.insert {
 						it[leadId] = leadRow[LeadTable.id]
 						it[result] = resultType
-						it[attemptedAt] = (Clock.System.now() - 1.days).toLocalDateTimeUTC()
+						it[attemptedAt] = (Clock.System.now() - 1.days).toLocalDateTimeUtc()
 					}
 				}
 			}
 			LeadResultTable.insert {
 				it[leadId] = leadRow[LeadTable.id]
 				it[result] = FetchResult.RELEVANT
-				it[attemptedAt] = (Clock.System.now() - 3.days).toLocalDateTimeUTC()
+				it[attemptedAt] = (Clock.System.now() - 3.days).toLocalDateTimeUtc()
 			}
 		}
 	}

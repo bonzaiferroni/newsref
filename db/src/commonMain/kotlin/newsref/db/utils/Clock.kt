@@ -2,8 +2,8 @@ package newsref.db.utils
 
 import kotlinx.datetime.*
 
-fun Clock.Companion.nowToLocalDateTimeUTC() = Clock.System.now().toLocalDateTimeUTC()
-fun Instant.toLocalDateTimeUTC() = toLocalDateTime(TimeZone.UTC).let { time ->
+fun Clock.Companion.nowToLocalDateTimeUtc() = Clock.System.now().toLocalDateTimeUtc()
+fun Instant.toLocalDateTimeUtc() = toLocalDateTime(TimeZone.UTC).let { time ->
     LocalDateTime(
         year = time.year,
         monthNumber = time.monthNumber,
@@ -14,6 +14,8 @@ fun Instant.toLocalDateTimeUTC() = toLocalDateTime(TimeZone.UTC).let { time ->
         nanosecond = 0
     )
 }
+
+fun LocalDateTime.toInstantUtc() = this.toInstant(TimeZone.UTC)
 
 fun Instant.Companion.tryParse(str: String) = try {
     parse(str)

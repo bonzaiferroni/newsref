@@ -6,6 +6,7 @@ import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import kotlinx.datetime.Clock
 import newsref.db.globalConsole
+import newsref.db.log.dim
 import newsref.db.log.toGreen
 import newsref.db.services.FeedSourceService
 import newsref.db.services.ScoreService
@@ -26,7 +27,7 @@ class ScoreFinder(
 				try {
 					findScores()
 				} catch (e: Exception) {
-					console.logError("error finding scores", e)
+					console.logError("error finding scores\n${e}")
 				}
 				console.logTrace("sleeping", "zz")
 				delay((4..6).random().minutes)
@@ -43,11 +44,13 @@ class ScoreFinder(
 			SourceScore(sourceId, score, now)
 		}.filter { it.score >= LINK_SCORE_MINIMUM }
 		scoreService.addScores(scores)
+		feedSourceService.addScores(scores)
 		val top = scores.takeIf{ it.isNotEmpty()}?.sortedByDescending { it.score }?.take(10)
-		console.log("looked at ${items.size} links, added ${scores.size} scores, top: ${top?.firstOrNull()?.score ?: 0}".toGreen())
+		var msg = "looked at ${items.size} links, added ${scores.size} scores, top: ${top?.firstOrNull()?.score ?: 0}".toGreen()
 		top?.forEach { (id, score) -> items.firstOrNull { it.sourceId == id }.let {
-			console.log("${score}: ${it?.link?.url.toString()}")
+			msg += "\n${score.toString().padStart(4)}: ${it?.link?.url.toString().dim()}"
 		}}
+		console.log(msg)
 	}
 }
 

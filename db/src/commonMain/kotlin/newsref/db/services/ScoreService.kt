@@ -1,12 +1,14 @@
 package newsref.db.services
 
 import kotlinx.datetime.Clock
+import kotlinx.datetime.TimeZone
+import kotlinx.datetime.toInstant
 import newsref.db.DbService
 import newsref.db.tables.*
 import newsref.db.tables.ArticleTable
 import newsref.db.tables.LinkTable
 import newsref.db.tables.SourceTable
-import newsref.db.utils.toLocalDateTimeUTC
+import newsref.db.utils.toLocalDateTimeUtc
 import newsref.model.data.Link
 import newsref.model.data.SourceScore
 import org.jetbrains.exposed.dao.id.EntityID
@@ -17,7 +19,7 @@ import kotlin.time.Duration.Companion.hours
 
 class ScoreService : DbService() {
 	suspend fun findNewLinksSince(duration: Duration) = dbQuery {
-		val time = (Clock.System.now() - duration).toLocalDateTimeUTC()
+		val time = (Clock.System.now() - duration).toLocalDateTimeUtc()
 
 		LeadTable.leftJoin(LinkTable)
 			.leftJoin(SourceTable, LinkTable.sourceId, SourceTable.id)
@@ -39,17 +41,19 @@ class ScoreService : DbService() {
 	}
 
 	suspend fun addScores(scores: List<SourceScore>) = dbQuery {
-//		for ((sourceId, score) in scores) {
-//			val now = Clock.System.now()
-//			val sourceRow =
-//				SourceRow.findById(sourceId) ?: throw IllegalArgumentException("source not found: $sourceId")
-//			val lastScore = LinkScoreRow.find { LinkScoreTable.sourceId eq sourceId }.maxByOrNull { LinkScoreTable.id }
-//			if (lastScore != null && lastScore.score == score
-//				&& lastScore.scoredAt.toInstant(TimeZone.UTC) - now < SAME_SCORE_TIME_THRESHOLD)
-//				continue
-//
-//			val linkScore = LinkScore(score = score, scoredAt = now)
-//			LinkScoreRow.new { fromData(linkScore, sourceRow) }
+		val now = Clock.System.now()
+		val scoreRows = scores.mapNotNull { (sourceId, score) ->
+			val sourceRow =
+				SourceRow.findById(sourceId) ?: throw IllegalArgumentException("source not found: $sourceId")
+			val lastScore =
+				SourceScoreRow.find { SourceScoreTable.sourceId eq sourceId }.maxByOrNull { SourceScoreTable.id }
+			if (lastScore != null && lastScore.score == score
+				&& lastScore.scoredAt.toInstant(TimeZone.UTC) - now < SAME_SCORE_TIME_THRESHOLD
+			) return@mapNotNull null
+
+			val linkScore = SourceScore(sourceId = sourceId, score = score, scoredAt = now)
+			SourceScoreRow.new { fromData(linkScore, sourceRow) }
+		}
 	}
 }
 

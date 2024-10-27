@@ -8,16 +8,17 @@ data class FeedSource(
 	val id: Int = 0,
 	val sourceId: Long = 0,
 	val url: String,
-	val headline: String,
+	val headline: String?,
 	val hostCore: String,
 	val hostName: String?,
 	val hostLogo: String?,
-	val citationCount: Int,
-	val wordCount: Int,
+	val wordCount: Int?,
 	val section: String?,
 	val thumbnail: String?,
 	val seenAt: Instant,
-	val publishedAt: Instant,
+	val latestScore: Int,
+	val publishedAt: Instant?,
+	val authors: List<String>?,
 	val inLinks: List<FeedSourceLink>,
 	val scores: List<FeedSourceScore>
 )
@@ -28,9 +29,10 @@ data class FeedSourceLink(
 	val urlText: String,
 	val context: String?,
 	val sourceUrl: String,
+	val hostName: String?,
+	val headline: String?,
 	val seenAt: Instant,
-	val headline: String,
-	val publishedAt: Instant,
+	val publishedAt: Instant?,
 )
 
 @Serializable

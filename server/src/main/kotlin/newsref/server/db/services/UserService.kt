@@ -18,7 +18,7 @@ import newsref.server.db.toBase64
 import newsref.db.tables.*
 import newsref.db.models.User
 import newsref.db.models.toPrivateInfo
-import newsref.db.utils.nowToLocalDateTimeUTC
+import newsref.db.utils.nowToLocalDateTimeUtc
 import newsref.model.core.UserRole
 import newsref.server.serverLog
 import java.util.*
@@ -111,7 +111,7 @@ class UserService : DataService<User, UUID, UserRow>(
                 if (info.deleteEmail) entity.email = null
                 entity.venmo = info.venmo
                 entity.avatarUrl = info.avatarUrl
-                entity.updatedAt = Clock.nowToLocalDateTimeUTC()
+                entity.updatedAt = Clock.nowToLocalDateTimeUtc()
                 // TODO validate email
             }
         }

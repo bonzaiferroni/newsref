@@ -4,22 +4,15 @@ import kotlinx.datetime.Clock
 import newsref.db.DbTest
 import newsref.db.tables.*
 import newsref.db.tables.HostRow
-import newsref.db.tables.LinkTable
-import newsref.db.tables.SourceTable
 import newsref.db.tables.fromData
 import newsref.db.utils.toCheckedFromDb
-import newsref.db.utils.toLocalDateTimeUTC
 import newsref.db.utils.plus
 import newsref.model.data.Author
 import newsref.model.data.Host
 import newsref.model.data.Source
 import org.jetbrains.exposed.dao.flushCache
-import org.jetbrains.exposed.sql.*
-import org.jetbrains.exposed.sql.SqlExpressionBuilder.eq
-import org.jetbrains.exposed.sql.SqlExpressionBuilder.greaterEq
 import kotlin.test.Test
 import kotlin.test.assertEquals
-import kotlin.time.Duration.Companion.days
 
 class FeedSourceServiceTest : DbTest(true) {
 	@Test

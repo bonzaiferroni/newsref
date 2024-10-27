@@ -1,17 +1,19 @@
 package newsref.server.routes
 
+import io.ktor.server.application.*
+import io.ktor.server.response.*
 import io.ktor.server.routing.*
 import newsref.db.services.FeedSourceService
 import newsref.model.Api
 
-fun Routing.sourceRouting() {
+fun Routing.feedSourceRouting() {
 	val service = FeedSourceService()
-	get(Api.source.path) {
-//		val sources = service.getTopSources(25, 1.days)
-//		call.respond(sources)
+	get(Api.feedSource.path) {
+		val sources = service.getTopSources()
+		call.respond(sources)
 	}
 
-	get(Api.source.serverIdTemplate) {
+	get(Api.feedSource.serverIdTemplate) {
 //		val id = call.getIdOrThrow { it.toLongOrNull() }
 //		val source = service.getSourceById(id)
 //		if (source == null) {

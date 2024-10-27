@@ -7,6 +7,7 @@ import kotlinx.datetime.toLocalDateTime
 import newsref.db.utils.toCheckedFromDb
 import newsref.model.core.SourceType
 import newsref.model.data.Source
+import newsref.model.data.SourceScore
 import org.jetbrains.exposed.dao.EntityClass
 import org.jetbrains.exposed.dao.LongEntity
 import org.jetbrains.exposed.dao.id.EntityID
@@ -37,6 +38,7 @@ internal class SourceRow(id: EntityID<Long>) : LongEntity(id) {
     val links by LinkRow referrersOn LinkTable.sourceId
     val document by ArticleRow referrersOn ArticleTable.sourceId
     val scores by SourceScoreRow referrersOn SourceScoreTable.sourceId
+    val authors by AuthorRow via SourceAuthorTable
 }
 
 internal fun SourceRow.toData() = Source(
@@ -82,8 +84,14 @@ internal class SourceScoreRow(id: EntityID<Long>) : LongEntity(id) {
     var scoredAt by SourceScoreTable.scoredAt
 }
 
-internal fun SourceScoreRow.toData() = newsref.model.data.SourceScore(
+internal fun SourceScoreRow.toData() = SourceScore(
     sourceId = this.source.id.value,
     score = this.score,
     scoredAt = this.scoredAt.toInstant(UtcOffset.ZERO)
 )
+
+internal fun SourceScoreRow.fromData(score: SourceScore, sourceRow: SourceRow) {
+    source = sourceRow
+    this.score = score.score
+    scoredAt = score.scoredAt.toLocalDateTime(TimeZone.UTC)
+}

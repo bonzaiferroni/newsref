@@ -1,0 +1,12 @@
+ScoreFin looked at 40761 links, added 33 scores, top: 21
+         21: https://www.nytimes.com/2024/10/22/us/politics/john-kelly-trump-fitness-character.html
+         19: https://www.theatlantic.com/politics/archive/2024/10/trump-military-generals-hitler/680327/
+         15: https://www.washingtonpost.com/opinions/2024/10/25/washington-post-endorsement/
+         14: https://www.cjr.org/business_of_news/los-angeles-times-editorials-editor-resigns-after-owner-blocks-presidential-endorsement.php
+         10: https://x.com/DrPatSoonShiong/status/1849217132183060705
+         9: https://www.washingtonpost.com/style/media/2024/10/25/washington-post-endorsement-president/
+         8: https://www.washingtonpost.com/nation/2024/10/12/mark-milley-donald-trump-fascist/
+         8: https://www.semafor.com/article/10/22/2024/los-angeles-times-wont-endorse-for-president
+         8: https://www.wsj.com/world/russia/musk-putin-secret-conversations-37e1c187
+         7: https://projects.fivethirtyeight.com/polls/president-general/2024/national/
+

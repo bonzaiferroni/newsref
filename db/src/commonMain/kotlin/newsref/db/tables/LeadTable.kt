@@ -5,7 +5,6 @@ import newsref.db.globalConsole
 import newsref.db.utils.*
 import newsref.db.utils.toCheckedFromDb
 import newsref.model.core.CheckedUrl
-import newsref.model.core.Url
 import newsref.model.data.*
 import newsref.model.data.Lead
 import org.jetbrains.exposed.dao.EntityClass
@@ -13,7 +12,6 @@ import org.jetbrains.exposed.dao.LongEntity
 import org.jetbrains.exposed.dao.id.EntityID
 import org.jetbrains.exposed.dao.id.LongIdTable
 import org.jetbrains.exposed.sql.*
-import org.jetbrains.exposed.sql.SqlExpressionBuilder.inList
 import org.jetbrains.exposed.sql.kotlin.datetime.datetime
 
 private val console = globalConsole.getHandle("LeadTable")
@@ -111,7 +109,7 @@ internal fun Query.wrapLeadResults() = this.map { row ->
 internal fun LeadResultRow.fromData(leadResult: LeadResult, leadRow: LeadRow) {
 	lead = leadRow
 	result = leadResult.result
-	attemptedAt = leadResult.attemptedAt.toLocalDateTimeUTC()
+	attemptedAt = leadResult.attemptedAt.toLocalDateTimeUtc()
 	strategy = leadResult.strategy
 }
 
@@ -148,5 +146,5 @@ internal fun LeadJobRow.fromData(leadJob: LeadJob, leadRow: LeadRow, feedRow: Fe
 	feed = feedRow
 	headline = leadJob.headline
 	isExternal = leadJob.isExternal
-	freshAt = leadJob.freshAt?.toLocalDateTimeUTC()
+	freshAt = leadJob.freshAt?.toLocalDateTimeUtc()
 }
