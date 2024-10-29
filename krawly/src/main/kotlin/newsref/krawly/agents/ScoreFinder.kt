@@ -10,11 +10,10 @@ import newsref.db.log.dim
 import newsref.db.log.toGreen
 import newsref.db.services.FeedSourceService
 import newsref.db.services.ScoreService
+import newsref.krawly.utils.profile
 import newsref.model.data.SourceScore
 import kotlin.time.Duration.Companion.days
 import kotlin.time.Duration.Companion.minutes
-import kotlin.time.DurationUnit
-import kotlin.time.measureTime
 
 class ScoreFinder(
 	private val scoreService: ScoreService = ScoreService(),
@@ -39,24 +38,16 @@ class ScoreFinder(
 
 	private suspend fun findScores() {
 		val now = Clock.System.now()
-		val items = printTime("findNewLinksSince", console::log) {
-			scoreService.findNewLinksSince(3.days)
+		val items = scoreService.findNewLinksSince(3.days)
+		val hostTally = mutableMapOf<Long, MutableSet<Int>>()
+		for (item in items) {
+			val set = hostTally.getOrPut(item.sourceId) { mutableSetOf() }
+			set.add(item.hostId)
 		}
+		val scores = hostTally.map { (sourceId, set) -> SourceScore(sourceId, set.size, now) }
 
-		val sourceIds = printTime("items map", console::log) { items.map { it.sourceId }.toSet() }
-		val scores = printTime("scores map", console::log) {
-			sourceIds.map { sourceId ->
-				val score = items.filter { it.sourceId == sourceId }.map { it.hostId }.toSet().size
-				SourceScore(sourceId, score, now)
-			}
-		}
-		printTime("scoreService", console:: log) {
-			scoreService.addScores(scores)
-		}
-
-		printTime("feedSourceService", console::log) {
-			feedSourceService.addScores(scores)
-		}
+		scoreService.addScores(scores)
+		feedSourceService.addScores(scores)
 
 		val top = scores.takeIf{ it.isNotEmpty()}?.sortedByDescending { it.score }?.take(10)
 		var msg = "looked at ${items.size} links, added ${scores.size} scores, top: ${top?.firstOrNull()?.score ?: 0}".toGreen()
@@ -65,12 +56,4 @@ class ScoreFinder(
 		}}
 		console.log(msg)
 	}
-}
-
-
-suspend fun <T> printTime(name: String, console: (String) -> Unit = { println(it) }, block: suspend () -> T): T {
-	var value: T
-	val duration = measureTime { value = block() }
-	console("$name took ${duration.toString(DurationUnit.SECONDS)}")
-	return value
 }

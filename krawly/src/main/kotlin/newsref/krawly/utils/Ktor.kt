@@ -11,10 +11,15 @@ import io.ktor.http.*
 import kotlinx.coroutines.CoroutineExceptionHandler
 import kotlinx.coroutines.supervisorScope
 import newsref.db.globalConsole
+import newsref.db.log.toBlue
+import newsref.db.log.toPurple
 import newsref.db.models.WebResult
 import newsref.db.utils.toFileLog
+import newsref.krawly.HaltCrawlException
 import newsref.krawly.chromeLinuxAgent
 import newsref.model.core.Url
+import java.net.NoRouteToHostException
+import java.net.UnknownHostException
 
 private var console = globalConsole.getHandle("ktor")
 
@@ -59,13 +64,25 @@ suspend fun ktorFetchAsync(url: Url): WebResult = supervisorScope {
 			pageHref = response.call.request.url.toString(),
 			content = content,
 		)
-	} catch (e: HttpRequestTimeoutException) {
-		console.logTrace("Arrr! The request timed out!")
-		WebResult(timeout = true)
 	} catch (e: Exception) {
-		console.logTrace("Arr! Unknown exception!\n${url}\n${e.message}")
-		"$url\n${e.message}".toFileLog("exceptions", "ktor")
-		WebResult(exception = e.message)
+		when (e) {
+			is HttpRequestTimeoutException -> {
+				console.logTrace("Arrr! The request timed out!")
+				WebResult(timeout = true)
+			}
+//			is UnknownHostException -> {
+//				WebResult(exception = e.message)
+//			}
+			is NoRouteToHostException -> {
+				throw HaltCrawlException(e.message ?: "No internet access, halt crawl\n$url")
+			}
+			else -> {
+				console.logError("Arr! Unknown exception!\n${url.href.toBlue()}\n${e::class.simpleName?.toPurple()}\n${e.message}")
+				"$url\n${e.message}".toFileLog("exceptions", "ktor")
+				WebResult(exception = e.message)
+			}
+		}
+
 	}
 }
 //		when (e) {

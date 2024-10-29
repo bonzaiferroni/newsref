@@ -17,10 +17,10 @@ import newsref.krawly.HaltCrawlException
 import newsref.krawly.SpiderWeb
 import newsref.krawly.utils.TallyMap
 import newsref.krawly.utils.getCount
+import newsref.krawly.utils.profile
 import newsref.model.data.LeadInfo
 import newsref.model.data.FetchResult
 import java.util.*
-import kotlin.collections.ArrayDeque
 import kotlin.time.Duration.Companion.minutes
 import kotlin.time.Duration.Companion.seconds
 import kotlin.time.DurationUnit
@@ -52,7 +52,7 @@ class LeadFollower(
 		get() = _icon
 		set(value) { _icon = value; refreshStatus() }
 	private val statusLine get() =
-		"${leadCount.toString().padStart(5)} $icon ${nest.size.toString().padStart(2)}/$maxSpiders"
+		"${leadCount.toString().padStart(5)} $icon ${nest.size.toString().padStart(2)}/$maxSpiders 🐛 ${fetched.size} 📖"
 	private fun refreshStatus() { console.status = statusLine }
 
 	fun start() {
@@ -84,7 +84,6 @@ class LeadFollower(
 		console.logInfo(message.toPink(), leadCount)
 		val top = allLeads.first()
 		console.log("top: ${top.linkCount} links, isExternal ${top.isExternal}\n${top.url}".toGreenBg())
-		val msg = "\n"
 		allLeads.groupBy { it.url.domain }.toList().sortedByDescending { it.second.size }.take(10).forEach {
 				(core, values) -> console.log("${values.size.toString().padStart(4, ' ')}: $core")
 		}
@@ -124,6 +123,11 @@ class LeadFollower(
 				icon = "🐛"
 				delay(10)
 			}
+			while (fetched.isNotEmpty()) {
+				icon = "📖"
+				delay(10)
+			}
+
 			--leadCount; icon = "👾"
 			followCount++
 

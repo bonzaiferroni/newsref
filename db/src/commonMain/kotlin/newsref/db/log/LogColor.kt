@@ -58,7 +58,7 @@ internal val sourceColor = cyanForeground
 internal val urgentColor = magentaForeground
 internal val messageColor = defaultForeground
 
-internal const val oceanBlue = "#3A8DE8"
+internal const val oceanBlue = "#9CC6F3"
 internal const val sunsetOrange = "#FF4500"
 internal const val emeraldGreen = "#50C878"
 internal const val lavenderPurple = "#967BB6"
