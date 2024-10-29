@@ -2,10 +2,9 @@ package newsref.krawly.utils
 
 import com.microsoft.playwright.*
 import com.microsoft.playwright.options.RequestOptions
-import it.skrape.selects.Doc
 import newsref.db.globalConsole
 import newsref.db.models.WebResult
-import newsref.db.utils.fileLog
+import newsref.db.utils.toFileLog
 import newsref.krawly.HaltCrawlException
 import newsref.krawly.chromeLinuxAgent
 import newsref.model.core.Url
@@ -35,9 +34,9 @@ fun pwFetch(url: Url, screenshot: Boolean = false): WebResult = useChromiumPage 
         WebResult(timeout = true)
     }, {
         val message = it.message?.take(200) ?: "Unknown error"
-        message.fileLog("exceptions", "playwright")
+        "$url\n$message".toFileLog("exceptions", "playwright")
         // adventure mode throws these
-        console.logTrace("Unusual exception: $url\n$message")
+        console.logTrace("$url\n$message")
         WebResult(exception = message)
     })
 }
@@ -57,7 +56,7 @@ fun pwFetchRequest(url: Url): WebResult = useChromiumContext { context ->
         WebResult(timeout = true)
     }, {
         val message = it.message?.take(200) ?: "Unknown error"
-        message.fileLog("exceptions", "playwright")
+        message.toFileLog("exceptions", "playwright")
         // adventure mode throws these
         console.logTrace("Unusual exception: $url\n$message")
         WebResult(exception = message)
@@ -80,7 +79,7 @@ fun pwFetchRedirect(url: Url): RedirectResult = useChromiumContext { context ->
         RedirectResult(timeout = true)
     }, {
         val message = it.message?.take(200) ?: "Unknown error"
-        message.fileLog("exceptions", "playwright")
+        message.toFileLog("exceptions", "playwright")
         // adventure mode throws these
         console.logTrace("Unusual exception: $url\n$message")
         RedirectResult()

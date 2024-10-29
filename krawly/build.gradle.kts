@@ -27,8 +27,9 @@ dependencies {
 	implementation("io.ktor:ktor-client-jetty:2.3.11")
     implementation("io.ktor:ktor-client-apache:2.3.11")
     implementation("io.ktor:ktor-client-java:2.3.11")
+	implementation("io.ktor:ktor-client-cio-jvm:2.3.11")
 
-    // Add dependencies for unit testing
+	// Add dependencies for unit testing
     testImplementation(kotlin("test"))
     testImplementation("org.jetbrains.kotlin:kotlin-test-junit5:$kotlin_version")
 }

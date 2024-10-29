@@ -53,7 +53,7 @@ inline fun <reified T> T.cacheSerializable(
     return this
 }
 
-fun String.fileLog(
+fun String.toFileLog(
     path: String,
     fileName: String
 ) {

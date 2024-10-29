@@ -2,25 +2,24 @@ package newsref.krawly.utils
 
 import io.ktor.client.*
 import io.ktor.client.call.*
-import io.ktor.client.engine.cio.*
-import io.ktor.client.engine.okhttp.*
+import io.ktor.client.engine.apache.*
 import io.ktor.client.plugins.*
 import io.ktor.client.plugins.compression.*
 import io.ktor.client.request.*
 import io.ktor.client.statement.*
 import io.ktor.http.*
-import io.ktor.util.*
-import kotlinx.coroutines.*
+import kotlinx.coroutines.CoroutineExceptionHandler
+import kotlinx.coroutines.supervisorScope
 import newsref.db.globalConsole
 import newsref.db.models.WebResult
+import newsref.db.utils.toFileLog
 import newsref.krawly.chromeLinuxAgent
 import newsref.model.core.Url
 
 private var console = globalConsole.getHandle("ktor")
 
-private val client = HttpClient(CIO) {
-
-	defaultRequest {
+private val client = HttpClient(Apache) {
+	 defaultRequest {
 		headers {
 			set(HttpHeaders.UserAgent, chromeLinuxAgent)
 			extraHeaders.forEach { (key, value) ->
@@ -33,25 +32,26 @@ private val client = HttpClient(CIO) {
 		gzip()
 		deflate()
 	}
-//	engine {
-//		followRedirects = true
-//		socketTimeout = 30000
-//		connectTimeout = 30000
-//		connectionRequestTimeout = 30000
-//		customizeClient {
-//			setMaxConnTotal(1000)
-//			setMaxConnPerRoute(100)
-//		}
-//		customizeRequest {
-//			// TODO: request transformations
-//		}
-//	}
+	install(HttpSend) {
+		maxSendCount = 30
+	}
+	engine {
+		followRedirects = true
+		socketTimeout = 30000
+		connectTimeout = 30000
+		connectionRequestTimeout = 30000
+		customizeClient {
+			setMaxConnTotal(1000)
+			setMaxConnPerRoute(100)
+		}
+		customizeRequest {
+			// TODO: request transformations
+		}
+	}
 }
 
-fun ktorFetch(url: Url) = runBlocking { ktorFetchAsync(url) }
-
-suspend fun ktorFetchAsync(url: Url): WebResult {
-	return try {
+suspend fun ktorFetchAsync(url: Url): WebResult = supervisorScope {
+	return@supervisorScope try {
 		val response: HttpResponse = client.get(url.href)
 		val content: String = response.body()
 		WebResult(
@@ -63,7 +63,8 @@ suspend fun ktorFetchAsync(url: Url): WebResult {
 		console.logTrace("Arrr! The request timed out!")
 		WebResult(timeout = true)
 	} catch (e: Exception) {
-		console.logError("arr! unknown excpetion!\n$e")
+		console.logTrace("Arr! Unknown exception!\n${url}\n${e.message}")
+		"$url\n${e.message}".toFileLog("exceptions", "ktor")
 		WebResult(exception = e.message)
 	}
 }

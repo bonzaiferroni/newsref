@@ -34,7 +34,7 @@ class LeadFollower(
 	private val leadService: LeadService = LeadService(),
 	private val sourceService: SourceService = SourceService(),
 ) {
-	private val maxSpiders: Int = 20
+	private val maxSpiders: Int = 10
 	private val console = globalConsole.getHandle("LeadFollower", true)
 	private val fetched = Collections.synchronizedList(mutableListOf<FetchInfo>())
 	private val nest = Collections.synchronizedList(((0 until maxSpiders).map { Spider(it) }).toMutableList())
