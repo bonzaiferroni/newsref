@@ -24,7 +24,6 @@ class SourceService : DbService() {
 
 		val source = Source(
 			url = crawl.page?.pageUrl ?: lead.url,
-			title = crawl.page?.article?.headline ?: lead.feedHeadline,
 			seenAt = Clock.System.now(),
 			type = crawl.page?.type ?: SourceType.UNKNOWN
 		)
@@ -82,7 +81,8 @@ class SourceService : DbService() {
 		}
 
 		// exit here if not news article
-		if (sourceRow.type != SourceType.ARTICLE) return@dbQuery sourceRow.id.value
+		if (sourceRow.type != SourceType.ARTICLE || page.language?.startsWith("en") != true)
+			return@dbQuery sourceRow.id.value
 
 		// create author
 		val authorRows = page.authors?.map { byLine ->
@@ -120,3 +120,4 @@ class SourceService : DbService() {
 		sourceRow.id.value // return
 	}
 }
+

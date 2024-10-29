@@ -27,11 +27,11 @@ fun Container.homePage(context: AppContext): PortalEvents? {
             for (source in state.sources) {
                 val title = source.headline ?: source.url
                 row {
-                    div(source.latestScore.toString())
+                    div(source.score.toString())
                     button("") {
                         link(title)
                     }.onClick {
-                        context.navigate(Pages.source, source.id)
+                        context.navigate(Pages.source, source.sourceId)
                     }
                 }
             }

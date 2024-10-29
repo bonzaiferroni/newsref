@@ -3,6 +3,7 @@ package newsref.web.ui.models
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import newsref.model.data.FeedSource
+import newsref.model.dto.SourceInfo
 import newsref.web.core.StateModel
 import newsref.web.io.stores.FeedSourceStore
 import kotlin.time.Duration.Companion.minutes
@@ -23,10 +24,10 @@ class HomeModel(
 	}
 
 	private suspend fun refreshSources() {
-		 sources = feedSourceStore.getFeedSources().sortedByDescending { it.latestScore }
+		 sources = feedSourceStore.getFeedSources().sortedByDescending { it.score }
 	}
 }
 
 data class HomeState(
-	val sources: List<FeedSource> = emptyList()
+	val sources: List<SourceInfo> = emptyList()
 )

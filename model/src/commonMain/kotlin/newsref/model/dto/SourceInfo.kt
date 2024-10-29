@@ -1,12 +1,11 @@
-package newsref.model.data
+package newsref.model.dto
 
 import kotlinx.datetime.Instant
 import kotlinx.serialization.Serializable
 
 @Serializable
-data class FeedSource(
-	val id: Int = 0,
-	val sourceId: Long = 0,
+data class SourceInfo(
+	val sourceId: Long,
 	val url: String,
 	val headline: String?,
 	val hostCore: String,
@@ -16,27 +15,31 @@ data class FeedSource(
 	val section: String?,
 	val thumbnail: String?,
 	val seenAt: Instant,
-	val latestScore: Int,
+	val score: Int,
 	val publishedAt: Instant?,
 	val authors: List<String>?,
-	val inLinks: List<FeedSourceLink>,
-	val scores: List<FeedSourceScore>
+	val inLinks: List<LinkInfo>,
+	val outLinks: List<LinkInfo>,
+	val scores: List<ScoreInfo>
 )
 
 @Serializable
-data class FeedSourceLink(
+data class LinkInfo(
+	val sourceId: Long,
+	val leadSourceId: Long?,
 	val url: String,
 	val urlText: String,
 	val context: String?,
 	val sourceUrl: String,
 	val hostName: String?,
 	val headline: String?,
+	val authors: List<String>?,
 	val seenAt: Instant,
 	val publishedAt: Instant?,
 )
 
 @Serializable
-data class FeedSourceScore(
+data class ScoreInfo(
 	val score: Int,
 	val scoredAt: Instant,
 )

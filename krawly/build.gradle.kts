@@ -11,7 +11,6 @@ plugins {
 
 dependencies {
     implementation("it.skrape:skrapeit:1.3.0-alpha.2")
-    implementation("com.squareup.okhttp3:okhttp:4.12.0")
     // implementation("io.ktor:ktor-client-apache5:$ktor_version")
     implementation("io.ktor:ktor-client-cio:$ktor_version")
     implementation("io.ktor:ktor-client-encoding:$ktor_version")
@@ -27,6 +26,7 @@ dependencies {
     implementation("io.ktor:ktor-client-okhttp-jvm:2.3.11")
 	implementation("io.ktor:ktor-client-jetty:2.3.11")
     implementation("io.ktor:ktor-client-apache:2.3.11")
+    implementation("io.ktor:ktor-client-java:2.3.11")
 
     // Add dependencies for unit testing
     testImplementation(kotlin("test"))

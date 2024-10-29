@@ -45,6 +45,10 @@ class ScoreService : DbService() {
 		val scoreRows = scores.mapNotNull { (sourceId, score) ->
 			val sourceRow =
 				SourceRow.findById(sourceId) ?: throw IllegalArgumentException("source not found: $sourceId")
+			sourceRow.score = score
+
+			if (score < MINIMUM_SCORE_RECORD) return@mapNotNull null
+
 			val lastScore =
 				SourceScoreRow.find { SourceScoreTable.sourceId eq sourceId }.maxByOrNull { SourceScoreTable.id }
 			if (lastScore != null && lastScore.score == score
@@ -67,3 +71,4 @@ internal fun <T : Comparable<T>> ColumnSet.leftJoin(
 data class LinkItem(val link: Link, val sourceId: Long, val hostId: Int)
 
 val SAME_SCORE_TIME_THRESHOLD = 1.hours
+const val MINIMUM_SCORE_RECORD = 5

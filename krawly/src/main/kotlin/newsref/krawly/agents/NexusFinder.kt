@@ -37,10 +37,3 @@ class NexusFinder(
 		return crawl.copy(page = crawl.page!!.copy(links = links))
 	}
 }
-
-suspend fun <T> printTime(name: String, console: (String) -> Unit = { println(it) }, block: suspend () -> T): T {
-	var value: T
-	val millis = measureTime { value = block() }
-	console("$name took $millis ms")
-	return value
-}
