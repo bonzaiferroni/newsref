@@ -16,6 +16,7 @@ import newsref.db.services.SourceService
 import newsref.krawly.HaltCrawlException
 import newsref.krawly.SpiderWeb
 import newsref.krawly.utils.TallyMap
+import newsref.krawly.utils.format
 import newsref.krawly.utils.getCount
 import newsref.krawly.utils.profile
 import newsref.model.data.LeadInfo
@@ -79,7 +80,7 @@ class LeadFollower(
 		} / sample.size
 		leadCount = leads.size
 		refreshed = Clock.System.now()
-		val message = "followed $followCount, found $leadCount, sample ~${avgDaysAgo.format("%.1f")} days ago"
+		val message = "followed $followCount, found $leadCount, sample ~${avgDaysAgo.format(1)} days ago"
 		followCount = 0
 		console.logInfo(message.toPink(), leadCount)
 		val top = allLeads.first()
@@ -167,7 +168,7 @@ class LeadFollower(
 
 						// consume source
 						sourceService.consume(crawl)
-						val resultMap = leadMaker.makeLeads(crawl)
+						val resultMap = profile("make_leads", true) { leadMaker.makeLeads(crawl) }
 						logFetch(crawl, resultMap)
 					} catch (e: Exception) {
 						console.logError("Error consuming fetch:\n${fetch.lead.url}\n$e")
@@ -282,5 +283,3 @@ class LeadFollower(
 			.row(background = background, width = rowWidth)
 	}
 }
-
-fun Double.format(format: String) = format.format(this)

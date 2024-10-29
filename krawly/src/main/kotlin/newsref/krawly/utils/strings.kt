@@ -10,3 +10,6 @@ fun String.hasHostAndProtocol(): Boolean = hostRegex.find(this) != null
 private val pathRegex = Regex("https?://[^/]+(/.*)?")
 
 fun String.getPath() = pathRegex.find(this)?.groups?.get(1)?.value ?: "/"
+
+fun Double.format(decimalPlaces: Int = 1, showSign: Boolean = false) =
+	"%${if (showSign) "+" else ""}.${decimalPlaces}f".format(this)
