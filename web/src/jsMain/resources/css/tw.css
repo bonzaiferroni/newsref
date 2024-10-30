@@ -11,10 +11,6 @@ h3 { @apply text-xl font-bold; }
 
 body {
     @apply bg-body text-white font-lato;
-    text-shadow: 0 0 1px rgba(50, 251, 226, 0.6),
-    0 0 3px rgba(50, 251, 226, 0.5),
-    0 0 0.5rem rgba(50, 251, 226, 0.3),
-    0 0 2rem rgba(50, 251, 226, 0.2);
 }
 
 p { @apply text-gray-100; }

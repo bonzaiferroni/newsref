@@ -10,11 +10,12 @@ import newsref.web.core.Pages
 import newsref.web.core.buildPortal
 import newsref.web.io.stores.AppModel
 
-class App : Application() {
+class WebApp : Application() {
 
     init {
         require("./css/kvapp.css")
         require("./css/tw.css")
+        require("./css/prose.css")
         require("./css/forms.css")
         require("./css/buttons.css")
         ThemeManager.init(initialTheme = Theme.DARK, remember = false)
@@ -34,7 +35,7 @@ class App : Application() {
 
 fun main() {
     startApplication(
-        ::App, module.hot,
+        ::WebApp, module.hot,
         BootstrapModule,
         // BootstrapCssModule,
         CoreModule,

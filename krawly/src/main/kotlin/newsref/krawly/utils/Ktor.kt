@@ -10,6 +10,7 @@ import io.ktor.client.request.*
 import io.ktor.client.statement.*
 import io.ktor.http.*
 import io.ktor.network.sockets.*
+import io.ktor.util.network.*
 import kotlinx.coroutines.CoroutineExceptionHandler
 import kotlinx.coroutines.supervisorScope
 import newsref.db.globalConsole
@@ -82,6 +83,8 @@ suspend fun ktorFetchAsync(url: Url): WebResult = supervisorScope {
 				WebResult(timeout = true)
 			}
 			// un-serious exceptions
+			is IllegalStateException,
+			is UnresolvedAddressException,
 			is SocketException,
 			is SocketTimeoutException,
 			is CircularRedirectException,

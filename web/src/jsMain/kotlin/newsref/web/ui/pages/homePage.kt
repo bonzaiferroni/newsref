@@ -22,7 +22,7 @@ import newsref.web.ui.models.HomeModel
 
 fun Container.homePage(context: AppContext): PortalEvents? {
     val model = HomeModel()
-    col {
+    col(className = "prose prose-invert") {
         p("Hello World!")
         renderStore(model.state, {it.sources}) { state ->
             for (source in state.sources) {
