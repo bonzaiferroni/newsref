@@ -10,6 +10,7 @@ import io.kvision.html.p
 import io.kvision.state.ObservableValue
 import io.kvision.state.bind
 import io.kvision.state.bindTo
+import newsref.model.dto.SourceInfo
 import newsref.web.core.AppContext
 import newsref.web.core.Pages
 import newsref.web.core.PortalEvents
@@ -28,11 +29,12 @@ fun Container.homePage(context: AppContext): PortalEvents? {
                 val title = source.headline ?: source.url
                 row {
                     div(source.score.toString())
-                    button("") {
-                        link(title)
-                    }.onClick {
-                        context.navigate(Pages.source, source.sourceId)
-                    }
+                    link(title, Pages.source.getLinkRoute(source.sourceId))
+//                    button("") {
+//                        link(title)
+//                    }.onClick {
+//                        context.navigate(Pages.source, source.sourceId)
+//                    }
                 }
             }
         }

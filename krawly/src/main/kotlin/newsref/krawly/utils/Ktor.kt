@@ -3,11 +3,13 @@ package newsref.krawly.utils
 import io.ktor.client.*
 import io.ktor.client.call.*
 import io.ktor.client.engine.apache.*
+import io.ktor.client.engine.cio.*
 import io.ktor.client.plugins.*
 import io.ktor.client.plugins.compression.*
 import io.ktor.client.request.*
 import io.ktor.client.statement.*
 import io.ktor.http.*
+import io.ktor.network.sockets.*
 import kotlinx.coroutines.CoroutineExceptionHandler
 import kotlinx.coroutines.supervisorScope
 import newsref.db.globalConsole
@@ -18,12 +20,19 @@ import newsref.db.utils.toFileLog
 import newsref.krawly.HaltCrawlException
 import newsref.krawly.chromeLinuxAgent
 import newsref.model.core.Url
+import org.apache.http.client.CircularRedirectException
+import org.apache.http.conn.ConnectTimeoutException
 import java.net.NoRouteToHostException
+import java.net.SocketException
+import java.net.URISyntaxException
 import java.net.UnknownHostException
+import java.nio.charset.MalformedInputException
+import java.nio.charset.UnmappableCharacterException
+import javax.net.ssl.SSLHandshakeException
 
 private var console = globalConsole.getHandle("ktor")
 
-private val client = HttpClient(Apache) {
+private val client = HttpClient(CIO) {
 	 defaultRequest {
 		headers {
 			set(HttpHeaders.UserAgent, chromeLinuxAgent)
@@ -38,21 +47,21 @@ private val client = HttpClient(Apache) {
 		deflate()
 	}
 	install(HttpSend) {
-		maxSendCount = 30
+		maxSendCount = 40
 	}
-	engine {
-		followRedirects = true
-		socketTimeout = 30000
-		connectTimeout = 30000
-		connectionRequestTimeout = 30000
-		customizeClient {
-			setMaxConnTotal(1000)
-			setMaxConnPerRoute(100)
-		}
-		customizeRequest {
-			// TODO: request transformations
-		}
-	}
+//	engine {
+//		followRedirects = true
+//		socketTimeout = 30000
+//		connectTimeout = 30000
+//		connectionRequestTimeout = 30000
+//		customizeClient {
+//			setMaxConnTotal(1000)
+//			setMaxConnPerRoute(100)
+//		}
+//		customizeRequest {
+//			// TODO: request transformations
+//		}
+//	}
 }
 
 suspend fun ktorFetchAsync(url: Url): WebResult = supervisorScope {
@@ -66,16 +75,28 @@ suspend fun ktorFetchAsync(url: Url): WebResult = supervisorScope {
 		)
 	} catch (e: Exception) {
 		when (e) {
+			// timeouts
+			is ConnectTimeoutException,
 			is HttpRequestTimeoutException -> {
 				console.logTrace("Arrr! The request timed out!")
 				WebResult(timeout = true)
 			}
-//			is UnknownHostException -> {
-//				WebResult(exception = e.message)
-//			}
+			// un-serious exceptions
+			is SocketException,
+			is SocketTimeoutException,
+			is CircularRedirectException,
+			is UnmappableCharacterException,
+			is MalformedInputException,
+			is URISyntaxException,
+			is SSLHandshakeException,
+			is UnknownHostException -> {
+				WebResult(exception = e.message)
+			}
+			// extra-serious exceptions
 			is NoRouteToHostException -> {
 				throw HaltCrawlException(e.message ?: "No internet access, halt crawl\n$url")
 			}
+			// mystery exceptions
 			else -> {
 				console.logError("Arr! Unknown exception!\n${url.href.toBlue()}\n${e::class.simpleName?.toPurple()}\n${e.message}")
 				"$url\n${e.message}".toFileLog("exceptions", "ktor")
@@ -87,5 +108,4 @@ suspend fun ktorFetchAsync(url: Url): WebResult = supervisorScope {
 }
 //		when (e) {
 //			// todo: handle is UnresolvedAddressException,
-//			is NoRouteToHostException -> throw HaltCrawlException(e.message ?: "No internet access, halt crawl\n$url")
 //		}

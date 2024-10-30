@@ -16,9 +16,7 @@ import newsref.model.data.FetchResult
 import kotlin.time.Duration.Companion.days
 
 class LeadMaker(
-	private val hostAgent: HostAgent,
 	private val leadService: LeadService = LeadService(),
-	private val nexusService: NexusService = NexusService()
 ) {
 	private val console = globalConsole.getHandle("LeadMaker")
 
@@ -40,7 +38,7 @@ class LeadMaker(
 		val links = fetch.page?.links ?: return resultMap
 		for (link in links) {
 			val publishedAt = page.article.publishedAt
-			val freshSource = publishedAt == null || publishedAt > (Clock.System.now() - 30.days)
+			val freshSource = publishedAt != null && publishedAt > (Clock.System.now() - 30.days)
 			val createIfFresh = fetch.fetchResult == FetchResult.RELEVANT && freshSource
 			val job = LeadJob(isExternal = link.isExternal, freshAt = fetch.page?.article?.publishedAt)
 			val result = makeLead(link.url, job, createIfFresh)

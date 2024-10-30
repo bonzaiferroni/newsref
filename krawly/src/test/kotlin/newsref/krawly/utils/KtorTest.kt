@@ -10,7 +10,7 @@ import kotlin.test.assertNotNull
 
 class KtorTest {
 	@Test
-	fun `fetch returns pageHref of landing page`() {
+	fun `fetch returns pageHref of landing page`() = coroutineScope {
 		val url = "https://tinyurl.com/4z6dd2hx".toUrl()
 		val result = SpiderWeb().fetch(url, FetchStrategy.BASIC)
 		assertNotNull(result.pageHref)

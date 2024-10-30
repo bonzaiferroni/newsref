@@ -26,14 +26,12 @@ fun <Id : Comparable<Id>, Ent : Entity<Id>> EntityClass<Id, Ent>.createOrUpdate(
 }
 
 internal fun Column<String>.sameUrl(url: Url): Op<Boolean> {
-	val list = mutableListOf(url.href.lowercase())
-	if (url.domain.startsWith("www."))
-		list.add(url.href.replaceFirst("www.", "").lowercase())
+	val (urlA, urlB) = if (url.domain.startsWith("www."))
+		Pair(url.href.lowercase(), url.href.replaceFirst("www.", "").lowercase())
 	else {
-		val variation = "${url.scheme}://www.${url.domain}${url.fullPath}".lowercase()
-		list.add(variation)
+		Pair(url.href.lowercase(), "${url.scheme}://www.${url.domain}${url.fullPath}".lowercase())
 	}
-	return this.lowerCase() inList list
+	return this.lowerCase().eq(urlA) or this.lowerCase().eq(urlB)
 }
 fun Column<String>.sameAs(other: String) = this.lowerCase() eq other.lowercase()
 

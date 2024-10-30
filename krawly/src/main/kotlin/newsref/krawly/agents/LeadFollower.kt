@@ -29,7 +29,7 @@ import kotlin.time.DurationUnit
 class LeadFollower(
 	private val web: SpiderWeb,
 	private val hostAgent: HostAgent,
-	private val leadMaker: LeadMaker = LeadMaker(hostAgent),
+	private val leadMaker: LeadMaker = LeadMaker(),
 	private val sourceReader: SourceReader = SourceReader(hostAgent),
 	private val nexusFinder: NexusFinder = NexusFinder(),
 	private val leadService: LeadService = LeadService(),
@@ -69,6 +69,11 @@ class LeadFollower(
 	}
 
 	private suspend fun refreshLeads() {
+		while (fetched.isNotEmpty()) {
+			icon = "📖"
+			delay(10)
+		}
+
 		leads.clear()
 		val now = Clock.System.now()
 		val allLeads = leadService.getOpenLeads()
@@ -124,10 +129,6 @@ class LeadFollower(
 				icon = "🐛"
 				delay(10)
 			}
-			while (fetched.isNotEmpty()) {
-				icon = "📖"
-				delay(10)
-			}
 
 			--leadCount; icon = "👾"
 			followCount++
@@ -168,7 +169,7 @@ class LeadFollower(
 
 						// consume source
 						sourceService.consume(crawl)
-						val resultMap = profile("make_leads", true) { leadMaker.makeLeads(crawl) }
+						val resultMap = leadMaker.makeLeads(crawl)
 						logFetch(crawl, resultMap)
 					} catch (e: Exception) {
 						console.logError("Error consuming fetch:\n${fetch.lead.url}\n$e")

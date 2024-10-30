@@ -2,12 +2,13 @@ package newsref.web.ui.models
 
 import kotlinx.coroutines.launch
 import newsref.model.data.FeedSource
+import newsref.model.dto.SourceInfo
 import newsref.web.core.StateModel
-import newsref.web.io.stores.FeedSourceStore
+import newsref.web.io.stores.SourceStore
 
 class SourceModel(
 	val id: Long,
-	val feedSourceStore: FeedSourceStore = FeedSourceStore(),
+	val sourceStore: SourceStore = SourceStore(),
 ): StateModel<SourceState>(SourceState()) {
 	private var source by StateDelegate({it.source}) { s, v -> s.copy(source = v) }
 
@@ -18,10 +19,10 @@ class SourceModel(
 	}
 
 	private suspend fun refreshSource() {
-//		source = feedSourceStore.getSource(id)
+		source = sourceStore.getSource(id)
 	}
 }
 
 data class SourceState(
-	val source: FeedSource? = null
+	val source: SourceInfo? = null
 )

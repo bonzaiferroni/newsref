@@ -4,11 +4,13 @@ import kotlinx.datetime.Clock
 import kotlinx.datetime.TimeZone
 import kotlinx.datetime.toInstant
 import newsref.db.DbService
+import newsref.db.globalConsole
 import newsref.db.tables.*
 import newsref.db.tables.ArticleTable
 import newsref.db.tables.LinkTable
 import newsref.db.tables.SourceTable
 import newsref.db.utils.toLocalDateTimeUtc
+import newsref.model.data.FeedSource
 import newsref.model.data.Link
 import newsref.model.data.SourceScore
 import org.jetbrains.exposed.dao.id.EntityID
@@ -58,14 +60,23 @@ class ScoreService : DbService() {
 			val linkScore = SourceScore(sourceId = sourceId, score = score, scoredAt = now)
 			SourceScoreRow.new { fromData(linkScore, sourceRow) }
 		}
+
+		FeedSourceTable.deleteAll()
+		val size = scores.filter { it.score >= MINIMUM_SCORE_RECORD }.map { score ->
+			val sourceInfo = SourceTable.getInfos { SourceTable.id.eq(score.sourceId) }.firstOrNull()
+				?: throw IllegalArgumentException("Source not found: ${score.sourceId}")
+			val feedSource = FeedSource(source = sourceInfo)
+			FeedSourceRow.new { fromData(feedSource) }
+		}.size
+		globalConsole.log("FeedSourceService: added $size scores")
 	}
 }
 
 
 internal fun <T : Comparable<T>> ColumnSet.leftJoin(
 	table: IdTable<T>,
-	idColumn: Column<EntityID<T>>,
-	otherIdColumn: Column<EntityID<T>>,
+	idColumn: Expression<*>?,
+	otherIdColumn: Expression<*>?,
 ) = this.join(table, JoinType.LEFT, idColumn, otherIdColumn)
 
 data class LinkItem(val link: Link, val sourceId: Long, val hostId: Int)

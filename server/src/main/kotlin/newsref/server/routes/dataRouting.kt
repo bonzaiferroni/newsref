@@ -10,5 +10,5 @@ fun Routing.dataRouting() {
 //    defaultRouting(Api.request, RequestService())
 
     userRouting(UserService())
-    feedSourceRouting()
+    sourceRouting()
 }

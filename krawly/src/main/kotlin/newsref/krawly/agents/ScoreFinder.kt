@@ -8,7 +8,6 @@ import kotlinx.datetime.Clock
 import newsref.db.globalConsole
 import newsref.db.log.dim
 import newsref.db.log.toGreen
-import newsref.db.services.FeedSourceService
 import newsref.db.services.ScoreService
 import newsref.krawly.utils.profile
 import newsref.model.data.SourceScore
@@ -17,7 +16,6 @@ import kotlin.time.Duration.Companion.minutes
 
 class ScoreFinder(
 	private val scoreService: ScoreService = ScoreService(),
-	private val feedSourceService: FeedSourceService = FeedSourceService(),
 ) {
 	private val console = globalConsole.getHandle("ScoreFinder")
 
@@ -47,7 +45,6 @@ class ScoreFinder(
 		val scores = hostTally.map { (sourceId, set) -> SourceScore(sourceId, set.size, now) }
 
 		scoreService.addScores(scores)
-		feedSourceService.addScores(scores)
 
 		val top = scores.takeIf{ it.isNotEmpty()}?.sortedByDescending { it.score }?.take(10)
 		var msg = "looked at ${items.size} links, added ${scores.size} scores, top: ${top?.firstOrNull()?.score ?: 0}".toGreen()

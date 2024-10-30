@@ -1,5 +1,6 @@
 package newsref.db.services
 
+import newsref.db.DbService
 import newsref.db.tables.*
 import newsref.db.tables.ArticleTable
 import newsref.db.tables.ContentTable
@@ -13,9 +14,17 @@ import newsref.model.dto.LinkInfo
 import newsref.model.dto.ScoreInfo
 import newsref.model.dto.SourceInfo
 import org.jetbrains.exposed.sql.Op
+import org.jetbrains.exposed.sql.QueryBuilder
 import org.jetbrains.exposed.sql.SqlExpressionBuilder
 
-class SourceInfoService {
+class SourceInfoService : DbService() {
+	suspend fun getSource(id: Long) = dbQuery {
+		SourceTable.getInfos { SourceTable.id eq id }.firstOrNull()
+	}
+
+	suspend fun getTopSources() = dbQuery {
+		FeedSourceRow.all().map { it.source }
+	}
 }
 
 internal fun SourceTable.getInfos(block: SqlExpressionBuilder.() -> Op<Boolean>): List<SourceInfo> {
@@ -70,7 +79,9 @@ internal fun SourceTable.getInfos(block: SqlExpressionBuilder.() -> Op<Boolean>)
 }
 
 internal fun LinkTable.getLinkInfos(block: SqlExpressionBuilder.() -> Op<Boolean>): List<LinkInfo> {
-	val linkInfos = this.leftJoin(SourceTable).leftJoin(HostTable).leftJoin(LeadTable).leftJoin(ArticleTable)
+	val linkInfos = this.leftJoin(SourceTable).leftJoin(HostTable)
+		.leftJoin(LeadTable, this.leadId, LeadTable.id)
+		.leftJoin(ArticleTable)
 		.leftJoin(ContentTable)
 		.select(
 			url,
@@ -85,6 +96,7 @@ internal fun LinkTable.getLinkInfos(block: SqlExpressionBuilder.() -> Op<Boolean
 			HostTable.name,
 		)
 		.where(block)
+//		.also { println(it.prepareSQL(QueryBuilder(false))) }
 		.map { row ->
 			LinkInfo(
 				sourceId = row[sourceId].value,

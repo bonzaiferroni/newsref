@@ -11,7 +11,7 @@ object Api {
     // val request = Endpoint("/data/request")
 
     // content
-    val feedSource = Endpoint("/source/feed")
+    val source = Endpoint("/source")
 
     // user
     val user = Endpoint("/user")
