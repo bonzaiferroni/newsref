@@ -1,5 +1,6 @@
 package newsref.db.tables
 
+import newsref.db.tables.LinkTable.index
 import newsref.db.utils.sameAs
 import newsref.model.data.Host
 import org.jetbrains.exposed.dao.EntityClass
@@ -9,7 +10,7 @@ import org.jetbrains.exposed.dao.id.IntIdTable
 import org.jetbrains.exposed.sql.ReferenceOption
 
 internal object HostTable : IntIdTable("host") {
-	val nexusId = reference("nexus_id", NexusTable, ReferenceOption.SET_NULL).nullable()
+	val nexusId = reference("nexus_id", NexusTable, ReferenceOption.SET_NULL).nullable().index()
 
 	val core = text("core").uniqueIndex()
 	val name = text("name").nullable()

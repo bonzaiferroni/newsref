@@ -3,6 +3,7 @@ package newsref.krawly
 import newsref.db.globalConsole
 import newsref.db.initDb
 import newsref.db.log.ConsoleConfig
+import newsref.db.utils.initProfiler
 import newsref.krawly.agents.*
 import newsref.krawly.utils.pwFetch
 import newsref.krawly.utils.pwFetchRedirect
@@ -20,6 +21,7 @@ fun main(args: Array<String>) {
 }
 
 fun crawl(args: Array<String>) {
+	initProfiler(globalConsole.getHandle("profiler")::log)
 	initDb()
 	val web = SpiderWeb()
 	val nexusFinder = NexusFinder()

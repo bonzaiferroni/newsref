@@ -40,6 +40,7 @@ class LeadMaker(
 			val publishedAt = page.article.publishedAt
 			val freshSource = publishedAt != null && publishedAt > (Clock.System.now() - 30.days)
 			val createIfFresh = fetch.fetchResult == FetchResult.RELEVANT && freshSource
+			if (createIfFresh && !link.isExternal) continue
 			val job = LeadJob(isExternal = link.isExternal, freshAt = fetch.page?.article?.publishedAt)
 			val result = makeLead(link.url, job, createIfFresh)
 			resultMap.increment(result)

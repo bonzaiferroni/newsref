@@ -1,3 +1,11 @@
 .prose a {
     @apply text-pink-400 hover:text-pink-600 no-underline;
 }
+
+.prose ul {
+    @apply list-disc pl-5 mb-4;
+}
+
+.prose ul li {
+    @apply mb-2;
+}

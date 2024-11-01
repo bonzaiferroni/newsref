@@ -1,5 +1,6 @@
 package newsref.db.tables
 
+import newsref.db.tables.LinkTable.index
 import newsref.model.data.Author
 import org.jetbrains.exposed.dao.EntityClass
 import org.jetbrains.exposed.dao.IntEntity
@@ -9,8 +10,8 @@ import org.jetbrains.exposed.dao.id.IntIdTable
 import org.jetbrains.exposed.sql.SizedCollection
 
 internal object AuthorTable: IntIdTable("author") {
-    val name = text("name").nullable()
-    val bylines = array<String>("bylines")
+    val name = text("name").nullable().index()
+    val bylines = array<String>("bylines").index()
 }
 
 internal class AuthorRow(id: EntityID<Int>): IntEntity(id) {
@@ -24,14 +25,14 @@ internal class AuthorRow(id: EntityID<Int>): IntEntity(id) {
 }
 
 internal object HostAuthorTable : CompositeIdTable("host_author") {
-    val hostId = reference("host_id", HostTable)
-    val authorId = reference("author_id", AuthorTable)
+    val hostId = reference("host_id", HostTable).index()
+    val authorId = reference("author_id", AuthorTable).index()
     override val primaryKey = PrimaryKey(hostId, authorId)
 }
 
 internal object SourceAuthorTable : CompositeIdTable("source_author") {
-    val sourceId = reference("source_id", SourceTable)
-    val authorId = reference("author_id", AuthorTable)
+    val sourceId = reference("source_id", SourceTable).index()
+    val authorId = reference("author_id", AuthorTable).index()
     override val primaryKey = PrimaryKey(sourceId, authorId)
 }
 

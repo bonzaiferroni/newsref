@@ -13,12 +13,12 @@ import newsref.db.models.FetchInfo
 import newsref.db.services.CreateLeadResult
 import newsref.db.services.LeadService
 import newsref.db.services.SourceService
+import newsref.db.utils.format
+import newsref.db.utils.profile
 import newsref.krawly.HaltCrawlException
 import newsref.krawly.SpiderWeb
 import newsref.krawly.utils.TallyMap
-import newsref.krawly.utils.format
 import newsref.krawly.utils.getCount
-import newsref.krawly.utils.profile
 import newsref.model.data.LeadInfo
 import newsref.model.data.FetchResult
 import java.util.*
@@ -169,7 +169,7 @@ class LeadFollower(
 
 						// consume source
 						sourceService.consume(crawl)
-						val resultMap = leadMaker.makeLeads(crawl)
+						val resultMap = profile("make_leads") { leadMaker.makeLeads(crawl) }
 						logFetch(crawl, resultMap)
 					} catch (e: Exception) {
 						console.logError("Error consuming fetch:\n${fetch.lead.url}\n$e")

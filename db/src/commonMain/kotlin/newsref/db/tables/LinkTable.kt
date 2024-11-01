@@ -12,9 +12,9 @@ import org.jetbrains.exposed.sql.ResultRow
 import org.jetbrains.exposed.sql.and
 
 internal object LinkTable: LongIdTable("link") {
-    val sourceId = reference("source_id", SourceTable)
-    val leadId = reference("lead_id", LeadTable).nullable()
-    val contentId = reference("content_id", ContentTable).nullable()
+    val sourceId = reference("source_id", SourceTable).index()
+    val leadId = reference("lead_id", LeadTable).nullable().index()
+    val contentId = reference("content_id", ContentTable).nullable().index()
     val url = text("url")
     val urlText = text("url_text")
     val isExternal = bool("is_external")

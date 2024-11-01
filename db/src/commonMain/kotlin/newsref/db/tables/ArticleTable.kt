@@ -1,6 +1,7 @@
 package newsref.db.tables
 
 import kotlinx.datetime.*
+import newsref.db.tables.LinkTable.index
 import newsref.db.utils.toCheckedFromDb
 import newsref.model.core.toUrlOrNull
 import newsref.model.data.Article
@@ -12,7 +13,7 @@ import org.jetbrains.exposed.sql.kotlin.datetime.datetime
 
 // todo: make all tables and rows internal
 internal object ArticleTable: LongIdTable("article") {
-    val sourceId = reference("source_id", SourceTable)
+    val sourceId = reference("source_id", SourceTable).index()
 
     val headline = text("headline")
     val alternativeHeadline = text("alternative_headline").nullable()
@@ -27,7 +28,7 @@ internal object ArticleTable: LongIdTable("article") {
     val language = text("language").nullable()
     val commentCount = integer("comment_count").nullable()
     val accessedAt = datetime("accessed_at")
-    val publishedAt = datetime("published_at").nullable()
+    val publishedAt = datetime("published_at").nullable().index()
     val modifiedAt = datetime("modified_at").nullable()
 }
 

@@ -2,6 +2,7 @@ package newsref.db.tables
 
 import kotlinx.datetime.*
 import newsref.db.globalConsole
+import newsref.db.tables.LinkTable.index
 import newsref.db.utils.*
 import newsref.db.utils.toCheckedFromDb
 import newsref.model.core.CheckedUrl
@@ -18,8 +19,8 @@ private val console = globalConsole.getHandle("LeadTable")
 
 internal object LeadTable : LongIdTable("lead") {
 	val url = text("url").uniqueIndex()
-	val hostId = reference("host_id", HostTable)
-	val sourceId = reference("source_id", SourceTable).nullable()
+	val hostId = reference("host_id", HostTable).index()
+	val sourceId = reference("source_id", SourceTable).nullable().index()
 }
 
 internal class LeadRow(id: EntityID<Long>) : LongEntity(id) {

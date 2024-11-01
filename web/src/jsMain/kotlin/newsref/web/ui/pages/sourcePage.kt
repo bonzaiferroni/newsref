@@ -9,6 +9,7 @@ import newsref.web.ui.components.col
 import newsref.web.ui.components.renderStore
 import newsref.web.ui.models.SourceModel
 import newsref.web.ui.widgets.linkWidget
+import newsref.web.utils.toAnchorString
 
 fun Container.sourcePage(context: AppContext, id: Long): PortalEvents? {
 	val model = SourceModel(id)
@@ -20,31 +21,29 @@ fun Container.sourcePage(context: AppContext, id: Long): PortalEvents? {
 		}
 		col(className = "prose prose-invert w-full") {
 			h1(source.headline)
-//		if (source.description != null) {
-//			p(article.description)
-//		}
+			if (source.description != null) {
+				h2("Description")
+				p(source.description)
+			}
 			val inLinks = state.source.inLinks
 			if (inLinks.isNotEmpty()) {
 				h2("Inbound Links")
-				for (link in inLinks) {
-					linkWidget(link)
+				listTag(ListType.UL) {
+					for (link in inLinks) {
+						linkWidget(link)
+					}
 				}
-			} else {
-				p("no inbound links")
 			}
 			val outLinks = state.source.outLinks
 			if (outLinks.isNotEmpty()) {
 				h2("Outbound Links")
-				for (link in outLinks) {
-					linkWidget(link)
+				listTag(ListType.UL) {
+					for (link in outLinks) {
+						linkWidget(link)
+					}
 				}
-			} else {
-				p("no outbound links")
 			}
 		}
 	}
 	return null
 }
-
-fun LinkInfo.getContextWithMarkup() = (this.context ?: "...${this.urlText}...")
-		.replace(this.urlText, "<a href=\"${this.url}\" target=\"_blank\">${this.urlText}</a>")

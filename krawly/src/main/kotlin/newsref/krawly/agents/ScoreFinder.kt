@@ -9,7 +9,6 @@ import newsref.db.globalConsole
 import newsref.db.log.dim
 import newsref.db.log.toGreen
 import newsref.db.services.ScoreService
-import newsref.krawly.utils.profile
 import newsref.model.data.SourceScore
 import kotlin.time.Duration.Companion.days
 import kotlin.time.Duration.Companion.minutes

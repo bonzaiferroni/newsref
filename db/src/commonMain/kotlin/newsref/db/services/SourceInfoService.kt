@@ -38,6 +38,7 @@ internal fun SourceTable.getInfos(block: SqlExpressionBuilder.() -> Op<Boolean>)
 			HostTable.name,
 			HostTable.logo,
 			ArticleTable.headline,
+			ArticleTable.description,
 			ArticleTable.wordCount,
 			ArticleTable.section,
 			ArticleTable.thumbnail,
@@ -54,6 +55,7 @@ internal fun SourceTable.getInfos(block: SqlExpressionBuilder.() -> Op<Boolean>)
 				hostName = row.getOrNull(HostTable.name),
 				hostLogo = row.getOrNull(HostTable.logo),
 				headline = row.getOrNull(ArticleTable.headline),
+				description = row.getOrNull(ArticleTable.description),
 				wordCount = row.getOrNull(ArticleTable.wordCount),
 				section = row.getOrNull(ArticleTable.section),
 				thumbnail = row.getOrNull(ArticleTable.thumbnail),
@@ -69,7 +71,7 @@ internal fun SourceTable.getInfos(block: SqlExpressionBuilder.() -> Op<Boolean>)
 		val inLinks = LinkTable.getLinkInfos { LeadTable.sourceId.eq(sourceInfo.sourceId) }
 		val outLinks = LinkTable.getLinkInfos { LinkTable.sourceId.eq(sourceInfo.sourceId) }
 		val authors = SourceRow.findById(sourceInfo.sourceId)?.authors?.mapNotNull { it.name }
-		sourceInfo.copy (
+		sourceInfo.copy(
 			inLinks = inLinks,
 			outLinks = outLinks,
 			scores = scoreRows.map { ScoreInfo(it.score, it.scoredAt.toInstantUtc()) },
@@ -114,7 +116,8 @@ internal fun LinkTable.getLinkInfos(block: SqlExpressionBuilder.() -> Op<Boolean
 		}
 	return linkInfos.map { linkInfo ->
 		val authors = AuthorTable.getAuthors { SourceAuthorTable.sourceId.eq(linkInfo.leadSourceId) }
-		linkInfo.copy(authors = authors)
+		val snippet = linkInfo.context?.findContainingSentence(linkInfo.urlText)
+		linkInfo.copy(authors = authors, context = snippet)
 	}
 }
 
@@ -124,3 +127,15 @@ internal fun AuthorTable.getAuthors(block: SqlExpressionBuilder.() -> Op<Boolean
 		.where(block)
 		.mapNotNull { row -> row[name] }
 }
+
+fun String.findContainingSentence(substring: String): String? {
+	val sentencePattern = """[^.!?]*[.!?]""".toRegex()
+	return sentencePattern.findAll(this)
+		.map { it.value.trim() }
+		.firstOrNull { it.contains(substring, ignoreCase = true) }
+		?.let { sentence ->
+			if (sentence.first().isUpperCase() || openingChars.contains(sentence.first())) sentence else "...$sentence"
+		}
+}
+
+private val openingChars = setOf('“', '\"')

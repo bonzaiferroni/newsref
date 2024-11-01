@@ -8,6 +8,7 @@ data class SourceInfo(
 	val sourceId: Long,
 	val url: String,
 	val headline: String?,
+	val description: String?,
 	val hostCore: String,
 	val hostName: String?,
 	val hostLogo: String?,

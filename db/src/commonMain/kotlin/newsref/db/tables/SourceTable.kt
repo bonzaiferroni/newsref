@@ -5,6 +5,7 @@ import kotlinx.datetime.UtcOffset
 import kotlinx.datetime.toInstant
 import kotlinx.datetime.toLocalDateTime
 import kotlinx.serialization.json.Json
+import newsref.db.tables.LinkTable.index
 import newsref.db.utils.toCheckedFromDb
 import newsref.db.utils.toInstantUtc
 import newsref.model.core.SourceType
@@ -25,11 +26,11 @@ import org.jetbrains.exposed.sql.json.json
 import org.jetbrains.exposed.sql.kotlin.datetime.datetime
 
 internal object SourceTable : LongIdTable("source") {
-    val hostId = reference("host_id", HostTable)
+    val hostId = reference("host_id", HostTable).index()
     val url = text("url").uniqueIndex()
     val score = integer("score").nullable()
     val type = enumeration("source_type", SourceType::class).nullable()
-    val seenAt = datetime("seen_at")
+    val seenAt = datetime("seen_at").index()
 }
 
 internal class SourceRow(id: EntityID<Long>) : LongEntity(id) {
