@@ -17,6 +17,7 @@ class FeedService : DataService<Feed, Int, FeedRow>(
         FeedRow.new {
             this.url = System.getenv("NEWSREF_INIT_FEED_URL")
             this.selector = System.getenv("NEWSREF_INIT_FEED_SELECTOR")
+            this.external = true
         }
     }
 }

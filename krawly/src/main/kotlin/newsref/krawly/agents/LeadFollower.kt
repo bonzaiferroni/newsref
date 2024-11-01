@@ -15,12 +15,14 @@ import newsref.db.services.LeadService
 import newsref.db.services.SourceService
 import newsref.db.utils.format
 import newsref.db.utils.profile
-import newsref.krawly.HaltCrawlException
 import newsref.krawly.SpiderWeb
 import newsref.krawly.utils.TallyMap
 import newsref.krawly.utils.getCount
+import newsref.krawly.utils.isNetworkAvailable
 import newsref.model.data.LeadInfo
 import newsref.model.data.FetchResult
+import java.net.InetSocketAddress
+import java.net.Socket
 import java.util.*
 import kotlin.time.Duration.Companion.minutes
 import kotlin.time.Duration.Companion.seconds
@@ -135,12 +137,11 @@ class LeadFollower(
 
 			val spider = nest.removeLast()
 			spider.crawl {
-				try {
-					val newFetch = spider.sourceFetcher.fetch(lead, url, host, pastResults)
+				val newFetch = spider.sourceFetcher.fetch(lead, url, host, pastResults)
+				if (newFetch.result?.noConnection != true || isNetworkAvailable()) {
 					fetched.add(newFetch)
-				} catch (e:HaltCrawlException) {
-					console.logError("Beware the kraken! (internet lost)\n$url\n$e")
-					delay(30.seconds)
+				} else {
+					console.logError("Choppy waters! (internet unavailable)")
 				}
 				nest.add(spider) // return home, spidey
 			}
@@ -169,7 +170,7 @@ class LeadFollower(
 
 						// consume source
 						sourceService.consume(crawl)
-						val resultMap = profile("make_leads") { leadMaker.makeLeads(crawl) }
+						val resultMap = leadMaker.makeLeads(crawl)
 						logFetch(crawl, resultMap)
 					} catch (e: Exception) {
 						console.logError("Error consuming fetch:\n${fetch.lead.url}\n$e")
@@ -284,3 +285,4 @@ class LeadFollower(
 			.row(background = background, width = rowWidth)
 	}
 }
+

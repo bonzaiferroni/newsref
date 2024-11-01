@@ -33,7 +33,8 @@ data class WebResult(
 	val content: String? = null,
 	val screenshot: ByteArray? = null,
 	val timeout: Boolean = false,
-	val exception: String? = null
+	val exception: String? = null,
+	val noConnection: Boolean = false,
 ) {
 	val isOk get() = status in 200..299
 	val isNotFound get() = status == 404

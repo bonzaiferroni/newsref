@@ -14,6 +14,7 @@ dependencies {
     // implementation("io.ktor:ktor-client-apache5:$ktor_version")
     implementation("io.ktor:ktor-client-cio:$ktor_version")
     implementation("io.ktor:ktor-client-encoding:$ktor_version")
+    implementation("io.ktor:ktor-network-tls:$ktor_version")
     implementation("org.jline:jline:3.21.0")
 
     implementation("com.microsoft.playwright:playwright:1.41.0")
@@ -23,11 +24,6 @@ dependencies {
     implementation(project(":db"))
 
     implementation(libs.kotlinx.datetime)
-    implementation("io.ktor:ktor-client-okhttp-jvm:2.3.11")
-	implementation("io.ktor:ktor-client-jetty:2.3.11")
-    implementation("io.ktor:ktor-client-apache:2.3.11")
-    implementation("io.ktor:ktor-client-java:2.3.11")
-	implementation("io.ktor:ktor-client-cio-jvm:2.3.11")
 
 	// Add dependencies for unit testing
     testImplementation(kotlin("test"))

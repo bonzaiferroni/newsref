@@ -2,27 +2,24 @@ package newsref.krawly.utils
 
 import io.ktor.client.*
 import io.ktor.client.call.*
-import io.ktor.client.engine.apache.*
 import io.ktor.client.engine.cio.*
+import io.ktor.client.network.sockets.*
 import io.ktor.client.plugins.*
 import io.ktor.client.plugins.compression.*
 import io.ktor.client.request.*
 import io.ktor.client.statement.*
 import io.ktor.http.*
-import io.ktor.network.sockets.*
+import io.ktor.network.sockets.SocketTimeoutException
 import io.ktor.util.network.*
-import kotlinx.coroutines.CoroutineExceptionHandler
 import kotlinx.coroutines.supervisorScope
 import newsref.db.globalConsole
 import newsref.db.log.toBlue
 import newsref.db.log.toPurple
 import newsref.db.models.WebResult
 import newsref.db.utils.toFileLog
-import newsref.krawly.HaltCrawlException
 import newsref.krawly.chromeLinuxAgent
 import newsref.model.core.Url
-import org.apache.http.client.CircularRedirectException
-import org.apache.http.conn.ConnectTimeoutException
+import org.htmlunit.org.apache.http.client.CircularRedirectException
 import java.net.NoRouteToHostException
 import java.net.SocketException
 import java.net.URISyntaxException
@@ -76,6 +73,11 @@ suspend fun ktorFetchAsync(url: Url): WebResult = supervisorScope {
 		)
 	} catch (e: Exception) {
 		when (e) {
+			// extra-serious exceptions
+			is UnresolvedAddressException,
+			is NoRouteToHostException -> {
+				WebResult(noConnection = true)
+			}
 			// timeouts
 			is ConnectTimeoutException,
 			is HttpRequestTimeoutException -> {
@@ -84,7 +86,6 @@ suspend fun ktorFetchAsync(url: Url): WebResult = supervisorScope {
 			}
 			// un-serious exceptions
 			is IllegalStateException,
-			is UnresolvedAddressException,
 			is SocketException,
 			is SocketTimeoutException,
 			is CircularRedirectException,
@@ -94,10 +95,6 @@ suspend fun ktorFetchAsync(url: Url): WebResult = supervisorScope {
 			is SSLHandshakeException,
 			is UnknownHostException -> {
 				WebResult(exception = e.message)
-			}
-			// extra-serious exceptions
-			is NoRouteToHostException -> {
-				throw HaltCrawlException(e.message ?: "No internet access, halt crawl\n$url")
 			}
 			// mystery exceptions
 			else -> {
