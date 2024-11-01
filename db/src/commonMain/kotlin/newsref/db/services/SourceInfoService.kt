@@ -14,7 +14,6 @@ import newsref.model.dto.LinkInfo
 import newsref.model.dto.ScoreInfo
 import newsref.model.dto.SourceInfo
 import org.jetbrains.exposed.sql.Op
-import org.jetbrains.exposed.sql.QueryBuilder
 import org.jetbrains.exposed.sql.SqlExpressionBuilder
 
 class SourceInfoService : DbService() {
@@ -23,7 +22,7 @@ class SourceInfoService : DbService() {
 	}
 
 	suspend fun getTopSources() = dbQuery {
-		FeedSourceRow.all().map { it.source }
+		FeedSourceRow.all().map { it.json }
 	}
 }
 

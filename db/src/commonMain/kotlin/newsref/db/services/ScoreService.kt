@@ -9,13 +9,14 @@ import newsref.db.tables.*
 import newsref.db.tables.ArticleTable
 import newsref.db.tables.LinkTable
 import newsref.db.tables.SourceTable
+import newsref.db.utils.createOrUpdate
 import newsref.db.utils.toLocalDateTimeUtc
 import newsref.model.data.FeedSource
 import newsref.model.data.Link
 import newsref.model.data.SourceScore
-import org.jetbrains.exposed.dao.id.EntityID
 import org.jetbrains.exposed.dao.id.IdTable
 import org.jetbrains.exposed.sql.*
+import org.jetbrains.exposed.sql.SqlExpressionBuilder.eq
 import kotlin.time.Duration
 import kotlin.time.Duration.Companion.hours
 
@@ -61,12 +62,14 @@ class ScoreService : DbService() {
 			SourceScoreRow.new { fromData(linkScore, sourceRow) }
 		}
 
-		FeedSourceTable.deleteAll()
-		val size = scores.filter { it.score >= MINIMUM_SCORE_RECORD }.map { score ->
+		val size = scores.sortedByDescending { it.score }.take(FEED_COUNT).map { score ->
 			val sourceInfo = SourceTable.getInfos { SourceTable.id.eq(score.sourceId) }.firstOrNull()
 				?: throw IllegalArgumentException("Source not found: ${score.sourceId}")
-			val feedSource = FeedSource(source = sourceInfo)
-			FeedSourceRow.new { fromData(feedSource) }
+			val feedSource = FeedSource(sourceId = score.sourceId, checkedAt = now, json = sourceInfo)
+			val sourceRow = SourceRow[score.sourceId]
+			FeedSourceRow.createOrUpdate(FeedSourceTable.sourceId eq score.sourceId) {
+				fromData(feedSource, sourceRow)
+			}
 		}.size
 		globalConsole.log("FeedSourceService: added $size scores")
 	}
@@ -83,3 +86,4 @@ data class LinkItem(val link: Link, val sourceId: Long, val hostId: Int)
 
 val SAME_SCORE_TIME_THRESHOLD = 1.hours
 const val MINIMUM_SCORE_RECORD = 5
+val FEED_COUNT = 50

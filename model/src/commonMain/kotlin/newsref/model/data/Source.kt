@@ -24,5 +24,7 @@ data class SourceScore(
 @Serializable
 data class FeedSource(
 	val id: Int = 0,
-	val source: SourceInfo,
+	val sourceId: Long = 0,
+	val checkedAt: Instant,
+	val json: SourceInfo,
 )

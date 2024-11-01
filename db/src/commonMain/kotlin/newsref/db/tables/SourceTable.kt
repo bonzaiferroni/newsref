@@ -5,9 +5,9 @@ import kotlinx.datetime.UtcOffset
 import kotlinx.datetime.toInstant
 import kotlinx.datetime.toLocalDateTime
 import kotlinx.serialization.json.Json
-import newsref.db.tables.LinkTable.index
 import newsref.db.utils.toCheckedFromDb
 import newsref.db.utils.toInstantUtc
+import newsref.db.utils.toLocalDateTimeUtc
 import newsref.model.core.SourceType
 import newsref.model.data.FeedSource
 import newsref.model.data.Source
@@ -107,20 +107,27 @@ internal fun SourceScoreRow.fromData(score: SourceScore, sourceRow: SourceRow) {
 
 // feed source
 internal object FeedSourceTable : IntIdTable("feed_source") {
-    val src = json<SourceInfo>("source", Json.Default)
+    val sourceId = reference("source_id", SourceTable)
+    val checkedAt = datetime("checked_at")
+    val json = json<SourceInfo>("source", Json.Default)
 }
 
 internal class FeedSourceRow(id: EntityID<Int>) : IntEntity(id) {
     companion object : IntEntityClass<FeedSourceRow>(FeedSourceTable)
-
-    var source by FeedSourceTable.src
+    var source by SourceRow referencedOn FeedSourceTable.sourceId
+    var checkedAt by FeedSourceTable.checkedAt
+    var json by FeedSourceTable.json
 }
 
 internal fun FeedSourceRow.toData() = FeedSource(
     id = this.id.value,
-    source = this.source,
+    sourceId = this.source.id.value,
+    checkedAt = this.checkedAt.toInstantUtc(),
+    json = this.json,
 )
 
-internal fun FeedSourceRow.fromData(feedSource: FeedSource) {
-    source = feedSource.source
+internal fun FeedSourceRow.fromData(feedSource: FeedSource, sourceRow: SourceRow) {
+    source = sourceRow
+    checkedAt = feedSource.checkedAt.toLocalDateTimeUtc()
+    json = feedSource.json
 }
