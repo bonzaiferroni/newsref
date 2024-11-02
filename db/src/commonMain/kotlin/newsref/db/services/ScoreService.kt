@@ -62,6 +62,7 @@ class ScoreService : DbService() {
 			SourceScoreRow.new { fromData(linkScore, sourceRow) }
 		}
 
+		FeedSourceTable.deleteAll()
 		val size = scores.sortedByDescending { it.score }.take(FEED_COUNT).map { score ->
 			val sourceInfo = SourceTable.getInfos { SourceTable.id.eq(score.sourceId) }.firstOrNull()
 				?: throw IllegalArgumentException("Source not found: ${score.sourceId}")

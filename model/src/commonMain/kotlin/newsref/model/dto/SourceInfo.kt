@@ -33,8 +33,9 @@ data class LinkInfo(
 	val context: String?,
 	val sourceUrl: String,
 	val hostName: String?,
+	val hostCore: String,
 	val headline: String?,
-	val authors: List<String>?,
+	val authors: List<PageAuthor>?,
 	val seenAt: Instant,
 	val publishedAt: Instant?,
 )

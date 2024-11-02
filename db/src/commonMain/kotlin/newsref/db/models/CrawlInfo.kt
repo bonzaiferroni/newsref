@@ -6,6 +6,7 @@ import newsref.model.core.ArticleType
 import newsref.model.core.CheckedUrl
 import newsref.model.core.SourceType
 import newsref.model.data.*
+import newsref.model.dto.PageAuthor
 import kotlin.time.Duration.Companion.days
 
 data class CrawlInfo(
@@ -53,7 +54,7 @@ data class PageInfo(
 	val contentWordCount: Int,
 	val contents: Set<String>,
 	val links: List<PageLink>,
-	val authors: Set<String>?,
+	val authors: List<PageAuthor>?,
 ) {
 	val isFresh get() = article.publishedAt.isFresh
 }

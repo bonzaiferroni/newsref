@@ -11,6 +11,7 @@ import newsref.db.tables.SourceScoreRow
 import newsref.db.tables.SourceScoreTable
 import newsref.db.utils.toInstantUtc
 import newsref.model.dto.LinkInfo
+import newsref.model.dto.PageAuthor
 import newsref.model.dto.ScoreInfo
 import newsref.model.dto.SourceInfo
 import org.jetbrains.exposed.sql.Op
@@ -95,6 +96,7 @@ internal fun LinkTable.getLinkInfos(block: SqlExpressionBuilder.() -> Op<Boolean
 			ArticleTable.headline,
 			ArticleTable.publishedAt,
 			HostTable.name,
+			HostTable.core,
 		)
 		.where(block)
 //		.also { println(it.prepareSQL(QueryBuilder(false))) }
@@ -107,6 +109,7 @@ internal fun LinkTable.getLinkInfos(block: SqlExpressionBuilder.() -> Op<Boolean
 				context = row.getOrNull(ContentTable.text),
 				sourceUrl = row[SourceTable.url],
 				hostName = row.getOrNull(HostTable.name),
+				hostCore = row[HostTable.core],
 				seenAt = row[SourceTable.seenAt].toInstantUtc(),
 				headline = row.getOrNull(ArticleTable.headline),
 				publishedAt = row.getOrNull(ArticleTable.publishedAt)?.toInstantUtc(),
@@ -114,21 +117,22 @@ internal fun LinkTable.getLinkInfos(block: SqlExpressionBuilder.() -> Op<Boolean
 			)
 		}
 	return linkInfos.map { linkInfo ->
-		val authors = AuthorTable.getAuthors { SourceAuthorTable.sourceId.eq(linkInfo.leadSourceId) }
+		val authors = AuthorTable.getAuthors { SourceAuthorTable.sourceId.eq(linkInfo.sourceId) }
+			.takeIf { it.isNotEmpty() }
 		val snippet = linkInfo.context?.findContainingSentence(linkInfo.urlText)
 		linkInfo.copy(authors = authors, context = snippet)
 	}
 }
 
-internal fun AuthorTable.getAuthors(block: SqlExpressionBuilder.() -> Op<Boolean>): List<String> {
+internal fun AuthorTable.getAuthors(block: SqlExpressionBuilder.() -> Op<Boolean>): List<PageAuthor> {
 	return this.leftJoin(SourceAuthorTable).leftJoin(HostAuthorTable)
 		.select(name, id, SourceAuthorTable.sourceId)
 		.where(block)
-		.mapNotNull { row -> row[name] }
+		.mapNotNull { row -> PageAuthor(name = row[name], url = row.getOrNull(url)) }
 }
 
 fun String.findContainingSentence(substring: String): String? {
-	val sentencePattern = """[^.!?]*[.!?]""".toRegex()
+	val sentencePattern = """[^.!?]*[.!?]["”']?""".toRegex()
 	return sentencePattern.findAll(this)
 		.map { it.value.trim() }
 		.firstOrNull { it.contains(substring, ignoreCase = true) }

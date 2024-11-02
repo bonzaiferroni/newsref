@@ -85,9 +85,9 @@ class SourceService : DbService() {
 			return@dbQuery sourceRow.id.value
 
 		// create author
-		val authorRows = page.authors?.map { byLine ->
-			val author = Author(name = byLine, bylines = setOf(byLine))
-			AuthorRow.find { stringParam(byLine) eq anyFrom(AuthorTable.bylines) }
+		val authorRows = page.authors?.map { pageAuthor ->
+			val author = Author(name = pageAuthor.name, bylines = setOf(pageAuthor.name), url = pageAuthor.url)
+			AuthorRow.find { stringParam(pageAuthor.name) eq anyFrom(AuthorTable.bylines) }
 				.firstOrNull { authorRow -> authorRow.hosts.any { it.id == hostRow.id } }
 				?: AuthorRow.new { fromData(author, hostRow, sourceRow) }
 		}

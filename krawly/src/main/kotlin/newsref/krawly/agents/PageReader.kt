@@ -11,6 +11,7 @@ import newsref.db.models.PageInfo
 import newsref.db.models.PageLink
 import newsref.db.models.WebResult
 import newsref.krawly.models.NewsArticle
+import newsref.model.dto.PageAuthor
 
 class PageReader(
 	private val hostAgent: HostAgent,
@@ -120,7 +121,7 @@ class PageReader(
 		val description = newsArticle?.description ?: doc.readDescription()
 		val publishedAt = newsArticle?.readPublishedAt() ?: doc.readPublishedAt()
 		val modifiedAt = newsArticle?.readModifiedAt() ?: doc.readModifiedAt()
-		val authors = (newsArticle?.readAuthor() ?: doc.readAuthor())?.let { setOf(it) }
+		val authors = newsArticle?.readAuthor() ?: doc.readAuthor()?.let { listOf(PageAuthor(name = it)) }
 		val articleType = typeSets.maxByOrNull { it.value }?.key ?: ArticleType.UNKNOWN
 		val docType = doc.readType()
 		val sourceType = getSourceType(newsArticle, articleType, docType ?: SourceType.UNKNOWN, contentWordCount)

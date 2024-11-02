@@ -28,7 +28,7 @@ class FeedSourceServiceTest : DbTest(true) {
 		val anotherHostRow = HostRow.new { fromData(Host(core = anotherUrl.domain, domains = setOf(anotherUrl.domain))) }
 		val sourceRow = SourceRow.new { fromData(Source(url = originalUrl, seenAt = Clock.System.now()), hostRow) }
 		val anotherSourceRow = SourceRow.new { fromData(Source(url = anotherUrl, seenAt = Clock.System.now()), anotherHostRow) }
-		val authorRow = AuthorRow.new { fromData(Author(name = "Luke", bylines = setOf("Luke")), hostRow, sourceRow) }
+		val authorRow = AuthorRow.new { fromData(Author(name = "Luke", bylines = setOf("Luke"), url = null), hostRow, sourceRow) }
 		flushCache()
 		authorRow.hosts += anotherHostRow
 		authorRow.sources += anotherSourceRow

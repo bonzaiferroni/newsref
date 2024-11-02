@@ -10,7 +10,8 @@ import org.jetbrains.exposed.dao.id.IntIdTable
 import org.jetbrains.exposed.sql.SizedCollection
 
 internal object AuthorTable: IntIdTable("author") {
-    val name = text("name").nullable().index()
+    val name = text("name").index()
+    val url = text("url").nullable()
     val bylines = array<String>("bylines").index()
 }
 
@@ -18,6 +19,7 @@ internal class AuthorRow(id: EntityID<Int>): IntEntity(id) {
     companion object : EntityClass<Int, AuthorRow>(AuthorTable)
 
     var name by AuthorTable.name
+    var url by AuthorTable.url
     var bylines by AuthorTable.bylines
 
     var hosts by HostRow via HostAuthorTable
@@ -39,11 +41,13 @@ internal object SourceAuthorTable : CompositeIdTable("source_author") {
 internal fun AuthorRow.toData() = Author(
     id = this.id.value,
     name = this.name,
+    url = this.url,
     bylines = this.bylines.toSet(),
 )
 
 internal fun AuthorRow.fromData(author: Author, hostRow: HostRow, sourceRow: SourceRow) {
     name = author.name
+    url = author.url
     hosts = SizedCollection(hostRow)
     sources = SizedCollection(sourceRow)
     bylines = author.bylines.toList()
