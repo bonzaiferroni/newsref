@@ -3,8 +3,6 @@ package newsref.web
 import io.kvision.*
 import io.kvision.panel.root
 import io.kvision.routing.Routing
-import io.kvision.theme.Theme
-import io.kvision.theme.ThemeManager
 import newsref.web.core.AppContext
 import newsref.web.core.Pages
 import newsref.web.core.buildPortal
@@ -18,7 +16,6 @@ class WebApp : Application() {
         require("./css/prose.css")
         require("./css/forms.css")
         require("./css/buttons.css")
-        ThemeManager.init(initialTheme = Theme.DARK, remember = false)
     }
 
     override fun start() {
@@ -36,7 +33,6 @@ class WebApp : Application() {
 fun main() {
     startApplication(
         ::WebApp, module.hot,
-        BootstrapModule,
         // BootstrapCssModule,
         CoreModule,
         FontAwesomeModule
