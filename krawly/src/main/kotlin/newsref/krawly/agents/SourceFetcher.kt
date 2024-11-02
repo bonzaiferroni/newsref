@@ -9,10 +9,13 @@ import newsref.krawly.utils.contentToDoc
 import newsref.krawly.utils.isFile
 import newsref.model.core.CheckedUrl
 import newsref.model.core.toCheckedUrl
+import newsref.model.core.toUrl
 import newsref.model.core.toUrlOrNull
 import newsref.model.data.*
 import newsref.model.data.FetchStrategy.BASIC
 import newsref.model.data.FetchStrategy.BROWSER
+import java.net.URLEncoder
+import java.nio.charset.StandardCharsets
 import kotlin.time.Duration.Companion.hours
 import kotlin.time.Duration.Companion.seconds
 
@@ -23,9 +26,6 @@ class SourceFetcher(
 	private val console = globalConsole.getHandle("$spindex SrcFetcher")
 
 	suspend fun fetch(lead: LeadInfo, leadUrl: CheckedUrl, leadHost: Host, pastResults: List<LeadResult>): FetchInfo {
-		if (leadUrl.href == "https://urldefense.com/v3/__https:/www.portman.senate.gov/sites/default/files/2022-03/220305*20-*20Letter*3B*20President*20Biden*20Transfer*20Aircraft*20to*20Ukraine.pdf__;JSUlJSUlJSUl!!PIZeeW5wscynRQ!7ZOqIyIQLhGjkimF9_Bx7oDwkmOC-SmBjXcqELoV8ggPVIfKpcQdMSkZNUmp_N4mhACzxNTh8406raM\$") {
-			console.log("yeehaw!")
-		}
 		if (leadUrl.isFile() || decideSkipFetch(pastResults))
 			return FetchInfo(lead = lead, leadHost = leadHost, pastResults = pastResults, skipFetch = true)
 

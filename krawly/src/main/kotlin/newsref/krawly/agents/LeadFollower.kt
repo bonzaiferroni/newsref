@@ -169,9 +169,9 @@ class LeadFollower(
 						crawl = nexusFinder.findNexuses(crawl)
 
 						// consume source
-						sourceService.consume(crawl)
+						val id = sourceService.consume(crawl)
 						val resultMap = leadMaker.makeLeads(crawl)
-						logFetch(crawl, resultMap)
+						logFetch(crawl, id, resultMap)
 					} catch (e: Exception) {
 						console.logError("Error consuming fetch:\n${fetch.lead.url}\n$e")
 					}
@@ -200,13 +200,12 @@ class LeadFollower(
 
 	private var alternateBg = false
 
-	private fun logFetch(crawl: CrawlInfo, tally: TallyMap<CreateLeadResult>) {
+	private fun logFetch(crawl: CrawlInfo, sourceId: Long, tally: TallyMap<CreateLeadResult>) {
 		val resultMap = crawl.fetch.pastResults.groupingBy { it.result }.eachCount()
 		val lead = crawl.fetch.lead
 		val resultType = crawl.fetchResult
 		val rowWidth = 64
 		val createdLeads = tally.getCount(CreateLeadResult.CREATED)
-		val affirmedLeads = tally.getCount(CreateLeadResult.AFFIRMED)
 		val strategyMsg = crawl.fetch.failedStrategy?.let {
 			"${it.toString().take(2)}~${crawl.fetch.strategy.toString().take(2)}"
 		} ?: crawl.fetch.strategy?.toString() ?: "SKIP"
@@ -256,18 +255,20 @@ class LeadFollower(
 		val title = page.article.headline
 		console.cell(title, rowWidth, justify = Justify.LEFT)
 			.row(background = background, width = rowWidth)
-
+		console.cell("http://localhost:3000/#/source/$sourceId", justify = Justify.LEFT)
+			.row(background = background, width = rowWidth)
 		val externalLinkCount = page.links.count { it.isExternal }
 		console
 			.cell(page.type.getEmoji())
 			.cell("📰") { page.foundNewsArticle }
 			.cell("🌆") { page.article.imageUrl != null }
-			.cell("📝") { page.article.description != null }
+			.cell("💅") { page.authors != null }
 			.cell("📅") { page.article.publishedAt != null }
 			.cell("🦦") { page.authors != null }
+			.cell("🔗") { page.authors?.firstOrNull()?.url != null }
 			.cell("🍓") { page.isFresh }
 			.cell(page.article.wordCount.toString(), 7, "words")
-			.cell("$createdLeads/$affirmedLeads", 5, "leads")
+			.cell(createdLeads, 2, "leads", highlight = createdLeads > 0)
 			.cell("$externalLinkCount/${page.links.size}", 5, "links")
 			.cell(strategyMsg, 5, justify = Justify.LEFT)
 			.cell(

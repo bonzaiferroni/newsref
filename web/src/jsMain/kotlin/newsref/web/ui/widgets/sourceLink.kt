@@ -4,7 +4,6 @@ import io.kvision.core.Container
 import io.kvision.html.div
 import io.kvision.html.p
 import newsref.model.dto.LinkInfo
-import newsref.web.ui.components.blockquote
 import newsref.web.utils.replaceWithAnchor
 
 fun Container.sourceLink(link: LinkInfo) {

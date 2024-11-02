@@ -35,7 +35,7 @@ class ScoreFinder(
 
 	private suspend fun findScores() {
 		val now = Clock.System.now()
-		val items = scoreService.findNewLinksSince(3.days)
+		val items = scoreService.findNewLinksSince(30.days)
 		val hostTally = mutableMapOf<Long, MutableSet<Int>>()
 		for (item in items) {
 			val set = hostTally.getOrPut(item.sourceId) { mutableSetOf() }

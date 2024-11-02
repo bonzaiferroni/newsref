@@ -3,6 +3,7 @@ package newsref.db.services
 import kotlinx.datetime.UtcOffset
 import kotlinx.datetime.toInstant
 import newsref.db.DbService
+import newsref.db.globalConsole
 import newsref.db.tables.*
 import newsref.db.utils.sameUrl
 import newsref.db.utils.toCheckedFromDb
@@ -11,6 +12,8 @@ import newsref.model.data.LeadJob
 import newsref.model.data.LeadInfo
 import org.jetbrains.exposed.sql.*
 import org.jetbrains.exposed.sql.SqlExpressionBuilder.isNull
+
+private val console = globalConsole.getHandle("LeadService")
 
 class LeadService : DbService() {
 
