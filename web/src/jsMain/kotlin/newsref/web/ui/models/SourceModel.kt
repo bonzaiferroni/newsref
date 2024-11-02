@@ -8,7 +8,7 @@ import newsref.web.io.stores.SourceStore
 
 class SourceModel(
 	val id: Long,
-	val sourceStore: SourceStore = SourceStore(),
+	private val sourceStore: SourceStore = SourceStore(),
 ): StateModel<SourceState>(SourceState()) {
 	private var source by StateDelegate({it.source}) { s, v -> s.copy(source = v) }
 
@@ -21,8 +21,18 @@ class SourceModel(
 	private suspend fun refreshSource() {
 		source = sourceStore.getSource(id)
 	}
+
+	fun toggleMoreInbound() {
+		_state.value = _state.value.copy(showMoreInbound = !state.value.showMoreInbound)
+	}
+
+	fun toggleMoreOutbound() {
+		sv = sv.copy(showMoreOutbound = !sv.showMoreOutbound)
+	}
 }
 
 data class SourceState(
-	val source: SourceInfo? = null
+	val source: SourceInfo? = null,
+	val showMoreInbound: Boolean = false,
+	val showMoreOutbound: Boolean = false,
 )

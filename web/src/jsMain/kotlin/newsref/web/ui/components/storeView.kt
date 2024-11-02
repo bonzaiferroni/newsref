@@ -13,7 +13,11 @@ fun <T> Container.renderStore(flow: StateFlow<T>, block: Container.(T) -> Unit) 
     }
 }
 
-fun <Store, Data> Container.renderStore(flow: StateFlow<Store>, map: (Store) -> Data, block: Container.(Store) -> Unit) {
+fun <Store, Data> Container.renderStore(
+    flow: StateFlow<Store>,
+    map: (Store) -> Data,
+    block: Container.(Store) -> Unit
+) {
     val div = col(className = "w-full")
     var value: Data? = null
     flow.subscribe {
