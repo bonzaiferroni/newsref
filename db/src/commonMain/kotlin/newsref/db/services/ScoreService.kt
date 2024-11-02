@@ -11,6 +11,7 @@ import newsref.db.tables.LinkTable
 import newsref.db.tables.SourceTable
 import newsref.db.utils.createOrUpdate
 import newsref.db.utils.toLocalDateTimeUtc
+import newsref.db.utils.updateFirst
 import newsref.model.data.FeedSource
 import newsref.model.data.Link
 import newsref.model.data.SourceScore
@@ -19,6 +20,8 @@ import org.jetbrains.exposed.sql.*
 import org.jetbrains.exposed.sql.SqlExpressionBuilder.eq
 import kotlin.time.Duration
 import kotlin.time.Duration.Companion.hours
+
+private val console = globalConsole.getHandle("ScoreService")
 
 class ScoreService : DbService() {
 	suspend fun findNewLinksSince(duration: Duration) = dbQuery {
@@ -62,19 +65,23 @@ class ScoreService : DbService() {
 			SourceScoreRow.new { fromData(linkScore, sourceRow) }
 		}
 
-		val size = scores.sortedByDescending { it.score }.take(FEED_COUNT).map { score ->
+		val size = scores.filter {it.score >= MINIMUM_SCORE_RECORD} .map { score ->
 			val sourceInfo = SourceTable.getInfos { SourceTable.id.eq(score.sourceId) }.firstOrNull()
 				?: throw IllegalArgumentException("Source not found: ${score.sourceId}")
-			val feedSource = FeedSource(sourceId = score.sourceId, checkedAt = now, json = sourceInfo)
 			val sourceRow = SourceRow[score.sourceId]
-			FeedSourceRow.createOrUpdate(FeedSourceTable.sourceId eq score.sourceId) {
-				fromData(feedSource, sourceRow)
+			FeedSourceRow.updateFirst(FeedSourceTable.sourceId eq score.sourceId) {
+				this.score = score.score
+				json = sourceInfo
+			} ?: FeedSourceRow.new {
+				source = sourceRow
+				this.score = score.score
+				createdAt = now.toLocalDateTimeUtc()
+				json = sourceInfo
 			}
 		}.size
-		globalConsole.log("FeedSourceService: added $size scores")
+		console.log("FeedSourceService: added $size scores")
 	}
 }
-
 
 internal fun <T : Comparable<T>> ColumnSet.leftJoin(
 	table: IdTable<T>,
@@ -86,4 +93,3 @@ data class LinkItem(val link: Link, val sourceId: Long, val hostId: Int)
 
 val SAME_SCORE_TIME_THRESHOLD = 1.hours
 const val MINIMUM_SCORE_RECORD = 5
-val FEED_COUNT = 50

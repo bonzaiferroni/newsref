@@ -108,26 +108,30 @@ internal fun SourceScoreRow.fromData(score: SourceScore, sourceRow: SourceRow) {
 // feed source
 internal object FeedSourceTable : IntIdTable("feed_source") {
     val sourceId = reference("source_id", SourceTable)
-    val checkedAt = datetime("checked_at")
+    val score = integer("score")
+    val createdAt = datetime("created_at")
     val json = json<SourceInfo>("source", Json.Default)
 }
 
 internal class FeedSourceRow(id: EntityID<Int>) : IntEntity(id) {
     companion object : IntEntityClass<FeedSourceRow>(FeedSourceTable)
     var source by SourceRow referencedOn FeedSourceTable.sourceId
-    var checkedAt by FeedSourceTable.checkedAt
+    var score by FeedSourceTable.score
+    var createdAt by FeedSourceTable.createdAt
     var json by FeedSourceTable.json
 }
 
 internal fun FeedSourceRow.toData() = FeedSource(
     id = this.id.value,
     sourceId = this.source.id.value,
-    checkedAt = this.checkedAt.toInstantUtc(),
+    score = this.score,
+    createdAt = this.createdAt.toInstantUtc(),
     json = this.json,
 )
 
 internal fun FeedSourceRow.fromData(feedSource: FeedSource, sourceRow: SourceRow) {
     source = sourceRow
-    checkedAt = feedSource.checkedAt.toLocalDateTimeUtc()
+    score = feedSource.score
+    createdAt = feedSource.createdAt.toLocalDateTimeUtc()
     json = feedSource.json
 }

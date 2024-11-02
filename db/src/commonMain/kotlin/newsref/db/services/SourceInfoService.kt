@@ -1,5 +1,6 @@
 package newsref.db.services
 
+import kotlinx.datetime.Clock
 import newsref.db.DbService
 import newsref.db.tables.*
 import newsref.db.tables.ArticleTable
@@ -10,20 +11,29 @@ import newsref.db.tables.SourceRow
 import newsref.db.tables.SourceScoreRow
 import newsref.db.tables.SourceScoreTable
 import newsref.db.utils.toInstantUtc
+import newsref.db.utils.toLocalDateTimeUtc
 import newsref.model.dto.LinkInfo
 import newsref.model.dto.PageAuthor
 import newsref.model.dto.ScoreInfo
 import newsref.model.dto.SourceInfo
 import org.jetbrains.exposed.sql.Op
+import org.jetbrains.exposed.sql.SortOrder
 import org.jetbrains.exposed.sql.SqlExpressionBuilder
+import org.jetbrains.exposed.sql.SqlExpressionBuilder.greaterEq
+import kotlin.time.Duration
 
 class SourceInfoService : DbService() {
 	suspend fun getSource(id: Long) = dbQuery {
 		SourceTable.getInfos { SourceTable.id eq id }.firstOrNull()
 	}
 
-	suspend fun getTopSources() = dbQuery {
-		FeedSourceRow.all().map { it.json }
+	suspend fun getTopSources(duration: Duration, limit: Int) = dbQuery {
+		val time = (Clock.System.now() - duration).toLocalDateTimeUtc()
+		FeedSourceTable.select(FeedSourceTable.json)
+			.where {FeedSourceTable.createdAt greaterEq time}
+			.orderBy(FeedSourceTable.score, SortOrder.DESC)
+			.limit(limit)
+			.map { it[FeedSourceTable.json] }
 	}
 }
 

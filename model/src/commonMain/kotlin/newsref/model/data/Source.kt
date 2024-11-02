@@ -25,6 +25,7 @@ data class SourceScore(
 data class FeedSource(
 	val id: Int = 0,
 	val sourceId: Long = 0,
-	val checkedAt: Instant,
+	val score: Int,
+	val createdAt: Instant,
 	val json: SourceInfo,
 )
