@@ -1,28 +1,28 @@
-.text-justify {
+.kv-text-justify {
     text-align: justify !important;
 }
 
-.text-left {
+.kv-text-left {
     text-align: left !important;
 }
 
-.text-start {
+.kv-text-start {
     text-align: left !important;
 }
 
-.text-right {
+.kv-text-right {
     text-align: right !important;
 }
 
-.text-end {
+.kv-text-end {
     text-align: right !important;
 }
 
-.text-center {
+.kv-text-center {
     text-align: center !important;
 }
 
-.text-nowrap {
+.kv-text-nowrap {
     white-space: nowrap !important;
 }
 
