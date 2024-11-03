@@ -37,8 +37,9 @@ fun Container.feedSource(source: SourceInfo) {
         link("", Pages.source.getLinkRoute(source.sourceId), className = "w-full") {
             h3(title)
         }
-        source.thumbnail?.let {
-            image(it, className = "w-16")
+        val image = source.thumbnail ?: source.hostLogo
+        image?.let {
+            image(it, className = "w-16 h-auto")
         }
     }
 }

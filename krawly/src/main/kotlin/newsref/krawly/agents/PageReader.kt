@@ -129,7 +129,7 @@ class PageReader(
 		val sourceType = getSourceType(newsArticle, articleType, docType ?: SourceType.UNKNOWN, contentWordCount)
 		val language = newsArticle?.inLanguage ?: doc.readLanguage()
 		val thumbnail = newsArticle?.thumbnailUrl ?: newsArticle?.image?.takeIf { it.size > 1 }
-			?.filter{ it.width != null }?.minByOrNull { it.width!! }?.url
+			?.firstNotNullOfOrNull{ if (it.width != null && it.width < 640) it else null }?.url
 
 		if (sourceType == SourceType.ARTICLE) articleCount++
 		docCount++
