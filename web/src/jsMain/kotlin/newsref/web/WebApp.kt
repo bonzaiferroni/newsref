@@ -35,6 +35,7 @@ fun main() {
     startApplication(
         ::WebApp, module.hot,
         // CoreModule,
-        FontAwesomeModule
+        FontAwesomeModule,
+        ChartModule,
     )
 }

@@ -57,9 +57,7 @@ class ScoreService : DbService() {
 
 			val lastScore =
 				SourceScoreRow.find { SourceScoreTable.sourceId eq sourceId }.maxByOrNull { SourceScoreTable.id }
-			if (lastScore != null && lastScore.score == score
-				&& lastScore.scoredAt.toInstant(TimeZone.UTC) - now < SAME_SCORE_TIME_THRESHOLD
-			) return@mapNotNull null
+			if (lastScore != null && lastScore.score == score) return@mapNotNull null
 
 			val linkScore = SourceScore(sourceId = sourceId, score = score, scoredAt = now)
 			SourceScoreRow.new { fromData(linkScore, sourceRow) }

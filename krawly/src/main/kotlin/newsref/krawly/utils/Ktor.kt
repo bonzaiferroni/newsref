@@ -2,7 +2,7 @@ package newsref.krawly.utils
 
 import io.ktor.client.*
 import io.ktor.client.call.*
-import io.ktor.client.engine.cio.*
+import io.ktor.client.engine.apache.*
 import io.ktor.client.network.sockets.*
 import io.ktor.client.plugins.*
 import io.ktor.client.plugins.compression.*
@@ -30,8 +30,8 @@ import javax.net.ssl.SSLHandshakeException
 
 private var console = globalConsole.getHandle("ktor")
 
-private val client = HttpClient(CIO) {
-	 defaultRequest {
+private val client = HttpClient(Apache) {
+	defaultRequest {
 		headers {
 			set(HttpHeaders.UserAgent, chromeLinuxAgent)
 			extraHeaders.forEach { (key, value) ->
@@ -47,19 +47,19 @@ private val client = HttpClient(CIO) {
 	install(HttpSend) {
 		maxSendCount = 40
 	}
-//	engine {
-//		followRedirects = true
-//		socketTimeout = 30000
-//		connectTimeout = 30000
-//		connectionRequestTimeout = 30000
-//		customizeClient {
-//			setMaxConnTotal(1000)
-//			setMaxConnPerRoute(100)
-//		}
-//		customizeRequest {
-//			// TODO: request transformations
-//		}
-//	}
+	engine {
+		followRedirects = true
+		socketTimeout = 30000
+		connectTimeout = 30000
+		connectionRequestTimeout = 30000
+		customizeClient {
+			setMaxConnTotal(1000)
+			setMaxConnPerRoute(100)
+		}
+		customizeRequest {
+			// TODO: request transformations
+		}
+	}
 }
 
 suspend fun ktorFetchAsync(url: Url): WebResult = supervisorScope {

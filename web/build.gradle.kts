@@ -40,6 +40,9 @@ kotlin {
         implementation("io.kvision:kvision-rest:$kvisionVersion")
         implementation("io.kvision:kvision-state-flow:$kvisionVersion")
         implementation("io.kvision:kvision-maps:$kvisionVersion")
+        implementation("io.kvision:kvision-chart:$kvisionVersion")
+
+        implementation(libs.kotlinx.datetime)
 
         implementation(project(":model"))
 
