@@ -15,11 +15,13 @@ module.exports = {
                 info: { DEFAULT: '#1ba2f6'},
                 warning: { DEFAULT: '#d19e09'},
                 danger: { DEFAULT: '#e44c55'},
-                content: { DEFAULT: '#202430'},
+                paper: { DEFAULT: '#202430'},
                 body: { DEFAULT: '#0f1217'},
                 navbar: { DEFAULT: '#1b212d'},
                 input: { DEFAULT: '#1c212c'},
                 border: { DEFAULT: '#2a3140'},
+                'ink-light': { DEFAULT: '#e6fffb'},
+                dim: { DEFAULT: '#99afa6'}
                 // You can add other color categories as needed
             },
             fontFamily: {lato: ['Lato', 'Helvetica Neue', 'Arial', 'sans-serif']},

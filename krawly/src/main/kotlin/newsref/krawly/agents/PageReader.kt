@@ -114,7 +114,9 @@ class PageReader(
 			}
 		}
 
-		val imageUrlString = newsArticle?.image?.firstOrNull()?.url ?: doc.readImageUrl()
+		val imageUrlString = newsArticle?.image?.firstNotNullOfOrNull {
+			if (it.width != null && it.width >= 640 && it.width <= 1280) it else null
+		}?.url ?: newsArticle?.image?.firstOrNull()?.url ?: doc.readImageUrl()
 		val imageUrl = imageUrlString?.toUrlWithContextOrNull(pageUrl)
 		val hostName = newsArticle?.publisher?.name ?: doc.readHostName()
 		val headline = doc.readHeadline() ?: newsArticle?.headline ?: h1Title ?: doc.titleText
@@ -126,6 +128,8 @@ class PageReader(
 		val docType = doc.readType()
 		val sourceType = getSourceType(newsArticle, articleType, docType ?: SourceType.UNKNOWN, contentWordCount)
 		val language = newsArticle?.inLanguage ?: doc.readLanguage()
+		val thumbnail = newsArticle?.thumbnailUrl ?: newsArticle?.image?.takeIf { it.size > 1 }
+			?.filter{ it.width != null }?.minByOrNull { it.width!! }?.url
 
 		if (sourceType == SourceType.ARTICLE) articleCount++
 		docCount++
@@ -150,7 +154,7 @@ class PageReader(
 				keywords = newsArticle?.keywords,
 				wordCount = newsArticle?.wordCount ?: contentWordCount,
 				isFree = newsArticle?.isAccessibleForFree,
-				thumbnail = newsArticle?.thumbnailUrl,
+				thumbnail = thumbnail,
 				language = newsArticle?.inLanguage,
 				commentCount = newsArticle?.commentCount,
 				accessedAt = Clock.System.now(),

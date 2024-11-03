@@ -14,6 +14,7 @@ data class SourceInfo(
 	val hostLogo: String?,
 	val wordCount: Int?,
 	val section: String?,
+	val image: String?,
 	val thumbnail: String?,
 	val seenAt: Instant,
 	val score: Int,

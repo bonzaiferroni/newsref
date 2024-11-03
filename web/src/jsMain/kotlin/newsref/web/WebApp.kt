@@ -11,11 +11,12 @@ import newsref.web.io.stores.AppModel
 class WebApp : Application() {
 
     init {
-        require("./css/kvapp.css")
         require("./css/tw.css")
         require("./css/prose.css")
         require("./css/forms.css")
         require("./css/buttons.css")
+        require("./css/kvapp.css")
+        require("./css/kvapp-override.css")
     }
 
     override fun start() {
@@ -33,8 +34,7 @@ class WebApp : Application() {
 fun main() {
     startApplication(
         ::WebApp, module.hot,
-        // BootstrapCssModule,
-        CoreModule,
+        // CoreModule,
         FontAwesomeModule
     )
 }

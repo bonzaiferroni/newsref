@@ -51,6 +51,7 @@ internal fun SourceTable.getInfos(block: SqlExpressionBuilder.() -> Op<Boolean>)
 			ArticleTable.description,
 			ArticleTable.wordCount,
 			ArticleTable.section,
+			ArticleTable.imageUrl,
 			ArticleTable.thumbnail,
 			ArticleTable.publishedAt,
 		)
@@ -68,6 +69,7 @@ internal fun SourceTable.getInfos(block: SqlExpressionBuilder.() -> Op<Boolean>)
 				description = row.getOrNull(ArticleTable.description),
 				wordCount = row.getOrNull(ArticleTable.wordCount),
 				section = row.getOrNull(ArticleTable.section),
+				image = row.getOrNull(ArticleTable.imageUrl),
 				thumbnail = row.getOrNull(ArticleTable.thumbnail),
 				publishedAt = row.getOrNull(ArticleTable.publishedAt)?.toInstantUtc(),
 				inLinks = emptyList(),
@@ -80,7 +82,7 @@ internal fun SourceTable.getInfos(block: SqlExpressionBuilder.() -> Op<Boolean>)
 		val scoreRows = SourceScoreRow.find { SourceScoreTable.sourceId.eq(sourceInfo.sourceId) }
 		val inLinks = LinkTable.getLinkInfos { LeadTable.sourceId.eq(sourceInfo.sourceId) }
 		val outLinks = LinkTable.getLinkInfos { LinkTable.sourceId.eq(sourceInfo.sourceId) }
-		val authors = SourceRow.findById(sourceInfo.sourceId)?.authors?.mapNotNull { it.name }
+		val authors = SourceRow.findById(sourceInfo.sourceId)?.authors?.map { it.name }
 		sourceInfo.copy(
 			inLinks = inLinks,
 			outLinks = outLinks,

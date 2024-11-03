@@ -7,7 +7,7 @@ import newsref.model.dto.LinkInfo
 import newsref.web.utils.replaceWithAnchor
 
 fun Container.sourceLink(link: LinkInfo) {
-	div {
+	div(className = "pb-4") {
 		quote(link.context.replaceWithAnchor(link.urlText, link.url), rich = true)
 		val authors = link.authors?.map{
 			if (it.url != null) it.name.replaceWithAnchor(it.name, it.url!!) else it.name

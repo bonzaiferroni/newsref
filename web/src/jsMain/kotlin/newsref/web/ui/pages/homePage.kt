@@ -3,10 +3,7 @@ package newsref.web.ui.pages
 import io.kvision.core.Container
 import io.kvision.core.Transition
 import io.kvision.form.text.text
-import io.kvision.html.button
-import io.kvision.html.div
-import io.kvision.html.link
-import io.kvision.html.p
+import io.kvision.html.*
 import io.kvision.state.ObservableValue
 import io.kvision.state.bind
 import io.kvision.state.bindTo
@@ -22,23 +19,26 @@ import newsref.web.ui.models.HomeModel
 
 fun Container.homePage(context: AppContext): PortalEvents? {
     val model = HomeModel()
-    col(className = "prose prose-invert") {
-        p("Hello World!")
+    div(className = "flex flex-col w-full") {
         renderStore(model.state, {it.sources}) { state ->
             for (source in state.sources) {
-                val title = source.headline ?: source.url
-                row {
-                    div(source.score.toString())
-                    link(title, Pages.source.getLinkRoute(source.sourceId))
-//                    button("") {
-//                        link(title)
-//                    }.onClick {
-//                        context.navigate(Pages.source, source.sourceId)
-//                    }
-                }
+                feedSource(source)
             }
         }
     }
 
     return null
+}
+
+fun Container.feedSource(source: SourceInfo) {
+    val title = source.headline ?: source.url
+    div(className = "flex flex-row gap-4 w-full") {
+        h3(source.score.toString(), className = "text-dim")
+        link("", Pages.source.getLinkRoute(source.sourceId), className = "w-full") {
+            h3(title)
+        }
+        source.thumbnail?.let {
+            image(it, className = "w-16")
+        }
+    }
 }

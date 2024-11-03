@@ -10,10 +10,8 @@ h2 { @apply text-2xl font-bold; }
 h3 { @apply text-xl font-bold; }
 
 body {
-    @apply bg-body text-white font-lato;
+    @apply bg-body text-ink-light font-lato;
 }
-
-p { @apply text-gray-100; }
 
 /*portal*/
 ._content {
