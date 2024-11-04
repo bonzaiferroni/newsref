@@ -55,9 +55,14 @@ class ScoreService : DbService() {
 
 			if (score < MINIMUM_SCORE_RECORD) return@mapNotNull null
 
-			val lastScore =
-				SourceScoreRow.find { SourceScoreTable.sourceId eq sourceId }.maxByOrNull { SourceScoreTable.id }
-			if (lastScore != null && lastScore.score == score) return@mapNotNull null
+			val lastScore = SourceScoreTable.select(SourceScoreTable.score)
+				.where{SourceScoreTable.sourceId eq sourceId}
+				.orderBy(SourceScoreTable.id, SortOrder.DESC)
+				.limit(1)
+				.map { it[SourceScoreTable.score] }
+				.firstOrNull()
+
+			if (lastScore != null && lastScore == score) return@mapNotNull null
 
 			val linkScore = SourceScore(sourceId = sourceId, score = score, scoredAt = now)
 			SourceScoreRow.new { fromData(linkScore, sourceRow) }
@@ -89,5 +94,4 @@ internal fun <T : Comparable<T>> ColumnSet.leftJoin(
 
 data class LinkItem(val link: Link, val sourceId: Long, val hostId: Int)
 
-val SAME_SCORE_TIME_THRESHOLD = 1.hours
 const val MINIMUM_SCORE_RECORD = 5

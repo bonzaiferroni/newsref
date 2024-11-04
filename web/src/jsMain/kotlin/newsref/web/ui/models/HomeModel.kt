@@ -5,6 +5,8 @@ import kotlinx.coroutines.launch
 import newsref.model.dto.SourceInfo
 import newsref.web.core.StateModel
 import newsref.web.io.stores.SourceStore
+import kotlin.time.Duration
+import kotlin.time.Duration.Companion.days
 import kotlin.time.Duration.Companion.minutes
 
 class HomeModel(
@@ -28,5 +30,6 @@ class HomeModel(
 }
 
 data class HomeState(
-	val sources: List<SourceInfo> = emptyList()
+	val timeSpan: Duration = 7.days,
+	val sources: List<SourceInfo> = emptyList(),
 )

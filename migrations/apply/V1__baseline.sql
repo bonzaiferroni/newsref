@@ -28,7 +28,7 @@ CREATE INDEX lead_job_lead_id ON lead_job (lead_id);
 CREATE INDEX lead_job_fresh_at ON lead_job (fresh_at);
 CREATE TABLE IF NOT EXISTS lead_result (id BIGSERIAL PRIMARY KEY, lead_id BIGINT NOT NULL, "result" INT NOT NULL, attempted_at TIMESTAMP NOT NULL, strategy INT NULL, CONSTRAINT fk_lead_result_lead_id__id FOREIGN KEY (lead_id) REFERENCES lead(id) ON DELETE RESTRICT ON UPDATE RESTRICT);
 CREATE TABLE IF NOT EXISTS source_content (source_id BIGINT, content_id BIGINT, CONSTRAINT pk_source_content PRIMARY KEY (source_id, content_id), CONSTRAINT fk_source_content_source_id__id FOREIGN KEY (source_id) REFERENCES "source"(id) ON DELETE RESTRICT ON UPDATE RESTRICT, CONSTRAINT fk_source_content_content_id__id FOREIGN KEY (content_id) REFERENCES "content"(id) ON DELETE RESTRICT ON UPDATE RESTRICT);
-CREATE TABLE IF NOT EXISTS author (id SERIAL PRIMARY KEY, "name" TEXT NULL, bylines TEXT[] NOT NULL);
+CREATE TABLE IF NOT EXISTS author (id SERIAL PRIMARY KEY, "name" TEXT NOT NULL, url TEXT NULL, bylines TEXT[] NOT NULL);
 CREATE INDEX author_name ON author ("name");
 CREATE INDEX author_bylines ON author (bylines);
 CREATE TABLE IF NOT EXISTS host_author (host_id INT, author_id INT, CONSTRAINT pk_host_author PRIMARY KEY (host_id, author_id), CONSTRAINT fk_host_author_host_id__id FOREIGN KEY (host_id) REFERENCES host(id) ON DELETE RESTRICT ON UPDATE RESTRICT, CONSTRAINT fk_host_author_author_id__id FOREIGN KEY (author_id) REFERENCES author(id) ON DELETE RESTRICT ON UPDATE RESTRICT);
@@ -38,7 +38,7 @@ CREATE TABLE IF NOT EXISTS source_author (source_id BIGINT, author_id INT, CONST
 CREATE INDEX source_author_source_id ON source_author (source_id);
 CREATE INDEX source_author_author_id ON source_author (author_id);
 CREATE TABLE IF NOT EXISTS scoop (id BIGSERIAL PRIMARY KEY, uri TEXT NOT NULL, html TEXT NOT NULL);
-CREATE TABLE IF NOT EXISTS feed_source (id SERIAL PRIMARY KEY, "source" JSON NOT NULL);
+CREATE TABLE IF NOT EXISTS feed_source (id SERIAL PRIMARY KEY, source_id BIGINT NOT NULL, score INT NOT NULL, created_at TIMESTAMP NOT NULL, "source" JSON NOT NULL, CONSTRAINT fk_feed_source_source_id__id FOREIGN KEY (source_id) REFERENCES "source"(id) ON DELETE RESTRICT ON UPDATE RESTRICT);
 CREATE SEQUENCE IF NOT EXISTS SessionToken_id_seq START WITH 1 MINVALUE 1 MAXVALUE 9223372036854775807;
 CREATE SEQUENCE IF NOT EXISTS source_id_seq START WITH 1 MINVALUE 1 MAXVALUE 9223372036854775807;
 CREATE SEQUENCE IF NOT EXISTS source_score_id_seq START WITH 1 MINVALUE 1 MAXVALUE 9223372036854775807;
