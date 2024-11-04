@@ -17,6 +17,10 @@ body {
     0 0 2rem rgba(50, 251, 226, 0.2);
 }
 
+a {
+    @apply hover:text-primary transition-colors duration-300
+}
+
 p { @apply text-gray-100; }
 
 /*portal*/
