@@ -35,36 +35,3 @@ class TweetFetcher(
 		)
 	}
 }
-
-fun String.encodeForUrl(): String {
-	return URLEncoder.encode(this, StandardCharsets.UTF_8.toString())
-}
-
-@Serializable
-data class TweetEmbed(
-	val url: String,
-	val author_name: String,
-	val author_url: String,
-	val html: String,
-	val width: Int,
-	val height: Int?,
-	val type: String,
-	val cache_age: String,
-	val provider_name: String,
-	val provider_url: String,
-	val version: String
-)
-
-// {
-//  "url": "https:\\/\\/twitter.com\\/Liz_Cheney\\/status\\/1852292100844621974",
-//  "author_name": "Liz Cheney",
-//  "author_url": "https:\\/\\/twitter.com\\/Liz_Cheney",
-//  "html": "\\u003Cblockquote class=\"twitter-tweet\"\\u003E\\u003Cp lang=\"en\" dir=\"ltr\"\\u003EThis is how dictators destroy free nations. They threaten those who speak against them with death. We cannot entrust our country and our freedom to a petty, vindictive, cruel, unstable man who wants to be a tyrant. \\u003Ca href=\"https:\\/\\/twitter.com\\/hashtag\\/Womenwillnotbesilenced?src=hash&amp;ref_src=twsrc%5Etfw\"\\u003E#Womenwillnotbesilenced\\u003C\\/a\\u003E \\u003Ca href=\"https:\\/\\/twitter.com\\/hashtag\\/VoteKamala?src=hash&amp;ref_src=twsrc%5Etfw\"\\u003E#VoteKamala\\u003C\\/a\\u003E \\u003Ca href=\"https:\\/\\/t.co\\/URH5s929Sa\"\\u003Ehttps:\\/\\/t.co\\/URH5s929Sa\\u003C\\/a\\u003E\\u003C\\/p\\u003E&mdash; Liz Cheney (@Liz_Cheney) \\u003Ca href=\"https:\\/\\/twitter.com\\/Liz_Cheney\\/status\\/1852292100844621974?ref_src=twsrc%5Etfw\"\\u003ENovember 1, 2024\\u003C\\/a\\u003E\\u003C\\/blockquote\\u003E\n\\u003Cscript async src=\"https:\\/\\/platform.twitter.com\\/widgets.js\" charset=\"utf-8\"\\u003E\\u003C\\/script\\u003E\n\n",
-//  "width": 550,
-//  "height": null,
-//  "type": "rich",
-//  "cache_age": "3153600000",
-//  "provider_name": "Twitter",
-//  "provider_url": "https:\\/\\/twitter.com",
-//  "version": "1.0"
-//}

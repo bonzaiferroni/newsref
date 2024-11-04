@@ -32,7 +32,7 @@ class LeadFollower(
 	private val web: SpiderWeb,
 	private val hostAgent: HostAgent,
 	private val leadMaker: LeadMaker = LeadMaker(),
-	private val sourceReader: SourceReader = SourceReader(hostAgent),
+	private val sourceReader: SourceReader = SourceReader(web, hostAgent),
 	private val nexusFinder: NexusFinder = NexusFinder(),
 	private val leadService: LeadService = LeadService(),
 	private val sourceService: SourceService = SourceService(),
