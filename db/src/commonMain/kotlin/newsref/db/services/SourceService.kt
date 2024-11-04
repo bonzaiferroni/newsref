@@ -117,6 +117,8 @@ class SourceService : DbService() {
 			linkRow // return@map
 		}
 
+		sourceRow.addContents(contentRows)
+
 		sourceRow.id.value // return
 	}
 }

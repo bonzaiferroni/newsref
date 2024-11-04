@@ -19,10 +19,9 @@ internal class ContentRow(id: EntityID<Long>) : LongEntity(id) {
     val sources by SourceRow via SourceContentTable
 }
 
-internal object SourceContentTable : CompositeIdTable("source_content") {
+internal object SourceContentTable : LongIdTable("source_content") {
     val sourceId = reference("source_id", SourceTable)
     val contentId = reference("content_id", ContentTable)
-    override val primaryKey = PrimaryKey(sourceId, contentId)
 }
 
 internal fun ContentRow.toData() = Content(
