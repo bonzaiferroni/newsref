@@ -2,9 +2,8 @@ package newsref.db.tables
 
 import kotlinx.datetime.*
 import newsref.db.globalConsole
-import newsref.db.tables.LinkTable.index
 import newsref.db.utils.*
-import newsref.db.utils.toCheckedFromDb
+import newsref.db.utils.toCheckedFromTrusted
 import newsref.model.core.CheckedUrl
 import newsref.model.data.*
 import newsref.model.data.Lead
@@ -38,7 +37,7 @@ internal fun LeadRow.toData() = Lead(
 	id = this.id.value,
 	hostId = this.host.id.value,
 	sourceId = this.source?.id?.value,
-	url = this.url.toCheckedFromDb(),
+	url = this.url.toCheckedFromTrusted(),
 )
 
 internal fun LeadRow.fromData(lead: Lead, hostRow: HostRow, sourceRow: SourceRow? = null) {

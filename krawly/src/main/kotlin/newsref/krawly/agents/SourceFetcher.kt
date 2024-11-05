@@ -7,10 +7,7 @@ import newsref.db.models.FetchInfo
 import newsref.krawly.SpiderWeb
 import newsref.krawly.utils.contentToDoc
 import newsref.krawly.utils.isFile
-import newsref.model.core.CheckedUrl
-import newsref.model.core.toCheckedUrl
-import newsref.model.core.toUrl
-import newsref.model.core.toUrlOrNull
+import newsref.model.core.*
 import newsref.model.data.*
 import newsref.model.data.FetchStrategy.BASIC
 import newsref.model.data.FetchStrategy.BROWSER
@@ -22,11 +19,21 @@ import kotlin.time.Duration.Companion.seconds
 class SourceFetcher(
 	spindex: Int,
 	private val web: SpiderWeb,
+	private val tweetFetcher: TweetFetcher = TweetFetcher(spindex, web)
 ) {
 	private val console = globalConsole.getHandle("$spindex SrcFetcher")
 
+	private val specialFetchers = mapOf(
+		"x.com" to tweetFetcher,
+		"twitter.com" to tweetFetcher
+	)
+
 	suspend fun fetch(lead: LeadInfo, leadUrl: CheckedUrl, leadHost: Host, pastResults: List<LeadResult>): FetchInfo {
-		if (leadUrl.isFile() || decideSkipFetch(pastResults))
+		val fetcher = specialFetchers[lead.url.core]
+		if (fetcher != null)
+			return fetcher.fetch(lead, leadUrl, leadHost, pastResults)
+
+		if (decideSkipFetch(lead, pastResults))
 			return FetchInfo(lead = lead, leadHost = leadHost, pastResults = pastResults, skipFetch = true)
 
 		val newParams = leadUrl.params.map { it.key }.toSet() - leadHost.navParams
@@ -99,7 +106,9 @@ class SourceFetcher(
 		}
 	}
 
-	private fun decideSkipFetch(pastResults: List<LeadResult>): Boolean {
+	private fun decideSkipFetch(lead: LeadInfo, pastResults: List<LeadResult>): Boolean {
+		if (lead.url.isFile()) return true
+		if (skipHosts.contains(lead.url.core)) return true
 		val now = Clock.System.now()
 		val resultMap = pastResults.filter { it.attemptedAt > now - 1.hours }.groupBy { it.result }
 		if (resultMap.getTally(FetchResult.CAPTCHA) > 0) return true
@@ -124,3 +133,4 @@ class SourceFetcher(
 }
 
 val safeParams = setOf("v", "id", "index", "releaseid")
+val skipHosts = setOf("facebook.com")

@@ -23,6 +23,7 @@ fun Doc.readMetaContent(vararg propertyValues: String) = propertyValues.firstNot
 
 fun Doc.readCannonHref() = this.readMetaContent("url", "og:url", "twitter:url")
 fun Doc.readHeadline() = this.readMetaContent("title", "og:title", "twitter:title")
+    ?.replace("\n", " ")?.take(100)
 fun Doc.readDescription() = this.readMetaContent("description", "og:description", "twitter:description")
 fun Doc.readImageUrl() = this.readMetaContent("image", "og:image", "twitter:image")
 fun Doc.readHostName() = this.readMetaContent("site", "og:site_name", "twitter:site")

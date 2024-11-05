@@ -42,8 +42,12 @@ internal fun SourceTable.getInfos(block: SqlExpressionBuilder.() -> Op<Boolean>)
 		.select(
 			SourceTable.id,
 			this.url,
+			this.title,
 			this.score,
+			this.imageUrl,
+			this.thumbnail,
 			this.seenAt,
+			this.publishedAt,
 			HostTable.core,
 			HostTable.name,
 			HostTable.logo,
@@ -51,17 +55,18 @@ internal fun SourceTable.getInfos(block: SqlExpressionBuilder.() -> Op<Boolean>)
 			ArticleTable.description,
 			ArticleTable.wordCount,
 			ArticleTable.section,
-			ArticleTable.imageUrl,
-			ArticleTable.thumbnail,
-			ArticleTable.publishedAt,
 		)
 		.where(block)
 		.map { row ->
 			SourceInfo(
 				sourceId = row[SourceTable.id].value,
 				url = row[this.url],
+				pageTitle = row[this.title],
 				score = row[this.score] ?: 0,
+				image = row.getOrNull(this.imageUrl),
+				thumbnail = row.getOrNull(this.thumbnail),
 				seenAt = row[this.seenAt].toInstantUtc(),
+				publishedAt = row.getOrNull(this.publishedAt)?.toInstantUtc(),
 				hostCore = row[HostTable.core],
 				hostName = row.getOrNull(HostTable.name),
 				hostLogo = row.getOrNull(HostTable.logo),
@@ -69,9 +74,6 @@ internal fun SourceTable.getInfos(block: SqlExpressionBuilder.() -> Op<Boolean>)
 				description = row.getOrNull(ArticleTable.description),
 				wordCount = row.getOrNull(ArticleTable.wordCount),
 				section = row.getOrNull(ArticleTable.section),
-				image = row.getOrNull(ArticleTable.imageUrl),
-				thumbnail = row.getOrNull(ArticleTable.thumbnail),
-				publishedAt = row.getOrNull(ArticleTable.publishedAt)?.toInstantUtc(),
 				inLinks = emptyList(),
 				outLinks = emptyList(),
 				scores = emptyList(),
@@ -105,8 +107,8 @@ internal fun LinkTable.getLinkInfos(block: SqlExpressionBuilder.() -> Op<Boolean
 			ContentTable.text,
 			SourceTable.url,
 			SourceTable.seenAt,
+			SourceTable.publishedAt,
 			ArticleTable.headline,
-			ArticleTable.publishedAt,
 			HostTable.name,
 			HostTable.core,
 		)
@@ -123,8 +125,8 @@ internal fun LinkTable.getLinkInfos(block: SqlExpressionBuilder.() -> Op<Boolean
 				hostName = row.getOrNull(HostTable.name),
 				hostCore = row[HostTable.core],
 				seenAt = row[SourceTable.seenAt].toInstantUtc(),
+				publishedAt = row.getOrNull(SourceTable.publishedAt)?.toInstantUtc(),
 				headline = row.getOrNull(ArticleTable.headline),
-				publishedAt = row.getOrNull(ArticleTable.publishedAt)?.toInstantUtc(),
 				authors = null
 			)
 		}

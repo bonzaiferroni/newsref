@@ -19,13 +19,13 @@ private val console = globalConsole.getHandle("SourceService")
 class SourceService : DbService() {
 
 	suspend fun consume(crawl: CrawlInfo): Long = dbQuery {
+		val now = Clock.System.now()
 		val lead = crawl.fetch.lead
 		val fetch = crawl.fetch
 
-		val source = Source(
-			url = crawl.page?.pageUrl ?: lead.url,
-			seenAt = Clock.System.now(),
-			type = crawl.page?.type ?: SourceType.UNKNOWN
+		val source = crawl.page?.source ?: Source(
+			url = lead.url,
+			seenAt = now
 		)
 
 		// find and update host
@@ -33,8 +33,8 @@ class SourceService : DbService() {
 			?: throw MissingResourceException("Missing Host", "SourceService", source.url.core)
 
 		// update or create source
-		val sourceRow = SourceRow.createOrUpdate(SourceTable.url.sameUrl(source.url)) {
-			fromData(source, hostRow)
+		val sourceRow = SourceRow.createOrUpdate(SourceTable.url.sameUrl(source.url)) { isModify ->
+			fromData(source, hostRow, isModify)
 		}
 
 		// update lead
@@ -71,13 +71,13 @@ class SourceService : DbService() {
 		}
 
 		// create or update lead for page url
-		if (page.pageUrl != lead.url) {
-			LeadRow.createOrUpdateAndLink(page.pageUrl, sourceRow)
+		if (page.source.url != lead.url) {
+			LeadRow.createOrUpdateAndLink(page.source.url, sourceRow)
 		}
 
 		// create or update document
-		val articleRow = ArticleRow.createOrUpdate(ArticleTable.sourceId eq sourceRow.id) {
-			fromData(page.article, sourceRow)
+		val articleRow = page.article?.let { article ->
+			ArticleRow.createOrUpdate(ArticleTable.sourceId eq sourceRow.id) { fromData(article, sourceRow) }
 		}
 
 		// exit here if not news article

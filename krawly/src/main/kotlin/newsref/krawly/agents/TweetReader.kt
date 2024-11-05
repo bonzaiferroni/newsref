@@ -4,8 +4,10 @@ import kotlinx.datetime.Clock
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 import newsref.db.models.PageInfo
+import newsref.db.models.WebResult
 import newsref.db.utils.jsonDecoder
 import newsref.db.utils.stripParams
+import newsref.db.utils.toNewDomain
 import newsref.krawly.SpiderWeb
 import newsref.krawly.utils.contentToDoc
 import newsref.krawly.utils.findFirstOrNull
@@ -16,6 +18,7 @@ import newsref.model.core.toUrl
 import newsref.model.data.Article
 import newsref.model.data.FetchStrategy
 import newsref.model.data.Host
+import newsref.model.data.Source
 import newsref.model.dto.PageAuthor
 import java.net.URLDecoder
 import java.net.URLEncoder
@@ -24,29 +27,44 @@ import java.nio.charset.StandardCharsets
 class TweetReader(
 	private val web: SpiderWeb,
 ) {
-	suspend fun read(url: Url, host: Host): PageInfo? {
+	fun read(url: Url, host: Host, result: WebResult?): PageInfo? {
 		val now = Clock.System.now()
-		val tweetUrl = url.stripParams()
-		val result = web.fetch(tweetUrl.toTweetEmbedUrl(), FetchStrategy.BASIC)
-		if (!result.isOk || result.content == null) return null
+		if (result == null || !result.isOk || result.content == null) return null
+		val tweetUrl = url.stripParams().toNewDomain("x.com")
 		val embedInfo = jsonDecoder.decodeFromString<TweetEmbedInfo>(result.content!!)
-		val doc = embedInfo.html.decodeHtmlFromJson().contentToDoc()
+		val html = embedInfo.html.decodeHtmlFromJson()
+		val doc = html.contentToDoc()
 		val content = doc.findFirstOrNull("blockquote>p")?.text
 		val wordCount = content?.split(' ')?.size ?: 0
 		val author = PageAuthor(name = embedInfo.authorName, url = embedInfo.authorUrl.decodeHtmlFromJson())
+		val title = "${author.name} on twitter".let {
+			if (content == null) return@let it
+			val snippet = StringBuilder()
+			val words = content.split(' ')
+			for (word in words) {
+				if (snippet.length + word.length > 50) {
+					snippet.append("...")
+					break
+				}
+				if (snippet.isEmpty())
+					snippet.append(": “")
+				else
+					snippet.append(' ')
+				snippet.append(word)
+			}
+			"$it$snippet”"
+		}
+
 		return PageInfo(
-			article = Article(
-				cannonUrl = embedInfo.url.decodeHtmlFromJson(),
-				wordCount = wordCount,
-				// todo: handle non-english tweets
-				language = "en",
+			source = Source(
+				url = tweetUrl,
+				title = title,
+				type = SourceType.SOCIAL_POST,
+				embed = html,
 				accessedAt = now,
+				seenAt = now,
 			),
-			articleType = ArticleType.UNKNOWN,
-			pageUrl = tweetUrl,
 			pageHost = host,
-			pageTitle = "Tweet by ${author.name}",
-			type = SourceType.SOCIAL_POST,
 			language = "en",
 			contentWordCount = wordCount,
 			foundNewsArticle = false,
@@ -71,7 +89,10 @@ fun String.encodeForUrl(): String {
 }
 
 fun String.decodeHtmlFromJson(): String {
-	return URLDecoder.decode(this, StandardCharsets.UTF_8.toString())
+	return this.replace(Regex("\\\\u([0-9A-Fa-f]{4})")) {
+		val charCode = it.groupValues[1].toInt(16)
+		charCode.toChar().toString()
+	}
 }
 
 @Serializable

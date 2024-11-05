@@ -1,9 +1,6 @@
 package newsref.db.tables
 
 import kotlinx.datetime.*
-import newsref.db.tables.LinkTable.index
-import newsref.db.utils.toCheckedFromDb
-import newsref.model.core.toUrlOrNull
 import newsref.model.data.Article
 import org.jetbrains.exposed.dao.EntityClass
 import org.jetbrains.exposed.dao.LongEntity
@@ -19,16 +16,12 @@ internal object ArticleTable: LongIdTable("article") {
     val alternativeHeadline = text("alternative_headline").nullable()
     val description = text("description").nullable()
     val cannonUrl = text("cannon_url").nullable()
-    val imageUrl = text("image_url").nullable()
     val section = text("section").nullable()
     val keywords = array<String>("keywords").nullable()
     val wordCount = integer("word_count").nullable()
     val isFree = bool("is_free").nullable()
-    val thumbnail = text("thumbnail").nullable()
     val language = text("language").nullable()
     val commentCount = integer("comment_count").nullable()
-    val accessedAt = datetime("accessed_at")
-    val publishedAt = datetime("published_at").nullable().index()
     val modifiedAt = datetime("modified_at").nullable()
 }
 
@@ -41,16 +34,12 @@ internal class ArticleRow(id: EntityID<Long>) : LongEntity(id) {
     var alternativeHeadline by ArticleTable.alternativeHeadline
     var description by ArticleTable.description
     var cannonUrl by ArticleTable.cannonUrl
-    var imageUrl by ArticleTable.imageUrl
     var section by ArticleTable.section
     var keywords by ArticleTable.keywords
     var wordCount by ArticleTable.wordCount
     var isFree by ArticleTable.isFree
-    var thumbnail by ArticleTable.thumbnail
     var language by ArticleTable.language
     var commentCount by ArticleTable.commentCount
-    var accessedAt by ArticleTable.accessedAt
-    var publishedAt by ArticleTable.publishedAt
     var modifiedAt by ArticleTable.modifiedAt
 }
 
@@ -61,16 +50,12 @@ internal fun ArticleRow.toData() = Article(
     alternativeHeadline = this.alternativeHeadline,
     description = this.description,
     cannonUrl = this.cannonUrl,
-    imageUrl = this.imageUrl,
     section = this.section,
     keywords = this.keywords,
     wordCount = this.wordCount,
     isFree = this.isFree,
-    thumbnail = this.thumbnail,
     language = this.language,
     commentCount = this.commentCount,
-    accessedAt = this.accessedAt.toInstant(UtcOffset.ZERO),
-    publishedAt = this.publishedAt?.toInstant(UtcOffset.ZERO),
     modifiedAt = this.modifiedAt?.toInstant(UtcOffset.ZERO)
 )
 
@@ -80,15 +65,11 @@ internal fun ArticleRow.fromData(article: Article, sourceRow: SourceRow) {
     alternativeHeadline = article.alternativeHeadline
     description = article.description
     cannonUrl = article.cannonUrl
-    imageUrl = article.imageUrl
     section = article.section
     keywords = article.keywords
     wordCount = article.wordCount
     isFree = article.isFree
-    thumbnail = article.thumbnail
     language = article.language
     commentCount = article.commentCount
-    accessedAt = article.accessedAt.toLocalDateTime(TimeZone.UTC)
-    publishedAt = article.publishedAt?.toLocalDateTime(TimeZone.UTC)
     modifiedAt = article.modifiedAt?.toLocalDateTime(TimeZone.UTC)
 }

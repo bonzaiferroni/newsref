@@ -25,7 +25,7 @@ class SourceReader(
 			?.let { hostAgent.getHost(it) } ?: Pair(null, null)
 		val page = fetch.lead.url.takeIf { it.isTweet }?.let {
 			val (twitterHost, _) = hostAgent.getHost("https://x.com/".toUrl())
-			tweetReader.read(it, twitterHost)
+			tweetReader.read(it, twitterHost, fetch.result)
 		} ?: fetch.result?.takeIf { it.isOk && it.pageHref != null }?.let {
 			pageReader.read(it, pageUrl, pageHost)
 		}
@@ -59,7 +59,7 @@ class SourceReader(
 
 		if (page != null) {
 			val md = crawl.toMarkdown()
-			md?.cacheResource(page.pageUrl.core, "md")
+			md?.cacheResource(page.source.url.core, "md")
 		}
 
 		return crawl
@@ -73,16 +73,17 @@ class SourceReader(
 		if (result.exception != null) return FetchResult.ERROR
 		if (page == null) return FetchResult.UNKNOWN
 		// todo: better bot detection
-		if (page.pageTitle.contains("you") && (page.pageTitle.contains("robot") || page.pageTitle.contains("human"))
-			&& page.pageTitle.endsWith('?')
+		val title = page.source.title
+		if (title != null && title.contains("you") && (title.contains("robot") || title.contains("human"))
+			&& title.endsWith('?')
 		)
 			return FetchResult.CAPTCHA
 		// todo: support other languages
 		if (page.language?.startsWith("en") != true) return FetchResult.IRRELEVANT
-		if (page.type == SourceType.ARTICLE) {
+		if (page.source.type == SourceType.ARTICLE) {
 			if (page.foundNewsArticle) return FetchResult.RELEVANT
-			val wordCount = page.article.wordCount ?: 0
-			val maybeUseful = page.article.publishedAt != null && page.links.any { it.isExternal } && wordCount > 100
+			val wordCount = page.article?.wordCount ?: 0
+			val maybeUseful = page.source.publishedAt != null && page.links.any { it.isExternal } && wordCount > 100
 			if (maybeUseful) return FetchResult.RELEVANT
 			// todo: add more relevance indicators
 		}

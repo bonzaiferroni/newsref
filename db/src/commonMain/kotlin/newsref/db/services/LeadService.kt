@@ -6,7 +6,7 @@ import newsref.db.DbService
 import newsref.db.globalConsole
 import newsref.db.tables.*
 import newsref.db.utils.sameUrl
-import newsref.db.utils.toCheckedFromDb
+import newsref.db.utils.toCheckedFromTrusted
 import newsref.model.core.CheckedUrl
 import newsref.model.data.LeadJob
 import newsref.model.data.LeadInfo
@@ -31,7 +31,7 @@ class LeadService : DbService() {
 			.map { row ->
 				LeadInfo(
 					id = row[LeadTable.id].value,
-					url = row[LeadTable.url].toCheckedFromDb(),
+					url = row[LeadTable.url].toCheckedFromTrusted(),
 					targetId = row[LeadTable.sourceId]?.value,
 					hostId = row[LeadTable.hostId].value,
 					feedHeadline = row.getOrNull(LeadJobTable.headline),
@@ -81,7 +81,7 @@ internal val leadInfoColumns = listOf(
 internal fun Query.wrapLeadInfo() = this.map { row ->
 	LeadInfo(
 		id = row[LeadTable.id].value,
-		url = row[LeadTable.url].toCheckedFromDb(),
+		url = row[LeadTable.url].toCheckedFromTrusted(),
 		targetId = row[LeadTable.sourceId]?.value,
 		hostId = row[LeadTable.hostId].value,
 		feedHeadline = row.getOrNull(LeadJobTable.headline),

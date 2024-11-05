@@ -10,18 +10,18 @@ import org.jetbrains.exposed.sql.SqlExpressionBuilder.eq
 
 fun <Id : Comparable<Id>, Ent : Entity<Id>> EntityClass<Id, Ent>.createOrUpdate(
 	find: Op<Boolean>,
-	modify: Ent.() -> Unit,
+	modify: Ent.(Boolean) -> Unit,
 ) = createOrUpdate({ find }, modify)
 
 fun <Id : Comparable<Id>, Ent : Entity<Id>> EntityClass<Id, Ent>.createOrUpdate(
 	find: SqlExpressionBuilder.() -> Op<Boolean>,
-	modify: Ent.() -> Unit,
+	modify: Ent.(Boolean) -> Unit,
 	): Ent {
 	val row = this.find(find).firstOrNull()
 	return if (row == null) {
-		this.new { modify() }
+		this.new { modify(false) }
 	} else {
-		modify(row)
+		row.modify(true)
 		row
 	}
 }

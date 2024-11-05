@@ -37,11 +37,11 @@ class LeadMaker(
 		val page = fetch.page ?: return resultMap
 		val links = fetch.page?.links ?: return resultMap
 		for (link in links) {
-			val publishedAt = page.article.publishedAt
+			val publishedAt = page.source.publishedAt
 			val freshSource = publishedAt != null && publishedAt > (Clock.System.now() - 30.days)
 			val createIfFresh = fetch.fetchResult == FetchResult.RELEVANT && freshSource
 			if (!createIfFresh && !link.isExternal) continue
-			val job = LeadJob(isExternal = link.isExternal, freshAt = fetch.page?.article?.publishedAt)
+			val job = LeadJob(isExternal = link.isExternal, freshAt = fetch.page?.source?.publishedAt)
 			val result = makeLead(link.url, job, createIfFresh)
 			if (result == CreateLeadResult.AFFIRMED)
 				console.log("affirmed")

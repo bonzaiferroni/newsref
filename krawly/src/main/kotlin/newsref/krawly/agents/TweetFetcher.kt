@@ -3,6 +3,8 @@ package newsref.krawly.agents
 import kotlinx.serialization.Serializable
 import newsref.db.globalConsole
 import newsref.db.models.FetchInfo
+import newsref.db.utils.stripParams
+import newsref.db.utils.toNewDomain
 import newsref.krawly.SpiderWeb
 import newsref.model.core.CheckedUrl
 import newsref.model.core.toCheckedUrl
@@ -21,11 +23,8 @@ class TweetFetcher(
 	private val web: SpiderWeb,
 ) {
 	suspend fun fetch(lead: LeadInfo, leadUrl: CheckedUrl, leadHost: Host, pastResults: List<LeadResult>): FetchInfo {
-		val twitterUrl = leadUrl.href.toCheckedUrl(setOf(), setOf()).let {
-			"https://publish.twitter.com/oembed?url=${it.href.encodeForUrl()}".toUrl()
-		}
-		console.log("twitter url:\n$twitterUrl")
-		val result = web.fetch(twitterUrl, FetchStrategy.BASIC)
+		val tweetUrl = leadUrl.stripParams().toNewDomain("x.com")
+		val result = web.fetch(tweetUrl.toTweetEmbedUrl(), FetchStrategy.BASIC)
 		return FetchInfo(
 			lead = lead,
 			leadHost = leadHost,

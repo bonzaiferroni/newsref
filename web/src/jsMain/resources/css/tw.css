@@ -10,7 +10,33 @@ h2 { @apply text-2xl font-bold; }
 h3 { @apply text-xl font-bold; }
 
 body {
-    @apply bg-body text-ink-light font-lato;
+    @apply bg-body text-white font-lato;
+}
+
+h1, h2, h3, h4, h5 {
+
+}
+
+body a {
+    @apply hover:text-primary transition-colors duration-300;
+}
+
+body a:hover {
+    text-shadow: 0 0 1px rgba(200, 40, 154, 0.6),
+    0 0 3px rgba(200, 40, 154, 0.5),
+    0 0 0.5rem rgba(200, 40, 154, 0.3),
+    0 0 2rem rgba(200, 40, 154, 0.2);
+}
+
+a h1:hover, a h2:hover, a h3:hover {
+    text-shadow: none;
+}
+
+body .text-dim {
+    text-shadow: 0 0 1px rgba(20, 20, 20, 0.6),
+    0 0 3px rgba(20, 20, 20, 0.5),
+    0 0 0.5rem rgba(20, 20, 20, 0.3),
+    0 0 2rem rgba(20, 20, 20, 0.2);
 }
 
 /*portal*/

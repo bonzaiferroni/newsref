@@ -10,9 +10,15 @@ data class Source(
 	val id: Long = 0,
 	val hostId: Int = 0,
 	val url: CheckedUrl,
+	val title: String? = null,
 	val score: Int? = null,
 	val type: SourceType? = null,
+	val thumbnail: String? = null,
+	val imageUrl: String? = null,
+	val embed: String? = null,
 	val seenAt: Instant,
+	val accessedAt: Instant? = null,
+	val publishedAt: Instant? = null,
 )
 
 data class SourceScore(

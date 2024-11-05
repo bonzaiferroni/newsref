@@ -18,7 +18,7 @@ fun Container.homePage(context: AppContext): PortalEvents? {
     val model = HomeModel()
     div(className = "flex flex-col w-full") {
         renderStore(model.state, {it.sources}) { state ->
-            h2("A bird's eye view of the news this week", className = "w-full text-center")
+            h4("A bird's eye view of the news this week", className = "w-full text-center")
             feedChart(state)
             for (source in state.sources) {
                 feedSource(source)
@@ -30,7 +30,7 @@ fun Container.homePage(context: AppContext): PortalEvents? {
 }
 
 fun Container.feedSource(source: SourceInfo) {
-    val title = source.headline ?: source.url
+    val title = source.headline ?: source.pageTitle ?: source.url
     div(className = "flex flex-row gap-4 w-full") {
         sourceChart(source)
         h3(source.score.toString(), className = "text-dim")
@@ -39,7 +39,7 @@ fun Container.feedSource(source: SourceInfo) {
         }
         val image = source.thumbnail ?: source.hostLogo
         image?.let {
-            image(it, className = "w-16 h-auto")
+            image(it, className = "w-16 object-contain")
         }
     }
 }
@@ -49,7 +49,7 @@ fun Container.feedChart(state: HomeState) {
     val dayCount = state.timeSpan.inWholeDays.toInt()
     val scores = mutableListOf<Int>()
     val days = mutableListOf<String>()
-    for (i in 0..dayCount) {
+    for (i in 1..dayCount) {
         val date = (now - (dayCount - i).days).toLocalDateTime(TimeZone.currentSystemDefault()).date
         val score = state.sources.sumOf { source ->
             val time = source.publishedAt?.takeIf { it >= (now - state.timeSpan) }

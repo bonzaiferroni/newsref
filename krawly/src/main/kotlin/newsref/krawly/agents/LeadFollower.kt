@@ -252,22 +252,22 @@ class LeadFollower(
 			return
 		}
 
-		val title = page.article.headline
+		val title = page.article?.headline ?: page.source.title ?: "[No title]"
 		console.cell(title, rowWidth, justify = Justify.LEFT)
 			.row(background = background, width = rowWidth)
 		console.cell("http://localhost:3000/#/source/$sourceId", justify = Justify.LEFT)
 			.row(background = background, width = rowWidth)
 		val externalLinkCount = page.links.count { it.isExternal }
 		console
-			.cell(page.type.getEmoji())
+			.cell(page.source.type?.getEmoji() ?: "💢")
 			.cell("📰") { page.foundNewsArticle }
-			.cell("🌆") { page.article.imageUrl != null }
-			.cell("💅") { page.authors != null }
-			.cell("📅") { page.article.publishedAt != null }
+			.cell("🌆") { page.source.imageUrl != null }
+			.cell("💅") { page.source.thumbnail != null }
+			.cell("📅") { page.source.publishedAt != null }
 			.cell("🦦") { page.authors != null }
 			.cell("🔗") { page.authors?.firstOrNull()?.url != null }
 			.cell("🍓") { page.isFresh }
-			.cell(page.article.wordCount.toString(), 7, "words")
+			.cell((page.article?.wordCount ?: page.contentWordCount).toString(), 7, "words")
 			.cell(createdLeads, 2, "leads", highlight = createdLeads > 0)
 			.cell("$externalLinkCount/${page.links.size}", 5, "links")
 			.cell(strategyMsg, 5, justify = Justify.LEFT)

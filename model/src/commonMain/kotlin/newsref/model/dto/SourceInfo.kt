@@ -7,6 +7,7 @@ import kotlinx.serialization.Serializable
 data class SourceInfo(
 	val sourceId: Long,
 	val url: String,
+	val pageTitle: String?,
 	val headline: String?,
 	val description: String?,
 	val hostCore: String,

@@ -5,7 +5,7 @@ import newsref.db.DbTest
 import newsref.db.tables.*
 import newsref.db.tables.HostRow
 import newsref.db.tables.fromData
-import newsref.db.utils.toCheckedFromDb
+import newsref.db.utils.toCheckedFromTrusted
 import newsref.db.utils.plus
 import newsref.model.data.Author
 import newsref.model.data.Host
@@ -22,12 +22,12 @@ class FeedSourceServiceTest : DbTest(true) {
 
 	@Test
 	fun `poke code`() = dbQuery {
-		val originalUrl = "https://www.businessinsider.com/tesla".toCheckedFromDb()
-		val anotherUrl = "https://axios.com/big-news-story".toCheckedFromDb()
+		val originalUrl = "https://www.businessinsider.com/tesla".toCheckedFromTrusted()
+		val anotherUrl = "https://axios.com/big-news-story".toCheckedFromTrusted()
 		val hostRow = HostRow.new { fromData(Host(core = originalUrl.domain, domains = setOf(originalUrl.domain))) }
 		val anotherHostRow = HostRow.new { fromData(Host(core = anotherUrl.domain, domains = setOf(anotherUrl.domain))) }
-		val sourceRow = SourceRow.new { fromData(Source(url = originalUrl, seenAt = Clock.System.now()), hostRow) }
-		val anotherSourceRow = SourceRow.new { fromData(Source(url = anotherUrl, seenAt = Clock.System.now()), anotherHostRow) }
+		val sourceRow = SourceRow.new { fromData(Source(url = originalUrl, seenAt = Clock.System.now()), hostRow, false) }
+		val anotherSourceRow = SourceRow.new { fromData(Source(url = anotherUrl, seenAt = Clock.System.now()), anotherHostRow, false) }
 		val authorRow = AuthorRow.new { fromData(Author(name = "Luke", bylines = setOf("Luke"), url = null), hostRow, sourceRow) }
 		flushCache()
 		authorRow.hosts += anotherHostRow

@@ -42,12 +42,10 @@ data class WebResult(
 }
 
 data class PageInfo(
-	val article: Article,
-	val articleType: ArticleType,
-	val pageUrl: CheckedUrl,
+	val source: Source,
+	val article: Article? = null,
+	val articleType: ArticleType = ArticleType.UNKNOWN,
 	val pageHost: Host,
-	val pageTitle: String,
-	val type: SourceType,
 	val hostName: String?,
 	val language: String?,
 	val foundNewsArticle: Boolean,
@@ -56,7 +54,7 @@ data class PageInfo(
 	val links: List<PageLink>,
 	val authors: List<PageAuthor>?,
 ) {
-	val isFresh get() = article.publishedAt.isFresh
+	val isFresh get() = source.publishedAt.isFresh
 }
 
 data class PageLink(

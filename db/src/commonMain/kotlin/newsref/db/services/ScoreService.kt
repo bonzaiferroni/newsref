@@ -29,11 +29,10 @@ class ScoreService : DbService() {
 
 		LeadTable.leftJoin(LinkTable)
 			.leftJoin(SourceTable, LinkTable.sourceId, SourceTable.id)
-			.leftJoin(ArticleTable)
 			.select(LinkTable.columns + LeadTable.sourceId + SourceTable.hostId)
 			.where {
 				SourceTable.seenAt.greaterEq(time) and
-						(ArticleTable.publishedAt.isNull() or ArticleTable.publishedAt.greaterEq(time)) and
+						(SourceTable.publishedAt.isNull() or SourceTable.publishedAt.greaterEq(time)) and
 						LinkTable.isExternal.eq(true) and LeadTable.sourceId.isNotNull()
 			}
 			// .also { println(it.prepareSQL(QueryBuilder(false))) }

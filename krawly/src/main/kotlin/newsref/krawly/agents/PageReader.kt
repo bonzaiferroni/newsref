@@ -23,6 +23,7 @@ class PageReader(
 	private var articleCount = 0
 
 	suspend fun read(result: WebResult, pageUrl: CheckedUrl?, pageHost: Host?): PageInfo? {
+		val now = Clock.System.now()
 		val doc = result.content?.contentToDoc() ?: return null
 		if (pageUrl == null || pageHost == null) return null
 
@@ -119,7 +120,7 @@ class PageReader(
 		}?.url ?: newsArticle?.image?.firstOrNull()?.url ?: doc.readImageUrl()
 		val imageUrl = imageUrlString?.toUrlWithContextOrNull(pageUrl)
 		val hostName = newsArticle?.publisher?.name ?: doc.readHostName()
-		val headline = doc.readHeadline() ?: newsArticle?.headline ?: h1Title ?: doc.titleText
+		val headline = doc.readHeadline() ?: newsArticle?.headline ?: doc.titleText
 		val description = newsArticle?.description ?: doc.readDescription()
 		val publishedAt = newsArticle?.readPublishedAt() ?: doc.readPublishedAt()
 		val modifiedAt = newsArticle?.readModifiedAt() ?: doc.readModifiedAt()
@@ -136,9 +137,17 @@ class PageReader(
 		console.status = "$articleCount/$docCount"
 
 		val page = PageInfo(
-			pageUrl = pageUrl,
+			source = Source(
+				url = pageUrl,
+				title = doc.titleText,
+				type = sourceType,
+				thumbnail = thumbnail,
+				imageUrl = imageUrl?.href,
+				seenAt = now,
+				accessedAt = now,
+				publishedAt = publishedAt
+			),
 			pageHost = pageHost,
-			pageTitle = doc.titleText,
 			articleType = articleType,
 			hostName = hostName,
 			language = language,
@@ -149,22 +158,17 @@ class PageReader(
 				alternativeHeadline = newsArticle?.alternativeHeadline,
 				description = description,
 				cannonUrl = cannonUrl?.toString(),
-				imageUrl = imageUrl?.toString(),
 				section = newsArticle?.articleSection?.firstOrNull(),
 				keywords = newsArticle?.keywords,
 				wordCount = newsArticle?.wordCount ?: contentWordCount,
 				isFree = newsArticle?.isAccessibleForFree,
-				thumbnail = thumbnail,
 				language = newsArticle?.inLanguage,
 				commentCount = newsArticle?.commentCount,
-				accessedAt = Clock.System.now(),
-				publishedAt = publishedAt,
 				modifiedAt = modifiedAt,
 			),
 			contents = contents,
 			links = links,
 			authors = authors,
-			type = sourceType,
 		)
 
 		return page

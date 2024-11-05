@@ -1,7 +1,7 @@
 package newsref.db.tables
 
 import newsref.db.utils.sameUrl
-import newsref.db.utils.toCheckedFromDb
+import newsref.db.utils.toCheckedFromTrusted
 import newsref.model.core.CheckedUrl
 import newsref.model.data.Link
 import org.jetbrains.exposed.dao.LongEntity
@@ -37,7 +37,7 @@ internal fun LinkRow.toData() = Link(
     sourceId = this.source.id.value,
     leadId = this.lead?.id?.value,
     contentId = this.content?.id?.value,
-    url = this.url.toCheckedFromDb(),
+    url = this.url.toCheckedFromTrusted(),
     text = this.urlText,
     isExternal = this.isExternal
 )
@@ -47,7 +47,7 @@ internal fun ResultRow.toLink() = Link(
     sourceId = this[LinkTable.sourceId].value,
     leadId = this[LinkTable.leadId]?.value,
     contentId = this[LinkTable.contentId]?.value,
-    url = this[LinkTable.url].toCheckedFromDb(),
+    url = this[LinkTable.url].toCheckedFromTrusted(),
     text = this[LinkTable.urlText],
     isExternal = this[LinkTable.isExternal]
 )

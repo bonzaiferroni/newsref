@@ -5,7 +5,7 @@ import kotlinx.datetime.UtcOffset
 import kotlinx.datetime.toInstant
 import kotlinx.datetime.toLocalDateTime
 import kotlinx.serialization.json.Json
-import newsref.db.utils.toCheckedFromDb
+import newsref.db.utils.toCheckedFromTrusted
 import newsref.db.utils.toInstantUtc
 import newsref.db.utils.toLocalDateTimeUtc
 import newsref.model.core.SourceType
@@ -28,9 +28,15 @@ import org.jetbrains.exposed.sql.kotlin.datetime.datetime
 internal object SourceTable : LongIdTable("source") {
     val hostId = reference("host_id", HostTable).index()
     val url = text("url").uniqueIndex()
+    val title = text("title").nullable()
     val score = integer("score").nullable()
     val type = enumeration("source_type", SourceType::class).nullable()
+    val imageUrl = text("image_url").nullable()
+    val thumbnail = text("thumbnail").nullable()
+    val embed = text("embed").nullable()
     val seenAt = datetime("seen_at").index()
+    val accessedAt = datetime("accessed_at").nullable()
+    val publishedAt = datetime("published_at").nullable().index()
 }
 
 internal class SourceRow(id: EntityID<Long>) : LongEntity(id) {
@@ -40,9 +46,15 @@ internal class SourceRow(id: EntityID<Long>) : LongEntity(id) {
     var contents by ContentRow via SourceContentTable
 
     var url by SourceTable.url
+    var title by SourceTable.title
     var score by SourceTable.score
     var type by SourceTable.type
+    var imageUrl by SourceTable.imageUrl
+    var thumbnail by SourceTable.thumbnail
+    var embed by SourceTable.embed
     var seenAt by SourceTable.seenAt
+    var accessedAt by SourceTable.accessedAt
+    var publishedAt by SourceTable.publishedAt
 
     val links by LinkRow referrersOn LinkTable.sourceId
     val document by ArticleRow referrersOn ArticleTable.sourceId
@@ -52,26 +64,45 @@ internal class SourceRow(id: EntityID<Long>) : LongEntity(id) {
 
 internal fun SourceRow.toData() = Source(
     id = this.id.value,
-    url = this.url.toCheckedFromDb(),
+    url = this.url.toCheckedFromTrusted(),
+    title = this.title,
     score = this.score,
     type = this.type,
-    seenAt = this.seenAt.toInstantUtc()
+    imageUrl = this.imageUrl,
+    thumbnail = this.thumbnail,
+    embed = this.embed,
+    seenAt = this.seenAt.toInstantUtc(),
+    accessedAt = this.accessedAt?.toInstantUtc(),
+    publishedAt = this.publishedAt?.toInstantUtc(),
 )
 
 internal fun ResultRow.toSource() = Source(
     id = this[SourceTable.id].value,
-    url = this[SourceTable.url].toCheckedFromDb(),
+    url = this[SourceTable.url].toCheckedFromTrusted(),
+    title = this[SourceTable.title],
     score = this[SourceTable.score],
     type = this[SourceTable.type],
-    seenAt = this[SourceTable.seenAt].toInstantUtc()
+    imageUrl = this[SourceTable.imageUrl],
+    thumbnail = this[SourceTable.thumbnail],
+    embed = this[SourceTable.embed],
+    seenAt = this[SourceTable.seenAt].toInstantUtc(),
+    accessedAt = this[SourceTable.accessedAt]?.toInstantUtc(),
+    publishedAt = this[SourceTable.publishedAt]?.toInstantUtc(),
 )
 
-internal fun SourceRow.fromData(source: Source, hostRow: HostRow) {
+internal fun SourceRow.fromData(source: Source, hostRow: HostRow, isUpdate: Boolean) {
     host = hostRow
     url = source.url.toString()
+    title = source.title
     score = source.score
     source.type?.let { type = it }
-    seenAt = source.seenAt.toLocalDateTime(TimeZone.UTC)
+    imageUrl = source.imageUrl
+    thumbnail = source.thumbnail
+    embed = source.embed
+    if (!isUpdate)
+        seenAt = source.seenAt.toLocalDateTimeUtc()
+    accessedAt = source.accessedAt?.toLocalDateTimeUtc()
+    publishedAt = source.publishedAt?.toLocalDateTimeUtc()
 }
 
 internal fun SourceRow.addContents(contentEntities: List<ContentRow>) {
