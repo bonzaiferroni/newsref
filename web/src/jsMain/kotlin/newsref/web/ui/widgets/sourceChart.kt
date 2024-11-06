@@ -6,8 +6,11 @@ import kotlinx.datetime.Instant
 import kotlinx.datetime.TimeZone
 import kotlinx.datetime.toLocalDateTime
 import newsref.model.dto.SourceInfo
+import newsref.web.ui.pages.ChartCache
 
-fun Container.sourceChart(source: SourceInfo, scores: List<Int>?, labels: List<String>?) {
+fun Container.sourceChart(source: SourceInfo, cache: ChartCache) {
+	val scores = cache.scores[source.sourceId]
+	val labels = cache.labels
 	if (scores == null || labels == null) return
 
 	chart(
@@ -22,7 +25,8 @@ fun Container.sourceChart(source: SourceInfo, scores: List<Int>?, labels: List<S
 						display = false
 					),
 					"y" to ChartScales(
-						display = false
+						display = false,
+						max = cache.maxY
 					)
 				),
 				plugins = PluginsOptions(

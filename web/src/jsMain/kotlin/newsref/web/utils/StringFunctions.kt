@@ -5,3 +5,5 @@ fun String.toAnchorString(href: String, inNewTab: Boolean = true) =
 
 fun String?.replaceWithAnchor(urlText: String, href: String) = (this ?: "...$urlText...")
 	.replace(urlText, urlText.toAnchorString(href))
+
+fun Long.pluralize() = if (this == 1L) "" else "s"

@@ -2,6 +2,7 @@ package newsref.web.ui.pages
 
 import io.kvision.chart.*
 import io.kvision.core.Container
+import io.kvision.html.h3
 import kotlinx.datetime.*
 import newsref.model.core.NewsSpan
 import newsref.model.dto.SourceInfo
@@ -16,6 +17,10 @@ import newsref.web.ui.models.HomeState
 import newsref.web.ui.css.div
 import newsref.web.ui.css.*
 import newsref.web.ui.widgets.sourceChart
+import newsref.web.utils.format
+import newsref.web.utils.pluralize
+import kotlin.time.Duration.Companion.days
+import kotlin.time.Duration.Companion.hours
 
 fun Container.homePage(context: AppContext): PortalEvents? {
 	val model = HomeModel()
@@ -41,27 +46,47 @@ fun Container.homePage(context: AppContext): PortalEvents? {
 }
 
 class ChartCache {
-	val charts = mutableMapOf<Long, List<Int>>()
+	val scores = mutableMapOf<Long, List<Int>>()
 	var labels: List<String>? = null
+	var maxY: Int = 0
 }
 
 fun Container.feedSource(source: SourceInfo, cache: ChartCache) {
 	val title = source.headline?.takeIf { it.isNotEmpty() }
 		?: source.pageTitle?.takeIf { it.isNotEmpty()} ?: source.url
-	div(row + gap_4 + w_full + items_center) {
-		sourceChart(source, cache.charts[source.sourceId], cache.labels)
-		iconLabel(fa_link + text_muter, col) {
-			h3(source.score.toString(), text_center + text_muted)
+	val now = Clock.System.now()
+	val timeSince = (now - (source.publishedAt ?: source.seenAt))
+	val label = if (timeSince < 1.hours) {
+		val minutes = timeSince.inWholeMinutes
+		"$minutes minutes${minutes.pluralize()}"
+	} else if (timeSince < 24.hours) {
+		val hours = timeSince.inWholeHours
+		"$hours hour${hours.pluralize()}"
+	} else if (timeSince < 800.days) {
+		val days = timeSince.inWholeDays
+		"$days day${days.pluralize()}"
+	} else {
+		"${(timeSince.inWholeDays / 365.2422).format()} years"
+	}
+	div(row + gap_4 + w_full + items_start) {
+		div(col + md_flex_row + gap_2) {
+			sourceChart(source, cache)
+			iconLabel(fa_link + text_muter, row + md_flex_col + items_center + gap_1 + justify_center) {
+				h3(source.score.toString(), text_center + text_muted)
+			}
 		}
 		div(col + flex_grow) {
-			link(Pages.source.getLinkRoute(source.sourceId), w_full) {
-				h3(title)
+			link(Pages.source.getLinkRoute(source.sourceId), clearfix) {
+				val image = source.thumbnail ?: source.hostLogo
+				image?.let {
+					image(it, w_16 + object_contain + float_right + ml_2 + mb_2)
+				}
+				h3(title, inline)
 			}
-			h3(source.hostCore, text_muted)
-		}
-		val image = source.thumbnail ?: source.hostLogo
-		image?.let {
-			image(it, w_16 + object_contain)
+			div(row + gap_4) {
+				h3(source.hostCore, text_muted)
+				h3("from $label ago", text_muted)
+			}
 		}
 	}
 }
@@ -101,14 +126,16 @@ fun Container.feedChart(state: HomeState, cache: ChartCache) {
 			}
 			buckets[bucket] += currentScore - lastScore
 			sourceBuckets[bucket] = currentScore
+			cache.maxY = maxOf(currentScore, cache.maxY)
 			lastScore = currentScore
 			currentScore = score.score
 			bucket++
 		}
 		val finalScore = source.scores.last().score
 		buckets[bucket] += finalScore - lastScore
+		cache.maxY = maxOf(finalScore, cache.maxY)
 		sourceBuckets[bucket] = finalScore
-		cache.charts[source.sourceId] = sourceBuckets
+		cache.scores[source.sourceId] = sourceBuckets
 	}
 
 	val labels = when (state.newsSpan) {
