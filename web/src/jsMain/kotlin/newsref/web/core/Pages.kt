@@ -4,12 +4,13 @@ import newsref.web.ui.pages.*
 
 object Pages {
 	val home = PageConfig("Home", "/", builder = CachedPageBuilder { homePage(it) })
+	val sandbox = PageConfig("Sandbox", "/sandbox", builder = CachedPageBuilder { sandboxPage(it) })
 	val about = PageConfig("About", "/about", true, builder = CachedPageBuilder { aboutPage() })
 	val privacy = PageConfig("Privacy", "/about/privacy", builder = CachedPageBuilder { privacyPage() })
 	val source = PageConfig("Source", "/source/:id", builder = IdPageBuilder { context, id ->
 		sourcePage(context, id.toLongOrNull() ?: 0)
 	})
-	val basePages = listOf(home, about, privacy, source)
+	val basePages = listOf(home, sandbox, about, privacy, source)
 
 	val login = PageConfig("Login", "/login", builder = CachedPageBuilder { loginPage(it) })
 	val admin = PageConfig("Admin", "/admin", builder = TransientPageBuilder { adminPage(it) })

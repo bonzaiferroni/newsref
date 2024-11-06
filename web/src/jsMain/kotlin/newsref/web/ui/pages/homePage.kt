@@ -4,75 +4,133 @@ import io.kvision.chart.*
 import io.kvision.core.Container
 import io.kvision.html.*
 import kotlinx.datetime.*
+import newsref.model.core.NewsSpan
 import newsref.model.dto.SourceInfo
 import newsref.web.core.AppContext
 import newsref.web.core.Pages
 import newsref.web.core.PortalEvents
+import newsref.web.ui.components.iconLabel
+import newsref.web.ui.components.menu
 import newsref.web.ui.components.renderStore
 import newsref.web.ui.models.HomeModel
 import newsref.web.ui.models.HomeState
+import newsref.web.ui.tailwind.div
+import newsref.web.ui.tailwind.*
 import newsref.web.ui.widgets.sourceChart
-import kotlin.time.Duration.Companion.days
 
 fun Container.homePage(context: AppContext): PortalEvents? {
-    val model = HomeModel()
-    div(className = "flex flex-col w-full") {
-        renderStore(model.state, {it.sources}) { state ->
-            h4("A bird's eye view of the news this week", className = "w-full text-center")
-            feedChart(state)
-            for (source in state.sources) {
-                feedSource(source)
-            }
-        }
-    }
+	val model = HomeModel()
+	div(col + w_full) {
+		renderStore(model.state, { it.refreshed }) { state ->
+			div(row + w_full + gap_4 + justify_center) {
+				h4("A bird's eye view of the news over the last:")
+				menu(
+					value = state.newsSpan,
+					options = listOf(NewsSpan.DAY, NewsSpan.WEEK, NewsSpan.MONTH, NewsSpan.YEAR),
+					bind = model::changeSpan
+				)
+			}
+			feedChart(state)
+			for (source in state.sources) {
+				feedSource(source)
+			}
+		}
+	}
 
-    return null
+	return null
 }
 
 fun Container.feedSource(source: SourceInfo) {
-    val title = source.headline ?: source.pageTitle ?: source.url
-    div(className = "flex flex-row gap-4 w-full") {
-        sourceChart(source)
-        h3(source.score.toString(), className = "text-dim")
-        link("", Pages.source.getLinkRoute(source.sourceId), className = "w-full") {
-            h3(title)
-        }
-        val image = source.thumbnail ?: source.hostLogo
-        image?.let {
-            image(it, className = "w-16 object-contain")
-        }
-    }
+	val title = source.headline ?: source.pageTitle ?: source.url
+	div(row + gap_4 + w_full + items_center) {
+		sourceChart(source)
+		iconLabel(fa_link + text_muted, row) {
+			h3(source.score.toString(), text_center)
+		}
+		div(col + flex_grow) {
+			link(Pages.source.getLinkRoute(source.sourceId), w_full) {
+				h3(title)
+			}
+			h3(source.hostCore, text_muted)
+		}
+		val image = source.thumbnail ?: source.hostLogo
+		image?.let {
+			image(it, w_16 + object_contain)
+		}
+	}
 }
 
 fun Container.feedChart(state: HomeState) {
-    val now = Clock.System.now()
-    val dayCount = state.timeSpan.inWholeDays.toInt()
-    val scores = mutableListOf<Int>()
-    val days = mutableListOf<String>()
-    for (i in 1..dayCount) {
-        val date = (now - (dayCount - i).days).toLocalDateTime(TimeZone.currentSystemDefault()).date
-        val score = state.sources.sumOf { source ->
-            val time = source.publishedAt?.takeIf { it >= (now - state.timeSpan) }
-                ?: source.scores.first().scoredAt
-            if (time.toLocalDateTime(TimeZone.currentSystemDefault()).date == date) source.score else 0
-        }
-        scores.add(score)
-        days.add(date.dayOfWeek.toString())
-    }
-    chart(
-        Configuration(
-            ChartType.BAR,
-            listOf(DataSets(data = scores)),
-            days,
-            ChartOptions(
-                maintainAspectRatio = true,
-                plugins = PluginsOptions(
-                    legend = LegendOptions(
-                        display = false
-                    )
-                )
-            )
-        ),
-        className = "w-full"
-    )
+	val now = Clock.System.now()
+	val duration = state.newsSpan.duration
+	val bucketCount = when (state.newsSpan) {
+		NewsSpan.DAY -> 12
+		NewsSpan.WEEK -> 7
+		NewsSpan.MONTH -> 30
+		NewsSpan.YEAR -> 12
+	}
+	val bucketSpan = duration / bucketCount
+	val buckets = mutableListOf<Int>()
+	val startTimes = mutableListOf<Instant>()
+	for (i in 1..bucketCount) {
+		val start = now - bucketSpan * (bucketCount - i)
+		buckets.add(0)
+		startTimes.add(start)
+	}
+	for (source in state.sources) {
+		var bucket = 0
+		var lastScore = 0
+		var currentScore = 0
+		val firstScore = source.scores.first()
+		for (i in 0 until bucketCount) {
+			if (startTimes[i] > firstScore.scoredAt) break
+			bucket++
+		}
+		for (score in source.scores) {
+			if (bucket + 1 == bucketCount) break
+			if (score.scoredAt < startTimes[bucket + 1]) {
+				currentScore = score.score
+				continue
+			}
+			buckets[bucket] += currentScore - lastScore
+			lastScore = currentScore
+			currentScore = score.score
+			bucket++
+		}
+		val finalScore = source.scores.last().score
+		buckets[bucket] += finalScore - lastScore
+	}
+
+	val labels = when (state.newsSpan) {
+		NewsSpan.DAY -> startTimes.map {
+			val hour = it.toLocalDateTime(TimeZone.currentSystemDefault()).hour
+			"$hour:00"
+		}
+		NewsSpan.WEEK -> startTimes.map {
+			it.toLocalDateTime(TimeZone.currentSystemDefault()).dayOfWeek.toString()
+		}
+		NewsSpan.MONTH -> startTimes.map {
+			it.toLocalDateTime(TimeZone.currentSystemDefault()).date.toString()
+		}
+		NewsSpan.YEAR -> startTimes.map {
+			it.toLocalDateTime(TimeZone.currentSystemDefault()).month.toString()
+		}
+	}
+
+	chart(
+		Configuration(
+			ChartType.BAR,
+			listOf(DataSets(data = buckets)),
+			labels,
+			ChartOptions(
+				maintainAspectRatio = true,
+				plugins = PluginsOptions(
+					legend = LegendOptions(
+						display = false
+					)
+				)
+			)
+		),
+		className = "w-full"
+	)
 }

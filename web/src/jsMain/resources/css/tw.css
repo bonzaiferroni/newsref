@@ -13,10 +13,6 @@ body {
     @apply bg-body text-white font-lato;
 }
 
-h1, h2, h3, h4, h5 {
-
-}
-
 body a {
     @apply hover:text-primary transition-colors duration-300;
 }
@@ -32,7 +28,7 @@ a h1:hover, a h2:hover, a h3:hover {
     text-shadow: none;
 }
 
-body .text-dim {
+body .text-muted {
     text-shadow: 0 0 1px rgba(20, 20, 20, 0.6),
     0 0 3px rgba(20, 20, 20, 0.5),
     0 0 0.5rem rgba(20, 20, 20, 0.3),
@@ -49,4 +45,8 @@ body .text-dim {
     0% { box-shadow: 100px 0 1000px rgba(0, 149, 255, 0.15), -100px 0 1000px rgba(55, 200, 165, 0.08); }
     50% { box-shadow: 100px 0 1100px rgba(0, 149, 255, 0.08), -105px 0 1000px rgba(55, 200, 165, 0.15); }
     100% { box-shadow: 105px 0 1000px rgba(0, 149, 255, 0.10), -100px 0 1100px rgba(55, 200, 165, 0.10); }
+}
+
+.form-select {
+    @apply bg-transparent
 }

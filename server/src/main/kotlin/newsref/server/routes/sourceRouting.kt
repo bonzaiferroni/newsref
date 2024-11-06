@@ -6,13 +6,17 @@ import io.ktor.server.response.*
 import io.ktor.server.routing.*
 import newsref.db.services.SourceInfoService
 import newsref.model.Api
+import newsref.model.core.NewsSpan
 import newsref.server.extensions.getIdOrThrow
 import kotlin.time.Duration.Companion.days
 
 fun Routing.sourceRouting(service: SourceInfoService = SourceInfoService()) {
 
-	get(Api.source.path) {
-		val sources = service.getTopSources(7.days, 20)
+	get(Api.feed.serverIdTemplate) {
+		val span = call.getIdOrThrow() {
+			NewsSpan.entries.toTypedArray().getOrNull(it.toIntOrNull() ?: NewsSpan.WEEK.ordinal)
+		}
+		val sources = service.getTopSources(span.duration, 20)
 		call.respond(sources)
 	}
 
