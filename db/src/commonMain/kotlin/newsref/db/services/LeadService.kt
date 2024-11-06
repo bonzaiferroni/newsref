@@ -36,7 +36,7 @@ class LeadService : DbService() {
 					hostId = row[LeadTable.hostId].value,
 					feedHeadline = row.getOrNull(LeadJobTable.headline),
 					lastAttemptAt = row.getOrNull(LeadResultTable.attemptedAt)?.toInstant(UtcOffset.ZERO),
-					isExternal = row[LeadJobTable.isExternal],
+					isExternal = row.getOrNull(LeadJobTable.isExternal) ?: true,
 					freshAt = row.getOrNull(LeadJobTable.freshAt)?.toInstant(UtcOffset.ZERO),
 					linkCount = row.getOrNull(linkCountAlias)?.toInt() ?: 0
 				)

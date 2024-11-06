@@ -6,6 +6,7 @@ import org.jetbrains.exposed.dao.LongEntity
 import org.jetbrains.exposed.dao.id.CompositeIdTable
 import org.jetbrains.exposed.dao.id.EntityID
 import org.jetbrains.exposed.dao.id.LongIdTable
+import org.jetbrains.exposed.sql.ReferenceOption
 
 internal object ContentTable : LongIdTable("content") {
     val text = text("text").uniqueIndex()
@@ -20,8 +21,8 @@ internal class ContentRow(id: EntityID<Long>) : LongEntity(id) {
 }
 
 internal object SourceContentTable : LongIdTable("source_content") {
-    val sourceId = reference("source_id", SourceTable)
-    val contentId = reference("content_id", ContentTable)
+    val sourceId = reference("source_id", SourceTable, ReferenceOption.CASCADE)
+    val contentId = reference("content_id", ContentTable, ReferenceOption.CASCADE)
 }
 
 internal fun ContentRow.toData() = Content(

@@ -7,6 +7,7 @@ import org.jetbrains.exposed.dao.IntEntity
 import org.jetbrains.exposed.dao.id.CompositeIdTable
 import org.jetbrains.exposed.dao.id.EntityID
 import org.jetbrains.exposed.dao.id.IntIdTable
+import org.jetbrains.exposed.sql.ReferenceOption
 import org.jetbrains.exposed.sql.SizedCollection
 
 internal object AuthorTable: IntIdTable("author") {
@@ -27,14 +28,14 @@ internal class AuthorRow(id: EntityID<Int>): IntEntity(id) {
 }
 
 internal object HostAuthorTable : CompositeIdTable("host_author") {
-    val hostId = reference("host_id", HostTable).index()
-    val authorId = reference("author_id", AuthorTable).index()
+    val hostId = reference("host_id", HostTable, ReferenceOption.CASCADE).index()
+    val authorId = reference("author_id", AuthorTable, ReferenceOption.CASCADE).index()
     override val primaryKey = PrimaryKey(hostId, authorId)
 }
 
 internal object SourceAuthorTable : CompositeIdTable("source_author") {
-    val sourceId = reference("source_id", SourceTable).index()
-    val authorId = reference("author_id", AuthorTable).index()
+    val sourceId = reference("source_id", SourceTable, ReferenceOption.CASCADE).index()
+    val authorId = reference("author_id", AuthorTable, ReferenceOption.CASCADE).index()
     override val primaryKey = PrimaryKey(sourceId, authorId)
 }
 

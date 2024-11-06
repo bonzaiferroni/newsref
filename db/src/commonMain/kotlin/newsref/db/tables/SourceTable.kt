@@ -20,13 +20,14 @@ import org.jetbrains.exposed.dao.LongEntity
 import org.jetbrains.exposed.dao.id.EntityID
 import org.jetbrains.exposed.dao.id.IntIdTable
 import org.jetbrains.exposed.dao.id.LongIdTable
+import org.jetbrains.exposed.sql.ReferenceOption
 import org.jetbrains.exposed.sql.ResultRow
 import org.jetbrains.exposed.sql.SizedCollection
 import org.jetbrains.exposed.sql.json.json
 import org.jetbrains.exposed.sql.kotlin.datetime.datetime
 
 internal object SourceTable : LongIdTable("source") {
-    val hostId = reference("host_id", HostTable).index()
+    val hostId = reference("host_id", HostTable, ReferenceOption.CASCADE).index()
     val url = text("url").uniqueIndex()
     val title = text("title").nullable()
     val score = integer("score").nullable()
@@ -111,7 +112,7 @@ internal fun SourceRow.addContents(contentEntities: List<ContentRow>) {
 
 // source score
 internal object SourceScoreTable : LongIdTable("source_score") {
-    val sourceId = reference("source_id", SourceTable)
+    val sourceId = reference("source_id", SourceTable, ReferenceOption.CASCADE)
     val score = integer("score")
     val scoredAt = datetime("scored_at")
 }
@@ -138,7 +139,7 @@ internal fun SourceScoreRow.fromData(score: SourceScore, sourceRow: SourceRow) {
 
 // feed source
 internal object FeedSourceTable : IntIdTable("feed_source") {
-    val sourceId = reference("source_id", SourceTable)
+    val sourceId = reference("source_id", SourceTable, ReferenceOption.CASCADE)
     val score = integer("score")
     val createdAt = datetime("created_at")
     val json = json<SourceInfo>("source", Json.Default)

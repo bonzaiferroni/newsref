@@ -18,8 +18,8 @@ private val console = globalConsole.getHandle("LeadTable")
 
 internal object LeadTable : LongIdTable("lead") {
 	val url = text("url").uniqueIndex()
-	val hostId = reference("host_id", HostTable).index()
-	val sourceId = reference("source_id", SourceTable).nullable().index()
+	val hostId = reference("host_id", HostTable, ReferenceOption.CASCADE).index()
+	val sourceId = reference("source_id", SourceTable, ReferenceOption.SET_NULL).nullable().index()
 }
 
 internal class LeadRow(id: EntityID<Long>) : LongEntity(id) {
@@ -71,7 +71,7 @@ internal fun LeadRow.Companion.createOrUpdateAndLink(url: CheckedUrl, source: So
 
 // lead result
 internal object LeadResultTable : LongIdTable("lead_result") {
-	val leadId = reference("lead_id", LeadTable)
+	val leadId = reference("lead_id", LeadTable, ReferenceOption.SET_NULL)
 	val result = enumeration("result", FetchResult::class)
 	val attemptedAt = datetime("attempted_at")
 	val strategy = enumeration("strategy", FetchStrategy::class).nullable()
@@ -116,7 +116,7 @@ internal fun LeadResultRow.fromData(leadResult: LeadResult, leadRow: LeadRow) {
 // lead job
 internal object LeadJobTable : LongIdTable("lead_job") {
 	val feedId = reference("feed_id", FeedTable, ReferenceOption.SET_NULL).nullable()
-	val leadId = reference("lead_id", LeadTable).index()
+	val leadId = reference("lead_id", LeadTable, ReferenceOption.CASCADE).index()
 	val headline = text("headline").nullable()
 	val isExternal = bool("is_external")
 	val freshAt = datetime("fresh_at").nullable().index()

@@ -8,13 +8,14 @@ import org.jetbrains.exposed.dao.LongEntity
 import org.jetbrains.exposed.dao.LongEntityClass
 import org.jetbrains.exposed.dao.id.EntityID
 import org.jetbrains.exposed.dao.id.LongIdTable
+import org.jetbrains.exposed.sql.ReferenceOption
 import org.jetbrains.exposed.sql.ResultRow
 import org.jetbrains.exposed.sql.and
 
 internal object LinkTable: LongIdTable("link") {
-    val sourceId = reference("source_id", SourceTable).index()
-    val leadId = reference("lead_id", LeadTable).nullable().index()
-    val contentId = reference("content_id", ContentTable).nullable().index()
+    val sourceId = reference("source_id", SourceTable, ReferenceOption.CASCADE).index()
+    val leadId = reference("lead_id", LeadTable, ReferenceOption.SET_NULL).nullable().index()
+    val contentId = reference("content_id", ContentTable, ReferenceOption.SET_NULL).nullable().index()
     val url = text("url")
     val urlText = text("url_text")
     val isExternal = bool("is_external")

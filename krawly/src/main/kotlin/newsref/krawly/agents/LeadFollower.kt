@@ -100,9 +100,9 @@ class LeadFollower(
 	private fun getNextLead(): LeadInfo? {
 		val now = Clock.System.now()
 		for ((index, lead) in leads.withIndex()) {
-			val nextAttempt = hosts[lead.url.domain]
+			val nextAttempt = hosts[lead.url.core]
 			if (nextAttempt != null && now < nextAttempt) continue
-			hosts[lead.url.domain] = now + 45.seconds + (0..30).random().seconds
+			hosts[lead.url.core] = now + 45.seconds + (0..30).random().seconds
 			leads.removeAt(index)
 			return lead
 		}

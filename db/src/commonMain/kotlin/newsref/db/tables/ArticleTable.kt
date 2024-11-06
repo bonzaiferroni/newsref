@@ -6,11 +6,12 @@ import org.jetbrains.exposed.dao.EntityClass
 import org.jetbrains.exposed.dao.LongEntity
 import org.jetbrains.exposed.dao.id.EntityID
 import org.jetbrains.exposed.dao.id.LongIdTable
+import org.jetbrains.exposed.sql.ReferenceOption
 import org.jetbrains.exposed.sql.kotlin.datetime.datetime
 
 // todo: make all tables and rows internal
 internal object ArticleTable: LongIdTable("article") {
-    val sourceId = reference("source_id", SourceTable).index()
+    val sourceId = reference("source_id", SourceTable, ReferenceOption.CASCADE).index()
 
     val headline = text("headline")
     val alternativeHeadline = text("alternative_headline").nullable()

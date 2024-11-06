@@ -131,6 +131,6 @@ fun Container.feedChart(state: HomeState) {
 				)
 			)
 		),
-		className = "w-full"
+		className = w_full.toString()
 	)
 }
