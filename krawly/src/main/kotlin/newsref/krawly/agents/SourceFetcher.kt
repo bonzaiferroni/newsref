@@ -11,8 +11,6 @@ import newsref.model.core.*
 import newsref.model.data.*
 import newsref.model.data.FetchStrategy.BASIC
 import newsref.model.data.FetchStrategy.BROWSER
-import java.net.URLEncoder
-import java.nio.charset.StandardCharsets
 import kotlin.time.Duration.Companion.hours
 import kotlin.time.Duration.Companion.seconds
 
@@ -29,9 +27,8 @@ class SourceFetcher(
 	)
 
 	suspend fun fetch(lead: LeadInfo, leadUrl: CheckedUrl, leadHost: Host, pastResults: List<LeadResult>): FetchInfo {
-		val fetcher = specialFetchers[lead.url.core]
-		if (fetcher != null)
-			return fetcher.fetch(lead, leadUrl, leadHost, pastResults)
+		val specialFetch = specialFetchers[lead.url.core]?.fetch(lead, leadUrl, leadHost, pastResults)
+		if (specialFetch != null) return specialFetch
 
 		if (decideSkipFetch(lead, pastResults))
 			return FetchInfo(lead = lead, leadHost = leadHost, pastResults = pastResults, skipFetch = true)

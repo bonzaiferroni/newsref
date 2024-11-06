@@ -22,7 +22,8 @@ class TweetFetcher(
 	spindex: Int,
 	private val web: SpiderWeb,
 ) {
-	suspend fun fetch(lead: LeadInfo, leadUrl: CheckedUrl, leadHost: Host, pastResults: List<LeadResult>): FetchInfo {
+	suspend fun fetch(lead: LeadInfo, leadUrl: CheckedUrl, leadHost: Host, pastResults: List<LeadResult>): FetchInfo? {
+		if (!lead.url.isTweet) return null
 		val tweetUrl = leadUrl.stripParams().toNewDomain("x.com")
 		val result = web.fetch(tweetUrl.toTweetEmbedUrl(), FetchStrategy.BASIC)
 		return FetchInfo(
