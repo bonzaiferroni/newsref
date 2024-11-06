@@ -7,14 +7,14 @@ import kotlinx.datetime.TimeZone
 import kotlinx.datetime.toLocalDateTime
 import newsref.model.dto.SourceInfo
 
-fun Container.sourceChart(source: SourceInfo) {
+fun Container.sourceChart(source: SourceInfo, scores: List<Int>?, labels: List<String>?) {
+	if (scores == null || labels == null) return
+
 	chart(
 		Configuration(
 			ChartType.LINE,
-			listOf(DataSets(data = source.scores.map {
-				it.score
-			})),
-			source.scores.map { it.scoredAt.toFormattedString() },
+			listOf(DataSets(data = scores)),
+			labels,
 			options = ChartOptions(
 				responsive = false,
 				scales = mapOf(
@@ -28,6 +28,11 @@ fun Container.sourceChart(source: SourceInfo) {
 				plugins = PluginsOptions(
 					legend = LegendOptions(
 						display = false
+					)
+				),
+				elements = ElementsOptions(
+					point = PointOptions(
+						radius = 0
 					)
 				)
 			)

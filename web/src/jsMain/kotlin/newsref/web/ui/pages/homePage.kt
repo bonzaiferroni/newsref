@@ -29,9 +29,10 @@ fun Container.homePage(context: AppContext): PortalEvents? {
 					bind = model::changeSpan
 				)
 			}
-			feedChart(state)
+			val cache = ChartCache()
+			feedChart(state, cache)
 			for (source in state.sources) {
-				feedSource(source)
+				feedSource(source, cache)
 			}
 		}
 	}
@@ -39,11 +40,16 @@ fun Container.homePage(context: AppContext): PortalEvents? {
 	return null
 }
 
-fun Container.feedSource(source: SourceInfo) {
+class ChartCache {
+	val charts = mutableMapOf<Long, List<Int>>()
+	var labels: List<String>? = null
+}
+
+fun Container.feedSource(source: SourceInfo, cache: ChartCache) {
 	val title = source.headline?.takeIf { it.isNotEmpty() }
 		?: source.pageTitle?.takeIf { it.isNotEmpty()} ?: source.url
 	div(row + gap_4 + w_full + items_center) {
-		sourceChart(source)
+		sourceChart(source, cache.charts[source.sourceId], cache.labels)
 		iconLabel(fa_link + text_muter, col) {
 			h3(source.score.toString(), text_center + text_muted)
 		}
@@ -60,7 +66,7 @@ fun Container.feedSource(source: SourceInfo) {
 	}
 }
 
-fun Container.feedChart(state: HomeState) {
+fun Container.feedChart(state: HomeState, cache: ChartCache) {
 	val now = Clock.System.now()
 	val duration = state.newsSpan.duration
 	val bucketCount = when (state.newsSpan) {
@@ -81,6 +87,7 @@ fun Container.feedChart(state: HomeState) {
 		var bucket = 0
 		var lastScore = 0
 		var currentScore = 0
+		val sourceBuckets = (0 until bucketCount).map { 0 }.toMutableList()
 		val firstScore = source.scores.first()
 		for (i in 0 until bucketCount) {
 			if (startTimes[i] > firstScore.scoredAt) break
@@ -93,12 +100,15 @@ fun Container.feedChart(state: HomeState) {
 				continue
 			}
 			buckets[bucket] += currentScore - lastScore
+			sourceBuckets[bucket] = currentScore
 			lastScore = currentScore
 			currentScore = score.score
 			bucket++
 		}
 		val finalScore = source.scores.last().score
 		buckets[bucket] += finalScore - lastScore
+		sourceBuckets[bucket] = finalScore
+		cache.charts[source.sourceId] = sourceBuckets
 	}
 
 	val labels = when (state.newsSpan) {
@@ -116,6 +126,8 @@ fun Container.feedChart(state: HomeState) {
 			it.toLocalDateTime(TimeZone.currentSystemDefault()).month.toString()
 		}
 	}
+
+	cache.labels = labels
 
 	chart(
 		Configuration(
