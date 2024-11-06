@@ -1,7 +1,6 @@
-package newsref.web.ui.tailwind
+package newsref.web.ui.css
 
 import io.kvision.core.Container
-import io.kvision.html.Align
 import io.kvision.html.TAG
 
 open class Div(

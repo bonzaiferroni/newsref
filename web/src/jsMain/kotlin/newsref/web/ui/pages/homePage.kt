@@ -2,7 +2,6 @@ package newsref.web.ui.pages
 
 import io.kvision.chart.*
 import io.kvision.core.Container
-import io.kvision.html.*
 import kotlinx.datetime.*
 import newsref.model.core.NewsSpan
 import newsref.model.dto.SourceInfo
@@ -14,8 +13,8 @@ import newsref.web.ui.components.menu
 import newsref.web.ui.components.renderStore
 import newsref.web.ui.models.HomeModel
 import newsref.web.ui.models.HomeState
-import newsref.web.ui.tailwind.div
-import newsref.web.ui.tailwind.*
+import newsref.web.ui.css.div
+import newsref.web.ui.css.*
 import newsref.web.ui.widgets.sourceChart
 
 fun Container.homePage(context: AppContext): PortalEvents? {
@@ -41,11 +40,12 @@ fun Container.homePage(context: AppContext): PortalEvents? {
 }
 
 fun Container.feedSource(source: SourceInfo) {
-	val title = source.headline ?: source.pageTitle ?: source.url
+	val title = source.headline?.takeIf { it.isNotEmpty() }
+		?: source.pageTitle?.takeIf { it.isNotEmpty()} ?: source.url
 	div(row + gap_4 + w_full + items_center) {
 		sourceChart(source)
-		iconLabel(fa_link + text_muted, row) {
-			h3(source.score.toString(), text_center)
+		iconLabel(fa_link + text_muter, col) {
+			h3(source.score.toString(), text_center + text_muted)
 		}
 		div(col + flex_grow) {
 			link(Pages.source.getLinkRoute(source.sourceId), w_full) {

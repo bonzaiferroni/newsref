@@ -1,10 +1,12 @@
-package newsref.web.ui.tailwind
+package newsref.web.ui.css
 
 val text_muted = Clasp("text-muted")
+val text_muter = Clasp("text-muter")
 
 val text_start = Clasp("text-start")
 val text_center = Clasp("text-center")
 val text_end = Clasp("text-end")
+val text_lg = Clasp("text-lg")
 
 val w_full = Clasp("w-full")
 val w_16 = Clasp("w-16")

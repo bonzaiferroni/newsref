@@ -1,4 +1,4 @@
-package newsref.web.ui.tailwind
+package newsref.web.ui.css
 
 import io.kvision.core.ClassSetBuilder
 import io.kvision.core.Container
@@ -6,7 +6,6 @@ import io.kvision.core.ResString
 import io.kvision.html.Image
 import io.kvision.html.ImageShape
 import io.kvision.html.TAG
-import io.kvision.html.Tag
 
 fun Container.icon(clasp: Clasp) = this.claspTag(TAG.SPAN, clasp = clasp)
 

@@ -5,7 +5,7 @@ import io.kvision.core.Transition
 import io.kvision.html.*
 import io.kvision.panel.SimplePanel
 import io.kvision.state.ObservableValue
-import newsref.web.ui.tailwind.div
+import newsref.web.ui.css.div
 
 fun Container.menuButton(
     text: String, icon: String? = null, options: List<MenuButtonOption> = emptyList(),

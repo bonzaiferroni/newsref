@@ -21,7 +21,8 @@ module.exports = {
                 input: { DEFAULT: '#1c212c'},
                 border: { DEFAULT: '#2a3140'},
                 'ink-light': { DEFAULT: '#e6fffb'},
-                muted: { DEFAULT: '#99afa6'}
+                muted: { DEFAULT: '#99a9af'},
+                muter: { DEFAULT: '#4c5457'}
                 // You can add other color categories as needed
             },
             fontFamily: {lato: ['Lato', 'Helvetica Neue', 'Arial', 'sans-serif']},

@@ -1,4 +1,4 @@
-package newsref.web.ui.tailwind
+package newsref.web.ui.css
 
 import io.kvision.core.ClassSetBuilder
 import io.kvision.core.Container

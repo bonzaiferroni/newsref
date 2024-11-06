@@ -1,4 +1,4 @@
-package newsref.web.ui.tailwind
+package newsref.web.ui.css
 
 import io.kvision.core.ClassSetBuilder
 
@@ -13,6 +13,22 @@ data class Clasp(
 	fun build(classSetBuilder: ClassSetBuilder) {
 		next?.build(classSetBuilder)
 		classSetBuilder.add(name)
+	}
+
+	private fun build(sb: StringBuilder) {
+		if (next == null) {
+			sb.append(name)
+		} else {
+			next.build(sb)
+			sb.append(' ')
+			sb.append(name)
+		}
+	}
+
+	override fun toString(): String {
+		val sb = StringBuilder()
+		build(sb)
+		return sb.toString()
 	}
 }
 
