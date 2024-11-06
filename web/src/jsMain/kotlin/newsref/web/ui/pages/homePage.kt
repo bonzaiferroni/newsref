@@ -93,6 +93,7 @@ fun Container.feedSource(source: SourceInfo, cache: ChartCache) {
 
 fun Container.feedChart(state: HomeState, cache: ChartCache) {
 	val now = Clock.System.now()
+	val nowLocal = now.toLocalDateTime(TimeZone.currentSystemDefault())
 	val duration = state.newsSpan.duration
 	val bucketCount = when (state.newsSpan) {
 		NewsSpan.DAY -> 12
@@ -103,8 +104,14 @@ fun Container.feedChart(state: HomeState, cache: ChartCache) {
 	val bucketSpan = duration / bucketCount
 	val buckets = mutableListOf<Int>()
 	val startTimes = mutableListOf<Instant>()
+	val timeSinceQuantum = when (state.newsSpan) {
+		NewsSpan.DAY -> (nowLocal.minute / 60.0 + nowLocal.hour % 2).hours
+		NewsSpan.WEEK -> (nowLocal.hour / 24.0 + nowLocal.minute / 60.0).hours
+		NewsSpan.MONTH -> (nowLocal.dayOfMonth / 30.0).days
+		NewsSpan.YEAR -> (nowLocal.dayOfYear / 365.24).days
+	}
 	for (i in 1..bucketCount) {
-		val start = now - bucketSpan * (bucketCount - i)
+		val start = if (i == bucketCount) now else (now - timeSinceQuantum) - bucketSpan * (bucketCount - i)
 		buckets.add(0)
 		startTimes.add(start)
 	}
