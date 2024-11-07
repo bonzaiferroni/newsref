@@ -4,24 +4,27 @@ import io.kvision.core.ClassSetBuilder
 
 data class Clasp(
 	val name: String,
+	val prefix: String? = null,
 	val next: Clasp? = null
 ) {
+	val className get() = prefix?.let { "$it:$name" } ?: name
+
 	operator fun plus(other: Clasp): Clasp {
-		return other.copy(next = this)
+		return this.copy(next = if (next != null) next + other else other)
 	}
 
 	fun build(classSetBuilder: ClassSetBuilder) {
+		classSetBuilder.add(className)
 		next?.build(classSetBuilder)
-		classSetBuilder.add(name)
 	}
 
 	private fun build(sb: StringBuilder) {
 		if (next == null) {
-			sb.append(name)
+			sb.append(className)
 		} else {
-			next.build(sb)
+			sb.append(className)
 			sb.append(' ')
-			sb.append(name)
+			next.build(sb)
 		}
 	}
 
@@ -30,6 +33,10 @@ data class Clasp(
 		build(sb)
 		return sb.toString()
 	}
+}
+
+operator fun String.times(clasp: Clasp): Clasp {
+	return clasp.copy(prefix = this, next = if (clasp.next != null) this * clasp.next else null)
 }
 
 fun clasp(clasp: Clasp?): String {

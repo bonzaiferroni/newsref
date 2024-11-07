@@ -69,9 +69,9 @@ fun Container.feedSource(source: SourceInfo, cache: ChartCache) {
 		"${(timeSince.inWholeDays / 365.2422).format()} years"
 	}
 	div(row + gap_4 + w_full + items_start) {
-		div(col + md_flex_row + gap_2) {
+		div(col + gap_2 + "md" * flex_row) {
 			sourceChart(source, cache)
-			iconLabel(fa_link + text_muter, row + md_flex_col + items_center + gap_1 + justify_center) {
+			iconLabel(fa_link + text_muter, row + items_center + gap_1 + justify_center + "md" * flex_col) {
 				h3(source.score.toString(), text_center + text_muted)
 			}
 		}
