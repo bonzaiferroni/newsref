@@ -3,6 +3,7 @@ package newsref.web.ui.pages
 import io.kvision.chart.*
 import io.kvision.core.Container
 import io.kvision.html.h3
+import kotlinx.browser.window
 import kotlinx.datetime.*
 import newsref.model.core.NewsSpan
 import newsref.model.dto.SourceInfo
@@ -19,6 +20,9 @@ import newsref.web.ui.css.*
 import newsref.web.ui.widgets.sourceChart
 import newsref.web.utils.format
 import newsref.web.utils.pluralize
+import org.w3c.dom.SMOOTH
+import org.w3c.dom.ScrollBehavior
+import org.w3c.dom.ScrollToOptions
 import kotlin.time.Duration.Companion.days
 import kotlin.time.Duration.Companion.hours
 
@@ -82,6 +86,11 @@ fun Container.feedSource(source: SourceInfo, cache: ChartCache) {
 					image(it, w_16 + object_contain + float_right + ml_2 + mb_2)
 				}
 				h3(title, inline)
+			}.onClick {
+				window.scrollTo(options = ScrollToOptions(
+					top = 100.0,
+					behavior = ScrollBehavior.SMOOTH
+				))
 			}
 			div(row + gap_4) {
 				h3(source.hostCore, text_muted)

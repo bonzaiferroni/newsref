@@ -16,6 +16,8 @@ dependencies {
     implementation("io.ktor:ktor-client-apache:$ktor_version")
     implementation("io.ktor:ktor-client-encoding:$ktor_version")
     implementation("io.ktor:ktor-network-tls:$ktor_version")
+    implementation("io.ktor:ktor-serialization-kotlinx-json:$ktor_version")
+    implementation("io.ktor:ktor-client-content-negotiation:$ktor_version")
     implementation("org.jline:jline:3.21.0")
 
     implementation("com.microsoft.playwright:playwright:1.41.0")

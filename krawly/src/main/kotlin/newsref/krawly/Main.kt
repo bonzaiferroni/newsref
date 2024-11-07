@@ -24,7 +24,6 @@ fun crawl(args: Array<String>) {
 	initProfiler(globalConsole.getHandle("profiler")::log)
 	initDb()
 	val web = SpiderWeb()
-	val nexusFinder = NexusFinder()
 	val scoreFinder = ScoreFinder()
 	val hostAgent = HostAgent(web)
 	val leadMaker = LeadMaker()

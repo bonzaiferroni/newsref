@@ -7,12 +7,12 @@ import com.aallam.openai.api.chat.ChatRole
 import com.aallam.openai.api.model.ModelId
 import com.aallam.openai.client.OpenAI
 
-private val key = System.getenv("OPENAI_KEY")
-val bot = OpenAI(
-    token = key,
-//    timeout = Timeout(socket = 60.seconds),
-    // additional configurations...
-)
+//private val key = System.getenv("OPENAI_KEY")
+//val bot = OpenAI(
+//    token = key,
+////    timeout = Timeout(socket = 60.seconds),
+//    // additional configurations...
+//)
 
 suspend fun OpenAI.ask(question: String): ChatCompletion {
     val chatCompletionRequest = ChatCompletionRequest(
