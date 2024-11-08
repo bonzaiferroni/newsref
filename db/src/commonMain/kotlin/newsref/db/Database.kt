@@ -1,5 +1,7 @@
 package newsref.db
 
+import kotlinx.coroutines.runBlocking
+import newsref.db.services.UserService
 import newsref.db.tables.*
 import newsref.model.core.UserRole
 import org.jetbrains.exposed.sql.*
@@ -7,12 +9,15 @@ import org.jetbrains.exposed.sql.SqlExpressionBuilder.eq
 import org.jetbrains.exposed.sql.transactions.transaction
 
 fun initDb() {
-	println("initDb: initializing db")
+	globalConsole.logInfo("initDb", "initializing db")
 	val db = connectDb()
 	transaction(db) {
 		// todo: add migration handling
 		SchemaUtils.create(*dbTables.toTypedArray())
 		// exec("CREATE INDEX IF NOT EXISTS idx_text_prefix ON content (SUBSTRING(text FROM 1 FOR 100))")
+	}
+	runBlocking {
+		UserService().initUsers()
 	}
 }
 
@@ -36,6 +41,7 @@ val dbTables = listOf(
 	FeedTable,
 	NexusTable,
 	FeedSourceTable,
+	NoteTable,
 )
 
 const val URL = "jdbc:postgresql://localhost:5432/newsrefdb"

@@ -23,7 +23,7 @@ import newsref.model.core.UserRole
 import newsref.server.serverLog
 import java.util.*
 
-class UserService : DataService<User, UUID, UserRow>(
+class UserService : DataService<User, Long, UserRow>(
     UserRow,
     {user -> user.id},
     UserRow::fromData,

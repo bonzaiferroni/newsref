@@ -10,14 +10,13 @@ import java.util.*
 
 @Serializable
 data class User(
-    @Serializable(with = UUIDSerializer::class)
-    val id: UUID = UUID.randomUUID(),
+    val id: Long = 0,
     val name: String? = "",
     val username: String = "",
     val hashedPassword: String = "",
     val salt: String = "",
     val email: String? = null,
-    val roles: RoleSet = emptySet(),
+    val roles: Set<UserRole> = emptySet(),
     val avatarUrl: String? = null,
     val venmo: String? = null,
     val createdAt: Instant = Instant.DISTANT_PAST,

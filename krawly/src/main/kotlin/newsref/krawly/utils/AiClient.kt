@@ -31,41 +31,41 @@ class AiClient(
 		}
 	}
 
-	private val messages: MutableMap<String, MutableList<AiMessage>> = mutableMapOf()
+	fun createChat(invocation: String, script: String) = AiChat(invocation, script, this)
 
-	suspend fun ask(question: String, name: String = "general", initContent: String = defaultInitContent): String? {
-		if (!messages.containsKey(name)) messages[name] = mutableListOf(
-			AiMessage(
-				role = AiRole.SYSTEM,
-				content = initContent
-			),
-		)
-		val messages = messages[name]!!
-		messages.add(AiMessage(AiRole.USER, question))
-		if (messages.size > 20) messages.removeFirst()
-		val result = request(AiRequest(
-			model = model,
-			messages = messages
-		))
-		val message = result.choices.firstOrNull()?.message ?: return null
-		messages.add(message)
-		if (messages.size > 20) messages.removeFirst()
-		return message.content
-	}
-
-	suspend fun request(request: AiRequest) = ktor.post("http://localhost:8000/v1/chat/completions") {
+	suspend fun chat(messages: List<AiMessage>) = ktor.post("http://localhost:8000/v1/chat/completions") {
 		contentType(ContentType.Application.Json)
-		setBody(request)
+		setBody(AiChatRequest(
+			model = model,
+			messages = messages,
+		))
+	}.body<AiResponse>()
+
+	suspend fun prompt(prompt: String) = ktor.post("http://localhost:8000/v1/completions") {
+		contentType(ContentType.Application.Json)
+		setBody(AiPromptRequest(
+			model = model,
+			prompt = prompt,
+		))
 	}.body<AiResponse>()
 }
 
 @Serializable
-data class AiRequest(
+data class AiChatRequest(
 	val model: String,
 	@SerialName("max_tokens")
 	val maxTokens: Int? = null,
 	val temperature: Double = .5,
 	val messages: List<AiMessage>
+)
+
+@Serializable
+data class AiPromptRequest(
+	val model: String,
+	@SerialName("max_tokens")
+	val maxTokens: Int? = null,
+	val temperature: Double = .5,
+	val prompt: String
 )
 
 @Serializable
@@ -77,8 +77,10 @@ data class AiMessage(
 enum class AiRole {
 	@SerialName("system")
 	SYSTEM,
+
 	@SerialName("user")
 	USER,
+
 	@SerialName("assistant")
 	ASSISTANT,
 }
@@ -110,9 +112,3 @@ data class Usage(
 	@SerialName("completion_tokens")
 	val completionTokens: Int
 )
-
-private const val defaultInitContent = "I am a programmer and a writer. " +
-		"I'm the captain of our pirate ship. " +
-		"Respond in the voice of a pirate, and keep your answers as brief as possible. " +
-		"Prioritize brevity over thoroughness. " +
-		"Your name is Rustbeard, you are the first officer of our pirate ship."

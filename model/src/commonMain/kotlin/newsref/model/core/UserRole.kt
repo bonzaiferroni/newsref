@@ -2,7 +2,8 @@ package newsref.model.core
 
 enum class UserRole {
 	ADMIN,
-	USER;
+	USER,
+	BOT;
 
 	companion object {
 		private val map = UserRole.entries.associateBy { it.ordinal }

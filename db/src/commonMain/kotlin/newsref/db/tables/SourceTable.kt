@@ -28,6 +28,7 @@ import org.jetbrains.exposed.sql.kotlin.datetime.datetime
 
 internal object SourceTable : LongIdTable("source") {
     val hostId = reference("host_id", HostTable, ReferenceOption.CASCADE).index()
+    val noteId = reference("note_id", NoteTable, ReferenceOption.SET_NULL).nullable().index()
     val url = text("url").uniqueIndex()
     val title = text("title").nullable()
     val score = integer("score").nullable()
@@ -44,6 +45,7 @@ internal class SourceRow(id: EntityID<Long>) : LongEntity(id) {
     companion object : EntityClass<Long, SourceRow>(SourceTable)
 
     var host by HostRow referencedOn SourceTable.hostId
+    var note by NoteRow optionalReferencedOn SourceTable.noteId
     var contents by ContentRow via SourceContentTable
 
     var url by SourceTable.url
@@ -65,6 +67,8 @@ internal class SourceRow(id: EntityID<Long>) : LongEntity(id) {
 
 internal fun SourceRow.toData() = Source(
     id = this.id.value,
+    hostId = this.host.id.value,
+    noteId = this.note?.id?.value,
     url = this.url.toCheckedFromTrusted(),
     title = this.title,
     score = this.score,
@@ -79,6 +83,8 @@ internal fun SourceRow.toData() = Source(
 
 internal fun ResultRow.toSource() = Source(
     id = this[SourceTable.id].value,
+    hostId = this[SourceTable.hostId].value,
+    noteId = this.getOrNull(SourceTable.noteId)?.value,
     url = this[SourceTable.url].toCheckedFromTrusted(),
     title = this[SourceTable.title],
     score = this[SourceTable.score],

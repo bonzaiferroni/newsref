@@ -5,7 +5,7 @@ import kotlinx.coroutines.runBlocking
 import newsref.krawly.utils.*
 import kotlin.test.Test
 
-class NoteMakerTest {
+class NoteWriterTest {
 
 	private val client = AiClient()
 

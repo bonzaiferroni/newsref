@@ -1,34 +1,36 @@
 package newsref.db.tables
 
+import kotlinx.datetime.*
 import kotlinx.datetime.TimeZone
-import kotlinx.datetime.UtcOffset
-import kotlinx.datetime.toInstant
-import kotlinx.datetime.toLocalDateTime
 import org.jetbrains.exposed.dao.EntityClass
 import org.jetbrains.exposed.dao.id.EntityID
 import newsref.model.dto.UserInfo
 import newsref.db.models.User
+import newsref.db.utils.toLocalDateTimeUtc
+import newsref.model.core.UserRole
 import newsref.model.core.UserRole.Companion.toUserRole
+import org.jetbrains.exposed.dao.LongEntity
 import org.jetbrains.exposed.dao.UUIDEntity
+import org.jetbrains.exposed.dao.id.LongIdTable
 import org.jetbrains.exposed.dao.id.UUIDTable
 import org.jetbrains.exposed.sql.kotlin.datetime.datetime
 import java.util.*
 
-object UserTable : UUIDTable("user") {
+object UserTable : LongIdTable("user") {
     val name = text("name").nullable()
     val username = text("username")
     val hashedPassword = text("hashed_password")
     val salt = text("salt")
     val email = text("email").nullable()
-    val roles = array<Int>("roles")
+    val roles = array<String>("roles")
     val avatarUrl = text("avatar_url").nullable()
     val venmo = text("venmo").nullable()
     val createdAt = datetime("created_at")
     val updatedAt = datetime("updated_at")
 }
 
-class UserRow(id: EntityID<UUID>) : UUIDEntity(id) {
-    companion object : EntityClass<UUID, UserRow>(UserTable)
+class UserRow(id: EntityID<Long>) : LongEntity(id) {
+    companion object : EntityClass<Long, UserRow>(UserTable)
 
     var name by UserTable.name
     var username by UserTable.username
@@ -49,7 +51,7 @@ fun UserRow.toData() = User(
     this.hashedPassword,
     this.salt,
     this.email,
-    this.roles.map { it.toUserRole() }.toSet(),
+    this.roles.map { UserRole.valueOf(it) }.toSet(),
     this.avatarUrl,
     this.venmo,
     this.createdAt.toInstant(UtcOffset.ZERO),
@@ -62,16 +64,16 @@ fun UserRow.fromData(data: User) {
     hashedPassword = data.hashedPassword
     salt = data.salt
     email = data.email
-    roles = data.roles.map { it.ordinal }
+    roles = data.roles.map { it.name }
     avatarUrl = data.avatarUrl
     venmo = data.venmo
     createdAt = data.createdAt.toLocalDateTime(TimeZone.UTC)
-    updatedAt = data.updatedAt.toLocalDateTime(TimeZone.UTC)
+    updatedAt = Clock.System.now().toLocalDateTimeUtc()
 }
 
 fun UserRow.toInfo() = UserInfo(
     this.username,
-    this.roles.map { it.toUserRole() }.toSet(),
+    this.roles.map { UserRole.valueOf(it) }.toSet(),
     this.avatarUrl,
     this.venmo,
     this.createdAt.toInstant(UtcOffset.ZERO),
