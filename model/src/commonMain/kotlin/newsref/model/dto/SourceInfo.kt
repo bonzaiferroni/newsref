@@ -17,6 +17,7 @@ data class SourceInfo(
 	val section: String?,
 	val image: String?,
 	val thumbnail: String?,
+	val note: String?,
 	val seenAt: Instant,
 	val score: Int,
 	val publishedAt: Instant?,

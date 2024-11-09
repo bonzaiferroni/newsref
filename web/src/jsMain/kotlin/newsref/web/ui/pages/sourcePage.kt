@@ -31,6 +31,11 @@ fun Container.sourcePage(context: AppContext, id: Long): PortalEvents? {
 					p(description)
 				}
 			}
+			source.note?.let { note ->
+				detailRow("Note") {
+					p(note)
+				}
+			}
 			if (source.inLinks.isNotEmpty()) {
 				renderStore(model.state, { it.showMoreInbound }) { inboundState ->
 					val inLinks = source.inLinks.let {

@@ -1,0 +1,14 @@
+en_GB-alba-medium
+en_GB-cori-high
+en_US-arctic-medium
+en_us-glados-high
+en_US-lessac-high
+en_US-libritts-high
+en_US-ryan-high
+en_US-spy-fox-medium
+glados
+jarvis-high
+kuroki_tomoko
+tdt_TL-joao-medium
+vasco
+wheatley1

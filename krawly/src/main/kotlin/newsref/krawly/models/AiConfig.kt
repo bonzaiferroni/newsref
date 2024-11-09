@@ -10,11 +10,17 @@ data class AiConfig(
 	val model: String,
 	val url: String,
 	val token: String? = null,
+	val voice: String? = null,
 	val status: BotStatus = BotStatus.ASLEEP,
 )
 
 enum class BotStatus {
 	ASLEEP,
-	RANDOM,
 	ACTIVE,
 }
+
+@Serializable
+data class AiSpeech(
+	val voice: String,
+	val content: String,
+)

@@ -38,7 +38,7 @@ class SourceInfoService : DbService() {
 }
 
 internal fun SourceTable.getInfos(block: SqlExpressionBuilder.() -> Op<Boolean>): List<SourceInfo> {
-	val sourceInfos = this.leftJoin(ArticleTable).leftJoin(HostTable)
+	val sourceInfos = this.leftJoin(ArticleTable).leftJoin(HostTable).leftJoin(NoteTable)
 		.select(
 			SourceTable.id,
 			this.url,
@@ -55,6 +55,7 @@ internal fun SourceTable.getInfos(block: SqlExpressionBuilder.() -> Op<Boolean>)
 			ArticleTable.description,
 			ArticleTable.wordCount,
 			ArticleTable.section,
+			NoteTable.body
 		)
 		.where(block)
 		.map { row ->
@@ -74,6 +75,7 @@ internal fun SourceTable.getInfos(block: SqlExpressionBuilder.() -> Op<Boolean>)
 				description = row.getOrNull(ArticleTable.description),
 				wordCount = row.getOrNull(ArticleTable.wordCount),
 				section = row.getOrNull(ArticleTable.section),
+				note = row.getOrNull(NoteTable.body),
 				inLinks = emptyList(),
 				outLinks = emptyList(),
 				scores = emptyList(),

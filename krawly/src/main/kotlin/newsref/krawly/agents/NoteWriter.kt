@@ -5,11 +5,14 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import kotlinx.datetime.Clock
+import kotlinx.serialization.serializer
 import newsref.db.globalConsole
 import newsref.db.services.NoteService
 import newsref.db.utils.RESOURCE_PATH
 import newsref.db.utils.jsonDecoder
+import newsref.db.utils.prettyPrintJson
 import newsref.krawly.models.AiConfig
+import newsref.krawly.models.AiSpeech
 import newsref.krawly.models.BotStatus
 import newsref.krawly.utils.AiClient
 import newsref.model.data.Source
@@ -43,17 +46,18 @@ class NoteWriter(
 		val source = noteService.findNextSource() ?: return
 		val (title, content) = noteService.getContent(source.id)
 			?: Pair("haiku", listOf("nevermind about the article, write a haiku inspired by this url:\n${source.url}"))
-		val body = content.joinToString("\n\n")
+		val body = content.joinToString("\n\n").take(20000)
 		val prompt = "# $title\n\n$body"
 		console.log(prompt)
-		val randomBots = bots.filter{ it.status == BotStatus.RANDOM}
-		if (randomBots.isNotEmpty()) {
-			val bot = randomBots.random()
+		val bots = bots.filter { it.status == BotStatus.ACTIVE }
+		if (bots.isEmpty()) return
+
+		if (title == "haiku") {
+			val bot = bots.random()
 			makeNote(bot, source, prompt)
-		}
-		val activeBots = bots.filter { it.status == BotStatus.ACTIVE }
-		if (title != "haiku" && activeBots.isNotEmpty()) {
-			for (bot in activeBots) {
+		} else {
+			createSpeech("${source.id}-body", body)
+			for (bot in bots) {
 				makeNote(bot, source, prompt)
 			}
 		}
@@ -64,7 +68,16 @@ class NoteWriter(
 		val chat = client.createChat(bot, defaultScript)
 		val response = chat.ask(prompt) ?: return
 		val note = noteService.createNote(source.id, userId, "bot note", response)
+		createSpeech("${source.id}-$userId", response, bot.voice)
 		console.log("${bot.name}${source.url}\n${note.body}")
+	}
+
+	private fun createSpeech(name: String, content: String, voice: String? = null) {
+		val json = prettyPrintJson.encodeToString(serializer(), AiSpeech(
+			voice = voice ?: "en_us-glados-high",
+			content = content
+		))
+		File("${RESOURCE_PATH}/speak/$name.json").writeText(json)
 	}
 }
 
