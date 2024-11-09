@@ -13,6 +13,8 @@ import newsref.db.utils.createOrUpdate
 import newsref.model.data.Note
 import org.jetbrains.exposed.sql.SortOrder
 import org.jetbrains.exposed.sql.SqlExpressionBuilder.eq
+import org.jetbrains.exposed.sql.SqlExpressionBuilder.isNotNull
+import org.jetbrains.exposed.sql.and
 
 class NoteService : DbService() {
 
@@ -24,8 +26,8 @@ class NoteService : DbService() {
 	}
 
 	suspend fun findNextSource() = dbQuery {
-		SourceRow.find { SourceTable.noteId.isNull() }
-			.orderBy(Pair(SourceTable.score, SortOrder.DESC))
+		SourceRow.find { SourceTable.noteId.isNull() and SourceTable.title.isNotNull() }
+			.orderBy(Pair(SourceTable.score, SortOrder.DESC_NULLS_LAST))
 			.firstOrNull()
 			?.toData()
 	}

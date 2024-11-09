@@ -48,6 +48,14 @@ private val client = HttpClient(CIO) {
 	install(HttpSend) {
 		maxSendCount = 40
 	}
+	engine {
+		requestTimeout = 30_000 // Timeout in milliseconds (30 seconds here)
+	}
+	install(HttpTimeout) {
+		requestTimeoutMillis = 30_000 // Set request timeout
+		connectTimeoutMillis = 30_000 // Set connection timeout
+		socketTimeoutMillis = 30_000  // Set socket timeout
+	}
 //	engine {
 //		followRedirects = true
 //		socketTimeout = 30000

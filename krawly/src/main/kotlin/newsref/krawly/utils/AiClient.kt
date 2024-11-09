@@ -11,9 +11,12 @@ import io.ktor.serialization.kotlinx.json.*
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.json.Json
+import newsref.krawly.models.AiConfig
 
 class AiClient(
-	private val model: String = "Qwen/Qwen2.5-1.5B-Instruct",
+	private val url: String = "http://localhost:8000/v1/chat/completions",
+	private val model: String = "Qwen/Qwen2.5-3B-Instruct",
+	private val token: String? = null,
 ) {
 
 	private val ktor = HttpClient(CIO) {
@@ -29,12 +32,30 @@ class AiClient(
 				set(HttpHeaders.ContentType, "application/json")
 			}
 		}
+		engine {
+			requestTimeout = 120_000 // Timeout in milliseconds (30 seconds here)
+		}
+		install(HttpTimeout) {
+			requestTimeoutMillis = 120_000 // Set request timeout
+			connectTimeoutMillis = 120_000 // Set connection timeout
+			socketTimeoutMillis = 120_000  // Set socket timeout
+		}
 	}
 
-	fun createChat(invocation: String, script: String) = AiChat(invocation, script, this)
+	fun createChat(config: AiConfig, script: String) = AiChat(config, script, this)
 
-	suspend fun chat(messages: List<AiMessage>) = ktor.post("http://localhost:8000/v1/chat/completions") {
+	suspend fun chat(
+		messages: List<AiMessage>,
+		url: String = this.url,
+		model: String = this.model,
+		token: String? = this.token
+	) = ktor.post(url) {
 		contentType(ContentType.Application.Json)
+		token?.also {
+			headers {
+				set(HttpHeaders.Authorization, "Bearer $it")
+			}
+		}
 		setBody(AiChatRequest(
 			model = model,
 			messages = messages,
