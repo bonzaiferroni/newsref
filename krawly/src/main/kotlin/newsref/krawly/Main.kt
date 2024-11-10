@@ -11,13 +11,8 @@ import newsref.model.core.toUrl
 
 fun main(args: Array<String>) {
 	println(args.joinToString(", "))
-	if (args.any {it.contains("http")}) {
-		// test(args.first())
-		testHead(args.first())
-	} else {
-		globalConsole.config = ConsoleConfig(showStatus = args.contains("showStatus"))
-		crawl(args)
-	}
+	globalConsole.config = ConsoleConfig(showStatus = args.contains("showStatus"))
+	crawl(args)
 }
 
 fun crawl(args: Array<String>) {
@@ -34,7 +29,7 @@ fun crawl(args: Array<String>) {
 		feedChecker.start()
 		leadFollower.start()
 		scoreFinder.start()
-		noteWriter.start()
+		// noteWriter.start()
 		"Starting spider 🕷"
 	}
 	args.map { it.split('=') }
@@ -54,19 +49,4 @@ fun crawl(args: Array<String>) {
 		val char = System.`in`.read()
 		globalConsole.addInput(char.toChar())
 	}
-}
-
-fun test(href: String) {
-	val url = href.toUrl()
-	val result = pwFetch(url, true)
-//	result?.screenshot?.cacheResource(url, "png", "test/${url.domain}")
-//	result?.requestHeaders?.map { "${it.key}:\n${it.value}" }?.joinToString("\n\n")
-//		?.cacheResource(url.domain, "txt", "test/${url.domain}", "headers")
-}
-
-fun testHead(href: String) {
-	val url = href.toUrl()
-	val result = pwFetchRedirect(url)
-	println(result.status)
-	// result?.doc?.html?.cacheResource(url, "html", "test/head", url.host)
 }

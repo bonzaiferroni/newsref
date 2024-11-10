@@ -5,6 +5,7 @@ import kotlinx.datetime.UtcOffset
 import kotlinx.datetime.toInstant
 import kotlinx.datetime.toLocalDateTime
 import kotlinx.serialization.json.Json
+import newsref.db.core.vector
 import newsref.db.utils.toCheckedFromTrusted
 import newsref.db.utils.toInstantUtc
 import newsref.db.utils.toLocalDateTimeUtc
@@ -36,6 +37,7 @@ internal object SourceTable : LongIdTable("source") {
     val imageUrl = text("image_url").nullable()
     val thumbnail = text("thumbnail").nullable()
     val embed = text("embed").nullable()
+    val embeddings = vector("embeddings", 1536).nullable()
     val seenAt = datetime("seen_at").index()
     val accessedAt = datetime("accessed_at").nullable()
     val publishedAt = datetime("published_at").nullable().index()
@@ -55,6 +57,7 @@ internal class SourceRow(id: EntityID<Long>) : LongEntity(id) {
     var imageUrl by SourceTable.imageUrl
     var thumbnail by SourceTable.thumbnail
     var embed by SourceTable.embed
+    var embeddings by SourceTable.embeddings
     var seenAt by SourceTable.seenAt
     var accessedAt by SourceTable.accessedAt
     var publishedAt by SourceTable.publishedAt

@@ -52,14 +52,12 @@ class NoteWriter(
 		val bots = bots.filter { it.status == BotStatus.ACTIVE }
 		if (bots.isEmpty()) return
 
+		val bot = bots.random()
 		if (title == "haiku") {
-			val bot = bots.random()
 			makeNote(bot, source, prompt)
 		} else {
 			createSpeech("${source.id}-body", body)
-			for (bot in bots) {
-				makeNote(bot, source, prompt)
-			}
+			makeNote(bot, source, prompt)
 		}
 	}
 
@@ -74,7 +72,7 @@ class NoteWriter(
 
 	private fun createSpeech(name: String, content: String, voice: String? = null) {
 		val json = prettyPrintJson.encodeToString(serializer(), AiSpeech(
-			voice = voice ?: "en_us-glados-high",
+			voice = voice ?: "en_GB-cori-high",
 			content = content
 		))
 		File("${RESOURCE_PATH}/speak/$name.json").writeText(json)

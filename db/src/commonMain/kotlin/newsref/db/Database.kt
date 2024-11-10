@@ -1,17 +1,21 @@
 package newsref.db
 
 import kotlinx.coroutines.runBlocking
+import newsref.db.core.PgVectorManager
 import newsref.db.services.UserService
 import newsref.db.tables.*
 import newsref.model.core.UserRole
 import org.jetbrains.exposed.sql.*
 import org.jetbrains.exposed.sql.SqlExpressionBuilder.eq
+import org.jetbrains.exposed.sql.transactions.TransactionManager
 import org.jetbrains.exposed.sql.transactions.transaction
 
 fun initDb() {
 	globalConsole.logInfo("initDb", "initializing db")
 	val db = connectDb()
+	TransactionManager.registerManager(db, PgVectorManager(TransactionManager.manager))
 	transaction(db) {
+		exec("CREATE EXTENSION IF NOT EXISTS vector;")
 		// todo: add migration handling
 		SchemaUtils.create(*dbTables.toTypedArray())
 		// exec("CREATE INDEX IF NOT EXISTS idx_text_prefix ON content (SUBSTRING(text FROM 1 FOR 100))")

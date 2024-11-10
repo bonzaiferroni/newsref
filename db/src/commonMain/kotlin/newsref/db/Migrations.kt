@@ -1,7 +1,9 @@
 package newsref.db
 
+import newsref.db.core.PgVectorManager
 import org.flywaydb.core.Flyway
 import org.jetbrains.exposed.sql.ExperimentalDatabaseMigrationApi
+import org.jetbrains.exposed.sql.transactions.TransactionManager
 import org.jetbrains.exposed.sql.transactions.transaction
 import java.io.File
 
@@ -23,13 +25,15 @@ private fun migrate(protocol: String, applyMigration: Boolean) {
 	val name = file.name
 
 	val isBaseline = folder.listFiles()?.count { it.isFile && it.name.endsWith(".sql") } == 0
-	connectDb()
+	val db = connectDb()
+	TransactionManager.registerManager(db, PgVectorManager(TransactionManager.manager))
 
 	if (file.readText().isNotEmpty()) {
 		file.renameTo(File("${file.absolutePath}.sql"))
 	} else {
 		file.delete()
 		transaction {
+			exec("CREATE EXTENSION IF NOT EXISTS vector;")
 			MigrationUtils.generateMigrationScript(
 				*dbTables.toTypedArray(),
 				scriptDirectory = folder.absolutePath,

@@ -84,7 +84,7 @@ internal fun SourceTable.getInfos(block: SqlExpressionBuilder.() -> Op<Boolean>)
 		}
 	return sourceInfos.map { sourceInfo ->
 		val scoreRows = SourceScoreRow.find { SourceScoreTable.sourceId.eq(sourceInfo.sourceId) }
-			.sortedBy { it.scoredAt }
+			.orderBy(Pair(SourceScoreTable.scoredAt, SortOrder.ASC))
 		val inLinks = LinkTable.getLinkInfos { LeadTable.sourceId.eq(sourceInfo.sourceId) }
 		val outLinks = LinkTable.getLinkInfos { LinkTable.sourceId.eq(sourceInfo.sourceId) }
 		val authors = SourceRow.findById(sourceInfo.sourceId)?.authors?.map { it.name }

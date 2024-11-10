@@ -22,6 +22,7 @@ kotlin {
                 implementation("org.jetbrains.exposed:exposed-kotlin-datetime:$exposed_version")
                 implementation("org.jetbrains.exposed:exposed-json:$exposed_version")
                 implementation("org.jetbrains.exposed:exposed-migration:$exposed_version")
+                implementation("com.pgvector:pgvector:0.1.6")
 
                 implementation("org.postgresql:postgresql:42.7.1")
                 implementation("org.flywaydb:flyway-core:10.20.0")
