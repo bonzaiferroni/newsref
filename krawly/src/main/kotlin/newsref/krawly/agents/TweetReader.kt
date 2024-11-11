@@ -15,19 +15,14 @@ import newsref.model.core.ArticleType
 import newsref.model.core.SourceType
 import newsref.model.core.Url
 import newsref.model.core.toUrl
-import newsref.model.data.Article
-import newsref.model.data.FetchStrategy
-import newsref.model.data.Host
-import newsref.model.data.Source
+import newsref.model.data.*
 import newsref.model.dto.PageAuthor
 import java.net.URLDecoder
 import java.net.URLEncoder
 import java.nio.charset.StandardCharsets
 
-class TweetReader(
-	private val web: SpiderWeb,
-) {
-	fun read(url: Url, host: Host, result: WebResult?): PageInfo? {
+class TweetReader {
+	fun read(lead: LeadInfo, url: Url, host: Host, result: WebResult?): PageInfo? {
 		val now = Clock.System.now()
 		if (result == null || !result.isOk || result.content == null) return null
 		val tweetUrl = url.stripParams().toNewDomain("x.com")
@@ -61,12 +56,12 @@ class TweetReader(
 				title = title,
 				type = SourceType.SOCIAL_POST,
 				embed = html,
+				wordCount = wordCount,
 				accessedAt = now,
-				seenAt = now,
+				seenAt = lead.freshAt ?: now,
 			),
 			pageHost = host,
 			language = "en",
-			contentWordCount = wordCount,
 			foundNewsArticle = false,
 			links = emptyList(),
 			authors = listOf(author),

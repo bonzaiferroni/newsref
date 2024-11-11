@@ -16,7 +16,7 @@ class SourceReader(
 	web: SpiderWeb,
 	private val hostAgent: HostAgent,
 	private val pageReader: PageReader = PageReader(hostAgent),
-	private val tweetReader: TweetReader = TweetReader(web)
+	private val tweetReader: TweetReader = TweetReader()
 ) {
 	private val console = globalConsole.getHandle("SourceReader")
 
@@ -25,9 +25,9 @@ class SourceReader(
 			?.let { hostAgent.getHost(it) } ?: Pair(null, null)
 		val page = fetch.lead.url.takeIf { it.isTweet }?.let {
 			val (twitterHost, _) = hostAgent.getHost("https://x.com/".toUrl())
-			tweetReader.read(it, twitterHost, fetch.result)
+			tweetReader.read(fetch.lead, it, twitterHost, fetch.result)
 		} ?: fetch.result?.takeIf { it.isOk && it.pageHref != null }?.let {
-			pageReader.read(it, pageUrl, pageHost)
+			pageReader.read(fetch.lead, it, pageUrl, pageHost)
 		}
 		val resultType = determineResultType(fetch.skipFetch, fetch.result, page)
 		if (resultType != FetchResult.TIMEOUT && !fetch.skipFetch)

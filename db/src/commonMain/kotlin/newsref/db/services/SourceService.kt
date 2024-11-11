@@ -25,7 +25,7 @@ class SourceService : DbService() {
 
 		val source = crawl.page?.source ?: Source(
 			url = lead.url,
-			seenAt = now
+			seenAt = crawl.fetch.lead.freshAt ?: now
 		)
 
 		// find and update host
@@ -81,7 +81,8 @@ class SourceService : DbService() {
 		}
 
 		// exit here if not news article
-		if (sourceRow.type != SourceType.ARTICLE || page.language?.startsWith("en") != true)
+		if (sourceRow.type != SourceType.ARTICLE && sourceRow.type != SourceType.SOCIAL_POST
+			|| page.language?.startsWith("en") != true)
 			return@dbQuery sourceRow.id.value
 
 		// create author

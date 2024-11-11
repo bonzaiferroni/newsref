@@ -49,7 +49,6 @@ data class PageInfo(
 	val hostName: String?,
 	val language: String?,
 	val foundNewsArticle: Boolean,
-	val contentWordCount: Int,
 	val contents: Set<String>,
 	val links: List<PageLink>,
 	val authors: List<PageAuthor>?,

@@ -22,7 +22,7 @@ class PageReader(
 	private var docCount = 0
 	private var articleCount = 0
 
-	suspend fun read(result: WebResult, pageUrl: CheckedUrl?, pageHost: Host?): PageInfo? {
+	suspend fun read(lead: LeadInfo, result: WebResult, pageUrl: CheckedUrl?, pageHost: Host?): PageInfo? {
 		val now = Clock.System.now()
 		val doc = result.content?.contentToDoc() ?: return null
 		if (pageUrl == null || pageHost == null) return null
@@ -143,7 +143,8 @@ class PageReader(
 				type = sourceType,
 				thumbnail = thumbnail,
 				imageUrl = imageUrl?.href,
-				seenAt = now,
+				wordCount = contentWordCount,
+				seenAt = lead.freshAt ?: now,
 				accessedAt = now,
 				publishedAt = publishedAt
 			),
@@ -152,7 +153,6 @@ class PageReader(
 			hostName = hostName,
 			language = language,
 			foundNewsArticle = newsArticle != null,
-			contentWordCount = contentWordCount,
 			article = Article(
 				headline = headline,
 				alternativeHeadline = newsArticle?.alternativeHeadline,

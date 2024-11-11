@@ -37,6 +37,7 @@ internal object SourceTable : LongIdTable("source") {
     val imageUrl = text("image_url").nullable()
     val thumbnail = text("thumbnail").nullable()
     val embed = text("embed").nullable()
+    val wordCount = integer("word_count").nullable()
     val embeddings = vector("embeddings", 1536).nullable()
     val seenAt = datetime("seen_at").index()
     val accessedAt = datetime("accessed_at").nullable()
@@ -57,6 +58,7 @@ internal class SourceRow(id: EntityID<Long>) : LongEntity(id) {
     var imageUrl by SourceTable.imageUrl
     var thumbnail by SourceTable.thumbnail
     var embed by SourceTable.embed
+    var wordCount by SourceTable.wordCount
     var embeddings by SourceTable.embeddings
     var seenAt by SourceTable.seenAt
     var accessedAt by SourceTable.accessedAt
@@ -79,6 +81,7 @@ internal fun SourceRow.toData() = Source(
     imageUrl = this.imageUrl,
     thumbnail = this.thumbnail,
     embed = this.embed,
+    wordCount = this.wordCount,
     seenAt = this.seenAt.toInstantUtc(),
     accessedAt = this.accessedAt?.toInstantUtc(),
     publishedAt = this.publishedAt?.toInstantUtc(),
@@ -95,6 +98,7 @@ internal fun ResultRow.toSource() = Source(
     imageUrl = this[SourceTable.imageUrl],
     thumbnail = this[SourceTable.thumbnail],
     embed = this[SourceTable.embed],
+    wordCount = this[SourceTable.wordCount],
     seenAt = this[SourceTable.seenAt].toInstantUtc(),
     accessedAt = this[SourceTable.accessedAt]?.toInstantUtc(),
     publishedAt = this[SourceTable.publishedAt]?.toInstantUtc(),
@@ -109,6 +113,7 @@ internal fun SourceRow.fromData(source: Source, hostRow: HostRow, isUpdate: Bool
     imageUrl = source.imageUrl
     thumbnail = source.thumbnail
     embed = source.embed
+    wordCount = source.wordCount
     if (!isUpdate)
         seenAt = source.seenAt.toLocalDateTimeUtc()
     accessedAt = source.accessedAt?.toLocalDateTimeUtc()
@@ -122,6 +127,7 @@ internal fun SourceRow.addContents(contentEntities: List<ContentRow>) {
 // source score
 internal object SourceScoreTable : LongIdTable("source_score") {
     val sourceId = reference("source_id", SourceTable, ReferenceOption.CASCADE)
+    val linkId = reference("link_id", LinkTable, ReferenceOption.CASCADE)
     val score = integer("score")
     val scoredAt = datetime("scored_at")
 }
@@ -130,21 +136,17 @@ internal class SourceScoreRow(id: EntityID<Long>) : LongEntity(id) {
     companion object : EntityClass<Long, SourceScoreRow>(SourceScoreTable)
 
     var source by SourceRow referencedOn SourceScoreTable.sourceId
+    var link by LinkRow referencedOn SourceScoreTable.linkId
     var score by SourceScoreTable.score
     var scoredAt by SourceScoreTable.scoredAt
 }
 
 internal fun SourceScoreRow.toData() = SourceScore(
     sourceId = this.source.id.value,
+    linkId = this.link.id.value,
     score = this.score,
     scoredAt = this.scoredAt.toInstant(UtcOffset.ZERO)
 )
-
-internal fun SourceScoreRow.fromData(score: SourceScore, sourceRow: SourceRow) {
-    source = sourceRow
-    this.score = score.score
-    scoredAt = score.scoredAt.toLocalDateTime(TimeZone.UTC)
-}
 
 // feed source
 internal object FeedSourceTable : IntIdTable("feed_source") {

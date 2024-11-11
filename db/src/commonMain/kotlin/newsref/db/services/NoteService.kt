@@ -9,11 +9,9 @@ import newsref.db.tables.SourceContentTable
 import newsref.db.tables.SourceRow
 import newsref.db.tables.SourceTable
 import newsref.db.tables.toData
-import newsref.db.utils.createOrUpdate
 import newsref.model.data.Note
 import org.jetbrains.exposed.sql.SortOrder
 import org.jetbrains.exposed.sql.SqlExpressionBuilder.eq
-import org.jetbrains.exposed.sql.SqlExpressionBuilder.isNotNull
 import org.jetbrains.exposed.sql.and
 
 class NoteService : DbService() {
@@ -25,7 +23,7 @@ class NoteService : DbService() {
 			.firstOrNull()
 	}
 
-	suspend fun findNextSource() = dbQuery {
+	suspend fun findNextJob() = dbQuery {
 		SourceRow.find { SourceTable.noteId.isNull() and SourceTable.title.isNotNull() }
 			.orderBy(Pair(SourceTable.score, SortOrder.DESC_NULLS_LAST))
 			.firstOrNull()

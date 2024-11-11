@@ -14,12 +14,12 @@ import kotlinx.serialization.json.Json
 import newsref.krawly.models.AiConfig
 
 class AiClient(
-	private val url: String = "http://localhost:8000/v1/chat/completions",
-	private val model: String = "Qwen/Qwen2.5-3B-Instruct",
-	private val token: String? = null,
+	val url: String = "http://localhost:8000/v1/chat/completions",
+	val model: String = "Qwen/Qwen2.5-3B-Instruct",
+	val token: String? = null,
 ) {
 
-	private val ktor = HttpClient(CIO) {
+	val ktor = HttpClient(CIO) {
 		install(ContentNegotiation) {
 			json(Json {
 				prettyPrint = true
@@ -69,7 +69,26 @@ class AiClient(
 			prompt = prompt,
 		))
 	}.body<AiResponse>()
+
+	suspend inline fun <reified Sent, reified Received> request(
+		request: Sent,
+		url: String = this.url,
+		token: String? = this.token
+	) = ktor.post(url) {
+		contentType(ContentType.Application.Json)
+		token?.also {
+			headers {
+				set(HttpHeaders.Authorization, "Bearer $it")
+			}
+		}
+		setBody(request)
+	}.body<Received>()
 }
+
+data class AiEmbeddingsRequest(
+	val input: String,
+	val model: String,
+)
 
 @Serializable
 data class AiChatRequest(

@@ -1,10 +1,10 @@
 package newsref.web.ui.widgets
 
 import io.kvision.core.Container
-import io.kvision.html.div
-import io.kvision.html.p
 import newsref.model.dto.LinkInfo
+import newsref.web.ui.css.*
 import newsref.web.utils.replaceWithAnchor
+import newsref.web.utils.sinceDescription
 
 fun Container.sourceLink(link: LinkInfo) {
 	div(className = "pb-4") {
@@ -12,8 +12,14 @@ fun Container.sourceLink(link: LinkInfo) {
 		val authors = link.authors?.map{
 			if (it.url != null) it.name.replaceWithAnchor(it.name, it.url!!) else it.name
 		}?.joinListWithAnd()?.let { "$it, " } ?: ""
-		val attribution = "—${authors}${link.hostCore}".replaceWithAnchor(link.hostCore, link.sourceUrl)
-		p(attribution, className = "text-right", rich = true)
+
+		div(row + justify_end + gap_1) {
+			val attribution = "—${authors}${link.hostCore},".replaceWithAnchor(link.hostCore, link.sourceUrl)
+			span(content = attribution, rich = true)
+			val label = (link.publishedAt ?: link.seenAt).sinceDescription()
+			span(text_muted, content = "from $label ago")
+		}
+
 	}
 }
 

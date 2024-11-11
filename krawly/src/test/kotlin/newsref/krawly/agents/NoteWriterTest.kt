@@ -11,10 +11,10 @@ class NoteWriterTest {
 
 	@Test
 	fun `explore code`() = runBlocking {
-		val result = client.ask(
-			"how ye doing, matey"
-		)
-		println(result)
+//		val result = client.ask(
+//			"how ye doing, matey"
+//		)
+//		println(result)
 		// println(result.choices.first().text)
 	}
 }

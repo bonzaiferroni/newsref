@@ -17,6 +17,7 @@ data class Source(
 	val thumbnail: String? = null,
 	val imageUrl: String? = null,
 	val embed: String? = null,
+	val wordCount: Int? = null,
 	val seenAt: Instant,
 	val accessedAt: Instant? = null,
 	val publishedAt: Instant? = null,
@@ -24,6 +25,7 @@ data class Source(
 
 data class SourceScore(
 	val sourceId: Long,
+	val linkId: Long,
 	val score: Int,
 	val scoredAt: Instant
 )

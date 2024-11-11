@@ -267,7 +267,7 @@ class LeadFollower(
 			.cell("🦦") { page.authors != null }
 			.cell("🔗") { page.authors?.firstOrNull()?.url != null }
 			.cell("🍓") { page.isFresh }
-			.cell((page.article?.wordCount ?: page.contentWordCount).toString(), 7, "words")
+			.cell((page.article?.wordCount ?: page.source.wordCount).toString(), 7, "words")
 			.cell(createdLeads, 2, "leads", highlight = createdLeads > 0)
 			.cell("$externalLinkCount/${page.links.size}", 5, "links")
 			.cell(strategyMsg, 5, justify = Justify.LEFT)

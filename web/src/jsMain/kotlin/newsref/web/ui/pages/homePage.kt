@@ -20,6 +20,7 @@ import newsref.web.ui.css.*
 import newsref.web.ui.widgets.sourceChart
 import newsref.web.utils.format
 import newsref.web.utils.pluralize
+import newsref.web.utils.sinceDescription
 import org.w3c.dom.SMOOTH
 import org.w3c.dom.ScrollBehavior
 import org.w3c.dom.ScrollToOptions
@@ -58,20 +59,7 @@ class ChartCache {
 fun Container.feedSource(source: SourceInfo, cache: ChartCache) {
 	val title = source.headline?.takeIf { it.isNotEmpty() }
 		?: source.pageTitle?.takeIf { it.isNotEmpty()} ?: source.url
-	val now = Clock.System.now()
-	val timeSince = (now - (source.publishedAt ?: source.seenAt))
-	val label = if (timeSince < 1.hours) {
-		val minutes = timeSince.inWholeMinutes
-		"$minutes minutes${minutes.pluralize()}"
-	} else if (timeSince < 24.hours) {
-		val hours = timeSince.inWholeHours
-		"$hours hour${hours.pluralize()}"
-	} else if (timeSince < 800.days) {
-		val days = timeSince.inWholeDays
-		"$days day${days.pluralize()}"
-	} else {
-		"${(timeSince.inWholeDays / 365.2422).format()} years"
-	}
+	val label = (source.publishedAt ?: source.seenAt).sinceDescription()
 	div(row + gap_4 + w_full + items_start) {
 		div(col + gap_2 + "md" * flex_row) {
 			sourceChart(source, cache)
@@ -128,7 +116,13 @@ fun Container.feedChart(state: HomeState, cache: ChartCache) {
 			if (startTimes[i] > firstScore.scoredAt) break
 			bucket++
 		}
+		val startTime = startTimes[bucket]
 		for (score in source.scores) {
+			if (score.scoredAt < startTime) {
+				lastScore = score.score
+				currentScore = score.score
+				continue
+			}
 			if (bucket + 1 == bucketCount) break
 			if (score.scoredAt < startTimes[bucket + 1]) {
 				currentScore = score.score
@@ -143,6 +137,7 @@ fun Container.feedChart(state: HomeState, cache: ChartCache) {
 		}
 		val finalScore = source.scores.last().score
 		buckets[bucket] += finalScore - lastScore
+		if (finalScore < lastScore) console.log(source)
 		cache.maxY = maxOf(finalScore, cache.maxY)
 		sourceBuckets[bucket] = finalScore
 		cache.scores[source.sourceId] = sourceBuckets

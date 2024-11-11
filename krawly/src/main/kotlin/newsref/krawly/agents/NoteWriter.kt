@@ -43,7 +43,7 @@ class NoteWriter(
 	}
 
 	private suspend fun makeNotes() {
-		val source = noteService.findNextSource() ?: return
+		val source = noteService.findNextJob() ?: return
 		val (title, content) = noteService.getContent(source.id)
 			?: Pair("haiku", listOf("nevermind about the article, write a haiku inspired by this url:\n${source.url}"))
 		val body = content.joinToString("\n\n").take(20000)
