@@ -33,7 +33,10 @@ fun Container.sourcePage(context: AppContext, id: Long): PortalEvents? {
 			}
 			source.note?.let { note ->
 				detailRow("Note") {
-					p(note)
+					p(note.replace("\n", "<br>").replace(Regex("""(http[s]?://[^\s<]+)""")) { matchResult ->
+						val url = matchResult.value
+						"""<a href="$url">$url</a>"""
+					}, true)
 				}
 			}
 			if (source.inLinks.isNotEmpty()) {
@@ -41,40 +44,39 @@ fun Container.sourcePage(context: AppContext, id: Long): PortalEvents? {
 					val inLinks = source.inLinks.let {
 						if (inboundState.showMoreInbound) it else it.take(INITIAL_LINK_COUNT)
 					}
-					if (inLinks.isNotEmpty()) {
-						detailRow("Inbound Links") {
-							div(className = "flex flex-col") {
-								for (link in inLinks) {
-									sourceLink(link)
-								}
+					detailRow("Inbound Links") {
+						div(className = "flex flex-col") {
+							for (link in inLinks) {
+								sourceLink(link)
 							}
-							val moreCount = source.inLinks.size - inLinks.size
-							if (moreCount > 0 || inboundState.showMoreInbound) {
-								val buttonText = if (inboundState.showMoreInbound)
-									"Show less" else "Show $moreCount more"
-								button(buttonText, className = "mx-auto block").bindTo(model::toggleMoreInbound)
-							}
+						}
+						val moreCount = source.inLinks.size - inLinks.size
+						if (moreCount > 0 || inboundState.showMoreInbound) {
+							val buttonText = if (inboundState.showMoreInbound)
+								"Show less" else "Show $moreCount more"
+							button(buttonText, className = "mx-auto block").bindTo(model::toggleMoreInbound)
 						}
 					}
 				}
 			}
 			if (source.outLinks.isNotEmpty()) {
-				val outLinks = state.source.outLinks.let {
-					if (state.showMoreOutbound) it else it.take(INITIAL_LINK_COUNT)
-				}
-				if (outLinks.isNotEmpty()) {
-					detailRow("Outbound Links", true) {
+				renderStore(model.state, { it.showMoreOutbound }) { outboundState ->
+					val outLinks = source.outLinks.let {
+						if (outboundState.showMoreOutbound) it else it.take(INITIAL_LINK_COUNT)
+					}
+					detailRow("Outbound Links") {
 						for (link in outLinks) {
 							sourceLink(link)
 						}
 						val moreCount = state.source.outLinks.size - outLinks.size
-						if (moreCount > 0 || !state.showMoreOutbound) {
-							val buttonText = if (state.showMoreOutbound)
+						if (moreCount > 0 || outboundState.showMoreOutbound) {
+							val buttonText = if (outboundState.showMoreOutbound)
 								"Show less" else "Show $moreCount more"
 							button(buttonText, className = "mx-auto block").bindTo(model::toggleMoreOutbound)
 						}
 					}
 				}
+
 			}
 		}
 	}

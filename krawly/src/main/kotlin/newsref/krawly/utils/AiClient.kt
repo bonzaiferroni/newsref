@@ -85,7 +85,8 @@ class AiClient(
 	}.body<Received>()
 }
 
-data class AiEmbeddingsRequest(
+@Serializable
+data class EmbeddingRequest(
 	val input: String,
 	val model: String,
 )
@@ -150,5 +151,22 @@ data class Usage(
 	@SerialName("total_tokens")
 	val totalTokens: Int,
 	@SerialName("completion_tokens")
-	val completionTokens: Int
+	val completionTokens: Int = 0
+)
+
+@Serializable
+data class EmbeddingResult(
+	@SerialName("object")
+	val type: String,
+	val data: List<EmbeddingData>,
+	val model: String,
+	val usage: Usage
+)
+
+@Serializable
+data class EmbeddingData(
+	@SerialName("object")
+	val type: String,
+	val index: Int,
+	val embedding: FloatArray
 )

@@ -15,14 +15,19 @@ fun Container.sourceChart(source: SourceInfo, cache: ChartCache) {
 
 	chart(
 		Configuration(
-			ChartType.LINE,
-			listOf(DataSets(data = scores)),
+			ChartType.BAR,
+			listOf(DataSets(data = scores, backgroundColor = cache.colors)),
 			labels,
 			options = ChartOptions(
 				responsive = false,
 				scales = mapOf(
 					"x" to ChartScales(
-						display = false
+						ticks = TickOptions(
+							display = false
+						),
+						grid = GridLineOptions(
+							display = true
+						)
 					),
 					"y" to ChartScales(
 						display = false,

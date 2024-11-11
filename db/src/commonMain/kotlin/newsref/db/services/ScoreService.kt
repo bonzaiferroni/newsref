@@ -30,7 +30,7 @@ class ScoreService : DbService() {
 						+ SourceTable.seenAt + SourceTable.publishedAt
 			)
 			.where {
-				SourceTable.seenAt.greaterEq(time) and
+				// SourceTable.seenAt.greaterEq(time) and
 						LinkTable.isExternal.eq(true) and LeadTable.sourceId.isNotNull()
 			}
 			// .also { println(it.prepareSQL(QueryBuilder(false))) }

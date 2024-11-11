@@ -8,7 +8,6 @@ import newsref.db.log.toYellow
 import newsref.model.core.CheckedUrl
 import newsref.db.models.CrawlInfo
 import newsref.db.services.CreateLeadResult
-import newsref.db.services.NexusService
 import newsref.krawly.utils.TallyMap
 import newsref.krawly.utils.increment
 import newsref.model.data.LeadJob
@@ -32,16 +31,21 @@ class LeadMaker(
 		}
 	}
 
-	suspend fun makeLeads(fetch: CrawlInfo): TallyMap<CreateLeadResult> {
+	suspend fun makeLeads(crawl: CrawlInfo): TallyMap<CreateLeadResult> {
 		val resultMap = mutableMapOf<CreateLeadResult, Int>()
-		val page = fetch.page ?: return resultMap
-		val links = fetch.page?.links ?: return resultMap
+		val page = crawl.page ?: return resultMap
+		val links = crawl.page?.links ?: return resultMap
 		for (link in links) {
 			val publishedAt = page.source.publishedAt
 			val freshSource = publishedAt != null && publishedAt > (Clock.System.now() - 30.days)
-			val createIfFresh = fetch.fetchResult == FetchResult.RELEVANT && freshSource
+			val createIfFresh = crawl.fetchResult == FetchResult.RELEVANT && freshSource
 			if (!createIfFresh && !link.isExternal) continue
-			val job = LeadJob(isExternal = link.isExternal, freshAt = fetch.page?.source?.publishedAt)
+			val job = LeadJob(
+				isExternal = link.isExternal,
+				freshAt = crawl.page?.source?.publishedAt
+					?: crawl.page?.source?.seenAt
+					?: crawl.fetch.lead.freshAt
+			)
 			val result = makeLead(link.url, job, createIfFresh)
 			if (result == CreateLeadResult.AFFIRMED)
 				console.log("affirmed")

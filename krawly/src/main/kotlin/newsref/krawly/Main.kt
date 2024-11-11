@@ -23,6 +23,7 @@ fun crawl(args: Array<String>) {
 	val hostAgent = HostAgent(web)
 	val leadMaker = LeadMaker()
 	val noteWriter = NoteWriter()
+	val sourceEmbedder = SourceEmbedder()
 	val feedChecker = FeedChecker(web, hostAgent, leadMaker)
 	val leadFollower = LeadFollower(web = web, leadMaker = leadMaker, hostAgent = hostAgent)
 	globalConsole.addCommand("start") {
@@ -30,6 +31,7 @@ fun crawl(args: Array<String>) {
 		leadFollower.start()
 		scoreFinder.start()
 		// noteWriter.start()
+		sourceEmbedder.start()
 		"Starting spider 🕷"
 	}
 	args.map { it.split('=') }

@@ -1,6 +1,7 @@
 package newsref.web.ui.pages
 
 import io.kvision.chart.*
+import io.kvision.core.Color
 import io.kvision.core.Container
 import io.kvision.html.h3
 import kotlinx.browser.window
@@ -24,6 +25,7 @@ import newsref.web.utils.sinceDescription
 import org.w3c.dom.SMOOTH
 import org.w3c.dom.ScrollBehavior
 import org.w3c.dom.ScrollToOptions
+import kotlin.math.roundToInt
 import kotlin.time.Duration.Companion.days
 import kotlin.time.Duration.Companion.hours
 
@@ -53,6 +55,7 @@ fun Container.homePage(context: AppContext): PortalEvents? {
 class ChartCache {
 	val scores = mutableMapOf<Long, List<Int>>()
 	var labels: List<String>? = null
+	var colors: List<Color>? = null
 	var maxY: Int = 0
 }
 
@@ -160,6 +163,7 @@ fun Container.feedChart(state: HomeState, cache: ChartCache) {
 	}
 
 	cache.labels = labels
+	cache.colors = interpolateColors(bucketCount)
 
 	chart(
 		Configuration(
@@ -177,4 +181,21 @@ fun Container.feedChart(state: HomeState, cache: ChartCache) {
 		),
 		className = w_full.toString()
 	)
+}
+
+fun interpolateColors(steps: Int): List<Color> {
+	// Default blue and fiery orange
+	val startColor = Triple(0, 119, 204)    // Default blue in RGB
+	val endColor = Triple(255, 85, 0)       // Fiery orange in RGB
+
+	return List(steps) { step ->
+		val ratio = step / (steps - 1).toFloat()
+
+		// Interpolated RGB values
+		val red = (startColor.first + ratio * (endColor.first - startColor.first)).roundToInt()
+		val green = (startColor.second + ratio * (endColor.second - startColor.second)).roundToInt()
+		val blue = (startColor.third + ratio * (endColor.third - startColor.third)).roundToInt()
+
+		Color.rgba(red, green, blue, 200)
+	}
 }

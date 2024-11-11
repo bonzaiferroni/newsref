@@ -9,20 +9,20 @@ import java.sql.ResultSet
 // referenced:
 // https://github.com/Martmists-GH/mlutils/blob/master/src/main/kotlin/com/martmists/mlutils/compat/exposed/PgVectorColumnType.kt
 
-class PgVectorColumnType(private val size: Int) : ColumnType<Embedding>() {
+class PgVectorColumnType(private val size: Int) : ColumnType<FloatArray>() {
 	override fun sqlType(): String = "vector($size)"
 
 	override fun readObject(rs: ResultSet, index: Int) = rs.getObject(index) as PGvector?
 
-	override fun validateValueBeforeUpdate(value: Embedding?) {
-		if (value !is Embedding) error("Value must be an Embedding")
-		require(value.vector.size == size) { "Embedding size must be $size" }
+	override fun validateValueBeforeUpdate(value: FloatArray?) {
+		if (value !is FloatArray) error("Value must be an Embedding")
+		require(value.size == size) { "Embedding size must be $size" }
 	}
 
-	override fun valueFromDB(value: Any) = when (value) {
-		is PGvector -> Embedding(value.toArray())
+	override fun valueFromDB(value: Any): FloatArray = when (value) {
+		is PGvector -> value.toArray()
 		else -> error("Unexpected value: $value")
 	}
 
-	override fun notNullValueToDB(value: Embedding) = PGvector(value.vector)
+	override fun notNullValueToDB(value: FloatArray) = PGvector(value)
 }
