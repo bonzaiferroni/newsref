@@ -46,6 +46,7 @@ val dbTables = listOf(
 	NexusTable,
 	FeedSourceTable,
 	NoteTable,
+	SourceNoteTable,
 )
 
 const val URL = "jdbc:postgresql://localhost:5432/newsrefdb"

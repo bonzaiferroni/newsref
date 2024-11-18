@@ -80,9 +80,8 @@ class SourceService : DbService() {
 			ArticleRow.createOrUpdate(ArticleTable.sourceId eq sourceRow.id) { fromData(article, sourceRow) }
 		}
 
-		// exit here if not news article
-		if (sourceRow.type != SourceType.ARTICLE && sourceRow.type != SourceType.SOCIAL_POST
-			|| page.language?.startsWith("en") != true)
+		// exit here if not content we are interested in
+		if (!cacheContent(sourceRow.type, page.language))
 			return@dbQuery sourceRow.id.value
 
 		// create author
@@ -123,4 +122,8 @@ class SourceService : DbService() {
 		sourceRow.id.value // return
 	}
 }
+
+fun cacheContent(type: SourceType?, language: String?) =
+	type != SourceType.ARTICLE && type != SourceType.SOCIAL_POST
+		|| language?.startsWith("en") != true
 

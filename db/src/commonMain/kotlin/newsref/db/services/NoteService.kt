@@ -13,6 +13,7 @@ import newsref.model.data.Note
 import org.jetbrains.exposed.sql.SortOrder
 import org.jetbrains.exposed.sql.SqlExpressionBuilder.eq
 import org.jetbrains.exposed.sql.and
+import org.jetbrains.exposed.sql.insert
 
 class NoteService : DbService() {
 
@@ -52,6 +53,10 @@ class NoteService : DbService() {
 		val note = Note(subject = subject, body = body, createdAt = now)
 		val noteRow = NoteRow.new { fromData(note, userRow) }
 		sourceRow.note = noteRow
+		SourceNoteTable.insert {
+			it[SourceNoteTable.noteId] = noteRow.id.value
+			it[SourceNoteTable.sourceId] = sourceId
+		}
 		noteRow.toData()
 	}
 }

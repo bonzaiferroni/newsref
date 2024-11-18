@@ -14,15 +14,12 @@ import newsref.db.services.CreateLeadResult
 import newsref.db.services.LeadService
 import newsref.db.services.SourceService
 import newsref.db.utils.format
-import newsref.db.utils.profile
 import newsref.krawly.SpiderWeb
 import newsref.krawly.utils.TallyMap
 import newsref.krawly.utils.getCount
 import newsref.krawly.utils.isNetworkAvailable
 import newsref.model.data.LeadInfo
 import newsref.model.data.FetchResult
-import java.net.InetSocketAddress
-import java.net.Socket
 import java.util.*
 import kotlin.time.Duration.Companion.minutes
 import kotlin.time.Duration.Companion.seconds
@@ -267,7 +264,7 @@ class LeadFollower(
 			.cell("🦦") { page.authors != null }
 			.cell("🔗") { page.authors?.firstOrNull()?.url != null }
 			.cell("🍓") { page.isFresh }
-			.cell((page.article?.wordCount ?: page.source.wordCount).toString(), 7, "words")
+			.cell((page.article?.wordCount ?: page.source.contentCount).toString(), 7, "words")
 			.cell(createdLeads, 2, "leads", highlight = createdLeads > 0)
 			.cell("$externalLinkCount/${page.links.size}", 5, "links")
 			.cell(strategyMsg, 5, justify = Justify.LEFT)

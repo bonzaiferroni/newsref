@@ -12,10 +12,7 @@ import newsref.db.tables.SourceScoreRow
 import newsref.db.tables.SourceScoreTable
 import newsref.db.utils.toInstantUtc
 import newsref.db.utils.toLocalDateTimeUtc
-import newsref.model.dto.LinkInfo
-import newsref.model.dto.PageAuthor
-import newsref.model.dto.ScoreInfo
-import newsref.model.dto.SourceInfo
+import newsref.model.dto.*
 import org.jetbrains.exposed.sql.Op
 import org.jetbrains.exposed.sql.SortOrder
 import org.jetbrains.exposed.sql.SqlExpressionBuilder
@@ -79,6 +76,7 @@ internal fun SourceTable.getInfos(block: SqlExpressionBuilder.() -> Op<Boolean>)
 				inLinks = emptyList(),
 				outLinks = emptyList(),
 				scores = emptyList(),
+				notes = emptyList(),
 				authors = null,
 			)
 		}
@@ -88,11 +86,24 @@ internal fun SourceTable.getInfos(block: SqlExpressionBuilder.() -> Op<Boolean>)
 		val inLinks = LinkTable.getLinkInfos { LeadTable.sourceId.eq(sourceInfo.sourceId) }
 		val outLinks = LinkTable.getLinkInfos { LinkTable.sourceId.eq(sourceInfo.sourceId) }
 		val authors = SourceRow.findById(sourceInfo.sourceId)?.authors?.map { it.name }
+		val notes = SourceNoteTable.leftJoin(NoteTable).leftJoin(UserTable)
+			.select(NoteTable.columns + UserTable.username)
+			.where { SourceNoteTable.sourceId eq sourceInfo.sourceId}
+			.map { NoteInfo(
+				userId = it[NoteTable.userId].value,
+				username = it[UserTable.username],
+				subject = it[NoteTable.subject],
+				body = it[NoteTable.body],
+				createdAt = it[NoteTable.createdAt].toInstantUtc(),
+				modifiedAt = it[NoteTable.modifiedAt].toInstantUtc(),
+			)}
+
 		sourceInfo.copy(
 			inLinks = inLinks,
 			outLinks = outLinks,
 			scores = scoreRows.map { ScoreInfo(it.score, it.scoredAt.toInstantUtc()) },
 			authors = authors,
+			notes = notes
 		)
 	}
 }

@@ -6,12 +6,16 @@ import io.ktor.client.engine.cio.*
 import io.ktor.client.plugins.*
 import io.ktor.client.plugins.contentnegotiation.*
 import io.ktor.client.request.*
+import io.ktor.client.statement.*
 import io.ktor.http.*
 import io.ktor.serialization.kotlinx.json.*
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.json.Json
+import newsref.db.globalConsole
 import newsref.krawly.models.AiConfig
+
+private val console = globalConsole.getHandle("AiClient")
 
 class AiClient(
 	val url: String = "http://localhost:8000/v1/chat/completions",
@@ -82,7 +86,11 @@ class AiClient(
 			}
 		}
 		setBody(request)
-	}.body<Received>()
+	}
+		.also { if (it.status != HttpStatusCode.OK)
+			globalConsole.logError("AiClient", "AiClient status: ${it.status}\n${it.bodyAsText()}")
+		}
+		.takeIf { it.status == HttpStatusCode.OK }?.body<Received>()
 }
 
 @Serializable

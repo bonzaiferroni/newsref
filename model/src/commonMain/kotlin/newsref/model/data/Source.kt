@@ -17,7 +17,7 @@ data class Source(
 	val thumbnail: String? = null,
 	val imageUrl: String? = null,
 	val embed: String? = null,
-	val wordCount: Int? = null,
+	val contentCount: Int? = null,
 	val seenAt: Instant,
 	val accessedAt: Instant? = null,
 	val publishedAt: Instant? = null,

@@ -2,6 +2,7 @@ package newsref.web.ui.pages
 
 import io.kvision.core.Container
 import io.kvision.html.*
+import newsref.model.dto.SourceInfo
 import newsref.web.core.AppContext
 import newsref.web.core.PortalEvents
 import newsref.web.ui.components.bindTo
@@ -26,17 +27,11 @@ fun Container.sourcePage(context: AppContext, id: Long): PortalEvents? {
 					image(url, className = "w-full h-auto max-h-80")
 				}
 			}
+			sourceNote(source, "Cosine Neighbors")
+			sourceNote(source, "Source Content")
 			source.description?.let { description ->
 				detailRow("Description") {
 					p(description)
-				}
-			}
-			source.note?.let { note ->
-				detailRow("Note") {
-					p(note.replace("\n", "<br>").replace(Regex("""(http[s]?://[^\s<]+)""")) { matchResult ->
-						val url = matchResult.value
-						"""<a href="$url">$url</a>"""
-					}, true)
 				}
 			}
 			if (source.inLinks.isNotEmpty()) {
@@ -81,6 +76,16 @@ fun Container.sourcePage(context: AppContext, id: Long): PortalEvents? {
 		}
 	}
 	return null
+}
+
+fun Container.sourceNote(source: SourceInfo, title: String) {
+	val note = source.notes.firstOrNull { it.subject == title } ?: return
+	detailRow(note.subject) {
+		p(note.body.replace("\n", "<br>").replace(Regex("""(http[s]?://[^\s<]+)""")) { matchResult ->
+			val url = matchResult.value
+			"""<a href="$url">$url</a>"""
+		}, true)
+	}
 }
 
 const val INITIAL_LINK_COUNT = 3

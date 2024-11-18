@@ -41,13 +41,14 @@ class SourceEmbedder(
 
 	private suspend fun findEmbeddings() {
 		val source = embeddingService.findNextJob() ?: return
-		val content = contentService.getSourceContent(source.id)
+		val content = contentService.getSourceContent(source.id).take(10000)
 		val model = "text-embedding-3-small"
 		val request = EmbeddingRequest(
 			model = model,
 			input = content
 		)
 		val result: EmbeddingResult = client.request(request, "https://api.openai.com/v1/embeddings", token)
+			?: throw IllegalStateException("no result found")
 		val vector = result.data.firstOrNull()?.embedding ?: throw IllegalStateException("no embedding found")
 		embeddingService.setEmbedding(source.id, vector)
 		val userId = noteService.getUserId("EmbeddingBot") ?: return

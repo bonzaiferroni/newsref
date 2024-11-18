@@ -35,7 +35,7 @@ internal object SourceTable : LongIdTable("source") {
     val imageUrl = text("image_url").nullable()
     val thumbnail = text("thumbnail").nullable()
     val embed = text("embed").nullable()
-    val wordCount = integer("word_count").nullable()
+    val contentCount = integer("content_count").nullable()
     val embedding = vector("embedding", 1536).nullable()
     val seenAt = datetime("seen_at").index()
     val accessedAt = datetime("accessed_at").nullable()
@@ -56,7 +56,7 @@ internal class SourceRow(id: EntityID<Long>) : LongEntity(id) {
     var imageUrl by SourceTable.imageUrl
     var thumbnail by SourceTable.thumbnail
     var embed by SourceTable.embed
-    var wordCount by SourceTable.wordCount
+    var contentCount by SourceTable.contentCount
     var embedding by SourceTable.embedding
     var seenAt by SourceTable.seenAt
     var accessedAt by SourceTable.accessedAt
@@ -79,7 +79,7 @@ internal fun SourceRow.toData() = Source(
     imageUrl = this.imageUrl,
     thumbnail = this.thumbnail,
     embed = this.embed,
-    wordCount = this.wordCount,
+    contentCount = this.contentCount,
     seenAt = this.seenAt.toInstantUtc(),
     accessedAt = this.accessedAt?.toInstantUtc(),
     publishedAt = this.publishedAt?.toInstantUtc(),
@@ -96,7 +96,7 @@ internal fun ResultRow.toSource() = Source(
     imageUrl = this[SourceTable.imageUrl],
     thumbnail = this[SourceTable.thumbnail],
     embed = this[SourceTable.embed],
-    wordCount = this[SourceTable.wordCount],
+    contentCount = this[SourceTable.contentCount],
     seenAt = this[SourceTable.seenAt].toInstantUtc(),
     accessedAt = this[SourceTable.accessedAt]?.toInstantUtc(),
     publishedAt = this[SourceTable.publishedAt]?.toInstantUtc(),
@@ -111,7 +111,7 @@ internal fun SourceRow.fromData(source: Source, hostRow: HostRow, isUpdate: Bool
     imageUrl = source.imageUrl
     thumbnail = source.thumbnail
     embed = source.embed
-    wordCount = source.wordCount
+    contentCount = source.contentCount
     if (!isUpdate)
         seenAt = source.seenAt.toLocalDateTimeUtc()
     accessedAt = source.accessedAt?.toLocalDateTimeUtc()

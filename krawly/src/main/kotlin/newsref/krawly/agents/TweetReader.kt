@@ -8,16 +8,13 @@ import newsref.db.models.WebResult
 import newsref.db.utils.jsonDecoder
 import newsref.db.utils.stripParams
 import newsref.db.utils.toNewDomain
-import newsref.krawly.SpiderWeb
 import newsref.krawly.utils.contentToDoc
 import newsref.krawly.utils.findFirstOrNull
-import newsref.model.core.ArticleType
 import newsref.model.core.SourceType
 import newsref.model.core.Url
 import newsref.model.core.toUrl
 import newsref.model.data.*
 import newsref.model.dto.PageAuthor
-import java.net.URLDecoder
 import java.net.URLEncoder
 import java.nio.charset.StandardCharsets
 
@@ -56,7 +53,7 @@ class TweetReader {
 				title = title,
 				type = SourceType.SOCIAL_POST,
 				embed = html,
-				wordCount = wordCount,
+				contentCount = wordCount,
 				accessedAt = now,
 				seenAt = lead.freshAt ?: now,
 			),
