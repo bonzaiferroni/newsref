@@ -1,4 +1,4 @@
-package newsref.krawly.utils
+package newsref.krawly.clients
 
 import io.ktor.client.*
 import io.ktor.client.call.*
@@ -60,18 +60,22 @@ class AiClient(
 				set(HttpHeaders.Authorization, "Bearer $it")
 			}
 		}
-		setBody(AiChatRequest(
+		setBody(
+			AiChatRequest(
 			model = model,
 			messages = messages,
-		))
+		)
+		)
 	}.body<AiResponse>()
 
 	suspend fun prompt(prompt: String) = ktor.post("http://localhost:8000/v1/completions") {
 		contentType(ContentType.Application.Json)
-		setBody(AiPromptRequest(
+		setBody(
+			AiPromptRequest(
 			model = model,
 			prompt = prompt,
-		))
+		)
+		)
 	}.body<AiResponse>()
 
 	suspend inline fun <reified Sent, reified Received> request(
@@ -80,15 +84,19 @@ class AiClient(
 		token: String? = this.token
 	) = ktor.post(url) {
 		contentType(ContentType.Application.Json)
-		token?.also {
+		token?.also { token ->
 			headers {
-				set(HttpHeaders.Authorization, "Bearer $it")
+				set(HttpHeaders.Authorization, "Bearer $token")
 			}
 		}
 		setBody(request)
 	}
-		.also { if (it.status != HttpStatusCode.OK)
-			globalConsole.logError("AiClient", "AiClient status: ${it.status}\n${it.bodyAsText()}")
+		.also {
+			if (it.status != HttpStatusCode.OK)
+				globalConsole.logError("AiClient", "AiClient status: ${it.status}\n${it.bodyAsText()}")
+			else {
+				globalConsole.logDebug("AiClient", "Response: OK\n${it.bodyAsText()}")
+			}
 		}
 		.takeIf { it.status == HttpStatusCode.OK }?.body<Received>()
 }

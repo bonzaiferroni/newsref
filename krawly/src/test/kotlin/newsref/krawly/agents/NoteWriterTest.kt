@@ -1,8 +1,7 @@
 package newsref.krawly.agents
 
-import io.ktor.client.statement.*
 import kotlinx.coroutines.runBlocking
-import newsref.krawly.utils.*
+import newsref.krawly.clients.AiClient
 import kotlin.test.Test
 
 class NoteWriterTest {

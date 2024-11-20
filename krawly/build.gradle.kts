@@ -23,6 +23,7 @@ dependencies {
 
 	implementation("com.microsoft.playwright:playwright:1.41.0")
 	implementation("com.aallam.openai:openai-client:3.8.2")
+	implementation("io.github.cdimascio:dotenv-kotlin:6.4.2")
 
 	implementation(project(":model"))
 	implementation(project(":db"))
@@ -72,5 +73,6 @@ val properties = Properties().apply {
 }
 
 tasks.withType<JavaExec> {
-	environment("OPENAI_KEY", properties.getProperty("OPENAI_KEY", ""))
+	System.setProperty("OPENAI_KEY", properties.getProperty("OPENAI_KEY", ""))
+	System.setProperty("HF_KEY", properties.getProperty("HF_KEY", ""))
 }

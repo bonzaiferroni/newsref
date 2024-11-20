@@ -10,9 +10,9 @@ import newsref.db.services.ContentService
 import newsref.db.services.EmbeddingService
 import newsref.db.services.NoteService
 import newsref.db.utils.format
-import newsref.krawly.utils.AiClient
-import newsref.krawly.utils.EmbeddingRequest
-import newsref.krawly.utils.EmbeddingResult
+import newsref.krawly.clients.AiClient
+import newsref.krawly.clients.EmbeddingRequest
+import newsref.krawly.clients.EmbeddingResult
 import newsref.model.data.Source
 import kotlin.time.Duration.Companion.minutes
 

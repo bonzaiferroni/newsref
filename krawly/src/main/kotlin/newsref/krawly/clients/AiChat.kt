@@ -1,4 +1,4 @@
-package newsref.krawly.utils
+package newsref.krawly.clients
 
 import newsref.krawly.models.AiConfig
 

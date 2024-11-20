@@ -14,7 +14,7 @@ import newsref.db.utils.prettyPrintJson
 import newsref.krawly.models.AiConfig
 import newsref.krawly.models.AiSpeech
 import newsref.krawly.models.BotStatus
-import newsref.krawly.utils.AiClient
+import newsref.krawly.clients.AiClient
 import newsref.model.data.Source
 import java.io.File
 import kotlin.time.Duration.Companion.minutes
