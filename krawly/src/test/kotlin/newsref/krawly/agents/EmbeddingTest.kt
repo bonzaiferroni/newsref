@@ -11,25 +11,11 @@ class EmbeddingTest {
 	@Test
 	fun `explore code`() = runBlocking {
 		val client = HfClient("BAAI/bge-large-en-v1.5")
-		val embeddings: FloatArray? = client.request(
-			request = HfEmbeddingsRequest(
-				inputs = "The quick brown fox jumped over the lazy dog"
-			)
-		)
-		println(embeddings)
+//		val embeddings: FloatArray? = client.request(
+//			request = HfEmbeddingsRequest(
+//				inputs = "The quick brown fox jumped over the lazy dog"
+//			)
+//		)
+//		println(embeddings)
 	}
-}
-
-@Serializable
-data class HfEmbeddingsRequest(
-	val inputs: String,
-	val normalize: Boolean? = null,
-	val promptName: String? = null,
-	val truncate: Boolean? = null,
-	val truncationDirection: TruncationDirection? = null,
-)
-
-enum class TruncationDirection {
-	Left,
-	Right
 }
