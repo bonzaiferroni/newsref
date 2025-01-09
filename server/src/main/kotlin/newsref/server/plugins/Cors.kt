@@ -14,9 +14,9 @@ fun Application.configureCors() {
         allowHeader(HttpHeaders.Authorization)  // Allow Authorization header
         // anyHost()  // Don't use this in production, specify the exact domain(s)
         allowHost("localhost:3000")
-        allowHost("192.168.1.122:3000")
+        allowHost("192.168.1.100:3000")
         allowHost("localhost:8080")
-        allowHost("192.168.1.122:8080")
+        allowHost("192.168.1.100:8080")
         allowHost("newsref.org")
         allowHeader(HttpHeaders.ContentType)
         allowHeader(HttpHeaders.AccessControlAllowOrigin)

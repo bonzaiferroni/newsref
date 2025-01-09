@@ -91,13 +91,6 @@ class AiClient(
 		}
 		setBody(request)
 	}
-		.also {
-			if (it.status != HttpStatusCode.OK)
-				globalConsole.logError("AiClient", "AiClient status: ${it.status}\n${it.bodyAsText()}")
-			else {
-				globalConsole.logDebug("AiClient", "Response: OK\n${it.bodyAsText()}")
-			}
-		}
 		.takeIf { it.status == HttpStatusCode.OK }?.body<Received>()
 }
 

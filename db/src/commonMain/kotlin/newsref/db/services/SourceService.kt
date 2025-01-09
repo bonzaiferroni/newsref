@@ -124,6 +124,6 @@ class SourceService : DbService() {
 }
 
 fun cacheContent(type: SourceType?, language: String?) =
-	type != SourceType.ARTICLE && type != SourceType.SOCIAL_POST
-		|| language?.startsWith("en") != true
+	(type == SourceType.ARTICLE || type == SourceType.SOCIAL_POST)
+			&& language?.startsWith("en") == true
 

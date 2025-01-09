@@ -4,7 +4,6 @@ from dotenv import load_dotenv
 import os
 import requests
 
-
 # Load environment variables from .env
 load_dotenv(dotenv_path="../.env")  # Adjust path if needed
 
