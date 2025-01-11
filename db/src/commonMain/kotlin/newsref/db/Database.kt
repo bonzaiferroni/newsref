@@ -51,7 +51,7 @@ val dbTables = listOf(
 
 const val URL = "jdbc:postgresql://localhost:5432/newsrefdb"
 const val USER = "newsref"
-val PASSWORD: String = System.getenv("NEWSREF_PSQL_PW")
+val PASSWORD: String = environment["NEWSREF_PSQL_PW"]
 
 fun connectDb() = Database.connect(
 	URL,

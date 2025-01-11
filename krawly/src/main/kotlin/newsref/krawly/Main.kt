@@ -1,5 +1,6 @@
 package newsref.krawly
 
+import io.github.cdimascio.dotenv.dotenv
 import newsref.db.globalConsole
 import newsref.db.initDb
 import newsref.db.log.ConsoleConfig

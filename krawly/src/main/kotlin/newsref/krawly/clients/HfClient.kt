@@ -10,6 +10,7 @@ import io.ktor.http.*
 import io.ktor.serialization.kotlinx.json.*
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.json.Json
+import newsref.db.environment
 
 class HfClient(
 	model: String
@@ -42,7 +43,7 @@ class HfClient(
 		}
 	}
 
-	private val token =  dotenv() { directory = "../.env" }["HF_KEY"]
+	private val token = environment["HF_KEY"]
 
 	fun request(text: String) {
 		
