@@ -1,0 +1,4 @@
+alias crawl='./scripts/crawl.sh'
+alias serve='./gradlew run -p server'
+
+echo "folder commands: crawl, serve"

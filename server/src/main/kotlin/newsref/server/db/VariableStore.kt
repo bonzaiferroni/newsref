@@ -1,6 +1,7 @@
 package newsref.server.db
 
 import kotlinx.datetime.Clock
+import newsref.db.environment
 import newsref.db.models.User
 import newsref.model.core.UserRole
 
@@ -21,7 +22,7 @@ class VariableStore {
     }
 
     private fun getEnvVariable(key: String): String {
-        return System.getenv(key) ?: throw IllegalStateException("Missing environment variable: $key")
+        return environment[key] ?: throw IllegalStateException("Missing environment variable: $key")
     }
 
     private fun getHashedPassword(): String {

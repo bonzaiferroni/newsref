@@ -12,6 +12,7 @@ import io.ktor.serialization.kotlinx.json.*
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.json.Json
+import kotlinx.serialization.json.JsonObject
 import newsref.db.globalConsole
 import newsref.krawly.models.AiConfig
 
@@ -82,16 +83,25 @@ class AiClient(
 		request: Sent,
 		url: String = this.url,
 		token: String? = this.token
-	) = ktor.post(url) {
-		contentType(ContentType.Application.Json)
-		token?.also { token ->
-			headers {
-				set(HttpHeaders.Authorization, "Bearer $token")
+	): Received? {
+		val response = ktor.post(url) {
+			contentType(ContentType.Application.Json)
+			token?.also { token ->
+				headers {
+					set(HttpHeaders.Authorization, "Bearer $token")
+				}
 			}
+			setBody(request)
 		}
-		setBody(request)
+
+		if (response.status == HttpStatusCode.OK) {
+			return response.body<Received>()
+		} else {
+			globalConsole.logError("AiClient", "Request failed:\n${response.body<JsonObject>()}")
+			return null
+		}
 	}
-		.takeIf { it.status == HttpStatusCode.OK }?.body<Received>()
+
 }
 
 @Serializable

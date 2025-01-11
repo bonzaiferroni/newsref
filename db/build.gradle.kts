@@ -49,22 +49,3 @@ kotlin {
         }
     }
 }
-
-// Load properties from the newsref.properties file
-val properties = Properties().apply {
-    file("../newsref.properties").takeIf { it.exists() }?.inputStream()?.use { load(it) }
-}
-
-tasks.all {
-    if (this is ProcessForkOptions) {
-        environment("NEWSREF_ADMIN_EMAIL", properties.getProperty("NEWSREF_ADMIN_EMAIL", ""))
-        environment("NEWSREF_ADMIN_NAME", properties.getProperty("NEWSREF_ADMIN_NAME", ""))
-        environment("NEWSREF_ADMIN_PASSWORD", properties.getProperty("NEWSREF_ADMIN_PASSWORD", ""))
-        environment("NEWSREF_ADMIN_SALT", properties.getProperty("NEWSREF_ADMIN_SALT", ""))
-        environment("NEWSREF_ADMIN_USERNAME", properties.getProperty("NEWSREF_ADMIN_USERNAME", ""))
-        environment("NEWSREF_APP_SECRET", properties.getProperty("NEWSREF_APP_SECRET", ""))
-        environment("NEWSREF_INIT_FEED_SELECTOR", properties.getProperty("NEWSREF_INIT_FEED_SELECTOR", ""))
-        environment("NEWSREF_INIT_FEED_URL", properties.getProperty("NEWSREF_INIT_FEED_URL", ""))
-        environment("NEWSREF_PSQL_PW", properties.getProperty("NEWSREF_PSQL_PW", ""))
-    }
-}

@@ -5,6 +5,7 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import kotlinx.datetime.Clock
+import newsref.db.environment
 import newsref.db.globalConsole
 import newsref.db.services.ContentService
 import newsref.db.services.EmbeddingService
@@ -25,8 +26,6 @@ class SourceEmbedder(
 	private val noteService: NoteService = NoteService()
 ) {
 
-	val token = System.getenv("OPENAI_KEY")
-
 	fun start() {
 		CoroutineScope(Dispatchers.IO).launch {
 			console.logTrace("looking for sources")
@@ -40,6 +39,8 @@ class SourceEmbedder(
 	}
 
 	private suspend fun findEmbeddings() {
+		val token = environment["OPENAI_KEY"]
+			?: throw IllegalStateException("Token missing from environment: OPENAI_KEY")
 		val source = embeddingService.findNextJob() ?: return
 		val content = contentService.getSourceContent(source.id).take(10000)
 		val model = "text-embedding-3-small"
@@ -48,7 +49,7 @@ class SourceEmbedder(
 			input = content
 		)
 		val result: EmbeddingResult = client.request(request, "https://api.openai.com/v1/embeddings", token)
-			?: throw IllegalStateException("no result found")
+			?: return
 		val vector = result.data.firstOrNull()?.embedding ?: throw IllegalStateException("no embedding found")
 		embeddingService.setEmbedding(source.id, vector)
 		val userId = noteService.getUserId("EmbeddingBot") ?: return

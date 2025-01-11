@@ -1,0 +1,13 @@
+Exception in thread "DefaultDispatcher-worker-1" java.lang.IllegalStateException: no result found
+	at newsref.krawly.agents.SourceEmbedder.findEmbeddings(SourceEmbedder.kt:51)
+	at newsref.krawly.agents.SourceEmbedder.access$findEmbeddings(SourceEmbedder.kt:21)
+	at newsref.krawly.agents.SourceEmbedder$findEmbeddings$1.invokeSuspend(SourceEmbedder.kt)
+	at kotlin.coroutines.jvm.internal.BaseContinuationImpl.resumeWith(ContinuationImpl.kt:33)
+	at kotlinx.coroutines.DispatchedTask.run(DispatchedTask.kt:101)
+	at kotlinx.coroutines.internal.LimitedDispatcher$Worker.run(LimitedDispatcher.kt:113)
+	at kotlinx.coroutines.scheduling.TaskImpl.run(Tasks.kt:89)
+	at kotlinx.coroutines.scheduling.CoroutineScheduler.runSafely(CoroutineScheduler.kt:589)
+	at kotlinx.coroutines.scheduling.CoroutineScheduler$Worker.executeTask(CoroutineScheduler.kt:823)
+	at kotlinx.coroutines.scheduling.CoroutineScheduler$Worker.runWorker(CoroutineScheduler.kt:720)
+	at kotlinx.coroutines.scheduling.CoroutineScheduler$Worker.run(CoroutineScheduler.kt:707)
+	Suppressed: kotlinx.coroutines.internal.DiagnosticCoroutineContextException: [StandaloneCoroutine{Cancelling}@713224a7, Dispatchers.IO]

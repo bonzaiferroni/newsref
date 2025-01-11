@@ -1,6 +1,7 @@
 package newsref.db.services
 
 import newsref.db.DataService
+import newsref.db.environment
 import newsref.db.tables.FeedRow
 import newsref.db.tables.fromData
 import newsref.db.tables.toData
@@ -15,8 +16,8 @@ class FeedService : DataService<Feed, Int, FeedRow>(
     suspend fun init() = dbQuery {
         if (FeedRow.all().count() > 0) return@dbQuery
         FeedRow.new {
-            this.url = System.getenv("NEWSREF_INIT_FEED_URL")
-            this.selector = System.getenv("NEWSREF_INIT_FEED_SELECTOR")
+            this.url = environment["NEWSREF_INIT_FEED_URL"]
+            this.selector = environment["NEWSREF_INIT_FEED_SELECTOR"]
             this.external = true
         }
     }

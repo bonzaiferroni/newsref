@@ -43,6 +43,7 @@ dependencies {
     implementation("io.ktor:ktor-server-websockets:$ktor_version")
     implementation("io.ktor:ktor-server-config-yaml:2.3.10")
     implementation("io.ktor:ktor-server-cors:$ktor_version")
+    implementation("io.github.cdimascio:dotenv-kotlin:6.4.2")
 
     implementation("ch.qos.logback:logback-classic:$logback_version")
     testImplementation("io.ktor:ktor-server-tests-jvm")
