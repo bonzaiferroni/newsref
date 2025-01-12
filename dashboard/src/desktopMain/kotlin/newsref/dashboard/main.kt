@@ -7,8 +7,8 @@ fun main() = application {
     Window(
         onCloseRequest = ::exitApplication,
         title = "Newsref Dashboard",
-        // undecorated = true,
+        undecorated = true,
     ) {
-        App()
+        App(::exitApplication)
     }
 }

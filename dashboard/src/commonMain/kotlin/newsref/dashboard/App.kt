@@ -7,8 +7,15 @@ import newsref.dashboard.ui.theme.AppTheme
 
 @Composable
 @Preview
-fun App() {
+fun App(
+    exitApp: () -> Unit
+) {
+    val context = AppContext(exitApp)
     AppTheme(true) {
-        AppNavigator()
+        AppNavigator(context)
     }
 }
+
+class AppContext(
+    val exitApp: () -> Unit
+)

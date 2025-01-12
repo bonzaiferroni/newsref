@@ -9,6 +9,8 @@ import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
+import androidx.compose.material.icons.filled.Close
+import androidx.compose.material3.Button
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -32,6 +34,7 @@ import newsref.dashboard.ui.theme.surfaceDark
 
 @Composable
 fun AppNavigator(
+    context: AppContext,
     navController: NavHostController = rememberNavController()
 ) {
     // Get current back stack entry
@@ -44,9 +47,10 @@ fun AppNavigator(
     Scaffold(
         topBar = {
             TopBar(
+                context = context,
                 currentScreen = currentScreen,
                 canNavigateBack = navController.previousBackStackEntry != null,
-                navigateUp = { navController.navigateUp() }
+                navigateUp = { navController.navigateUp() },
             )
         }
     ) { innerPadding ->
@@ -94,13 +98,14 @@ fun ScreenSurface(
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun TopBar(
+    context: AppContext,
     currentScreen: AppScreen,
     canNavigateBack: Boolean,
     navigateUp: () -> Unit,
     modifier: Modifier = Modifier
 ) {
     TopAppBar(
-        title = { Text("App Name") },
+        title = { Text(currentScreen.title) },
         colors = TopAppBarDefaults.mediumTopAppBarColors(
             containerColor = MaterialTheme.colorScheme.primaryContainer
         ),
@@ -113,6 +118,11 @@ fun TopBar(
                         contentDescription = "Back"
                     )
                 }
+            }
+        },
+        actions = {
+            IconButton(onClick = context.exitApp) {
+                Icon(imageVector = Icons.Default.Close, contentDescription = "Close App")
             }
         }
     )
