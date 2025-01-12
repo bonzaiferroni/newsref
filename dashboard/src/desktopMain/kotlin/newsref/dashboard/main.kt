@@ -12,11 +12,7 @@ import java.io.File
 
 fun main() = application {
     // look for a file appdata.json and get initial width and height
-    val fileName = "appdata.json"
-    val appData = File(fileName)
-        .takeIf { it.exists() }
-        ?.readText()
-        ?.let { json -> Json.decodeFromString<AppData>(json) }
+    val appData = getAppData()
 
     val windowState = rememberWindowState(
         width = (appData?.width ?: 600).dp,
@@ -24,9 +20,7 @@ fun main() = application {
     )
 
     LaunchedEffect(windowState.size) {
-        val size = windowState.size
-        val appData = AppData(size.width.value.toInt(), size.height.value.toInt())
-        File(fileName).writeText(Json.encodeToString(serializer(), appData))
+        saveSize(windowState.size)
     }
 
     Window(
@@ -38,9 +32,3 @@ fun main() = application {
         App(::exitApplication)
     }
 }
-
-@Serializable
-class AppData(
-    val width: Int?,
-    val height: Int?,
-)
