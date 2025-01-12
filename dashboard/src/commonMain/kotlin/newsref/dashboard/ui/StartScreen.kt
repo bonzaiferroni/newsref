@@ -14,8 +14,8 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.navigation.NavHostController
-import newsref.dashboard.AppScreen
 import newsref.dashboard.Greeting
+import newsref.dashboard.HelloRoute
 import newsref.dashboard.generated.resources.Res
 import newsref.dashboard.generated.resources.compose_multiplatform
 import org.jetbrains.compose.resources.painterResource
@@ -24,7 +24,7 @@ import org.jetbrains.compose.resources.painterResource
 fun StartScreen(navController: NavHostController) {
     var showContent by remember { mutableStateOf(false) }
     Column(Modifier.fillMaxWidth(), horizontalAlignment = Alignment.CenterHorizontally) {
-        Button(onClick = { navController.navigate(AppScreen.Hello.name) }) {
+        Button(onClick = { navController.navigate(HelloRoute("cowboy")) }) {
             Text("Go to Hello")
         }
         Button(onClick = { showContent = !showContent }) {

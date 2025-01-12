@@ -13,25 +13,27 @@ import androidx.navigation.NavHostController
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
-import newsref.dashboard.AppScreen
+import newsref.dashboard.HelloRoute
+import newsref.dashboard.StartRoute
 
 @Composable
 fun HelloScreen(
+    route: HelloRoute,
     navController: NavHostController,
-    viewModel: HelloModel = viewModel { HelloModel() },
+    viewModel: HelloModel = viewModel { HelloModel(route) },
 ) {
     val uiState by viewModel.uiState.collectAsState()
     Column {
         TextField(value = uiState.name, onValueChange = viewModel::changeName)
         Text("Hello ${uiState.name}!")
-        Button(onClick = { navController.navigate(AppScreen.Start.name)}) {
+        Button(onClick = { navController.navigate(StartRoute)}) {
             Text("Go to Start")
         }
     }
 }
 
-class HelloModel : ViewModel() {
-    private val _uiState = MutableStateFlow(HelloState("cupcake"))
+class HelloModel(route: HelloRoute) : ViewModel() {
+    private val _uiState = MutableStateFlow(HelloState(route.name))
     val uiState: StateFlow<HelloState> = _uiState.asStateFlow()
 
     fun changeName(newName: String) {

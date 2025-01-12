@@ -1,9 +1,13 @@
 package newsref.dashboard
 
-enum class AppScreen(
-    val title: String,
-    val route: String,
-) {
-    Start(title = "Start", route = "start"),
-    Hello(title = "Hello", route = "hello")
+import kotlinx.serialization.Serializable
+
+@Serializable
+object StartRoute : ScreenRoute("Start")
+
+@Serializable
+data class HelloRoute(val name: String) : ScreenRoute("Hello")
+
+@Serializable
+open class ScreenRoute(val title: String = "Title") {
 }
