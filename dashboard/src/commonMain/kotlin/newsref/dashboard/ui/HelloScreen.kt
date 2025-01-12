@@ -11,7 +11,7 @@ import newsref.dashboard.AppScreen
 fun HelloScreen(navController: NavHostController) {
     Column {
         Text("Hello cupcake!")
-        Button(onClick = { navController.navigate(AppScreen.Start.route)}) {
+        Button(onClick = { navController.navigate(AppScreen.Start.name)}) {
             Text("Go to Start")
         }
     }

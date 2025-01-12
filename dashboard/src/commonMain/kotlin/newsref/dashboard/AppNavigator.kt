@@ -33,7 +33,7 @@ fun AppNavigator(
     val backStackEntry by navController.currentBackStackEntryAsState()
     // Get the name of the current screen
     val currentScreen = AppScreen.valueOf(
-        backStackEntry?.destination?.route ?: AppScreen.Start.route
+        backStackEntry?.destination?.route ?: AppScreen.Start.name
     )
 
     Scaffold(
@@ -49,16 +49,16 @@ fun AppNavigator(
 
         NavHost(
             navController = navController,
-            startDestination = AppScreen.Start.route,
+            startDestination = AppScreen.Start.name,
             modifier = Modifier
                 .fillMaxSize()
                 .verticalScroll(rememberScrollState())
                 .padding(innerPadding)
         ) {
-            composable(route = AppScreen.Start.route) {
+            composable(route = AppScreen.Start.name) {
                 StartScreen(navController)
             }
-            composable(route = AppScreen.Hello.route) {
+            composable(route = AppScreen.Hello.name) {
                 HelloScreen(navController)
             }
         }

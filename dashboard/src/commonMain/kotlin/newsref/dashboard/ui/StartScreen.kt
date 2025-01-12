@@ -24,7 +24,7 @@ import org.jetbrains.compose.resources.painterResource
 fun StartScreen(navController: NavHostController) {
     var showContent by remember { mutableStateOf(false) }
     Column(Modifier.fillMaxWidth(), horizontalAlignment = Alignment.CenterHorizontally) {
-        Button(onClick = { navController.navigate(AppScreen.Hello.route) }) {
+        Button(onClick = { navController.navigate(AppScreen.Hello.name) }) {
             Text("Go to Hello")
         }
         Button(onClick = { showContent = !showContent }) {
