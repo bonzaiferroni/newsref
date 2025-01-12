@@ -19,11 +19,13 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.setValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.ui.Modifier
+import androidx.navigation.NavGraphBuilder
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
@@ -38,7 +40,8 @@ fun AppNavigator(
     context: AppContext,
     navController: NavHostController = rememberNavController()
 ) {
-    var route: ScreenRoute by remember { mutableStateOf(StartRoute) }
+    val routeState: MutableState<ScreenRoute> = mutableStateOf(StartRoute)
+    var route: ScreenRoute by remember { routeState }
 
     Scaffold(
         topBar = {
@@ -50,7 +53,6 @@ fun AppNavigator(
             )
         }
     ) { innerPadding ->
-        // val uiState by viewModel.uiState.collectAsState()
         NavHost(
             navController = navController,
             startDestination = StartRoute,
@@ -60,20 +62,28 @@ fun AppNavigator(
                 .background(surfaceDark)
                 .verticalScroll(rememberScrollState())
         ) {
-            composable<StartRoute> { backStackEntry ->
-                route = StartRoute
+            routeComposable<StartRoute>(routeState) {
                 DefaultScaffold {
                     StartScreen(navController)
                 }
             }
-            composable<HelloRoute> { backStackEntry ->
-                val helloRoute: HelloRoute = backStackEntry.toRoute()
-                route = helloRoute
+            routeComposable<HelloRoute>(routeState) { route ->
                 DefaultScaffold {
-                    HelloScreen(helloRoute, navController)
+                    HelloScreen(route, navController)
                 }
             }
         }
+    }
+}
+
+inline fun <reified T: ScreenRoute> NavGraphBuilder.routeComposable(
+    routeState: MutableState<ScreenRoute>,
+    crossinline content: @Composable (T) -> Unit
+) {
+    composable<T> { backStackEntry ->
+        val route: T = backStackEntry.toRoute()
+        routeState.value = route
+        content(route)
     }
 }
 
