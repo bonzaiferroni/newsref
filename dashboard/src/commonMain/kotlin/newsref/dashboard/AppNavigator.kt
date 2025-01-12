@@ -1,5 +1,8 @@
 package newsref.dashboard
 
+import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.rememberScrollState
@@ -11,6 +14,7 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
+import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
@@ -24,6 +28,7 @@ import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import newsref.dashboard.ui.HelloScreen
 import newsref.dashboard.ui.StartScreen
+import newsref.dashboard.ui.theme.surfaceDark
 
 @Composable
 fun AppNavigator(
@@ -53,15 +58,33 @@ fun AppNavigator(
             modifier = Modifier
                 .fillMaxSize()
                 .verticalScroll(rememberScrollState())
+                .background(surfaceDark)
                 .padding(innerPadding)
         ) {
             composable(route = AppScreen.Start.name) {
-                StartScreen(navController)
+                ScreenSurface {
+                    StartScreen(navController)
+                }
             }
             composable(route = AppScreen.Hello.name) {
-                HelloScreen(navController)
+                ScreenSurface {
+                    HelloScreen(navController)
+                }
             }
         }
+    }
+}
+
+@Composable
+fun ScreenSurface(
+    padding: PaddingValues = basePadding,
+    content: @Composable() () -> Unit
+) {
+    Surface(
+        modifier = Modifier
+            .padding(padding)
+    ) {
+        content()
     }
 }
 
