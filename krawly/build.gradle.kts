@@ -1,6 +1,3 @@
-import org.gradle.internal.impldep.com.fasterxml.jackson.core.JsonPointer.compile
-import java.util.*
-
 val ktor_version: String by project
 val kotlin_version: String by project
 
@@ -65,14 +62,4 @@ tasks.withType<Jar> {
 	from({
 		configurations.runtimeClasspath.get().filter { it.name.endsWith("jar") }.map { zipTree(it) }
 	})
-}
-
-// Load properties from the newsref.properties file
-val properties = Properties().apply {
-	file("../newsref.properties").takeIf { it.exists() }?.inputStream()?.use { load(it) }
-}
-
-tasks.withType<JavaExec> {
-	System.setProperty("OPENAI_KEY", properties.getProperty("OPENAI_KEY", ""))
-	System.setProperty("HF_KEY", properties.getProperty("HF_KEY", ""))
 }

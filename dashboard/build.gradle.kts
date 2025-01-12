@@ -1,3 +1,4 @@
+import org.gradle.kotlin.dsl.project
 import org.jetbrains.compose.desktop.application.dsl.TargetFormat
 import org.jetbrains.kotlin.gradle.ExperimentalWasmDsl
 import org.jetbrains.kotlin.gradle.targets.js.webpack.KotlinWebpackConfig
@@ -46,6 +47,11 @@ kotlin {
             implementation(libs.androidx.lifecycle.runtime.compose)
             implementation(libs.kotlinx.serialization.json)
             implementation("org.jetbrains.androidx.navigation:navigation-compose:2.8.0-alpha10")
+
+            implementation(project(":model"))
+            implementation(project(":db"))
+
+            implementation(libs.kotlinx.datetime)
         }
         desktopMain.dependencies {
             implementation(compose.desktop.currentOs)
