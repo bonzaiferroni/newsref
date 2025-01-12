@@ -31,8 +31,6 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.toRoute
-import newsref.dashboard.ui.HelloScreen
-import newsref.dashboard.ui.StartScreen
 import newsref.dashboard.ui.theme.surfaceDark
 
 @Composable
@@ -62,16 +60,7 @@ fun AppNavigator(
                 .background(surfaceDark)
                 .verticalScroll(rememberScrollState())
         ) {
-            routeComposable<StartRoute>(routeState) {
-                DefaultScaffold {
-                    StartScreen(navController)
-                }
-            }
-            routeComposable<HelloRoute>(routeState) { route ->
-                DefaultScaffold {
-                    HelloScreen(route, navController)
-                }
-            }
+            navGraph(routeState, navController)
         }
     }
 }
