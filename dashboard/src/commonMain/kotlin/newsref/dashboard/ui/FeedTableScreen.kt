@@ -22,11 +22,13 @@ fun FeedTableScreen(
     viewModel: FeedTableModel = viewModel { FeedTableModel() }
 ) {
     val state by viewModel.uiState.collectAsState()
-    Column {
-        state.feedItems.forEach { feed ->
-            Text(feed.url.toString())
-        }
-    }
+    TableView(
+        columns = listOf(
+            TableColumn<Feed>("Core", 200) { it.url.core },
+            TableColumn<Feed>("Url", 400) { it.url.toString() },
+        ),
+        items = state.feedItems
+    )
 }
 
 class FeedTableModel(
