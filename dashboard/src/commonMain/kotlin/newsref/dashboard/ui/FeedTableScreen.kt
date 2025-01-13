@@ -18,7 +18,7 @@ fun FeedTableScreen(
         items = state.feedItems,
         columns = listOf(
             TableColumn(name = "Core", width = 200) { TextCell(it.url.core) },
-            TableColumn(name = "Leads", width = 200) { TextCell(viewModel.uiState.value.leadCounts[it.id].toString()) }
+            TableColumn(name = "Leads", width = 200) { CountCell(it.id, state.leadCounts, state.leadAdditions) }
         )
     )
 }
