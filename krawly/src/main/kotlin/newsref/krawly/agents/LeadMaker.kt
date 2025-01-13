@@ -31,7 +31,7 @@ class LeadMaker(
 		}
 	}
 
-	suspend fun makeLeads(crawl: CrawlInfo): TallyMap<CreateLeadResult> {
+	suspend fun makeCrawlLeads(crawl: CrawlInfo): TallyMap<CreateLeadResult> {
 		val resultMap = mutableMapOf<CreateLeadResult, Int>()
 		val page = crawl.page ?: return resultMap
 		val links = crawl.page?.links ?: return resultMap

@@ -78,6 +78,7 @@ class FeedChecker(
 					freshAt = Clock.System.now()
 				)
 				links++
+				// todo: track FeedPosition
 				val result = leadMaker.makeLead(hostUrl, job, true)
 				if (result == CreateLeadResult.CREATED) count++
 			}

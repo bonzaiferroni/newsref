@@ -63,6 +63,10 @@ class LeadService : DbService() {
 	suspend fun getResultsByHost(hostId: Int, limit: Int) = dbQuery {
 		LeadResultRow.getHostResults(hostId, limit)
 	}
+
+	suspend fun getLeadsFromFeed(feedId: Int) = dbQuery {
+		LeadRow.find { LeadJobTable.feedId eq feedId }.map { it.toData() }
+	}
 }
 
 class LeadExistsException(url: CheckedUrl) : IllegalArgumentException("Lead already exists: $url")

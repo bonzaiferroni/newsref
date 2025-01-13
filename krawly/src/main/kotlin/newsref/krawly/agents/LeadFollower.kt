@@ -167,7 +167,7 @@ class LeadFollower(
 
 						// consume source
 						val id = sourceService.consume(crawl)
-						val resultMap = leadMaker.makeLeads(crawl)
+						val resultMap = leadMaker.makeCrawlLeads(crawl)
 						logFetch(crawl, id, resultMap)
 					} catch (e: Exception) {
 						console.logError("Error consuming fetch:\n${fetch.lead.url}\n$e")
