@@ -29,7 +29,6 @@ class FeedChecker(
 
 	fun start() {
 		CoroutineScope(Dispatchers.Default).launch {
-			feedService.init()
 			while (true) {
 				console.log("checking feeds", "🕷 ")
 				checkFeeds()

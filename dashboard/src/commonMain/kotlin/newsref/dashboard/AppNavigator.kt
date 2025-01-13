@@ -35,10 +35,11 @@ import newsref.dashboard.ui.theme.surfaceDark
 
 @Composable
 fun AppNavigator(
+    startRoute: ScreenRoute,
     context: AppContext,
     navController: NavHostController = rememberNavController()
 ) {
-    val routeState: MutableState<ScreenRoute> = mutableStateOf(StartRoute)
+    val routeState: MutableState<ScreenRoute> = mutableStateOf(startRoute)
     var route: ScreenRoute by remember { routeState }
 
     Scaffold(
@@ -53,7 +54,7 @@ fun AppNavigator(
     ) { innerPadding ->
         NavHost(
             navController = navController,
-            startDestination = StartRoute,
+            startDestination = startRoute,
             modifier = Modifier
                 .padding(innerPadding)
                 .fillMaxSize()

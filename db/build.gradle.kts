@@ -15,7 +15,7 @@ kotlin {
             dependencies {
                 implementation(libs.kotlinx.serialization.json)
                 implementation(libs.kotlinx.datetime)
-                implementation("org.jetbrains.exposed:exposed-core:$exposed_version")
+                api("org.jetbrains.exposed:exposed-core:$exposed_version")
                 implementation("org.jetbrains.exposed:exposed-crypt:$exposed_version")
                 implementation("org.jetbrains.exposed:exposed-dao:$exposed_version")
                 implementation("org.jetbrains.exposed:exposed-jdbc:$exposed_version")
