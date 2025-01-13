@@ -18,27 +18,36 @@ fun <T> TableView(
     Column {
         Row {
             for (column in columns) {
-                Text(
+                TableCell(
                     text = column.name,
-                    maxLines = 1,
-                    overflow = TextOverflow.Ellipsis,
-                    modifier = Modifier.width(column.width.dp)
+                    width = column.width
                 )
             }
         }
         items.forEach { item ->
             Row {
                 for (column in columns) {
-                    Text(
+                    TableCell(
                         text = column.getValue(item),
-                        maxLines = 1,
-                        overflow = TextOverflow.Ellipsis,
-                        modifier = Modifier.width(column.width.dp)
+                        width = column.width
                     )
                 }
             }
         }
     }
+}
+
+@Composable
+fun TableCell(
+    text: String,
+    width: Int
+) {
+    Text(
+        text = text,
+        maxLines = 1,
+        overflow = TextOverflow.Ellipsis,
+        modifier = Modifier.width(width.dp)
+    )
 }
 
 data class TableColumn<T>(
