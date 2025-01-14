@@ -2,8 +2,12 @@ package newsref.dashboard.ui.table
 
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.fillMaxHeight
+import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.items
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 
 @Composable
@@ -13,37 +17,34 @@ fun <T> DataTable(
     columns: List<TableColumn<T>>,
     color: Color = Color(.5f, .6f, .7f, 1f)
 ) {
-    Column {
-        Text(text = name)
+    LazyColumn {
+        item {
+            Text(text = name)
+        }
+        item {
+            Row {
+                val baseColor = color.darken(.8f)
+                val altColor = color.darken(.7f)
+                var alternateColor = false
 
-        // header row
-        Row {
-            val baseColor = color.darken(.8f)
-            val altColor = color.darken(.7f)
-            var alternateColor = false
-
-            for (column in columns) {
-                val bgColor = if (alternateColor) altColor else baseColor
-                TableCell(column.width, bgColor) {
-                    TextCell(text = column.name)
+                for (column in columns) {
+                    val bgColor = if (alternateColor) altColor else baseColor
+                    TableCell(column.width, bgColor) {
+                        TextCell(text = column.name)
+                    }
+                    alternateColor = !alternateColor
                 }
-                alternateColor = !alternateColor
             }
         }
 
         var alternateColumnBg = false
         var alternateRowBg = false
         val cellColors = mapOf(
-            false to mapOf(
-                false to color,
-                true to color.darken(.1f)
-            ),
-            true to mapOf(
-                false to color.darken(.2f),
-                true to color.darken(.3f)
-            )
+            false to mapOf(false to color, true to color.darken(.1f)),
+            true to mapOf(false to color.darken(.2f), true to color.darken(.3f))
         )
-        for (item in items) {
+
+        items(items) { item ->
             Row {
                 for (column in columns) {
                     val bgColor = cellColors.getValue(alternateRowBg).getValue(alternateColumnBg)

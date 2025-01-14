@@ -6,7 +6,6 @@ import androidx.navigation.NavHostController
 import kotlinx.serialization.Serializable
 import newsref.dashboard.ui.FeedTableScreen
 import newsref.dashboard.ui.HelloScreen
-import newsref.dashboard.ui.StartScreen
 
 @Serializable
 object StartRoute : ScreenRoute("Start")
@@ -26,12 +25,12 @@ fun NavGraphBuilder.navGraph(
     navController: NavHostController
 ) {
     routeComposable<FeedTableRoute>(routeState) {
-        DefaultScaffold {
+        DefaultSurface {
             FeedTableScreen(navController)
         }
     }
     routeComposable<HelloRoute>(routeState) { route ->
-        DefaultScaffold {
+        DefaultSurface {
             HelloScreen(route, navController)
         }
     }

@@ -59,7 +59,7 @@ fun AppNavigator(
                 .padding(innerPadding)
                 .fillMaxSize()
                 .background(surfaceDark)
-                .verticalScroll(rememberScrollState())
+                // .verticalScroll(rememberScrollState())
         ) {
             navGraph(routeState, navController)
         }
@@ -78,7 +78,7 @@ inline fun <reified T: ScreenRoute> NavGraphBuilder.routeComposable(
 }
 
 @Composable
-fun DefaultScaffold(
+fun DefaultSurface(
     padding: PaddingValues = basePadding,
     content: @Composable() () -> Unit
 ) {
