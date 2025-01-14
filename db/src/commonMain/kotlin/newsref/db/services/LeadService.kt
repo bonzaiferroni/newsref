@@ -69,7 +69,6 @@ class LeadService : DbService() {
 	}
 
 	suspend fun getAllFeedLeads() = dbQuery {
-		// LeadJobRow.find { LeadJobTable.feedId.isNotNull() }.map { it.toData() }
 		LeadJobTable.selectAll().where { LeadJobTable.feedId.isNotNull() }.map { it.toData() }
 	}
 }
