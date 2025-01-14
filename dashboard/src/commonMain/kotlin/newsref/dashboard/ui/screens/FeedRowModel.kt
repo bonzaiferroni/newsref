@@ -4,6 +4,8 @@ import androidx.lifecycle.viewModelScope
 import kotlinx.coroutines.launch
 import newsref.dashboard.FeedRowRoute
 import newsref.db.services.FeedService
+import newsref.model.core.toUrl
+import newsref.model.core.toUrlOrNull
 import newsref.model.data.Feed
 
 class FeedRowModel(
@@ -13,12 +15,26 @@ class FeedRowModel(
     init {
         viewModelScope.launch {
             val feed = feedService.read(route.feedId)
-            editState { it.copy(feed = feed) }
+            editState { it.copy(
+                feed = feed,
+                updatedFeed = feed,
+                updatedHref = feed?.url.toString()
+            ) }
         }
+    }
+
+    fun changeHref(value: String) {
+        val updatedUrl = value.toUrlOrNull()
+        editState { it.copy(
+            updatedFeed = it.updatedFeed?.copy(url = updatedUrl ?: it.updatedFeed.url),
+            updatedHref = value
+        )}
     }
 }
 
 data class FeedRowState(
     val feedId: Int,
-    val feed: Feed? = null
+    val feed: Feed? = null,
+    val updatedFeed: Feed? = null,
+    val updatedHref: String = "",
 )

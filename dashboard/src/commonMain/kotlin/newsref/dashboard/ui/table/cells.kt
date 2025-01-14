@@ -3,24 +3,30 @@ package newsref.dashboard.ui.table
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.widthIn
+import androidx.compose.foundation.text.BasicTextField
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.IconButtonDefaults
+import androidx.compose.material3.LocalContentColor
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextField
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.SolidColor
+import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
+import newsref.dashboard.ui.theme.onSurfaceDark
 import newsref.dashboard.ui.theme.primaryDark
 import newsref.dashboard.utils.modifyIfNotNull
 
@@ -65,6 +71,20 @@ fun TextCell(
         text = text,
         maxLines = 1,
         overflow = TextOverflow.Ellipsis,
+    )
+}
+
+@Composable
+fun TextFieldCell(
+    value: String,
+    onValueChange: (String) -> Unit,
+) {
+    BasicTextField(
+        value = value,
+        onValueChange = onValueChange,
+        minLines = 1,
+        textStyle = MaterialTheme.typography.bodyLarge.copy(color = LocalContentColor.current),
+        cursorBrush = SolidColor(LocalContentColor.current)
     )
 }
 

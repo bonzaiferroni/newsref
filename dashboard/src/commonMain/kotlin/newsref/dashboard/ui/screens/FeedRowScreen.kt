@@ -24,6 +24,7 @@ import newsref.dashboard.ui.table.CellControls
 import newsref.dashboard.ui.table.PropertyRow
 import newsref.dashboard.ui.table.PropertyTable
 import newsref.dashboard.ui.table.TextCell
+import newsref.dashboard.ui.table.TextFieldCell
 import newsref.db.services.FeedService
 import newsref.model.data.Feed
 
@@ -44,7 +45,7 @@ fun FeedRowScreen(
                 name = "href",
                 controls = listOf(CellControls(TablerIcons.ExternalLink) { uriHandler.openUri(item.url.toString()) })
             ) {
-                TextCell(item.url.toString())
+                TextFieldCell(state.updatedHref, viewModel::changeHref)
             }
         ))
     }
