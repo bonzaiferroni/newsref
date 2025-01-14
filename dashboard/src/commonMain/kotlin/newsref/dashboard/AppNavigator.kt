@@ -1,6 +1,8 @@
 package newsref.dashboard
 
 import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
@@ -25,6 +27,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.setValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.unit.dp
 import androidx.navigation.NavGraphBuilder
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
@@ -86,7 +89,9 @@ fun DefaultSurface(
         modifier = Modifier
             .padding(padding)
     ) {
-        content()
+        Column(verticalArrangement = Arrangement.spacedBy(halfSpacing)) {
+            content()
+        }
     }
 }
 

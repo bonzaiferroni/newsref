@@ -1,8 +1,10 @@
 package newsref.dashboard.ui.screens
 
+import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.material.icons.Icons
+import androidx.compose.material3.Button
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.Text
@@ -20,6 +22,7 @@ import compose.icons.tablericons.ExternalLink
 import compose.icons.tablericons.Globe
 import kotlinx.coroutines.launch
 import newsref.dashboard.FeedRowRoute
+import newsref.dashboard.ui.table.BooleanCell
 import newsref.dashboard.ui.table.CellControls
 import newsref.dashboard.ui.table.PropertyRow
 import newsref.dashboard.ui.table.PropertyTable
@@ -51,7 +54,11 @@ fun FeedRowScreen(
                 name = "selector",
             ) {
                 TextFieldCell(state.updatedFeed?.selector ?: "", viewModel::changeSelector)
-            }
+            },
+            PropertyRow("external") { BooleanCell(state.updatedFeed?.external == true, viewModel::changeExternal) }
         ))
+        Button(onClick = viewModel::updateItem, enabled = state.canUpdateItem) {
+            Text("Update")
+        }
     }
 }
