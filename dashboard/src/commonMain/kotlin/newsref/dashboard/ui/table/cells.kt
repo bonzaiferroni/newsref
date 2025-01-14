@@ -9,14 +9,19 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.widthIn
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
+import androidx.compose.material3.IconButtonDefaults
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
+import newsref.dashboard.ui.theme.primaryDark
 import newsref.dashboard.utils.modifyIfNotNull
 
 @Composable
@@ -25,9 +30,10 @@ fun <T> TableCell(
     item: T? = null,
     color: Color = Color(0f, 0f, 0f, 0f),
     onClickCell: ((T) -> Unit)? = null,
+    controls: (List<CellControls<T>>)? = null,
     content: @Composable () -> Unit
 ) {
-    Box(
+    Row (
         modifier = Modifier
             .modifyIfNotNull(width) { this.width(it.dp) }
             .background(color = color)
@@ -36,6 +42,18 @@ fun <T> TableCell(
             .modifyIfNotNull(onClickCell) { this.clickable(onClick = { it(item!!) }) }
     ) {
         content()
+        if (controls != null) {
+            Spacer(modifier = Modifier.width(8.dp))
+            for (control in controls) {
+                IconButton(
+                    onClick = { control.onClick(item!!) },
+                    modifier = Modifier.size(24.dp),
+                    colors = IconButtonDefaults.iconButtonColors(contentColor = primaryDark),
+                ) {
+                    Icon(imageVector = control.icon, contentDescription = "cell control")
+                }
+            }
+        }
     }
 }
 

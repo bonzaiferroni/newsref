@@ -52,6 +52,7 @@ kotlin {
             implementation(project(":db"))
 
             implementation(libs.kotlinx.datetime)
+            implementation(libs.composeIcons.tablerIcons)
         }
         desktopMain.dependencies {
             implementation(compose.desktop.currentOs)
