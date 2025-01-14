@@ -29,7 +29,7 @@ class FeedTableModel(
     suspend fun refresh() {
         val feeds = feedService.readAll()
         val additions = mutableMapOf<Int, Int?>()
-        val previousCounts = sv.leadCounts
+        val previousCounts = stateNow.leadCounts
         val leadCounts = leadService.getAllFeedLeads().groupBy { it.feedId }
             .filterKeys { it != null }
             .mapKeys { it.key!! }
@@ -40,11 +40,13 @@ class FeedTableModel(
             val addition = count - currentCount
             additions[feed.id] = addition
         }
-        sv = sv.copy(
-            leadCounts = leadCounts,
-            leadAdditions = sv.leadAdditions + additions,
-            feedItems = feeds
-        )
+        editState {
+            it.copy(
+                leadCounts = leadCounts,
+                leadAdditions = it.leadAdditions + additions,
+                feedItems = feeds
+            )
+        }
     }
 }
 

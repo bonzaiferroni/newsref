@@ -34,20 +34,3 @@ fun FeedRowScreen(
         ))
     }
 }
-
-class FeedRowModel(
-    route: FeedRowRoute,
-    feedService: FeedService = FeedService(),
-) : ScreenModel<FeedRowState>(FeedRowState(route.feedId)) {
-    init {
-        viewModelScope.launch {
-            val feed = feedService.read(route.feedId)
-            sv = sv.copy(feed = feed)
-        }
-    }
-}
-
-data class FeedRowState(
-    val feedId: Int,
-    val feed: Feed? = null
-)
