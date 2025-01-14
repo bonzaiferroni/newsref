@@ -3,8 +3,11 @@ package newsref.dashboard.ui.table
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.IntrinsicSize
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
@@ -41,7 +44,7 @@ fun <T> TableCell(
 ) {
     Row (
         modifier = Modifier
-            .modifyIfNotNull(width) { this.width(it.dp) }
+            .modifyIfNotNull(width, elseBlock = { this.fillMaxWidth() }) { this.width(it.dp) }
             .background(color = color)
             .border(2.dp, color.darken(.05f))
             .padding(4.dp)

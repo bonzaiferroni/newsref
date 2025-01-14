@@ -46,6 +46,11 @@ fun FeedRowScreen(
                 controls = listOf(CellControls(TablerIcons.ExternalLink) { uriHandler.openUri(item.url.toString()) })
             ) {
                 TextFieldCell(state.updatedHref, viewModel::changeHref)
+            },
+            PropertyRow(
+                name = "selector",
+            ) {
+                TextFieldCell(state.updatedFeed?.selector ?: "", viewModel::changeSelector)
             }
         ))
     }

@@ -30,6 +30,10 @@ class FeedRowModel(
             updatedHref = value
         )}
     }
+
+    fun changeSelector(value: String) {
+        editState { it.copy(updatedFeed = it.updatedFeed?.copy(selector = value)) }
+    }
 }
 
 data class FeedRowState(
