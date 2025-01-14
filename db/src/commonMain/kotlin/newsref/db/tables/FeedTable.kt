@@ -9,6 +9,7 @@ import org.jetbrains.exposed.dao.LongEntity
 import org.jetbrains.exposed.dao.id.EntityID
 import org.jetbrains.exposed.dao.id.IntIdTable
 import org.jetbrains.exposed.dao.id.LongIdTable
+import org.jetbrains.exposed.sql.ResultRow
 
 internal object FeedTable : IntIdTable("feed") {
     val url = text("url")
@@ -29,6 +30,13 @@ fun FeedRow.toData() = Feed(
     url = this.url.toUrl(),
     selector = this.selector,
     external = this.external,
+)
+
+fun ResultRow.toFeed() = Feed(
+    id = this[FeedTable.id].value,
+    url = this[FeedTable.url].toUrl(),
+    selector = this[FeedTable.selector],
+    external = this[FeedTable.external],
 )
 
 fun FeedRow.fromData(feed: Feed) {

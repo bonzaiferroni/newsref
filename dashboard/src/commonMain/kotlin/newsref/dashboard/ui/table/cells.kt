@@ -7,6 +7,7 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.widthIn
@@ -16,21 +17,23 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
+import newsref.dashboard.utils.modifyIfNotNull
 
 @Composable
-fun TableCell(
-    width: Int,
+fun <T> TableCell(
+    width: Int? = null,
+    item: T? = null,
     color: Color = Color(0f, 0f, 0f, 0f),
-    onClickCell: (() -> Unit)? = null,
+    onClickCell: ((T) -> Unit)? = null,
     content: @Composable () -> Unit
 ) {
     Box(
         modifier = Modifier
-            .width(width.dp)
+            .modifyIfNotNull(width) { this.width(it.dp) }
             .background(color = color)
             .border(2.dp, color.darken(.05f))
             .padding(4.dp)
-            .apply { onClickCell?.let { this.clickable(onClick = it) } }
+            .modifyIfNotNull(onClickCell) { this.clickable(onClick = { it(item!!) }) }
     ) {
         content()
     }

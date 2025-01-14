@@ -1,4 +1,4 @@
-package newsref.dashboard.ui
+package newsref.dashboard.ui.screens
 
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
@@ -16,7 +16,7 @@ fun FeedTableScreen(
     navController: NavController,
     viewModel: FeedTableModel = viewModel { FeedTableModel() }
 ) {
-    val state by viewModel.uiState.collectAsState()
+    val state by viewModel.state.collectAsState()
     DataTable(
         name = "Feed Table",
         items = state.feedItems,

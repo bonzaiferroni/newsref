@@ -1,4 +1,4 @@
-package newsref.dashboard.ui
+package newsref.dashboard.ui.screens
 
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.foundation.Image

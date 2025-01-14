@@ -1,4 +1,4 @@
-package newsref.dashboard.ui
+package newsref.dashboard.ui.screens
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
@@ -15,9 +15,7 @@ import kotlin.time.Duration.Companion.seconds
 class FeedTableModel(
     private val feedService: FeedService = FeedService(),
     private val leadService: LeadService = LeadService(),
-) : ViewModel() {
-    private val _uiState = MutableStateFlow(FeedTableState())
-    val uiState = _uiState.asStateFlow()
+) : ScreenModel<FeedTableState>(FeedTableState()) {
 
     init {
         viewModelScope.launch {
@@ -31,7 +29,7 @@ class FeedTableModel(
     suspend fun refresh() {
         val feeds = feedService.readAll()
         val additions = mutableMapOf<Int, Int?>()
-        val previousCounts = _uiState.value.leadCounts
+        val previousCounts = sv.leadCounts
         val leadCounts = leadService.getAllFeedLeads().groupBy { it.feedId }
             .filterKeys { it != null }
             .mapKeys { it.key!! }
@@ -42,9 +40,9 @@ class FeedTableModel(
             val addition = count - currentCount
             additions[feed.id] = addition
         }
-        _uiState.value = _uiState.value.copy(
+        sv = sv.copy(
             leadCounts = leadCounts,
-            leadAdditions = _uiState.value.leadAdditions + additions,
+            leadAdditions = sv.leadAdditions + additions,
             feedItems = feeds
         )
     }

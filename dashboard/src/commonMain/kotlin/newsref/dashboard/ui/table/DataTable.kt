@@ -9,6 +9,7 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import newsref.dashboard.utils.modifyIfNotNull
 
 @Composable
 fun <T> DataTable(
@@ -26,7 +27,7 @@ fun <T> DataTable(
             Row {
                 val bgColor = color.darken(.5f)
                 for (column in columns) {
-                    TableCell(column.width, bgColor) {
+                    TableCell<T>(column.width, color = bgColor) {
                         TextCell(text = column.name)
                     }
                 }
@@ -39,7 +40,7 @@ fun <T> DataTable(
                     .modifyIfNotNull(onClickRow) { this.clickable { it(item) }}
             ) {
                 for (column in columns) {
-                    TableCell(column.width, color) {
+                    TableCell<T>(width = column.width, item = item, color = color, onClickCell = column.onClickCell) {
                         column.content(item)
                     }
                 }
@@ -51,7 +52,7 @@ fun <T> DataTable(
 data class TableColumn<T>(
     val name: String,
     val width: Int,
-    val onClickCell: (() -> Unit)? = null,
+    val onClickCell: ((T) -> Unit)? = null,
     val content: @Composable (T) -> Unit
 )
 
@@ -65,9 +66,4 @@ fun Color.scaleBrightness(factor: Float): Color {
         blue = this.blue * scaleFactor,
         alpha = this.alpha
     )
-}
-
-inline fun <V> Modifier.modifyIfNotNull(value: V?, block: Modifier.(V) -> Modifier): Modifier {
-    if (value != null) return this.block(value)
-    return this
 }

@@ -5,12 +5,8 @@ import newsref.db.tables.*
 import newsref.db.tables.HostRow
 import newsref.db.tables.NexusRow
 import newsref.db.tables.toData
-import newsref.model.core.toUrl
 import newsref.model.data.Host
 import newsref.model.data.Nexus
-import org.jetbrains.exposed.dao.flushCache
-import org.jetbrains.exposed.sql.JoinType
-import org.jetbrains.exposed.sql.and
 
 class NexusService : DbService() {
 
