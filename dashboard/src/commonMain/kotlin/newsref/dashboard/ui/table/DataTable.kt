@@ -1,9 +1,7 @@
 package newsref.dashboard.ui.table
 
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material3.MaterialTheme
@@ -18,17 +16,14 @@ fun <T> DataTable(
     items: List<T>,
     columns: List<TableColumn<T>>,
     color: Color = Color(.2f, .24f, .22f, 1f),
-    onClickRow: (() -> Unit)? = null
+    onClickRow: ((T) -> Unit)? = null
 ) {
     LazyColumn {
         item {
             Text(text = name, style = MaterialTheme.typography.headlineSmall)
         }
         item {
-            Row(
-                modifier = Modifier
-                    .apply { onClickRow?.let { this.clickable(onClick = it) } }
-            ) {
+            Row {
                 val bgColor = color.darken(.5f)
                 for (column in columns) {
                     TableCell(column.width, bgColor) {
@@ -39,7 +34,10 @@ fun <T> DataTable(
         }
 
         items(items) { item ->
-            Row {
+            Row(
+                modifier = Modifier
+                    .modifyIfNotNull(onClickRow) { this.clickable { it(item) }}
+            ) {
                 for (column in columns) {
                     TableCell(column.width, color) {
                         column.content(item)
@@ -67,4 +65,9 @@ fun Color.scaleBrightness(factor: Float): Color {
         blue = this.blue * scaleFactor,
         alpha = this.alpha
     )
+}
+
+inline fun <V> Modifier.modifyIfNotNull(value: V?, block: Modifier.(V) -> Modifier): Modifier {
+    if (value != null) return this.block(value)
+    return this
 }
