@@ -2,6 +2,7 @@ package newsref.dashboard.ui.table
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -20,6 +21,7 @@ import androidx.compose.ui.unit.dp
 fun TableCell(
     width: Int,
     color: Color = Color(0f, 0f, 0f, 0f),
+    onClickCell: (() -> Unit)? = null,
     content: @Composable () -> Unit
 ) {
     Box(
@@ -28,6 +30,7 @@ fun TableCell(
             .background(color = color)
             .border(2.dp, color.darken(.05f))
             .padding(4.dp)
+            .apply { onClickCell?.let { this.clickable(onClick = it) } }
     ) {
         content()
     }

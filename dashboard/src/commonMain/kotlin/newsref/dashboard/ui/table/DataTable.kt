@@ -1,5 +1,6 @@
 package newsref.dashboard.ui.table
 
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxHeight
@@ -16,14 +17,18 @@ fun <T> DataTable(
     name: String,
     items: List<T>,
     columns: List<TableColumn<T>>,
-    color: Color = Color(.2f, .24f, .22f, 1f)
+    color: Color = Color(.2f, .24f, .22f, 1f),
+    onClickRow: (() -> Unit)? = null
 ) {
     LazyColumn {
         item {
             Text(text = name, style = MaterialTheme.typography.headlineSmall)
         }
         item {
-            Row {
+            Row(
+                modifier = Modifier
+                    .apply { onClickRow?.let { this.clickable(onClick = it) } }
+            ) {
                 val bgColor = color.darken(.5f)
                 for (column in columns) {
                     TableCell(column.width, bgColor) {
@@ -48,6 +53,7 @@ fun <T> DataTable(
 data class TableColumn<T>(
     val name: String,
     val width: Int,
+    val onClickCell: (() -> Unit)? = null,
     val content: @Composable (T) -> Unit
 )
 
