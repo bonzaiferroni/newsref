@@ -141,6 +141,15 @@ internal fun LeadJobRow.toData() = LeadJob(
 	freshAt = this.freshAt?.toInstant(UtcOffset.ZERO)
 )
 
+internal fun ResultRow.toData() = LeadJob(
+	id = this[LeadJobTable.id].value,
+	leadId = this[LeadJobTable.leadId].value,
+	feedId = this[LeadJobTable.feedId]?.value,
+	headline = this[LeadJobTable.headline],
+	isExternal = this[LeadJobTable.isExternal],
+	freshAt = this[LeadJobTable.freshAt]?.toInstant(UtcOffset.ZERO)
+)
+
 internal fun LeadJobRow.fromData(leadJob: LeadJob, leadRow: LeadRow, feedRow: FeedRow?) {
 	lead = leadRow
 	feed = feedRow

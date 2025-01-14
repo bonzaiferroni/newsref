@@ -65,7 +65,12 @@ class LeadService : DbService() {
 	}
 
 	suspend fun getLeadsFromFeed(feedId: Int) = dbQuery {
-		LeadRow.find { LeadJobTable.feedId eq feedId }.map { it.toData() }
+		LeadJobRow.find { LeadJobTable.feedId eq feedId }.map { it.toData() }
+	}
+
+	suspend fun getAllFeedLeads() = dbQuery {
+		// LeadJobRow.find { LeadJobTable.feedId.isNotNull() }.map { it.toData() }
+		LeadJobTable.selectAll().where { LeadJobTable.feedId.isNotNull() }.map { it.toData() }
 	}
 }
 
