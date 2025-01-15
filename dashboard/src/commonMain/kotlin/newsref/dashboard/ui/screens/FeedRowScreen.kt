@@ -24,6 +24,7 @@ import kotlinx.coroutines.launch
 import newsref.dashboard.FeedRowRoute
 import newsref.dashboard.ui.table.BooleanCell
 import newsref.dashboard.ui.table.CellControls
+import newsref.dashboard.ui.table.DataTable
 import newsref.dashboard.ui.table.PropertyRow
 import newsref.dashboard.ui.table.PropertyTable
 import newsref.dashboard.ui.table.TextCell
@@ -53,6 +54,7 @@ fun FeedRowScreen(
         Button(onClick = viewModel::updateItem, enabled = state.canUpdateItem) {
             Text("Update")
         }
+        // DataTable("LeadJobs", )
     }
 }
 

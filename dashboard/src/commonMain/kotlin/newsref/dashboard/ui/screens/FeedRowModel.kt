@@ -7,6 +7,7 @@ import newsref.db.services.FeedService
 import newsref.model.core.toUrl
 import newsref.model.core.toUrlOrNull
 import newsref.model.data.Feed
+import newsref.model.data.LeadJob
 
 class FeedRowModel(
     private val route: FeedRowRoute,

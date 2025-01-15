@@ -4,6 +4,7 @@ import androidx.lifecycle.viewModelScope
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import kotlinx.datetime.Instant
+import newsref.dashboard.ui.table.TableRow
 import newsref.db.services.FeedService
 import newsref.db.services.LeadService
 import newsref.model.core.toUrl
@@ -28,9 +29,12 @@ class FeedTableModel(
 
     suspend fun refresh() {
         val items = feedService.readAll()
-        val itemsDelta = items - stateNow.items
-        val oldItems = if (itemsDelta.isNotEmpty()) stateNow.items else stateNow.oldItems
-        val newItems = if (itemsDelta.isNotEmpty()) itemsDelta else stateNow.newItems
+        val rows = items.map {
+            TableRow(
+                isNew = stateNow.rows.all { row -> row.item.id != it.id },
+                item = it
+            )
+        }.sortedByDescending { it.item.createdAt }
 
         val additions = mutableMapOf<Int, Int?>()
         val previousCounts = stateNow.leadCounts
@@ -48,19 +52,19 @@ class FeedTableModel(
             it.copy(
                 leadCounts = leadCounts,
                 leadAdditions = it.leadAdditions + additions,
-                items = items,
-                newItems = newItems.sortedByDescending { it.createdAt },
-                oldItems = oldItems.sortedByDescending { it.createdAt },
+                rows = rows,
             )
         }
     }
 
     fun changeHref(value: String) {
         val updatedUrl = value.toUrlOrNull()
-        editState { it.copy(
-            newItem = it.newItem.copy(url = updatedUrl ?: it.newItem.url),
-            newHref = value
-        )}
+        editState {
+            it.copy(
+                newItem = it.newItem.copy(url = updatedUrl ?: it.newItem.url),
+                newHref = value
+            )
+        }
     }
 
     fun changeSelector(value: String) {
@@ -84,9 +88,7 @@ class FeedTableModel(
 data class FeedTableState(
     val newItem: Feed = emptyFeed,
     val newHref: String = emptyFeed.url.href,
-    val items: List<Feed> = emptyList(),
-    val newItems: List<Feed> = emptyList(),
-    val oldItems: List<Feed> = emptyList(),
+    val rows: List<TableRow<Feed>> = emptyList(),
     val leadCounts: Map<Int, Int> = emptyMap(),
     val leadAdditions: List<Map<Int, Int?>> = emptyList()
 ) {

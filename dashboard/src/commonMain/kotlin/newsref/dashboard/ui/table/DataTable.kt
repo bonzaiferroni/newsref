@@ -10,14 +10,12 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import newsref.dashboard.ui.theme.primaryContainerDark
-import newsref.dashboard.ui.theme.primaryDark
 import newsref.dashboard.utils.modifyIfNotNull
 
 @Composable
 fun <T> DataTable(
     name: String,
-    newItems: List<T>,
-    oldItems: List<T>,
+    rows: List<TableRow<T>>,
     columns: List<TableColumn<T>>,
     color: Color = primaryContainerDark.darken(.5f),
     onClickRow: ((T) -> Unit)? = null
@@ -37,20 +35,11 @@ fun <T> DataTable(
             }
         }
 
-        items(newItems) { item ->
+        items(rows) { row ->
             ItemRow(
-                item = item,
+                item = row.item,
                 columns = columns,
-                color = color.scaleBrightness(.2f),
-                onClickRow = onClickRow
-            )
-        }
-
-        items(oldItems) { item ->
-            ItemRow (
-                item = item,
-                columns = columns,
-                color = color,
+                color = if (row.isNew) color.scaleBrightness(.2f) else color,
                 onClickRow = onClickRow
             )
         }
@@ -75,6 +64,11 @@ fun <T> ItemRow(
         }
     }
 }
+
+data class TableRow<T>(
+    val isNew: Boolean,
+    val item: T,
+)
 
 data class TableColumn<T>(
     val name: String,

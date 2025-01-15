@@ -34,8 +34,7 @@ fun FeedTableScreen(
     }
     DataTable(
         name = "Feed Table",
-        newItems = state.newItems,
-        oldItems = state.oldItems,
+        rows = state.rows,
         onClickRow = { navController.navigate(FeedRowRoute(it.id))},
         columns = listOf(
             TableColumn(name = "Core", width = 200) { TextCell(it.url.core) },
