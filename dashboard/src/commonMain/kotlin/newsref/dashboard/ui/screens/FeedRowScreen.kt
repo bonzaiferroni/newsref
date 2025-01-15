@@ -25,6 +25,7 @@ import newsref.dashboard.FeedRowRoute
 import newsref.dashboard.ui.table.BooleanCell
 import newsref.dashboard.ui.table.CellControls
 import newsref.dashboard.ui.table.DataTable
+import newsref.dashboard.ui.table.DurationAgoCell
 import newsref.dashboard.ui.table.PropertyRow
 import newsref.dashboard.ui.table.PropertyTable
 import newsref.dashboard.ui.table.TableColumn
@@ -59,8 +60,8 @@ fun FeedRowScreen(
             name = "LeadJobs",
             rows = state.leadJobRows,
             columns = listOf(
-                TableColumn("Headline", 200) { TextCell(it.headline.toString()) }
-                // TODO: add FreshAt
+                TableColumn("Headline", 300) { TextCell(it.headline.toString()) },
+                TableColumn("FreshAt", 200) { DurationAgoCell(it.freshAt) }
             )
         )
     }

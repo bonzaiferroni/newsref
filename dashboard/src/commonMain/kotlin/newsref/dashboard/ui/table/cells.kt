@@ -37,8 +37,11 @@ import androidx.compose.ui.input.key.onPreviewKeyEvent
 import androidx.compose.ui.input.key.type
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.text.input.ImeAction
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
+import kotlinx.datetime.Clock
+import kotlinx.datetime.Instant
 import newsref.dashboard.ui.theme.primaryDark
 import newsref.dashboard.utils.changeFocusWithTab
 import newsref.dashboard.utils.modifyIfNotNull
@@ -85,6 +88,25 @@ fun TextCell(
         maxLines = 1,
         overflow = TextOverflow.Ellipsis,
     )
+}
+
+@Composable
+fun DurationAgoCell(
+    instant: Instant?
+) {
+    if (instant == null) return
+    val duration = Clock.System.now() - instant
+    val formatted = buildString {
+        val days = duration.inWholeDays
+        if (days > 0) append(days, "d ")
+        val hours = duration.inWholeHours
+        if (hours > 0) append(hours, "h ")
+        val minutes = duration.inWholeMinutes % 60
+        if (minutes > 0) append(minutes % 60, "m ")
+        val seconds = duration.inWholeSeconds % 60
+        if (seconds > 0) append(seconds, "s")
+    }
+    Text(textAlign = TextAlign.End, text = formatted)
 }
 
 @Composable
