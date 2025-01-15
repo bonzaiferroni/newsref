@@ -3,6 +3,7 @@ package newsref.dashboard.ui.table
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.focusable
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -11,6 +12,8 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.widthIn
 import androidx.compose.foundation.text.BasicTextField
+import androidx.compose.foundation.text.KeyboardActions
+import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material3.Checkbox
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -19,13 +22,25 @@ import androidx.compose.material3.LocalContentColor
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Switch
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextField
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.focus.FocusDirection
+import androidx.compose.ui.focus.focusProperties
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.SolidColor
+import androidx.compose.ui.input.key.Key
+import androidx.compose.ui.input.key.KeyEventType
+import androidx.compose.ui.input.key.key
+import androidx.compose.ui.input.key.onKeyEvent
+import androidx.compose.ui.input.key.onPreviewKeyEvent
+import androidx.compose.ui.input.key.type
+import androidx.compose.ui.platform.LocalFocusManager
+import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import newsref.dashboard.ui.theme.primaryDark
+import newsref.dashboard.utils.changeFocusWithTab
 import newsref.dashboard.utils.modifyIfNotNull
 
 @Composable
@@ -51,7 +66,7 @@ fun <T> TableCell(
             for (control in controls) {
                 IconButton(
                     onClick = { control.onClick(item!!) },
-                    modifier = Modifier.size(24.dp),
+                    modifier = Modifier.size(24.dp).focusProperties { canFocus = false },
                     colors = IconButtonDefaults.iconButtonColors(contentColor = primaryDark),
                 ) {
                     Icon(imageVector = control.icon, contentDescription = "cell control")
@@ -82,7 +97,8 @@ fun TextFieldCell(
         onValueChange = onValueChange,
         minLines = 1,
         textStyle = MaterialTheme.typography.bodyLarge.copy(color = LocalContentColor.current),
-        cursorBrush = SolidColor(LocalContentColor.current)
+        cursorBrush = SolidColor(LocalContentColor.current),
+        modifier = Modifier.changeFocusWithTab(LocalFocusManager.current)
     )
 }
 

@@ -5,6 +5,7 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.ui.platform.LocalFocusManager
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import newsref.dashboard.FeedRowRoute
@@ -19,6 +20,7 @@ fun FeedTableScreen(
     viewModel: FeedTableModel = viewModel { FeedTableModel() }
 ) {
     val state by viewModel.state.collectAsState()
+
     FeedRowProperties(
         name = "New Feed",
         item = state.newItem,
