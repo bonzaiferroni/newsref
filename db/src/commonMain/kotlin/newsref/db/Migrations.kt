@@ -52,4 +52,4 @@ private fun migrate(protocol: String, applyMigration: Boolean) {
 	flyway.migrate()
 }
 
-const val MIGRATIONS_DIRECTORY = "migrations/apply" // Location of migration scripts
+const val MIGRATIONS_DIRECTORY = "../migrations/apply" // Location of migration scripts

@@ -1,5 +1,6 @@
 package newsref.model.data
 
+import kotlinx.datetime.Instant
 import newsref.model.core.Url
 
 data class Feed(
@@ -7,4 +8,5 @@ data class Feed(
     val url: Url,
     val selector: String,
     val external: Boolean,
+    val createdAt: Instant,
 )
