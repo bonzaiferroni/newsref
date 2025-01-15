@@ -9,14 +9,17 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import newsref.dashboard.ui.theme.primaryContainerDark
+import newsref.dashboard.ui.theme.primaryDark
 import newsref.dashboard.utils.modifyIfNotNull
 
 @Composable
 fun <T> DataTable(
     name: String,
-    items: List<T>,
+    newItems: List<T>,
+    oldItems: List<T>,
     columns: List<TableColumn<T>>,
-    color: Color = Color(.2f, .24f, .22f, 1f),
+    color: Color = primaryContainerDark.darken(.5f),
     onClickRow: ((T) -> Unit)? = null
 ) {
     LazyColumn {
@@ -34,16 +37,40 @@ fun <T> DataTable(
             }
         }
 
-        items(items) { item ->
-            Row(
-                modifier = Modifier
-                    .modifyIfNotNull(onClickRow) { this.clickable { it(item) }}
-            ) {
-                for (column in columns) {
-                    TableCell<T>(width = column.width, item = item, color = color, onClickCell = column.onClickCell) {
-                        column.content(item)
-                    }
-                }
+        items(newItems) { item ->
+            ItemRow(
+                item = item,
+                columns = columns,
+                color = color.scaleBrightness(.2f),
+                onClickRow = onClickRow
+            )
+        }
+
+        items(oldItems) { item ->
+            ItemRow (
+                item = item,
+                columns = columns,
+                color = color,
+                onClickRow = onClickRow
+            )
+        }
+    }
+}
+
+@Composable
+fun <T> ItemRow(
+    item: T,
+    columns: List<TableColumn<T>>,
+    color: Color,
+    onClickRow: ((T) -> Unit)?
+) {
+    Row(
+        modifier = Modifier
+            .modifyIfNotNull(onClickRow) { this.clickable { it(item) } }
+    ) {
+        for (column in columns) {
+            TableCell<T>(width = column.width, item = item, color = color, onClickCell = column.onClickCell) {
+                column.content(item)
             }
         }
     }

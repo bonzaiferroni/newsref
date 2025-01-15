@@ -27,14 +27,18 @@ class FeedTableModel(
     }
 
     suspend fun refresh() {
-        val feeds = feedService.readAll()
+        val items = feedService.readAll()
+        val itemsDelta = items - stateNow.items
+        val oldItems = if (itemsDelta.isNotEmpty()) stateNow.items else stateNow.oldItems
+        val newItems = if (itemsDelta.isNotEmpty()) itemsDelta else stateNow.newItems
+
         val additions = mutableMapOf<Int, Int?>()
         val previousCounts = stateNow.leadCounts
         val leadCounts = leadService.getAllFeedLeads().groupBy { it.feedId }
             .filterKeys { it != null }
             .mapKeys { it.key!! }
             .mapValues { it.value.size }
-        for (feed in feeds) {
+        for (feed in items) {
             val count = leadCounts[feed.id] ?: 0
             val currentCount = previousCounts[feed.id] ?: 0
             val addition = count - currentCount
@@ -44,7 +48,9 @@ class FeedTableModel(
             it.copy(
                 leadCounts = leadCounts,
                 leadAdditions = it.leadAdditions + additions,
-                feedItems = feeds
+                items = items,
+                newItems = newItems.sortedByDescending { it.createdAt },
+                oldItems = oldItems.sortedByDescending { it.createdAt },
             )
         }
     }
@@ -77,8 +83,10 @@ class FeedTableModel(
 
 data class FeedTableState(
     val newItem: Feed = emptyFeed,
-    val newHref: String = "",
-    val feedItems: List<Feed> = emptyList(),
+    val newHref: String = emptyFeed.url.href,
+    val items: List<Feed> = emptyList(),
+    val newItems: List<Feed> = emptyList(),
+    val oldItems: List<Feed> = emptyList(),
     val leadCounts: Map<Int, Int> = emptyMap(),
     val leadAdditions: List<Map<Int, Int?>> = emptyList()
 ) {

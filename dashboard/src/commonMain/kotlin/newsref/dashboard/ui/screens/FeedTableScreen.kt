@@ -10,7 +10,6 @@ import androidx.navigation.NavController
 import newsref.dashboard.FeedRowRoute
 import newsref.dashboard.ui.table.CountCell
 import newsref.dashboard.ui.table.DataTable
-import newsref.dashboard.ui.table.PropertyTable
 import newsref.dashboard.ui.table.TableColumn
 import newsref.dashboard.ui.table.TextCell
 
@@ -33,7 +32,8 @@ fun FeedTableScreen(
     }
     DataTable(
         name = "Feed Table",
-        items = state.feedItems,
+        newItems = state.newItems,
+        oldItems = state.oldItems,
         onClickRow = { navController.navigate(FeedRowRoute(it.id))},
         columns = listOf(
             TableColumn(name = "Core", width = 200) { TextCell(it.url.core) },

@@ -15,13 +15,15 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
 import newsref.dashboard.halfSpacing
+import newsref.dashboard.ui.theme.secondaryContainerDark
+import newsref.dashboard.ui.theme.secondaryDark
 
 @Composable
 fun <T> PropertyTable(
     name: String,
     item: T,
     properties: List<PropertyRow<T>>,
-    color: Color = Color(.2f, .22f, .24f, 1f),
+    color: Color = secondaryContainerDark.darken(.5f),
 ) {
     Column {
         Text(text = name, style = MaterialTheme.typography.headlineSmall)
