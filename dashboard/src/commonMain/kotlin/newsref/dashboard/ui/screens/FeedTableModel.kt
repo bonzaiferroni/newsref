@@ -1,13 +1,13 @@
 package newsref.dashboard.ui.screens
 
-import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import kotlinx.coroutines.delay
-import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
+import kotlinx.datetime.Instant
 import newsref.db.services.FeedService
 import newsref.db.services.LeadService
+import newsref.model.core.toUrl
+import newsref.model.core.toUrlOrNull
 import newsref.model.data.Feed
 import kotlin.collections.plus
 import kotlin.time.Duration.Companion.seconds
@@ -48,10 +48,41 @@ class FeedTableModel(
             )
         }
     }
+
+    fun changeHref(value: String) {
+        val updatedUrl = value.toUrlOrNull()
+        editState { it.copy(
+            newItem = it.newItem.copy(url = updatedUrl ?: it.newItem.url),
+            newHref = value
+        )}
+    }
+
+    fun changeSelector(value: String) {
+        editState { it.copy(newItem = it.newItem.copy(selector = value)) }
+    }
+
+    fun changeExternal(value: Boolean) {
+        editState { it.copy(newItem = it.newItem.copy(external = value)) }
+    }
+
+    fun addNewItem() {
+        if (!stateNow.canAddItem) return
+        viewModelScope.launch {
+            feedService.create(stateNow.newItem)
+            editState { it.copy(newItem = emptyFeed) }
+            refresh()
+        }
+    }
 }
 
 data class FeedTableState(
+    val newItem: Feed = emptyFeed,
+    val newHref: String = "",
     val feedItems: List<Feed> = emptyList(),
     val leadCounts: Map<Int, Int> = emptyMap(),
     val leadAdditions: List<Map<Int, Int?>> = emptyList()
-)
+) {
+    val canAddItem get() = newHref.toUrlOrNull() != null && newItem.selector.isNotBlank()
+}
+
+private val emptyFeed = Feed(0, "https://example.com/".toUrl(), "", false, Instant.DISTANT_PAST)

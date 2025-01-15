@@ -5,8 +5,8 @@ import newsref.db.tables.FeedRow
 import newsref.db.tables.FeedTable
 import newsref.db.tables.toData
 import newsref.db.tables.toFeed
-import newsref.db.tables.toLeadJob
 import newsref.model.data.Feed
+import org.jetbrains.exposed.sql.insertAndGetId
 import org.jetbrains.exposed.sql.selectAll
 import org.jetbrains.exposed.sql.update
 
@@ -25,5 +25,14 @@ class FeedService : DbService() {
             it[selector] = feed.selector
             it[external] = feed.external
         }
+    }
+
+    suspend fun create(feed: Feed) = dbQuery {
+        val id = FeedTable.insertAndGetId {
+            it[url] = feed.url.toString()
+            it[selector] = feed.selector
+            it[external] = feed.external
+        }
+        id.value
     }
 }
