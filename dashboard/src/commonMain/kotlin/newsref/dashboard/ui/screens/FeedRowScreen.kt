@@ -38,27 +38,44 @@ fun FeedRowScreen(
     viewModel: FeedRowModel = viewModel { FeedRowModel(route) }
 ) {
     val state by viewModel.state.collectAsState()
-    val uriHandler = LocalUriHandler.current
-    val item = state.feed
+    val item = state.updatedFeed
     if (item == null) {
         Text("Fetching Feed with id: ${route.feedId}")
     } else {
-        PropertyTable(item.url.core, item, listOf(
-            PropertyRow(
-                name = "href",
-                controls = listOf(CellControls(TablerIcons.ExternalLink) { uriHandler.openUri(item.url.toString()) })
-            ) {
-                TextFieldCell(state.updatedHref, viewModel::changeHref)
-            },
-            PropertyRow(
-                name = "selector",
-            ) {
-                TextFieldCell(state.updatedFeed?.selector ?: "", viewModel::changeSelector)
-            },
-            PropertyRow("external") { BooleanCell(state.updatedFeed?.external == true, viewModel::changeExternal) }
-        ))
+        FeedRowProperties(
+            name = item.url.core,
+            item = item,
+            href = state.updatedHref,
+            changeHref = viewModel::changeHref,
+            changeSelector = viewModel::changeSelector,
+            changeExternal = viewModel::changeExternal,
+        )
         Button(onClick = viewModel::updateItem, enabled = state.canUpdateItem) {
             Text("Update")
         }
     }
+}
+
+@Composable
+fun FeedRowProperties(
+    name: String,
+    item: Feed,
+    href: String,
+    changeHref: (String) -> Unit,
+    changeSelector: (String) -> Unit,
+    changeExternal: (Boolean) -> Unit,
+) {
+    val uriHandler = LocalUriHandler.current
+    PropertyTable(
+        name = name,
+        item = item,
+        properties = listOf(
+            PropertyRow(
+                name = "href",
+                controls = listOf(CellControls(TablerIcons.ExternalLink) { uriHandler.openUri(item.url.toString()) })
+            ) { TextFieldCell(href, changeHref) },
+            PropertyRow(name = "selector") { TextFieldCell(item.selector, changeSelector) },
+            PropertyRow("external") { BooleanCell(item.external, changeExternal) }
+        )
+    )
 }
