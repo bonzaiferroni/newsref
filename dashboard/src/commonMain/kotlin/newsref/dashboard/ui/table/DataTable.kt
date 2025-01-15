@@ -15,7 +15,7 @@ import newsref.dashboard.utils.modifyIfNotNull
 @Composable
 fun <T> DataTable(
     name: String,
-    rows: List<TableRow<T>>,
+    rows: List<DataRow<T>>,
     columns: List<TableColumn<T>>,
     color: Color = primaryContainerDark.darken(.5f),
     onClickRow: ((T) -> Unit)? = null
@@ -65,10 +65,14 @@ fun <T> ItemRow(
     }
 }
 
-data class TableRow<T>(
+data class DataRow<T>(
     val isNew: Boolean,
     val item: T,
 )
+
+fun <T> Iterable<T>.toRows(isNew: (T) -> Boolean,) = this.map {
+    DataRow(isNew = isNew(it), item = it)
+}
 
 data class TableColumn<T>(
     val name: String,

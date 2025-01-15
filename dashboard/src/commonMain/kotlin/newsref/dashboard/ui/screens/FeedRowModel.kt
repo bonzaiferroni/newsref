@@ -3,8 +3,10 @@ package newsref.dashboard.ui.screens
 import androidx.lifecycle.viewModelScope
 import kotlinx.coroutines.launch
 import newsref.dashboard.FeedRowRoute
+import newsref.dashboard.ui.table.DataRow
+import newsref.dashboard.ui.table.toRows
 import newsref.db.services.FeedService
-import newsref.model.core.toUrl
+import newsref.db.services.LeadService
 import newsref.model.core.toUrlOrNull
 import newsref.model.data.Feed
 import newsref.model.data.LeadJob
@@ -12,6 +14,7 @@ import newsref.model.data.LeadJob
 class FeedRowModel(
     private val route: FeedRowRoute,
     private val feedService: FeedService = FeedService(),
+    private val leadService: LeadService = LeadService(),
 ) : ScreenModel<FeedRowState>(FeedRowState(route.feedId)) {
     
     init {
@@ -22,10 +25,15 @@ class FeedRowModel(
 
     private suspend fun refreshItem() {
         val feed = feedService.read(route.feedId)
+        val leadJobs = leadService.getLeadsFromFeed(route.feedId)
+        val leadJobRows = leadJobs
+            .toRows { stateNow.leadJobRows.all { row -> it.id != row.item.id } }
+            .sortedBy { it.item.id }
         editState { it.copy(
             feed = feed,
             updatedFeed = feed,
-            updatedHref = feed?.url.toString()
+            updatedHref = feed?.url.toString(),
+            leadJobRows = leadJobRows
         ) }
     }
 
@@ -60,6 +68,7 @@ data class FeedRowState(
     val feed: Feed? = null,
     val updatedFeed: Feed? = null,
     val updatedHref: String = "",
+    val leadJobRows: List<DataRow<LeadJob>> = emptyList(),
 ) {
     val canUpdateItem get() = feed != updatedFeed
 }

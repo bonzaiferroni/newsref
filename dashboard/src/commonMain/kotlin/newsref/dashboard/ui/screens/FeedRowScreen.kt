@@ -27,6 +27,7 @@ import newsref.dashboard.ui.table.CellControls
 import newsref.dashboard.ui.table.DataTable
 import newsref.dashboard.ui.table.PropertyRow
 import newsref.dashboard.ui.table.PropertyTable
+import newsref.dashboard.ui.table.TableColumn
 import newsref.dashboard.ui.table.TextCell
 import newsref.dashboard.ui.table.TextFieldCell
 import newsref.db.services.FeedService
@@ -54,7 +55,14 @@ fun FeedRowScreen(
         Button(onClick = viewModel::updateItem, enabled = state.canUpdateItem) {
             Text("Update")
         }
-        // DataTable("LeadJobs", )
+        DataTable(
+            name = "LeadJobs",
+            rows = state.leadJobRows,
+            columns = listOf(
+                TableColumn("Headline", 200) { TextCell(it.headline.toString()) }
+                // TODO: add FreshAt
+            )
+        )
     }
 }
 
