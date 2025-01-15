@@ -4,8 +4,6 @@ import androidx.lifecycle.viewModelScope
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import kotlinx.datetime.Instant
-import newsref.dashboard.ui.table.DataRow
-import newsref.dashboard.ui.table.toRows
 import newsref.db.services.FeedService
 import newsref.db.services.LeadService
 import newsref.model.core.toUrl
@@ -29,10 +27,7 @@ class FeedTableModel(
     }
 
     suspend fun refresh() {
-        val items = feedService.readAll()
-        val rows = items.toRows { stateNow.rows.all { row -> row.item.id != it.id } }
-            .sortedByDescending { it.item.createdAt }
-
+        val items = feedService.readAll().sortedByDescending { it.createdAt }
         val additions = mutableMapOf<Int, Int?>()
         val previousCounts = stateNow.leadCounts
         val leadCounts = leadService.getAllFeedLeads().groupBy { it.feedId }
@@ -49,7 +44,7 @@ class FeedTableModel(
             it.copy(
                 leadCounts = leadCounts,
                 leadAdditions = it.leadAdditions + additions,
-                rows = rows,
+                items = items,
             )
         }
     }
@@ -85,7 +80,7 @@ class FeedTableModel(
 data class FeedTableState(
     val newItem: Feed = emptyFeed,
     val newHref: String = emptyFeed.url.href,
-    val rows: List<DataRow<Feed>> = emptyList(),
+    val items: List<Feed> = emptyList(),
     val leadCounts: Map<Int, Int> = emptyMap(),
     val leadAdditions: List<Map<Int, Int?>> = emptyList()
 ) {

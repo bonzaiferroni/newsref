@@ -1,26 +1,15 @@
 package newsref.dashboard.ui.screens
 
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.wrapContentSize
-import androidx.compose.material.icons.Icons
 import androidx.compose.material3.Button
-import androidx.compose.material3.Icon
-import androidx.compose.material3.IconButton
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
-import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalUriHandler
-import androidx.compose.ui.unit.dp
-import androidx.lifecycle.viewModelScope
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import compose.icons.TablerIcons
 import compose.icons.tablericons.ExternalLink
-import compose.icons.tablericons.Globe
-import kotlinx.coroutines.launch
 import newsref.dashboard.FeedRowRoute
 import newsref.dashboard.ui.table.BooleanCell
 import newsref.dashboard.ui.table.CellControls
@@ -31,7 +20,7 @@ import newsref.dashboard.ui.table.PropertyTable
 import newsref.dashboard.ui.table.TableColumn
 import newsref.dashboard.ui.table.TextCell
 import newsref.dashboard.ui.table.TextFieldCell
-import newsref.db.services.FeedService
+import newsref.dashboard.ui.table.glowOverDay
 import newsref.model.data.Feed
 
 @Composable
@@ -58,7 +47,8 @@ fun FeedRowScreen(
         }
         DataTable(
             name = "LeadJobs",
-            rows = state.leadJobRows,
+            rows = state.leadJobs,
+            glowFunction = { glowOverDay(it.freshAt) },
             columns = listOf(
                 TableColumn("Headline", 300) { TextCell(it.headline.toString()) },
                 TableColumn("FreshAt", 200) { DurationAgoCell(it.freshAt) }

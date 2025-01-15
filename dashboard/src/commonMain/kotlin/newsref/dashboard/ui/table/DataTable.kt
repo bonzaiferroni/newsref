@@ -9,15 +9,19 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import kotlinx.datetime.Clock
+import kotlinx.datetime.Instant
 import newsref.dashboard.ui.theme.primaryContainerDark
 import newsref.dashboard.utils.modifyIfNotNull
+import kotlin.div
 
 @Composable
 fun <T> DataTable(
     name: String,
-    rows: List<DataRow<T>>,
+    rows: List<T>,
     columns: List<TableColumn<T>>,
     color: Color = primaryContainerDark.darken(.5f),
+    glowFunction: ((T) -> Float?)? = null,
     onClickRow: ((T) -> Unit)? = null
 ) {
     LazyColumn {
@@ -35,11 +39,13 @@ fun <T> DataTable(
             }
         }
 
-        items(rows) { row ->
+        items(rows) { item ->
             ItemRow(
-                item = row.item,
+                item = item,
                 columns = columns,
-                color = if (row.isNew) color.scaleBrightness(.2f) else color,
+                color = glowFunction?.let { function ->
+                    function(item)?.let { color.scaleBrightness(it * .5f) }
+                } ?: color,
                 onClickRow = onClickRow
             )
         }
@@ -65,15 +71,6 @@ fun <T> ItemRow(
     }
 }
 
-data class DataRow<T>(
-    val isNew: Boolean,
-    val item: T,
-)
-
-fun <T> Iterable<T>.toRows(isNew: (T) -> Boolean,) = this.map {
-    DataRow(isNew = isNew(it), item = it)
-}
-
 data class TableColumn<T>(
     val name: String,
     val width: Int,
@@ -92,3 +89,5 @@ fun Color.scaleBrightness(factor: Float): Color {
         alpha = this.alpha
     )
 }
+
+fun glowOverDay(instant: Instant?) = instant?.let { (24 - (Clock.System.now() - it).inWholeHours) / 24f }
