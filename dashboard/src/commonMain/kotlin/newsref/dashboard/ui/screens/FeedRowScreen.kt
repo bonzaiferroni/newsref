@@ -1,6 +1,7 @@
 package newsref.dashboard.ui.screens
 
 import androidx.compose.animation.animateColorAsState
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Row
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
@@ -19,6 +20,8 @@ import compose.icons.TablerIcons
 import compose.icons.tablericons.ExternalLink
 import newsref.dashboard.FeedRowRoute
 import newsref.dashboard.FeedTableRoute
+import newsref.dashboard.halfSpacing
+import newsref.dashboard.ui.controls.ConfirmButton
 import newsref.dashboard.ui.table.BooleanCell
 import newsref.dashboard.ui.table.CellControls
 import newsref.dashboard.ui.table.DataTable
@@ -50,7 +53,7 @@ fun FeedRowScreen(
             changeSelector = viewModel::changeSelector,
             changeExternal = viewModel::changeExternal,
         )
-        Row {
+        Row(horizontalArrangement = Arrangement.spacedBy(halfSpacing)) {
             Button(onClick = viewModel::updateItem, enabled = state.canUpdateItem) {
                 Text("Update")
             }
@@ -65,34 +68,6 @@ fun FeedRowScreen(
                 TableColumn("FreshAt", 200) { DurationAgoCell(it.freshAt) }
             )
         )
-    }
-}
-
-@Composable
-fun ConfirmButton(
-    text: String,
-    onConfirm: () -> Unit
-) {
-    var confirmed by remember { mutableStateOf(false) }
-    val containerColor by animateColorAsState(
-        if (confirmed) MaterialTheme.colorScheme.errorContainer else MaterialTheme.colorScheme.tertiaryContainer,
-        label = "color"
-    )
-
-    Button(
-        onClick = {
-            if (confirmed) {
-                onConfirm()
-            } else {
-                confirmed = true
-            }
-        },
-        colors = ButtonDefaults.buttonColors(
-            containerColor = containerColor,
-            contentColor = MaterialTheme.colorScheme.onTertiaryContainer
-        )
-    ) {
-        Text(if (confirmed) text else "$text?")
     }
 }
 
