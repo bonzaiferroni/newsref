@@ -2,8 +2,6 @@ package newsref.dashboard.ui.screens
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Row
-import androidx.compose.material3.Button
-import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
@@ -12,22 +10,11 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import compose.icons.TablerIcons
 import compose.icons.tablericons.ExternalLink
-import newsref.dashboard.FeedRowRoute
-import newsref.dashboard.FeedTableRoute
-import newsref.dashboard.halfSpacing
-import newsref.dashboard.ui.controls.ConfirmButton
-import newsref.dashboard.ui.table.BooleanCell
-import newsref.dashboard.ui.table.CellControls
-import newsref.dashboard.ui.table.DataTable
-import newsref.dashboard.ui.table.DurationAgoCell
-import newsref.dashboard.ui.table.PropertyRow
-import newsref.dashboard.ui.table.PropertyTable
-import newsref.dashboard.ui.table.TableColumn
-import newsref.dashboard.ui.table.TextCell
-import newsref.dashboard.ui.table.TextFieldCell
-import newsref.dashboard.ui.table.glowOverDay
-import newsref.dashboard.ui.table.glowOverHour
-import newsref.model.data.Feed
+import androidx.compose.material3.*
+import newsref.dashboard.*
+import newsref.dashboard.ui.controls.*
+import newsref.dashboard.ui.table.*
+import newsref.model.data.*
 
 @Composable
 fun FeedRowScreen(
@@ -61,10 +48,10 @@ fun FeedRowScreen(
             glowFunction = { glowOverHour(it.freshAt) },
             columns = listOf(
                 TableColumn("Headline", 300, { uriHandler.openUri(it.url.href)}) { TextCell(it.feedHeadline.toString()) },
-                TableColumn("Fresh At", 200) { DurationAgoCell(it.freshAt) },
-                TableColumn("Last Attempt", 200) { DurationAgoCell(it.lastAttemptAt) },
+                TableColumn("Fresh At", 100, alignContent = AlignContent.Right) { DurationAgoCell(it.freshAt) },
+                TableColumn("Last Attempt", 100, alignContent = AlignContent.Right) { DurationAgoCell(it.lastAttemptAt) },
                 TableColumn("External", 50) { BooleanCell(it.isExternal) },
-                TableColumn("Links", 50) { TextCell(it.linkCount.toString())}
+                TableColumn("Links", 50, alignContent = AlignContent.Right) { TextCell(it.linkCount.toString())}
             )
         )
     }

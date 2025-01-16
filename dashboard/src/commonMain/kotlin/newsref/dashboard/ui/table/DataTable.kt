@@ -1,22 +1,25 @@
 package newsref.dashboard.ui.table
 
 import androidx.compose.foundation.background
+import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.ExperimentalLayoutApi
 import androidx.compose.foundation.layout.FlowRow
-import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.unit.dp
 import kotlinx.datetime.Clock
 import kotlinx.datetime.Instant
 import newsref.dashboard.ui.theme.primaryContainerDark
 import newsref.dashboard.utils.modifyIfNotNull
-import kotlin.div
 
 @OptIn(ExperimentalLayoutApi::class)
 @Composable
@@ -38,7 +41,11 @@ fun <T> DataTable(
                 modifier = Modifier.background(bgColor)
             ) {
                 for (column in columns) {
-                    TableCell<T>(column.width, color = bgColor) {
+                    TableCell<T>(
+                        width = column.width,
+                        color = bgColor,
+                        alignContent = column.alignContent
+                    ) {
                         TextCell(text = column.name)
                     }
                 }
@@ -52,9 +59,16 @@ fun <T> DataTable(
             FlowRow(
                 modifier = Modifier.modifyIfNotNull(onClickRow) { this.clickable { it(item) } }
                     .background(bgColor)
+                    .border(2.dp, bgColor.addBrightness(.05f))
             ) {
                 for (column in columns) {
-                    TableCell<T>(width = column.width, item = item, color = bgColor, onClickCell = column.onClickCell) {
+                    TableCell<T>(
+                        width = column.width,
+                        item = item,
+                        color = bgColor,
+                        alignContent = column.alignContent,
+                        onClickCell = column.onClickCell
+                    ) {
                         column.content(item)
                     }
                 }
@@ -67,6 +81,7 @@ data class TableColumn<T>(
     val name: String,
     val width: Int,
     val onClickCell: ((T) -> Unit)? = null,
+    val alignContent: AlignContent? = null,
     val content: @Composable (T) -> Unit
 )
 
@@ -81,6 +96,12 @@ fun Color.scaleBrightness(factor: Float): Color {
         alpha = this.alpha
     )
 }
+
+fun Color.addBrightness(factor: Float) = Color(
+    red = this.red + factor,
+    green = this.green + factor,
+    blue = this.blue + factor,
+)
 
 fun glowOverDay(instant: Instant?) = instant?.let { (24 - (Clock.System.now() - it).inWholeHours) / 24f }
 fun glowOverHour(instant: Instant?) = instant?.let { (60 - (Clock.System.now() - it).inWholeMinutes) / 60f }

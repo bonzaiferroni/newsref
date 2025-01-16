@@ -3,41 +3,17 @@ package newsref.dashboard.ui.table
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.focusable
-import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.width
-import androidx.compose.foundation.layout.widthIn
+import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.text.BasicTextField
-import androidx.compose.foundation.text.KeyboardActions
-import androidx.compose.foundation.text.KeyboardOptions
-import androidx.compose.material3.Checkbox
-import androidx.compose.material3.Icon
-import androidx.compose.material3.IconButton
-import androidx.compose.material3.IconButtonDefaults
-import androidx.compose.material3.LocalContentColor
-import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Switch
-import androidx.compose.material3.Text
-import androidx.compose.material3.TextField
+import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.focus.FocusDirection
 import androidx.compose.ui.focus.focusProperties
+import androidx.compose.ui.geometry.Rect
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.Outline
 import androidx.compose.ui.graphics.SolidColor
-import androidx.compose.ui.input.key.Key
-import androidx.compose.ui.input.key.KeyEventType
-import androidx.compose.ui.input.key.key
-import androidx.compose.ui.input.key.onKeyEvent
-import androidx.compose.ui.input.key.onPreviewKeyEvent
-import androidx.compose.ui.input.key.type
 import androidx.compose.ui.platform.LocalFocusManager
-import androidx.compose.ui.text.input.ImeAction
-import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import kotlinx.datetime.Clock
@@ -45,38 +21,55 @@ import kotlinx.datetime.Instant
 import newsref.dashboard.ui.theme.primaryDark
 import newsref.dashboard.utils.changeFocusWithTab
 import newsref.dashboard.utils.modifyIfNotNull
+import newsref.dashboard.utils.twoDigits
 
 @Composable
 fun <T> TableCell(
     width: Int? = null,
     item: T? = null,
     color: Color = Color(0f, 0f, 0f, 0f),
+    alignContent: AlignContent? = null,
     onClickCell: ((T) -> Unit)? = null,
     controls: (List<CellControls<T>>)? = null,
     content: @Composable () -> Unit
 ) {
-    Row (
+    Row(
+        horizontalArrangement =
+            if (alignContent == AlignContent.Right) {
+                Arrangement.End
+            } else if (controls != null) {
+                Arrangement.SpaceBetween
+            } else {
+                Arrangement.Start
+            },
         modifier = Modifier
             .modifyIfNotNull(width, elseBlock = { this.fillMaxWidth() }) { this.width(it.dp) }
             .background(color = color)
-            .border(2.dp, color.darken(.05f))
+            .border(2.dp, color.addBrightness(.05f))
             .padding(4.dp)
             .modifyIfNotNull(onClickCell) { this.clickable(onClick = { it(item!!) }) }
     ) {
         content()
+
         if (controls != null) {
-            Spacer(modifier = Modifier.width(8.dp))
-            for (control in controls) {
-                IconButton(
-                    onClick = { control.onClick(item!!) },
-                    modifier = Modifier.size(24.dp).focusProperties { canFocus = false },
-                    colors = IconButtonDefaults.iconButtonColors(contentColor = primaryDark),
-                ) {
-                    Icon(imageVector = control.icon, contentDescription = "cell control")
+            Row {
+                for (control in controls) {
+                    IconButton(
+                        onClick = { control.onClick(item!!) },
+                        modifier = Modifier.size(24.dp).focusProperties { canFocus = false },
+                        colors = IconButtonDefaults.iconButtonColors(contentColor = primaryDark),
+                    ) {
+                        Icon(imageVector = control.icon, contentDescription = "cell control")
+                    }
                 }
             }
         }
     }
+}
+
+enum class AlignContent {
+    Left,
+    Right
 }
 
 @Composable
@@ -92,21 +85,24 @@ fun TextCell(
 
 @Composable
 fun DurationAgoCell(
-    instant: Instant?
+    instant: Instant?,
 ) {
-    if (instant == null) return
-    val duration = Clock.System.now() - instant
-    val formatted = buildString {
-        val days = duration.inWholeDays
-        if (days > 0) append(days, "d ")
-        val hours = duration.inWholeHours
-        if (hours > 0) append(hours, "h ")
-        val minutes = duration.inWholeMinutes % 60
-        if (minutes > 0) append(minutes % 60, "m ")
-        val seconds = duration.inWholeSeconds % 60
-        if (seconds > 0) append(seconds, "s")
+    if (instant == null) {
+        Text("💁")
+    } else {
+        val duration = Clock.System.now() - instant
+        val formatted = buildString {
+            val days = duration.inWholeDays
+            if (days > 0) append(days, ":")
+            val hours = duration.inWholeHours % 24
+            if (hours > 0) append(hours.twoDigits(), ":")
+            val minutes = duration.inWholeMinutes % 60
+            if (minutes > 0) append((minutes % 60).twoDigits(), ":")
+            val seconds = duration.inWholeSeconds % 60
+            if (seconds > 0) append(seconds.twoDigits())
+        }
+        Text(text = formatted)
     }
-    Text(textAlign = TextAlign.End, text = formatted)
 }
 
 @Composable
