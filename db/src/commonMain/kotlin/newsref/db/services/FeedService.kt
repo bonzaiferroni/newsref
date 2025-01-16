@@ -6,9 +6,11 @@ import newsref.db.tables.FeedTable
 import newsref.db.tables.toData
 import newsref.db.tables.toFeed
 import newsref.model.data.Feed
+import org.jetbrains.exposed.sql.deleteWhere
 import org.jetbrains.exposed.sql.insertAndGetId
 import org.jetbrains.exposed.sql.selectAll
 import org.jetbrains.exposed.sql.update
+import org.jetbrains.exposed.sql.SqlExpressionBuilder.eq
 
 class FeedService : DbService() {
     suspend fun readAll(): List<Feed> = dbQuery {
@@ -34,5 +36,9 @@ class FeedService : DbService() {
             it[external] = feed.external
         }
         id.value
+    }
+
+    suspend fun delete(feedId: Int) = dbQuery {
+        FeedTable.deleteWhere { id eq feedId }
     }
 }

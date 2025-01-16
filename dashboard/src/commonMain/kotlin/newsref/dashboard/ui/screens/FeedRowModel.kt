@@ -56,6 +56,13 @@ class FeedRowModel(
             refreshItem()
         }
     }
+
+    fun deleteFeed(onDelete: () -> Unit) {
+        viewModelScope.launch {
+            feedService.delete(stateNow.feedId)
+            onDelete()
+        }
+    }
 }
 
 data class FeedRowState(
