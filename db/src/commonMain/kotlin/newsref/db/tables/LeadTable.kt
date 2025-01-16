@@ -161,8 +161,8 @@ internal fun LeadJobRow.fromData(leadJob: LeadJob, leadRow: LeadRow, feedRow: Fe
 }
 
 // lead info
-internal val linkCountAlias = LinkTable.leadId.count().alias("linkCount")
-internal val leadInfoJoin = LeadTable.leftJoin(LinkTable).leftJoin(LeadJobTable)
+internal val linkCountAlias get() = LinkTable.leadId.count().alias("linkCount")
+internal val leadInfoJoin get() = LeadTable.leftJoin(LinkTable).leftJoin(LeadJobTable)
 	.select(leadInfoColumns + linkCountAlias)
 
 internal fun ResultRow.toLeadInfo() = LeadInfo(

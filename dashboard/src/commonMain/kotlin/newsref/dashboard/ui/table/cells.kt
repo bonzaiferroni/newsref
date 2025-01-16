@@ -146,3 +146,15 @@ fun BooleanCell(
 ) {
     Checkbox(value, onValueChanged, modifier = Modifier.size(24.dp), enabled = onValueChanged != null)
 }
+
+@Composable
+fun NullableIdCell(
+    id: Long?,
+    action: (Long) -> Unit
+) {
+    if (id == null) {
+        Text("🤷")
+    } else {
+        Text("👉", modifier = Modifier.clickable { action(id) })
+    }
+}

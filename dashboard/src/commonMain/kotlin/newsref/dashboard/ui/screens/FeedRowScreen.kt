@@ -48,10 +48,11 @@ fun FeedRowScreen(
             glowFunction = { glowOverHour(it.freshAt) },
             columns = listOf(
                 TableColumn("Headline", 300, { uriHandler.openUri(it.url.href)}) { TextCell(it.feedHeadline.toString()) },
-                TableColumn("Fresh At", 100, alignContent = AlignContent.Right) { DurationAgoCell(it.freshAt) },
-                TableColumn("Last Attempt", 100, alignContent = AlignContent.Right) { DurationAgoCell(it.lastAttemptAt) },
-                TableColumn("External", 50) { BooleanCell(it.isExternal) },
-                TableColumn("Links", 50, alignContent = AlignContent.Right) { TextCell(it.linkCount.toString())}
+                TableColumn("Fresh", 100, alignContent = AlignContent.Right) { DurationAgoCell(it.freshAt) },
+                TableColumn("Attempt", 100, alignContent = AlignContent.Right) { DurationAgoCell(it.lastAttemptAt) },
+                TableColumn("Ext", 50) { BooleanCell(it.isExternal) },
+                TableColumn("Links", 50, alignContent = AlignContent.Right) { TextCell(it.linkCount.toString())},
+                TableColumn("Src", 50) { NullableIdCell(it.targetId) { /* navigate to source */ } }
             )
         )
     }

@@ -7,6 +7,7 @@ import newsref.db.globalConsole
 import newsref.db.tables.*
 import newsref.db.utils.sameUrl
 import newsref.db.utils.toCheckedFromTrusted
+import newsref.db.utils.toSqlString
 import newsref.model.core.CheckedUrl
 import newsref.model.data.LeadJob
 import newsref.model.data.LeadInfo
@@ -23,6 +24,7 @@ class LeadService : DbService() {
             .orderBy(LeadJobTable.isExternal, SortOrder.DESC)
             .orderBy(LeadJobTable.freshAt, SortOrder.DESC_NULLS_LAST)
             .limit(limit)
+            // .toSqlString { console.log(it) }
             .toLeadInfos()
     }
 

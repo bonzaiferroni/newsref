@@ -1,7 +1,12 @@
-Exception in thread "DefaultDispatcher-worker-1" java.lang.IllegalStateException: no result found
-	at newsref.krawly.agents.SourceEmbedder.findEmbeddings(SourceEmbedder.kt:51)
-	at newsref.krawly.agents.SourceEmbedder.access$findEmbeddings(SourceEmbedder.kt:21)
-	at newsref.krawly.agents.SourceEmbedder$findEmbeddings$1.invokeSuspend(SourceEmbedder.kt)
+Exception in thread "DefaultDispatcher-worker-20" java.lang.IllegalStateException: WHERE clause is specified twice. Old value = 'lead.source_id IS NULL', new value = 'lead.source_id IS NULL'
+	at org.jetbrains.exposed.sql.Query.where(Query.kt:324)
+	at newsref.db.services.LeadService$getOpenLeads$2.invokeSuspend(LeadService.kt:21)
+	at newsref.db.services.LeadService$getOpenLeads$2.invoke(LeadService.kt)
+	at newsref.db.services.LeadService$getOpenLeads$2.invoke(LeadService.kt)
+	at newsref.db.DbService$dbQuery$2.invokeSuspend(DbService.kt:9)
+	at newsref.db.DbService$dbQuery$2.invoke(DbService.kt)
+	at newsref.db.DbService$dbQuery$2.invoke(DbService.kt)
+	at org.jetbrains.exposed.sql.transactions.experimental.SuspendedKt$suspendedTransactionAsyncInternal$1.invokeSuspend(Suspended.kt:193)
 	at kotlin.coroutines.jvm.internal.BaseContinuationImpl.resumeWith(ContinuationImpl.kt:33)
 	at kotlinx.coroutines.DispatchedTask.run(DispatchedTask.kt:101)
 	at kotlinx.coroutines.internal.LimitedDispatcher$Worker.run(LimitedDispatcher.kt:113)
@@ -10,4 +15,37 @@ Exception in thread "DefaultDispatcher-worker-1" java.lang.IllegalStateException
 	at kotlinx.coroutines.scheduling.CoroutineScheduler$Worker.executeTask(CoroutineScheduler.kt:823)
 	at kotlinx.coroutines.scheduling.CoroutineScheduler$Worker.runWorker(CoroutineScheduler.kt:720)
 	at kotlinx.coroutines.scheduling.CoroutineScheduler$Worker.run(CoroutineScheduler.kt:707)
-	Suppressed: kotlinx.coroutines.internal.DiagnosticCoroutineContextException: [StandaloneCoroutine{Cancelling}@713224a7, Dispatchers.IO]
+	Suppressed: kotlinx.coroutines.internal.DiagnosticCoroutineContextException: [StandaloneCoroutine{Cancelling}@40cdea14, Dispatchers.Default]
+
+	Exception in thread "DefaultDispatcher-worker-20" java.lang.IllegalStateException: WHERE clause is specified twice. Old value = 'lead.source_id IS NULL', new value = 'lead.source_id IS NULL'
+    	at org.jetbrains.exposed.sql.Query.where(Query.kt:324)
+    	at newsref.db.services.LeadService$getOpenLeads$2.invokeSuspend(LeadService.kt:22)
+    	at newsref.db.services.LeadService$getOpenLeads$2.invoke(LeadService.kt)
+    	at newsref.db.services.LeadService$getOpenLeads$2.invoke(LeadService.kt)
+    	at newsref.db.DbService$dbQuery$2.invokeSuspend(DbService.kt:9)
+    	at newsref.db.DbService$dbQuery$2.invoke(DbService.kt)
+    	at newsref.db.DbService$dbQuery$2.invoke(DbService.kt)
+    	at org.jetbrains.exposed.sql.transactions.experimental.SuspendedKt$suspendedTransactionAsyncInternal$1.invokeSuspend(Suspended.kt:193)
+    	at kotlin.coroutines.jvm.internal.BaseContinuationImpl.resumeWith(ContinuationImpl.kt:33)
+    	at kotlinx.coroutines.DispatchedTask.run(DispatchedTask.kt:101)
+    	at kotlinx.coroutines.internal.LimitedDispatcher$Worker.run(LimitedDispatcher.kt:113)
+    	at kotlinx.coroutines.scheduling.TaskImpl.run(Tasks.kt:89)
+    	at kotlinx.coroutines.scheduling.CoroutineScheduler.runSafely(CoroutineScheduler.kt:589)
+    	at kotlinx.coroutines.scheduling.CoroutineScheduler$Worker.executeTask(CoroutineScheduler.kt:823)
+    	at kotlinx.coroutines.scheduling.CoroutineScheduler$Worker.runWorker(CoroutineScheduler.kt:720)
+    	at kotlinx.coroutines.scheduling.CoroutineScheduler$Worker.run(CoroutineScheduler.kt:707)
+
+
+Exception in thread "DefaultDispatcher-worker-6" java.util.ConcurrentModificationException
+	at java.base/java.util.ArrayList$Itr.checkForComodification(ArrayList.java:1095)
+	at java.base/java.util.ArrayList$Itr.next(ArrayList.java:1049)
+	at newsref.db.log.LogConsole.renderLog(LogConsole.kt:93)
+	at newsref.db.log.LogConsole.access$renderLog(LogConsole.kt:10)
+	at newsref.db.log.LogConsole$startQueueConsumer$1.invokeSuspend(LogConsole.kt:73)
+	at kotlin.coroutines.jvm.internal.BaseContinuationImpl.resumeWith(ContinuationImpl.kt:33)
+	at kotlinx.coroutines.DispatchedTask.run(DispatchedTask.kt:101)
+	at kotlinx.coroutines.scheduling.CoroutineScheduler.runSafely(CoroutineScheduler.kt:589)
+	at kotlinx.coroutines.scheduling.CoroutineScheduler$Worker.executeTask(CoroutineScheduler.kt:832)
+	at kotlinx.coroutines.scheduling.CoroutineScheduler$Worker.runWorker(CoroutineScheduler.kt:720)
+	at kotlinx.coroutines.scheduling.CoroutineScheduler$Worker.run(CoroutineScheduler.kt:707)
+	Suppressed: kotlinx.coroutines.internal.DiagnosticCoroutineContextException: [StandaloneCoroutine{Cancelling}@11f2f6f2, Dispatchers.Default]
