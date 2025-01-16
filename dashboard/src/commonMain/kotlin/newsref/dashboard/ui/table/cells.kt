@@ -95,12 +95,12 @@ fun DurationAgoCell(
         val formatted = buildString {
             val days = duration.inWholeDays
             if (days > 0) append(days, ":")
-            val hours = duration.inWholeHours % 24
-            if (hours > 0) append(hours.twoDigits(), ":")
-            val minutes = duration.inWholeMinutes % 60
+            val hours = duration.inWholeHours
+            if (hours > 0) append((hours % 24).twoDigits(), ":")
+            val minutes = duration.inWholeMinutes
             if (minutes > 0) append((minutes % 60).twoDigits(), ":")
-            val seconds = duration.inWholeSeconds % 60
-            if (seconds > 0) append(seconds.twoDigits())
+            val seconds = duration.inWholeSeconds
+            append((seconds % 60).twoDigits())
         }
         Text(text = formatted)
     }

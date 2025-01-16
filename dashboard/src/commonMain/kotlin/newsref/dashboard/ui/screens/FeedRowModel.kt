@@ -1,13 +1,18 @@
 package newsref.dashboard.ui.screens
 
 import androidx.lifecycle.viewModelScope
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
+import kotlinx.datetime.Clock
+import kotlinx.datetime.Instant
 import newsref.dashboard.FeedRowRoute
 import newsref.db.services.FeedService
 import newsref.db.services.LeadService
 import newsref.model.core.toUrlOrNull
 import newsref.model.data.Feed
 import newsref.model.data.LeadInfo
+import kotlin.time.Duration
+import kotlin.time.Duration.Companion.minutes
 
 class FeedRowModel(
     private val route: FeedRowRoute,
@@ -17,7 +22,10 @@ class FeedRowModel(
     
     init {
         viewModelScope.launch {
-           refreshItem()
+           while (true) {
+               refreshItem()
+               delay(stateNow.nextRefresh - Clock.System.now())
+           }
         }
     }
 
@@ -28,7 +36,8 @@ class FeedRowModel(
             feed = feed,
             updatedFeed = feed,
             updatedHref = feed?.url.toString(),
-            leadInfos = leadInfos
+            leadInfos = leadInfos,
+            nextRefresh = Clock.System.now() + 1.minutes
         ) }
     }
 
@@ -71,6 +80,7 @@ data class FeedRowState(
     val updatedFeed: Feed? = null,
     val updatedHref: String = "",
     val leadInfos: List<LeadInfo> = emptyList(),
+    val nextRefresh: Instant = Instant.DISTANT_PAST
 ) {
     val canUpdateItem get() = feed != updatedFeed
 }

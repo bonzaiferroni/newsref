@@ -11,10 +11,13 @@ import androidx.navigation.NavController
 import compose.icons.TablerIcons
 import compose.icons.tablericons.ExternalLink
 import androidx.compose.material3.*
+import androidx.compose.ui.Alignment
+import kotlinx.datetime.Clock
 import newsref.dashboard.*
 import newsref.dashboard.ui.controls.*
 import newsref.dashboard.ui.table.*
 import newsref.model.data.*
+import kotlin.time.Duration.Companion.minutes
 
 @Composable
 fun FeedRowScreen(
@@ -36,11 +39,12 @@ fun FeedRowScreen(
             changeSelector = viewModel::changeSelector,
             changeExternal = viewModel::changeExternal,
         )
-        Row(horizontalArrangement = Arrangement.spacedBy(halfSpacing)) {
+        Row(horizontalArrangement = Arrangement.spacedBy(halfSpacing), verticalAlignment = Alignment.CenterVertically) {
             Button(onClick = viewModel::updateItem, enabled = state.canUpdateItem) {
                 Text("Update")
             }
             ConfirmButton("Delete", onConfirm = { viewModel.deleteFeed { navController.navigate(FeedTableRoute) }})
+            Countdown(Clock.System.now() + 1.minutes)
         }
         DataTable(
             name = "LeadInfos",

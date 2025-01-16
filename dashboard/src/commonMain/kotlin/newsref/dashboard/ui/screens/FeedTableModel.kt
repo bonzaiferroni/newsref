@@ -10,6 +10,7 @@ import newsref.model.core.toUrl
 import newsref.model.core.toUrlOrNull
 import newsref.model.data.Feed
 import kotlin.collections.plus
+import kotlin.time.Duration.Companion.minutes
 import kotlin.time.Duration.Companion.seconds
 
 class FeedTableModel(
@@ -21,7 +22,7 @@ class FeedTableModel(
         viewModelScope.launch {
             while (true) {
                 refresh()
-                delay(30.seconds)
+                delay(1.minutes)
             }
         }
     }
