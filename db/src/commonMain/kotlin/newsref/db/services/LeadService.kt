@@ -51,6 +51,7 @@ class LeadService : DbService() {
 
     suspend fun getLeadsFromFeed(feedId: Int) = dbQuery {
         leadInfoJoin.where { LeadJobTable.feedId eq feedId }
+            .orderBy(LeadJobTable.id, SortOrder.DESC)
             .limit(100)
             .toLeadInfos()
     }
@@ -63,29 +64,6 @@ class LeadService : DbService() {
 class LeadExistsException(url: CheckedUrl) : IllegalArgumentException("Lead already exists: $url")
 
 // lead info
-internal val leadInfoColumns = listOf(
-    LeadTable.id,
-    LeadTable.url,
-    LeadTable.sourceId,
-    LeadTable.hostId,
-    LeadJobTable.headline,
-    LeadJobTable.isExternal,
-    LeadJobTable.freshAt,
-)
-
-internal fun Query.wrapLeadInfo() = this.map { row ->
-    LeadInfo(
-        id = row[LeadTable.id].value,
-        url = row[LeadTable.url].toCheckedFromTrusted(),
-        targetId = row[LeadTable.sourceId]?.value,
-        hostId = row[LeadTable.hostId].value,
-        feedHeadline = row.getOrNull(LeadJobTable.headline),
-        lastAttemptAt = row.getOrNull(LeadResultTable.attemptedAt)?.toInstant(UtcOffset.ZERO),
-        isExternal = row[LeadJobTable.isExternal],
-        freshAt = row.getOrNull(LeadJobTable.freshAt)?.toInstant(UtcOffset.ZERO),
-        linkCount = row[LinkTable.leadId.count()].toInt()
-    )
-}
 
 enum class CreateLeadResult {
     CREATED,

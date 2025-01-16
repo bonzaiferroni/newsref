@@ -2,7 +2,6 @@ package newsref.db.tables
 
 import kotlinx.datetime.*
 import newsref.db.globalConsole
-import newsref.db.services.leadInfoColumns
 import newsref.db.utils.*
 import newsref.db.utils.toCheckedFromTrusted
 import newsref.model.core.CheckedUrl
@@ -122,6 +121,7 @@ internal object LeadJobTable : LongIdTable("lead_job") {
 	val headline = text("headline").nullable()
 	val isExternal = bool("is_external")
 	val freshAt = datetime("fresh_at").nullable().index()
+	val feedPosition = integer("feed_position").nullable()
 }
 
 internal class LeadJobRow(id: EntityID<Long>) : LongEntity(id) {
@@ -132,6 +132,7 @@ internal class LeadJobRow(id: EntityID<Long>) : LongEntity(id) {
 	var headline by LeadJobTable.headline
 	var isExternal by LeadJobTable.isExternal
 	var freshAt by LeadJobTable.freshAt
+	var feedPosition by LeadJobTable.feedPosition
 }
 
 internal fun LeadJobRow.toData() = LeadJob(
@@ -140,7 +141,8 @@ internal fun LeadJobRow.toData() = LeadJob(
 	feedId = this.feed?.id?.value,
 	headline = this.headline,
 	isExternal = this.isExternal,
-	freshAt = this.freshAt?.toInstant(UtcOffset.ZERO)
+	freshAt = this.freshAt?.toInstant(UtcOffset.ZERO),
+	feedPosition = this.feedPosition,
 )
 
 internal fun ResultRow.toLeadJob() = LeadJob(
@@ -149,7 +151,8 @@ internal fun ResultRow.toLeadJob() = LeadJob(
 	feedId = this[LeadJobTable.feedId]?.value,
 	headline = this[LeadJobTable.headline],
 	isExternal = this[LeadJobTable.isExternal],
-	freshAt = this[LeadJobTable.freshAt]?.toInstant(UtcOffset.ZERO)
+	freshAt = this[LeadJobTable.freshAt]?.toInstant(UtcOffset.ZERO),
+	feedPosition = this[LeadJobTable.feedPosition],
 )
 
 internal fun LeadJobRow.fromData(leadJob: LeadJob, leadRow: LeadRow, feedRow: FeedRow?) {
@@ -158,9 +161,22 @@ internal fun LeadJobRow.fromData(leadJob: LeadJob, leadRow: LeadRow, feedRow: Fe
 	headline = leadJob.headline
 	isExternal = leadJob.isExternal
 	freshAt = leadJob.freshAt?.toLocalDateTimeUtc()
+	feedPosition = leadJob.feedPosition
 }
 
 // lead info
+internal val leadInfoColumns = listOf(
+	LeadTable.id,
+	LeadTable.url,
+	LeadTable.sourceId,
+	LeadTable.hostId,
+	LeadJobTable.id,
+	LeadJobTable.headline,
+	LeadJobTable.feedPosition,
+	LeadJobTable.isExternal,
+	LeadJobTable.freshAt,
+)
+
 internal val linkCountAlias get() = LinkTable.leadId.count().alias("linkCount")
 internal val leadInfoJoin get() = LeadTable.leftJoin(LinkTable).leftJoin(LeadJobTable)
 	.select(leadInfoColumns + linkCountAlias)
@@ -171,10 +187,11 @@ internal fun ResultRow.toLeadInfo() = LeadInfo(
 	targetId = this[LeadTable.sourceId]?.value,
 	hostId = this[LeadTable.hostId].value,
 	feedHeadline = this.getOrNull(LeadJobTable.headline),
+	feedPosition = this.getOrNull(LeadJobTable.feedPosition),
 	lastAttemptAt = this.getOrNull(LeadResultTable.attemptedAt)?.toInstant(UtcOffset.ZERO),
 	isExternal = this.getOrNull(LeadJobTable.isExternal) ?: true,
 	freshAt = this.getOrNull(LeadJobTable.freshAt)?.toInstant(UtcOffset.ZERO),
-	linkCount = this.getOrNull(linkCountAlias)?.toInt() ?: 0
+	linkCount = this.getOrNull(linkCountAlias)?.toInt() ?: 0,
 )
 
 internal fun Query.toLeadInfos() = this.groupBy(*leadInfoColumns.toTypedArray()).map { it.toLeadInfo() }

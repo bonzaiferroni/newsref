@@ -25,6 +25,7 @@ data class LeadJob(
 	val headline: String? = null,
 	val isExternal: Boolean,
 	val freshAt: Instant?,
+	val feedPosition: Int? = null,
 )
 
 data class LeadInfo(
@@ -33,6 +34,7 @@ data class LeadInfo(
 	val hostId: Int,
 	val targetId: Long?,
 	val feedHeadline: String?,
+	val feedPosition: Int?,
 	val lastAttemptAt: Instant?,
 	val isExternal: Boolean,
 	val freshAt: Instant?,

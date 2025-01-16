@@ -64,6 +64,7 @@ class FeedChecker(
 				console.logWarning("no leads with selector: ${feed.selector}\n${feed.url}")
 				emptyList()
 			}
+			var elementIndex = 0
 			for (docElement in elements) {
 				val (headline, href) = docElement.tryGetHrefOrParent() ?: continue
 				val url = href.toUrlWithContextOrNull(feed.url) ?: continue
@@ -75,10 +76,10 @@ class FeedChecker(
 					feedId = feed.id,
 					headline = headline,
 					isExternal = true,
-					freshAt = Clock.System.now()
+					freshAt = Clock.System.now(),
+					feedPosition = elementIndex++,
 				)
 				links++
-				// todo: track FeedPosition
 				val result = leadMaker.makeLead(hostUrl, job, true)
 				if (result == CreateLeadResult.CREATED) count++
 			}

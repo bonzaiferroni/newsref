@@ -75,14 +75,17 @@ enum class AlignContent {
 
 @Composable
 fun TextCell(
-    text: String
+    text: String?
 ) {
     Text(
-        text = text,
+        text = text ?: emptyEmoji,
         maxLines = 1,
         overflow = TextOverflow.Ellipsis,
     )
 }
+
+@Composable
+fun TextCell(number: Int?) = TextCell(number?.toString())
 
 @Composable
 fun DurationAgoCell(
