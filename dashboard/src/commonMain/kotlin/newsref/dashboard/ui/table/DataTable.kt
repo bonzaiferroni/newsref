@@ -1,6 +1,9 @@
 package newsref.dashboard.ui.table
 
+import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.ExperimentalLayoutApi
+import androidx.compose.foundation.layout.FlowRow
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
@@ -15,6 +18,7 @@ import newsref.dashboard.ui.theme.primaryContainerDark
 import newsref.dashboard.utils.modifyIfNotNull
 import kotlin.div
 
+@OptIn(ExperimentalLayoutApi::class)
 @Composable
 fun <T> DataTable(
     name: String,
@@ -29,8 +33,10 @@ fun <T> DataTable(
             Text(text = name, style = MaterialTheme.typography.headlineSmall)
         }
         item {
-            Row {
-                val bgColor = color.darken(.5f)
+            val bgColor = color.darken(.5f)
+            FlowRow(
+                modifier = Modifier.background(bgColor)
+            ) {
                 for (column in columns) {
                     TableCell<T>(column.width, color = bgColor) {
                         TextCell(text = column.name)
@@ -40,32 +46,18 @@ fun <T> DataTable(
         }
 
         items(rows) { item ->
-            ItemRow(
-                item = item,
-                columns = columns,
-                color = glowFunction?.let { function ->
-                    function(item)?.let { color.scaleBrightness(it * .5f) }
-                } ?: color,
-                onClickRow = onClickRow
-            )
-        }
-    }
-}
-
-@Composable
-fun <T> ItemRow(
-    item: T,
-    columns: List<TableColumn<T>>,
-    color: Color,
-    onClickRow: ((T) -> Unit)?
-) {
-    Row(
-        modifier = Modifier
-            .modifyIfNotNull(onClickRow) { this.clickable { it(item) } }
-    ) {
-        for (column in columns) {
-            TableCell<T>(width = column.width, item = item, color = color, onClickCell = column.onClickCell) {
-                column.content(item)
+            val bgColor =  glowFunction?.let { function ->
+                function(item)?.let { color.scaleBrightness(it * .5f) }
+            } ?: color
+            FlowRow(
+                modifier = Modifier.modifyIfNotNull(onClickRow) { this.clickable { it(item) } }
+                    .background(bgColor)
+            ) {
+                for (column in columns) {
+                    TableCell<T>(width = column.width, item = item, color = bgColor, onClickCell = column.onClickCell) {
+                        column.content(item)
+                    }
+                }
             }
         }
     }
