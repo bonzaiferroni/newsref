@@ -28,7 +28,7 @@ class FeedTableModel(
     }
 
     suspend fun refresh() {
-        val items = feedService.readAll().sortedByDescending { it.createdAt }
+        val items = feedService.readAll().sortedByDescending { it.id }
         val additions = mutableMapOf<Int, Int?>()
         val previousCounts = stateNow.leadCounts
         val leadCounts = leadService.getAllFeedLeads().groupBy { it.feedId }
