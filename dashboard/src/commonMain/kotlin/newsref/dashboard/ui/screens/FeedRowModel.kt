@@ -23,7 +23,7 @@ class FeedRowModel(
 
     private suspend fun refreshItem() {
         val feed = feedService.read(route.feedId)
-        val leadInfos = leadService.getLeadsFromFeed(route.feedId).sortedBy { it.id }
+        val leadInfos = leadService.getLeadsFromFeed(route.feedId).sortedByDescending { it.id }
         editState { it.copy(
             feed = feed,
             updatedFeed = feed,

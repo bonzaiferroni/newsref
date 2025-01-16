@@ -18,6 +18,7 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import kotlinx.datetime.Clock
 import kotlinx.datetime.Instant
+import newsref.dashboard.emptyEmoji
 import newsref.dashboard.ui.theme.primaryDark
 import newsref.dashboard.utils.changeFocusWithTab
 import newsref.dashboard.utils.modifyIfNotNull
@@ -88,7 +89,7 @@ fun DurationAgoCell(
     instant: Instant?,
 ) {
     if (instant == null) {
-        Text("💁")
+        Text(emptyEmoji)
     } else {
         val duration = Clock.System.now() - instant
         val formatted = buildString {
@@ -153,7 +154,7 @@ fun NullableIdCell(
     action: (Long) -> Unit
 ) {
     if (id == null) {
-        Text("🤷")
+        Text(emptyEmoji)
     } else {
         Text("👉", modifier = Modifier.clickable { action(id) })
     }
