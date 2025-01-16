@@ -77,7 +77,7 @@ class FeedChecker(
 					headline = headline,
 					isExternal = true,
 					freshAt = Clock.System.now(),
-					feedPosition = elementIndex++,
+					feedPosition = if (feed.trackPosition) elementIndex++ else null,
 				)
 				links++
 				val result = leadMaker.makeLead(hostUrl, job, true)

@@ -20,6 +20,7 @@ internal object FeedTable : IntIdTable("feed") {
     val url = text("url")
     val selector = text("selector")
     val external = bool("external").default(false)
+    val trackPosition = bool("track_position").default(false)
     val createdAt = datetime("created_at").defaultExpression(nowExpression)
 }
 
@@ -35,6 +36,7 @@ class FeedRow(id: EntityID<Int>): IntEntity(id) {
     var url by FeedTable.url
     var selector by FeedTable.selector
     var external by FeedTable.external
+    var trackPosition by FeedTable.trackPosition
     var createdAt by FeedTable.createdAt
 }
 
@@ -43,6 +45,7 @@ fun FeedRow.toData() = Feed(
     url = this.url.toUrl(),
     selector = this.selector,
     external = this.external,
+    trackPosition = this.trackPosition,
     createdAt = this.createdAt.toInstantUtc()
 )
 
@@ -51,6 +54,7 @@ fun ResultRow.toFeed() = Feed(
     url = this[FeedTable.url].toUrl(),
     selector = this[FeedTable.selector],
     external = this[FeedTable.external],
+    trackPosition = this[FeedTable.trackPosition],
     createdAt = this[FeedTable.createdAt].toInstantUtc()
 )
 

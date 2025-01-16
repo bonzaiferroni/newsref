@@ -157,7 +157,7 @@ internal fun ResultRow.toLeadJob() = LeadJob(
 
 internal fun LeadJobRow.fromData(leadJob: LeadJob, leadRow: LeadRow, feedRow: FeedRow?) {
 	lead = leadRow
-	feed = feedRow
+	feed = feedRow ?: leadJob.feedId?.let { FeedRow[it] }
 	headline = leadJob.headline
 	isExternal = leadJob.isExternal
 	freshAt = leadJob.freshAt?.toLocalDateTimeUtc()

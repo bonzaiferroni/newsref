@@ -23,10 +23,10 @@ class ScoreService : DbService() {
 	suspend fun findNewLinksSince(duration: Duration) = dbQuery {
 		val time = (Clock.System.now() - duration).toLocalDateTimeUtc()
 
-		LeadTable.leftJoin(LinkTable)
+		LeadTable.leftJoin(LinkTable).leftJoin(LeadJobTable)
 			.leftJoin(SourceTable, LinkTable.sourceId, SourceTable.id)
 			.select(
-				LinkTable.columns + LeadTable.sourceId + SourceTable.hostId
+				LinkTable.columns + LeadTable.sourceId + LeadJobTable.feedPosition + SourceTable.hostId
 						+ SourceTable.seenAt + SourceTable.publishedAt
 			)
 			.where {
@@ -39,7 +39,8 @@ class ScoreService : DbService() {
 					link = it.toLink(),
 					sourceId = it.getOrNull(LeadTable.sourceId)!!.value,
 					hostId = it[SourceTable.hostId].value,
-					linkedAt = (it.getOrNull(SourceTable.publishedAt) ?: it[SourceTable.seenAt]).toInstantUtc()
+					linkedAt = (it.getOrNull(SourceTable.publishedAt) ?: it[SourceTable.seenAt]).toInstantUtc(),
+					feedPosition = it.getOrNull(LeadJobTable.feedPosition),
 				)
 			}
 	}
@@ -81,7 +82,13 @@ internal fun <T : Comparable<T>> ColumnSet.leftJoin(
 	otherIdColumn: Expression<*>?,
 ) = this.join(table, JoinType.LEFT, idColumn, otherIdColumn)
 
-data class LinkTracer(val link: Link, val sourceId: Long, val hostId: Int, val linkedAt: Instant)
+data class LinkTracer(
+	val link: Link,
+	val sourceId: Long,
+	val hostId: Int,
+	val linkedAt: Instant,
+	val feedPosition: Int?,
+)
 data class SourceTracer(val sourceId: Long, val score: Int, val scores: List<SourceScore>)
 
 const val MINIMUM_SCORE_RECORD = 3

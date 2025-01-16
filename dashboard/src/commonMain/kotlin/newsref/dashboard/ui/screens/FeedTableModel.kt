@@ -68,6 +68,10 @@ class FeedTableModel(
         editState { it.copy(newItem = it.newItem.copy(external = value)) }
     }
 
+    fun changeTrackPosition(value: Boolean) {
+        editState { it.copy(newItem = it.newItem.copy(trackPosition = value)) }
+    }
+
     fun addNewItem() {
         if (!stateNow.canAddItem) return
         viewModelScope.launch {
@@ -88,4 +92,11 @@ data class FeedTableState(
     val canAddItem get() = newHref.toUrlOrNull() != null && newItem.selector.isNotBlank()
 }
 
-private val emptyFeed = Feed(0, "https://example.com/".toUrl(), "", false, Instant.DISTANT_PAST)
+private val emptyFeed = Feed(
+    id = 0,
+    url = "https://example.com/".toUrl(),
+    selector = "",
+    external = false,
+    trackPosition = false,
+    createdAt = Instant.DISTANT_PAST
+)

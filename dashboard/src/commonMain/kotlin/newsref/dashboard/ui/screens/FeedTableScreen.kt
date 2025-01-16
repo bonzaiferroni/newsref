@@ -29,6 +29,7 @@ fun FeedTableScreen(
         changeHref = viewModel::changeHref,
         changeSelector = viewModel::changeSelector,
         changeExternal = viewModel::changeExternal,
+        changeTrackPosition = viewModel::changeTrackPosition
     )
     Button(onClick = viewModel::addNewItem, enabled = state.canAddItem) {
         Text("Add")

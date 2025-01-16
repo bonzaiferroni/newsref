@@ -30,7 +30,20 @@ class LeadService : DbService() {
 
     suspend fun createOrLinkLead(url: CheckedUrl, leadJob: LeadJob?, createIfFresh: Boolean) = dbQuery {
         var leadRow = LeadRow.find(LeadTable.url.sameUrl(url)).firstOrNull()
-        if (leadRow != null) {
+        val leadId = leadRow?.id?.value
+        if (leadRow != null && leadId != null) {
+            // assign FeedPosition for scoring purposes
+            val feedPosition = leadJob?.feedPosition
+            if (feedPosition != null) {
+                val leadJobRow = LeadJobRow.find { LeadJobTable.leadId eq leadId }.firstOrNull()
+                if (leadJobRow != null) {
+                    // take lowest index of FeedPosition
+                    leadJobRow.feedPosition = leadJobRow.feedPosition?.let { minOf(it, feedPosition) }
+                } else {
+                    LeadJobRow.new { fromData(leadJob, leadRow!!, null) }
+                }
+            }
+            // assign lead to links that might already exist from other sources
             val affirmed = LinkRow.setLeadOnSameLinks(url, leadRow)
             return@dbQuery if (affirmed) CreateLeadResult.AFFIRMED else CreateLeadResult.IRRELEVANT
         }

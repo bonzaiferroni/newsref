@@ -8,5 +8,6 @@ data class Feed(
     val url: Url,
     val selector: String,
     val external: Boolean,
+    val trackPosition: Boolean,
     val createdAt: Instant,
 )

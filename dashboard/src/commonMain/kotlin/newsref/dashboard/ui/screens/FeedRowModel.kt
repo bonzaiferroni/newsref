@@ -57,6 +57,10 @@ class FeedRowModel(
         editState { it.copy(updatedFeed = it.updatedFeed?.copy(external = value)) }
     }
 
+    fun changeTrackPosition(value: Boolean) {
+        editState { it.copy(updatedFeed = it.updatedFeed?.copy(trackPosition = value)) }
+    }
+
     fun updateItem() {
         val updatedFeed = stateNow.updatedFeed
         if (!stateNow.canUpdateItem || updatedFeed == null) return

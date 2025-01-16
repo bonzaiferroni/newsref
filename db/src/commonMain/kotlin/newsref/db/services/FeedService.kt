@@ -26,6 +26,7 @@ class FeedService : DbService() {
             it[url] = feed.url.toString()
             it[selector] = feed.selector
             it[external] = feed.external
+            it[trackPosition] = feed.trackPosition
         }
     }
 
@@ -34,6 +35,7 @@ class FeedService : DbService() {
             it[url] = feed.url.toString()
             it[selector] = feed.selector
             it[external] = feed.external
+            it[trackPosition] = feed.trackPosition
         }
         id.value
     }

@@ -38,6 +38,7 @@ fun FeedRowScreen(
             changeHref = viewModel::changeHref,
             changeSelector = viewModel::changeSelector,
             changeExternal = viewModel::changeExternal,
+            changeTrackPosition = viewModel::changeTrackPosition
         )
         Row(horizontalArrangement = Arrangement.spacedBy(halfSpacing), verticalAlignment = Alignment.CenterVertically) {
             Button(onClick = viewModel::updateItem, enabled = state.canUpdateItem) {
@@ -71,6 +72,7 @@ fun FeedRowProperties(
     changeHref: (String) -> Unit,
     changeSelector: (String) -> Unit,
     changeExternal: (Boolean) -> Unit,
+    changeTrackPosition: (Boolean) -> Unit,
 ) {
     val uriHandler = LocalUriHandler.current
     PropertyTable(
@@ -82,7 +84,8 @@ fun FeedRowProperties(
                 controls = listOf(CellControls(TablerIcons.ExternalLink) { uriHandler.openUri(item.url.toString()) })
             ) { TextFieldCell(href, changeHref) },
             PropertyRow(name = "selector") { TextFieldCell(item.selector, changeSelector) },
-            PropertyRow("external") { BooleanCell(item.external, changeExternal) }
+            PropertyRow("external") { BooleanCell(item.external, changeExternal) },
+            PropertyRow("track position") { BooleanCell(item.trackPosition, changeTrackPosition)}
         )
     )
 }
