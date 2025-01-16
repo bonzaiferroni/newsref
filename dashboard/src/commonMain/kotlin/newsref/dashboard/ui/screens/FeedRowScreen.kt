@@ -1,18 +1,12 @@
 package newsref.dashboard.ui.screens
 
-import androidx.compose.animation.animateColorAsState
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Row
 import androidx.compose.material3.Button
-import androidx.compose.material3.ButtonDefaults
-import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.setValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
 import androidx.compose.ui.platform.LocalUriHandler
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
@@ -32,6 +26,7 @@ import newsref.dashboard.ui.table.TableColumn
 import newsref.dashboard.ui.table.TextCell
 import newsref.dashboard.ui.table.TextFieldCell
 import newsref.dashboard.ui.table.glowOverDay
+import newsref.dashboard.ui.table.glowOverHour
 import newsref.model.data.Feed
 
 @Composable
@@ -42,6 +37,7 @@ fun FeedRowScreen(
 ) {
     val state by viewModel.state.collectAsState()
     val item = state.updatedFeed
+    val uriHandler = LocalUriHandler.current
     if (item == null) {
         Text("Fetching Feed with id: ${route.feedId}")
     } else {
@@ -60,12 +56,15 @@ fun FeedRowScreen(
             ConfirmButton("Delete", onConfirm = { viewModel.deleteFeed { navController.navigate(FeedTableRoute) }})
         }
         DataTable(
-            name = "LeadJobs",
-            rows = state.leadJobs,
-            glowFunction = { glowOverDay(it.freshAt) },
+            name = "LeadInfos",
+            rows = state.leadInfos,
+            glowFunction = { glowOverHour(it.freshAt) },
             columns = listOf(
-                TableColumn("Headline", 300) { TextCell(it.headline.toString()) },
-                TableColumn("FreshAt", 200) { DurationAgoCell(it.freshAt) }
+                TableColumn("Headline", 300, { uriHandler.openUri(it.url.href)}) { TextCell(it.feedHeadline.toString()) },
+                TableColumn("Fresh At", 200) { DurationAgoCell(it.freshAt) },
+                TableColumn("Last Attempt", 200) { DurationAgoCell(it.lastAttemptAt) },
+                TableColumn("External", 50) { BooleanCell(it.isExternal) },
+                TableColumn("Links", 50) { TextCell(it.linkCount.toString())}
             )
         )
     }

@@ -36,6 +36,6 @@ fun ConfirmButton(
             contentColor = MaterialTheme.colorScheme.onTertiaryContainer
         )
     ) {
-        Text(if (confirmed) text else "$text?")
+        Text(if (confirmed) "$text." else "$text?")
     }
 }

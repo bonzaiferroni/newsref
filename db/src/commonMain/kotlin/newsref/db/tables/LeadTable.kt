@@ -2,6 +2,7 @@ package newsref.db.tables
 
 import kotlinx.datetime.*
 import newsref.db.globalConsole
+import newsref.db.services.leadInfoColumns
 import newsref.db.utils.*
 import newsref.db.utils.toCheckedFromTrusted
 import newsref.model.core.CheckedUrl
@@ -13,6 +14,7 @@ import org.jetbrains.exposed.dao.id.EntityID
 import org.jetbrains.exposed.dao.id.LongIdTable
 import org.jetbrains.exposed.sql.*
 import org.jetbrains.exposed.sql.kotlin.datetime.datetime
+import kotlin.collections.plus
 
 private val console = globalConsole.getHandle("LeadTable")
 
@@ -157,3 +159,22 @@ internal fun LeadJobRow.fromData(leadJob: LeadJob, leadRow: LeadRow, feedRow: Fe
 	isExternal = leadJob.isExternal
 	freshAt = leadJob.freshAt?.toLocalDateTimeUtc()
 }
+
+// lead info
+internal val linkCountAlias = LinkTable.leadId.count().alias("linkCount")
+internal val leadInfoJoin = LeadTable.leftJoin(LinkTable).leftJoin(LeadJobTable)
+	.select(leadInfoColumns + linkCountAlias)
+
+internal fun ResultRow.toLeadInfo() = LeadInfo(
+	id = this[LeadTable.id].value,
+	url = this[LeadTable.url].toCheckedFromTrusted(),
+	targetId = this[LeadTable.sourceId]?.value,
+	hostId = this[LeadTable.hostId].value,
+	feedHeadline = this.getOrNull(LeadJobTable.headline),
+	lastAttemptAt = this.getOrNull(LeadResultTable.attemptedAt)?.toInstant(UtcOffset.ZERO),
+	isExternal = this.getOrNull(LeadJobTable.isExternal) ?: true,
+	freshAt = this.getOrNull(LeadJobTable.freshAt)?.toInstant(UtcOffset.ZERO),
+	linkCount = this.getOrNull(linkCountAlias)?.toInt() ?: 0
+)
+
+internal fun Query.toLeadInfos() = this.groupBy(*leadInfoColumns.toTypedArray()).map { it.toLeadInfo() }

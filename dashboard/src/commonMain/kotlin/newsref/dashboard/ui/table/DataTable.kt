@@ -91,3 +91,4 @@ fun Color.scaleBrightness(factor: Float): Color {
 }
 
 fun glowOverDay(instant: Instant?) = instant?.let { (24 - (Clock.System.now() - it).inWholeHours) / 24f }
+fun glowOverHour(instant: Instant?) = instant?.let { (60 - (Clock.System.now() - it).inWholeMinutes) / 60f }

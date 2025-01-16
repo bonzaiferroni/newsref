@@ -146,7 +146,7 @@ fun CountCell(
 @Composable
 fun BooleanCell(
     value: Boolean,
-    onValueChanged: (Boolean) -> Unit,
+    onValueChanged: ((Boolean) -> Unit)? = null,
 ) {
-    Checkbox(value, onValueChanged, modifier = Modifier.size(24.dp))
+    Checkbox(value, onValueChanged, modifier = Modifier.size(24.dp), enabled = onValueChanged != null)
 }

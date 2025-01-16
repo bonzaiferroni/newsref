@@ -7,7 +7,7 @@ import newsref.db.services.FeedService
 import newsref.db.services.LeadService
 import newsref.model.core.toUrlOrNull
 import newsref.model.data.Feed
-import newsref.model.data.LeadJob
+import newsref.model.data.LeadInfo
 
 class FeedRowModel(
     private val route: FeedRowRoute,
@@ -23,12 +23,12 @@ class FeedRowModel(
 
     private suspend fun refreshItem() {
         val feed = feedService.read(route.feedId)
-        val leadJobs = leadService.getLeadsFromFeed(route.feedId).sortedBy { it.id }
+        val leadInfos = leadService.getLeadsFromFeed(route.feedId).sortedBy { it.id }
         editState { it.copy(
             feed = feed,
             updatedFeed = feed,
             updatedHref = feed?.url.toString(),
-            leadJobs = leadJobs
+            leadInfos = leadInfos
         ) }
     }
 
@@ -70,7 +70,7 @@ data class FeedRowState(
     val feed: Feed? = null,
     val updatedFeed: Feed? = null,
     val updatedHref: String = "",
-    val leadJobs: List<LeadJob> = emptyList(),
+    val leadInfos: List<LeadInfo> = emptyList(),
 ) {
     val canUpdateItem get() = feed != updatedFeed
 }
