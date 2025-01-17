@@ -4,6 +4,7 @@ import org.jetbrains.compose.ui.tooling.preview.Preview
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import newsref.dashboard.ui.screens.FeedTableRoute
+import newsref.dashboard.ui.screens.SourceTableRoute
 
 import newsref.dashboard.ui.theme.AppTheme
 import newsref.db.initDb
@@ -16,7 +17,7 @@ fun App(
     initDb()
     val context = AppContext(exitApp)
     AppTheme(true) {
-        AppNavigator(FeedTableRoute, context)
+        AppNavigator(SourceTableRoute, context)
     }
 }
 

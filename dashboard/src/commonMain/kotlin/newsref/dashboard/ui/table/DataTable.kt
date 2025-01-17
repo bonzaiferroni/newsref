@@ -79,7 +79,7 @@ fun <T> DataTable(
 
 data class TableColumn<T>(
     val name: String,
-    val width: Int,
+    val width: Int? = null,
     val onClickCell: ((T) -> Unit)? = null,
     val alignContent: AlignContent? = null,
     val content: @Composable (T) -> Unit

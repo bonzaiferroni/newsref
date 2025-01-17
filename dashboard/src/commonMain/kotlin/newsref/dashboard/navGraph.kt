@@ -19,6 +19,8 @@ import newsref.dashboard.ui.screens.FeedTableRoute
 import newsref.dashboard.ui.screens.FeedTableScreen
 import newsref.dashboard.ui.screens.HelloRoute
 import newsref.dashboard.ui.screens.HelloScreen
+import newsref.dashboard.ui.screens.SourceTableRoute
+import newsref.dashboard.ui.screens.SourceTableScreen
 
 @Serializable
 open class ScreenRoute(val title: String = "Title") {
@@ -28,6 +30,11 @@ fun NavGraphBuilder.navGraph(
     routeState: MutableState<ScreenRoute>,
     navController: NavHostController
 ) {
+    routeComposable<SourceTableRoute>(routeState) {
+        DefaultSurface {
+            SourceTableScreen(navController)
+        }
+    }
     routeComposable<FeedTableRoute>(routeState) {
         DefaultSurface {
             FeedTableScreen(navController)

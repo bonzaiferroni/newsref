@@ -10,12 +10,14 @@ import newsref.db.tables.LinkTable
 import newsref.db.tables.SourceRow
 import newsref.db.tables.SourceScoreRow
 import newsref.db.tables.SourceScoreTable
+import newsref.db.utils.applyIfNotNull
 import newsref.db.utils.toInstantUtc
 import newsref.db.utils.toLocalDateTimeUtc
 import newsref.model.dto.*
 import org.jetbrains.exposed.sql.Op
 import org.jetbrains.exposed.sql.SortOrder
 import org.jetbrains.exposed.sql.SqlExpressionBuilder
+import org.jetbrains.exposed.sql.selectAll
 import kotlin.time.Duration
 
 class SourceService : DbService() {
@@ -26,6 +28,18 @@ class SourceService : DbService() {
     suspend fun getSourceInfo(id: Long) = dbQuery {
         sourceInfoTables.where { SourceTable.id eq id }
             .firstOrNull()?.toSourceInfo()
+    }
+
+    suspend fun getSourceInfos(afterId: Long? = null, limit: Int = 100) = dbQuery {
+        sourceInfoTables
+            .applyIfNotNull(afterId) { this.where { SourceTable.id greater it } }
+            .orderBy(SourceTable.id, SortOrder.DESC)
+            .limit(limit)
+            .map { it.toSourceInfo() }
+    }
+
+    suspend fun getSourceCount() = dbQuery {
+        SourceTable.selectAll().count()
     }
 
     suspend fun getTopSources(duration: Duration, limit: Int) = dbQuery {
