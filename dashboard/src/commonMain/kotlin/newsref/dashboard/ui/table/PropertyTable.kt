@@ -1,6 +1,5 @@
 package newsref.dashboard.ui.table
 
-import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.IntrinsicSize
 import androidx.compose.foundation.layout.Row
@@ -10,13 +9,11 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
 import newsref.dashboard.halfSpacing
 import newsref.dashboard.ui.theme.secondaryContainerDark
-import newsref.dashboard.ui.theme.secondaryDark
 
 @Composable
 fun <T> PropertyTable(
@@ -56,11 +53,16 @@ fun <T> PropertyTable(
 data class PropertyRow<T>(
     val name: String,
     val onClick: ((T) -> Unit)? = null,
-    val controls: (List<CellControls<T>>)? = null,
+    val controls: List<CellControl<T>> = emptyList(),
     val content: @Composable (T) -> Unit
 )
 
-data class CellControls<T>(
+fun <T> PropertyRow<T>.onClick(block: (T) -> Unit) = this.copy(onClick = block)
+
+fun <T> PropertyRow<T>.addControl(icon: ImageVector, block: (T) -> Unit) =
+    this.copy(controls = this.controls + CellControl(icon, block))
+
+data class CellControl<T>(
     val icon: ImageVector,
     val onClick: (T) -> Unit,
 )

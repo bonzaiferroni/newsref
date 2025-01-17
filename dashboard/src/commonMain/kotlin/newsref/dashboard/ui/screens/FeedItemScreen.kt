@@ -21,7 +21,7 @@ import newsref.model.data.*
 import kotlin.time.Duration.Companion.minutes
 
 @Serializable
-data class FeedItemRoute(val feedId: Int) : ScreenRoute("Feed Row")
+data class FeedItemRoute(val feedId: Int) : ScreenRoute("Feed Item")
 
 @Composable
 fun FeedItemScreen(
@@ -56,13 +56,13 @@ fun FeedItemScreen(
             rows = state.leadInfos,
             glowFunction = { glowOverHour(it.freshAt) },
             columns = listOf(
-                TableColumn("Headline", 300, { uriHandler.openUri(it.url.href)}) { TextCell(it.feedHeadline) },
-                TableColumn("Fresh", 100, alignContent = AlignContent.Right) { DurationAgoCell(it.freshAt) },
-                TableColumn("Attempt", 100, alignContent = AlignContent.Right) { DurationAgoCell(it.lastAttemptAt) },
+                TableColumn("Headline") { TextCell(it.feedHeadline) { uriHandler.openUri(it.url.href) } },
+                TableColumn("Fresh", 100, AlignContent.Right) { DurationAgoCell(it.freshAt) },
+                TableColumn("Attempt", 100, AlignContent.Right) { DurationAgoCell(it.lastAttemptAt) },
                 TableColumn("Ext", 50) { BooleanCell(it.isExternal) },
-                TableColumn("Links", 50, alignContent = AlignContent.Right) { TextCell(it.linkCount.toString())},
-                TableColumn("Src", 50) { NullableIdCell(it.targetId) { /* navigate to source */ } },
-                TableColumn("Pos", 50, alignContent = AlignContent.Right) { TextCell(it.feedPosition) }
+                TableColumn("Links", 50, AlignContent.Right) { TextCell(it.linkCount.toString())},
+                TableColumn("Src", 50) { NullableIdCell(it.targetId) { navController.navigate(SourceItemRoute(it)) } },
+                TableColumn("Pos", 50, AlignContent.Right) { TextCell(it.feedPosition) }
             )
         )
     }
@@ -83,10 +83,8 @@ fun FeedRowProperties(
         name = name,
         item = item,
         properties = listOf(
-            PropertyRow(
-                name = "href",
-                controls = listOf(CellControls(TablerIcons.ExternalLink) { uriHandler.openUri(item.url.toString()) })
-            ) { TextFieldCell(href, changeHref) },
+            PropertyRow<Feed>("href") { TextFieldCell(href, changeHref) }
+                .addControl(TablerIcons.ExternalLink) { uriHandler.openUri(item.url.toString()) },
             PropertyRow(name = "selector") { TextFieldCell(item.selector, changeSelector) },
             PropertyRow("external") { BooleanCell(item.external, changeExternal) },
             PropertyRow("track position") { BooleanCell(item.trackPosition, changeTrackPosition)}

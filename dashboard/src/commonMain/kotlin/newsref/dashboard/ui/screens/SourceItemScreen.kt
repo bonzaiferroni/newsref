@@ -7,11 +7,13 @@ import androidx.compose.material3.*
 import androidx.compose.ui.platform.LocalUriHandler
 import androidx.navigation.NavController
 import androidx.lifecycle.viewmodel.compose.viewModel
+import kotlinx.serialization.Serializable
 import newsref.dashboard.ui.table.DurationAgoCell
 import newsref.dashboard.ui.table.PropertyRow
 import newsref.dashboard.ui.table.PropertyTable
 import newsref.dashboard.ui.table.TextCell
 
+@Serializable
 data class SourceItemRoute(
     val sourceId: Long
 )

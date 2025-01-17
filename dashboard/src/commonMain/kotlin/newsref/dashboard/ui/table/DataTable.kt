@@ -3,6 +3,7 @@ package newsref.dashboard.ui.table
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.ExperimentalLayoutApi
 import androidx.compose.foundation.layout.FlowRow
 import androidx.compose.foundation.layout.padding
@@ -18,6 +19,7 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import kotlinx.datetime.Clock
 import kotlinx.datetime.Instant
+import newsref.dashboard.halfSpacing
 import newsref.dashboard.ui.theme.primaryContainerDark
 import newsref.dashboard.utils.modifyIfNotNull
 
@@ -31,7 +33,9 @@ fun <T> DataTable(
     glowFunction: ((T) -> Float?)? = null,
     onClickRow: ((T) -> Unit)? = null
 ) {
-    LazyColumn {
+    LazyColumn(
+        verticalArrangement = Arrangement.spacedBy(halfSpacing)
+    ) {
         item {
             Text(text = name, style = MaterialTheme.typography.headlineSmall)
         }
@@ -80,10 +84,12 @@ fun <T> DataTable(
 data class TableColumn<T>(
     val name: String,
     val width: Int? = null,
-    val onClickCell: ((T) -> Unit)? = null,
     val alignContent: AlignContent? = null,
+    val onClickCell: ((T) -> Unit)? = null,
     val content: @Composable (T) -> Unit
 )
+
+fun <T> TableColumn<T>.onClick(block: (T) -> Unit) = this.copy(onClickCell = block)
 
 fun Color.darken(factor: Float = 0.8f) = this.scaleBrightness(-factor)
 

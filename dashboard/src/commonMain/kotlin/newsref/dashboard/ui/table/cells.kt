@@ -9,9 +9,7 @@ import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.focusProperties
-import androidx.compose.ui.geometry.Rect
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.Outline
 import androidx.compose.ui.graphics.SolidColor
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.text.style.TextOverflow
@@ -31,7 +29,7 @@ fun <T> TableCell(
     color: Color = Color(0f, 0f, 0f, 0f),
     alignContent: AlignContent? = null,
     onClickCell: ((T) -> Unit)? = null,
-    controls: (List<CellControls<T>>)? = null,
+    controls: (List<CellControl<T>>)? = null,
     content: @Composable () -> Unit
 ) {
     Row(
@@ -75,12 +73,15 @@ enum class AlignContent {
 
 @Composable
 fun TextCell(
-    text: String?
+    text: String?,
+    modifier: Modifier = Modifier,
+    onClick: (() -> Unit)? = null,
 ) {
     Text(
         text = text ?: emptyEmoji,
         maxLines = 1,
         overflow = TextOverflow.Ellipsis,
+        modifier = modifier.modifyIfNotNull(onClick) { this.clickable(onClick = it) }
     )
 }
 

@@ -13,10 +13,12 @@ import kotlinx.datetime.Instant
 import kotlinx.serialization.Serializable
 import newsref.dashboard.*
 import newsref.dashboard.ui.table.DataTable
+import newsref.dashboard.ui.table.DurationAgoCell
 import newsref.dashboard.ui.table.PropertyRow
 import newsref.dashboard.ui.table.PropertyTable
 import newsref.dashboard.ui.table.TableColumn
 import newsref.dashboard.ui.table.TextCell
+import newsref.dashboard.ui.table.glowOverMin
 import newsref.db.services.SourceService
 import newsref.model.dto.SourceInfo
 import kotlin.time.Duration.Companion.minutes
@@ -40,8 +42,11 @@ fun SourceTableScreen(
     DataTable(
         name = "Sources",
         rows = state.items,
+        glowFunction = { glowOverMin(it.seenAt) },
         columns = listOf(
-            TableColumn("url") { TextCell(it.url) }
+            TableColumn("headline") { TextCell(it.headline ?: it.pageTitle) },
+            TableColumn("url") { TextCell(it.url) },
+            TableColumn("seenAt") { DurationAgoCell(it.seenAt) }
         )
     )
 }
