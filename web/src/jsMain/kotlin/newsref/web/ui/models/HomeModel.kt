@@ -5,6 +5,7 @@ import kotlinx.coroutines.launch
 import kotlinx.datetime.Clock
 import kotlinx.datetime.Instant
 import newsref.model.core.NewsSpan
+import newsref.model.dto.SourceCollection
 import newsref.model.dto.SourceInfo
 import newsref.web.core.StateModel
 import newsref.web.io.stores.SourceStore
@@ -42,6 +43,6 @@ class HomeModel(
 
 data class HomeState(
 	val newsSpan: NewsSpan = NewsSpan.DAY,
-	val sources: List<SourceInfo> = emptyList(),
+	val sources: List<SourceCollection> = emptyList(),
 	val refreshed: Instant = Instant.DISTANT_PAST
 )

@@ -46,7 +46,6 @@ class ScoreService : DbService() {
 	}
 
 	suspend fun addScores(tracers: List<SourceTracer>) = dbQuery {
-		val now = Clock.System.now()
 		val scoreRows = tracers.mapNotNull { (sourceId, score, scores) ->
 			val sourceRow = SourceRow.findById(sourceId)
 				?: throw IllegalArgumentException("source not found: $sourceId")
@@ -63,13 +62,13 @@ class ScoreService : DbService() {
 				this[SourceScoreTable.scoredAt] = it.scoredAt.toLocalDateTimeUtc()
 			}
 
-			val sourceInfo = SourceTable.getInfos { SourceTable.id.eq(sourceId) }.firstOrNull()
-				?: throw IllegalArgumentException("Source not found: ${sourceId}")
+			val sourceCollection = SourceTable.getCollections { SourceTable.id.eq(sourceId) }.firstOrNull()
+				?: throw IllegalArgumentException("Source not found: $sourceId")
 			FeedSourceRow.createOrUpdate(FeedSourceTable.sourceId eq sourceId) {
 				source = sourceRow
 				this.score = score
 				createdAt = sourceRow.publishedAt ?: sourceRow.seenAt
-				json = sourceInfo
+				json = sourceCollection
 			}
 		}
 		console.log("FeedSourceService: added ${scoreRows.size} scores")

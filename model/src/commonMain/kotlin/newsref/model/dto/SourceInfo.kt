@@ -22,6 +22,11 @@ data class SourceInfo(
 	val seenAt: Instant,
 	val score: Int,
 	val publishedAt: Instant?,
+)
+
+@Serializable
+data class SourceCollection(
+	val info: SourceInfo,
 	val authors: List<String>?,
 	val inLinks: List<LinkInfo>,
 	val outLinks: List<LinkInfo>,

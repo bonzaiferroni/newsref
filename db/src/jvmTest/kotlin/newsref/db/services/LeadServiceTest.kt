@@ -57,17 +57,4 @@ class LeadServiceTest : DbTest() {
 		val leads = LeadService().getOpenLeads()
 		assertEquals(2, leads.size)
 	}
-
-	@Test
-	fun `explore code`(): Unit = dbQuery {
-		val limit = 2000
-		LeadTable.leftJoin(LeadJobTable).leftJoin(LeadResultTable)
-			.select(leadInfoColumns + LeadResultTable.leadId.count())
-			.where(LeadTable.sourceId.isNull())
-			.orderBy(LeadJobTable.freshAt, SortOrder.DESC_NULLS_LAST)
-			.limit(limit)
-			.groupBy(*leadInfoColumns.toTypedArray())
-			.also { println(it.prepareSQL(QueryBuilder(false))) }
-			.wrapLeadInfo()
-	}
 }

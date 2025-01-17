@@ -4,6 +4,7 @@ import kotlinx.datetime.Instant
 import kotlinx.serialization.Serializable
 import newsref.model.core.CheckedUrl
 import newsref.model.core.SourceType
+import newsref.model.dto.SourceCollection
 import newsref.model.dto.SourceInfo
 
 data class Source(
@@ -36,5 +37,5 @@ data class FeedSource(
 	val sourceId: Long = 0,
 	val score: Int,
 	val createdAt: Instant,
-	val json: SourceInfo,
+	val json: SourceCollection,
 )

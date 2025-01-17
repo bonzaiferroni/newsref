@@ -11,6 +11,7 @@ import newsref.model.core.SourceType
 import newsref.model.data.FeedSource
 import newsref.model.data.Source
 import newsref.model.data.SourceScore
+import newsref.model.dto.SourceCollection
 import newsref.model.dto.SourceInfo
 import org.jetbrains.exposed.dao.EntityClass
 import org.jetbrains.exposed.dao.IntEntity
@@ -151,7 +152,7 @@ internal object FeedSourceTable : IntIdTable("feed_source") {
     val sourceId = reference("source_id", SourceTable, ReferenceOption.CASCADE)
     val score = integer("score")
     val createdAt = datetime("created_at")
-    val json = json<SourceInfo>("source", Json.Default)
+    val json = json<SourceCollection>("source", Json.Default)
 }
 
 internal class FeedSourceRow(id: EntityID<Int>) : IntEntity(id) {
@@ -176,3 +177,45 @@ internal fun FeedSourceRow.fromData(feedSource: FeedSource, sourceRow: SourceRow
     createdAt = feedSource.createdAt.toLocalDateTimeUtc()
     json = feedSource.json
 }
+
+// sourceInfo
+internal val sourceInfoColumns = listOf(
+    SourceTable.id,
+    SourceTable.url,
+    SourceTable.title,
+    SourceTable.score,
+    SourceTable.imageUrl,
+    SourceTable.thumbnail,
+    SourceTable.seenAt,
+    SourceTable.publishedAt,
+    HostTable.core,
+    HostTable.name,
+    HostTable.logo,
+    ArticleTable.headline,
+    ArticleTable.description,
+    ArticleTable.wordCount,
+    ArticleTable.section,
+    NoteTable.body
+)
+
+val sourceInfoTables get () = SourceTable.leftJoin(ArticleTable).leftJoin(HostTable).leftJoin(NoteTable)
+    .select(sourceInfoColumns)
+
+internal fun ResultRow.toSourceInfo() = SourceInfo(
+    sourceId = this[SourceTable.id].value,
+    url = this[SourceTable.url],
+    pageTitle = this[SourceTable.title],
+    score = this[SourceTable.score] ?: 0,
+    image = this.getOrNull(SourceTable.imageUrl),
+    thumbnail = this.getOrNull(SourceTable.thumbnail),
+    seenAt = this[SourceTable.seenAt].toInstantUtc(),
+    publishedAt = this.getOrNull(SourceTable.publishedAt)?.toInstantUtc(),
+    hostCore = this[HostTable.core],
+    hostName = this.getOrNull(HostTable.name),
+    hostLogo = this.getOrNull(HostTable.logo),
+    headline = this.getOrNull(ArticleTable.headline),
+    description = this.getOrNull(ArticleTable.description),
+    wordCount = this.getOrNull(ArticleTable.wordCount),
+    section = this.getOrNull(ArticleTable.section),
+    note = this.getOrNull(NoteTable.body),
+)

@@ -4,11 +4,13 @@ import kotlinx.datetime.Clock
 import newsref.db.utils.toInstantUtc
 import newsref.db.utils.toLocalDateTimeUtc
 import newsref.model.data.Note
+import newsref.model.dto.NoteInfo
 import org.jetbrains.exposed.dao.EntityClass
 import org.jetbrains.exposed.dao.LongEntity
 import org.jetbrains.exposed.dao.id.EntityID
 import org.jetbrains.exposed.dao.id.LongIdTable
 import org.jetbrains.exposed.sql.ReferenceOption
+import org.jetbrains.exposed.sql.ResultRow
 import org.jetbrains.exposed.sql.kotlin.datetime.datetime
 
 internal object NoteTable : LongIdTable("note") {
@@ -50,3 +52,18 @@ internal object SourceNoteTable : LongIdTable("source_note") {
 	val sourceId = reference("source_id", SourceTable, ReferenceOption.CASCADE).index()
 	val noteId = reference("note_id", NoteTable, ReferenceOption.SET_NULL).index()
 }
+
+// note info
+internal val noteInfoColumns = NoteTable.columns + UserTable.username
+
+internal val noteInfoJoins get() = SourceNoteTable.leftJoin(NoteTable).leftJoin(UserTable)
+	.select(noteInfoColumns)
+
+internal fun ResultRow.toNoteInfo() = NoteInfo(
+	userId = this[NoteTable.userId].value,
+	username = this[UserTable.username],
+	subject = this[NoteTable.subject],
+	body = this[NoteTable.body],
+	createdAt = this[NoteTable.createdAt].toInstantUtc(),
+	modifiedAt = this[NoteTable.modifiedAt].toInstantUtc(),
+)

@@ -12,7 +12,7 @@ import newsref.db.models.CrawlInfo
 import newsref.db.models.FetchInfo
 import newsref.db.services.CreateLeadResult
 import newsref.db.services.LeadService
-import newsref.db.services.SourceService
+import newsref.db.services.ConsumeSourceService
 import newsref.db.utils.format
 import newsref.krawly.SpiderWeb
 import newsref.krawly.utils.TallyMap
@@ -32,7 +32,7 @@ class LeadFollower(
 	private val sourceReader: SourceReader = SourceReader(web, hostAgent),
 	private val nexusFinder: NexusFinder = NexusFinder(),
 	private val leadService: LeadService = LeadService(),
-	private val sourceService: SourceService = SourceService(),
+	private val consumeSourceService: ConsumeSourceService = ConsumeSourceService(),
 ) {
 	private val maxSpiders: Int = 10
 	private val console = globalConsole.getHandle("LeadFollower", true)
@@ -166,7 +166,7 @@ class LeadFollower(
 						crawl = nexusFinder.findNexuses(crawl)
 
 						// consume source
-						val id = sourceService.consume(crawl)
+						val id = consumeSourceService.consume(crawl)
 						val resultMap = leadMaker.makeCrawlLeads(crawl)
 						logFetch(crawl, id, resultMap)
 					} catch (e: Exception) {

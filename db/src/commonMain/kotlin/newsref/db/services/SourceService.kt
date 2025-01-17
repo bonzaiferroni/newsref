@@ -2,128 +2,125 @@ package newsref.db.services
 
 import kotlinx.datetime.Clock
 import newsref.db.DbService
-import newsref.db.globalConsole
 import newsref.db.tables.*
-import newsref.model.core.SourceType
-import newsref.model.data.*
-import newsref.db.models.CrawlInfo
-import newsref.db.utils.createOrUpdate
-import newsref.db.utils.sameUrl
-import newsref.db.utils.plus
-import org.jetbrains.exposed.sql.*
-import org.jetbrains.exposed.sql.SqlExpressionBuilder.eq
-import java.util.MissingResourceException
-
-private val console = globalConsole.getHandle("SourceService")
+import newsref.db.tables.ArticleTable
+import newsref.db.tables.ContentTable
+import newsref.db.tables.HostTable
+import newsref.db.tables.LinkTable
+import newsref.db.tables.SourceRow
+import newsref.db.tables.SourceScoreRow
+import newsref.db.tables.SourceScoreTable
+import newsref.db.utils.toInstantUtc
+import newsref.db.utils.toLocalDateTimeUtc
+import newsref.model.dto.*
+import org.jetbrains.exposed.sql.Op
+import org.jetbrains.exposed.sql.SortOrder
+import org.jetbrains.exposed.sql.SqlExpressionBuilder
+import kotlin.time.Duration
 
 class SourceService : DbService() {
+	suspend fun getSourceCollection(id: Long) = dbQuery {
+		SourceTable.getCollections { SourceTable.id eq id }.firstOrNull()
+	}
 
-	suspend fun consume(crawl: CrawlInfo): Long = dbQuery {
-		val now = Clock.System.now()
-		val lead = crawl.fetch.lead
-		val fetch = crawl.fetch
+	suspend fun getSourceInfo(id: Long) = dbQuery {
+		sourceInfoTables.where { SourceTable.id eq id }.map { it.toSourceInfo() }
+	}
 
-		val source = crawl.page?.source ?: Source(
-			url = lead.url,
-			seenAt = crawl.fetch.lead.freshAt ?: now
-		)
-
-		// find and update host
-		val hostRow = HostRow.findByCore(source.url.core)
-			?: throw MissingResourceException("Missing Host", "SourceService", source.url.core)
-
-		// update or create source
-		val sourceRow = SourceRow.createOrUpdate(SourceTable.url.sameUrl(source.url)) { isModify ->
-			fromData(source, hostRow, isModify)
-		}
-
-		// update lead
-		val leadRow = LeadRow.createOrUpdateAndLink(lead.url, sourceRow)
-
-		// create leadResult
-		LeadResultRow.new {
-			fromData(
-				LeadResult(
-					result = crawl.fetchResult,
-					attemptedAt = Clock.System.now(),
-					strategy = fetch.strategy,
-				), leadRow
-			)
-		}
-		fetch.failedStrategy?.let {
-			LeadResultRow.new {
-				fromData(
-					LeadResult(
-						result = FetchResult.ERROR,
-						attemptedAt = Clock.System.now(),
-						strategy = it
-					), leadRow
-				)
-			}
-		}
-
-		// exit here if no page
-		val page = crawl.page ?: return@dbQuery sourceRow.id.value
-
-		// update host with found data
-		if (hostRow.core == page.pageHost.core) {
-			page.hostName?.let { hostRow.name = it }
-		}
-
-		// create or update lead for page url
-		if (page.source.url != lead.url) {
-			LeadRow.createOrUpdateAndLink(page.source.url, sourceRow)
-		}
-
-		// create or update document
-		val articleRow = page.article?.let { article ->
-			ArticleRow.createOrUpdate(ArticleTable.sourceId eq sourceRow.id) { fromData(article, sourceRow) }
-		}
-
-		// exit here if not content we are interested in
-		if (!cacheContent(sourceRow.type, page.language))
-			return@dbQuery sourceRow.id.value
-
-		// create author
-		val authorRows = page.authors?.map { pageAuthor ->
-			val author = Author(name = pageAuthor.name, bylines = setOf(pageAuthor.name), url = pageAuthor.url)
-			AuthorRow.find { stringParam(pageAuthor.name) eq anyFrom(AuthorTable.bylines) }
-				.firstOrNull { authorRow -> authorRow.hosts.any { it.id == hostRow.id } }
-				?: AuthorRow.new { fromData(author, hostRow, sourceRow) }
-		}
-		authorRows?.forEach { authorRow ->
-			if (!authorRow.hosts.any { it.id != hostRow.id })
-				authorRow.hosts += hostRow
-			if (!authorRow.sources.any { it.id != sourceRow.id })
-				authorRow.sources += sourceRow
-		}
-
-		// create Content
-		val contentRows = page.contents.map { content ->
-			ContentRow.find { ContentTable.text eq content }.firstOrNull()
-				?: ContentRow.new { fromData(content) } // return@map
-		}
-
-		val linkRows = page.links.map { info ->
-
-			// update or create links
-			val link = Link(url = info.url, text = info.anchorText, isExternal = info.isExternal)
-			val contentRow = contentRows.firstOrNull { it.text == info.context }
-			val linkRow = LinkRow.find {
-				(LinkTable.url.sameUrl(info.url)) and
-						(LinkTable.urlText eq info.anchorText) and (LinkTable.sourceId eq sourceRow.id)
-			}.firstOrNull()
-				?: LinkRow.new { fromData(link, sourceRow, contentRow) }
-			linkRow // return@map
-		}
-
-		sourceRow.addContents(contentRows)
-
-		sourceRow.id.value // return
+	suspend fun getTopSources(duration: Duration, limit: Int) = dbQuery {
+		val time = (Clock.System.now() - duration).toLocalDateTimeUtc()
+		FeedSourceTable.select(FeedSourceTable.json)
+			.where {FeedSourceTable.createdAt greaterEq time}
+			.orderBy(FeedSourceTable.score, SortOrder.DESC)
+			.limit(limit)
+			.map { it[FeedSourceTable.json] }
 	}
 }
 
-fun cacheContent(type: SourceType?, language: String?) =
-	(type == SourceType.ARTICLE || type == SourceType.SOCIAL_POST)
-			&& language?.startsWith("en") == true
+internal fun SourceTable.getCollections(block: SqlExpressionBuilder.() -> Op<Boolean>): List<SourceCollection> {
+	val sourceInfos = sourceInfoTables
+		.where(block)
+		.map { it.toSourceInfo() }
+	return sourceInfos.map { sourceInfo ->
+		val scoreRows = SourceScoreRow.find { SourceScoreTable.sourceId.eq(sourceInfo.sourceId) }
+			.orderBy(Pair(SourceScoreTable.scoredAt, SortOrder.ASC))
+		val inLinks = LinkTable.getLinkInfos { LeadTable.sourceId.eq(sourceInfo.sourceId) }
+		val outLinks = LinkTable.getLinkInfos { LinkTable.sourceId.eq(sourceInfo.sourceId) }
+		val authors = SourceRow.findById(sourceInfo.sourceId)?.authors?.map { it.name }
+		val notes = noteInfoJoins
+			.where { SourceNoteTable.sourceId eq sourceInfo.sourceId}
+			.map { it.toNoteInfo() }
 
+		SourceCollection(
+			info = sourceInfo,
+			inLinks = inLinks,
+			outLinks = outLinks,
+			scores = scoreRows.map { ScoreInfo(it.score, it.scoredAt.toInstantUtc()) },
+			authors = authors,
+			notes = notes
+		)
+	}
+}
+
+internal fun LinkTable.getLinkInfos(block: SqlExpressionBuilder.() -> Op<Boolean>): List<LinkInfo> {
+	val linkInfos = this.leftJoin(SourceTable).leftJoin(HostTable)
+		.leftJoin(LeadTable, this.leadId, LeadTable.id)
+		.leftJoin(ArticleTable)
+		.leftJoin(ContentTable)
+		.select(
+			url,
+			urlText,
+			sourceId,
+			LeadTable.sourceId,
+			ContentTable.text,
+			SourceTable.url,
+			SourceTable.seenAt,
+			SourceTable.publishedAt,
+			ArticleTable.headline,
+			HostTable.name,
+			HostTable.core,
+		)
+		.where(block)
+//		.also { println(it.prepareSQL(QueryBuilder(false))) }
+		.map { row ->
+			LinkInfo(
+				sourceId = row[sourceId].value,
+				leadSourceId = row[LeadTable.sourceId]?.value,
+				url = row[url],
+				urlText = row[urlText],
+				context = row.getOrNull(ContentTable.text),
+				sourceUrl = row[SourceTable.url],
+				hostName = row.getOrNull(HostTable.name),
+				hostCore = row[HostTable.core],
+				seenAt = row[SourceTable.seenAt].toInstantUtc(),
+				publishedAt = row.getOrNull(SourceTable.publishedAt)?.toInstantUtc(),
+				headline = row.getOrNull(ArticleTable.headline),
+				authors = null
+			)
+		}
+	return linkInfos.map { linkInfo ->
+		val authors = AuthorTable.getAuthors { SourceAuthorTable.sourceId.eq(linkInfo.sourceId) }
+			.takeIf { it.isNotEmpty() }
+		val snippet = linkInfo.context?.findContainingSentence(linkInfo.urlText)
+		linkInfo.copy(authors = authors, context = snippet)
+	}
+}
+
+internal fun AuthorTable.getAuthors(block: SqlExpressionBuilder.() -> Op<Boolean>): List<PageAuthor> {
+	return this.leftJoin(SourceAuthorTable).leftJoin(HostAuthorTable)
+		.select(name, id, SourceAuthorTable.sourceId)
+		.where(block)
+		.mapNotNull { row -> PageAuthor(name = row[name], url = row.getOrNull(url)) }
+}
+
+fun String.findContainingSentence(substring: String): String? {
+	val sentencePattern = """[^.!?]*[.!?]["”']?""".toRegex()
+	return sentencePattern.findAll(this)
+		.map { it.value.trim() }
+		.firstOrNull { it.contains(substring, ignoreCase = true) }
+		?.let { sentence ->
+			if (sentence.first().isUpperCase() || openingChars.contains(sentence.first())) sentence else "...$sentence"
+		}
+}
+
+private val openingChars = setOf('“', '\"')
