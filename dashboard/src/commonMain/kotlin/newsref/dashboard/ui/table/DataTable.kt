@@ -14,12 +14,15 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import kotlinx.datetime.Clock
 import kotlinx.datetime.Instant
 import newsref.dashboard.halfSpacing
+import newsref.dashboard.innerPadding
+import newsref.dashboard.roundedCorners
 import newsref.dashboard.ui.theme.primaryContainerDark
 import newsref.dashboard.utils.modifyIfNotNull
 
@@ -42,7 +45,11 @@ fun <T> DataTable(
         item {
             val bgColor = color.darken(.5f)
             FlowRow(
-                modifier = Modifier.background(bgColor)
+                modifier = Modifier
+                    .border(2.dp, Color.White.copy(alpha = 0.2f), roundedCorners)
+                    .clip(roundedCorners)
+                    .background(bgColor)
+                    .padding(innerPadding)
             ) {
                 for (column in columns) {
                     TableCell<T>(
@@ -62,8 +69,10 @@ fun <T> DataTable(
             } ?: color
             FlowRow(
                 modifier = Modifier.modifyIfNotNull(onClickRow) { this.clickable { it(item) } }
+                    .border(2.dp, Color.White.copy(alpha = 0.2f), roundedCorners)
+                    .clip(roundedCorners)
                     .background(bgColor)
-                    .border(2.dp, bgColor.addBrightness(.05f))
+                    .padding(innerPadding)
             ) {
                 for (column in columns) {
                     TableCell<T>(

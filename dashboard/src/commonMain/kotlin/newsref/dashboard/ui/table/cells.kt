@@ -17,6 +17,7 @@ import androidx.compose.ui.unit.dp
 import kotlinx.datetime.Clock
 import kotlinx.datetime.Instant
 import newsref.dashboard.emptyEmoji
+import newsref.dashboard.innerPadding
 import newsref.dashboard.ui.theme.primaryDark
 import newsref.dashboard.utils.changeFocusWithTab
 import newsref.dashboard.utils.modifyIfNotNull
@@ -30,6 +31,7 @@ fun <T> TableCell(
     alignContent: AlignContent? = null,
     onClickCell: ((T) -> Unit)? = null,
     controls: (List<CellControl<T>>)? = null,
+    modifier: Modifier = Modifier,
     content: @Composable () -> Unit
 ) {
     Row(
@@ -41,12 +43,11 @@ fun <T> TableCell(
             } else {
                 Arrangement.Start
             },
-        modifier = Modifier
+        modifier = modifier
             .modifyIfNotNull(width, elseBlock = { this.fillMaxWidth() }) { this.width(it.dp) }
             .background(color = color)
-            .border(2.dp, color.addBrightness(.05f))
-            .padding(4.dp)
             .modifyIfNotNull(onClickCell) { this.clickable(onClick = { it(item!!) }) }
+            .padding(innerPadding)
     ) {
         content()
 

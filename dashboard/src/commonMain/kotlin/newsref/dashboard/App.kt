@@ -17,7 +17,7 @@ fun App(
     initDb()
     val context = AppContext(exitApp)
     AppTheme(true) {
-        AppNavigator(FeedTableRoute, context)
+        AppNavigator(SourceTableRoute, context)
     }
 }
 
