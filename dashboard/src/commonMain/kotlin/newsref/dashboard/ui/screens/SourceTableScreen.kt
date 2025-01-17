@@ -42,6 +42,7 @@ fun SourceTableScreen(
     DataTable(
         name = "Sources",
         rows = state.items,
+        isNew = { it.sourceId > state.previousTopId},
         glowFunction = { glowOverMin(it.seenAt) },
         columns = listOf(
             TableColumn("headline") { TextCell(it.headline ?: it.pageTitle) },

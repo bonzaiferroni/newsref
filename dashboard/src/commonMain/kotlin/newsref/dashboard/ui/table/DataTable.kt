@@ -1,5 +1,11 @@
 package newsref.dashboard.ui.table
 
+import androidx.compose.animation.core.Animatable
+import androidx.compose.animation.core.FastOutSlowInEasing
+import androidx.compose.animation.core.LinearEasing
+import androidx.compose.animation.core.animateFloatAsState
+import androidx.compose.animation.core.tween
+import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
@@ -12,11 +18,15 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.ui.Alignment
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import kotlinx.datetime.Clock
 import kotlinx.datetime.Instant
@@ -26,12 +36,13 @@ import newsref.dashboard.roundedCorners
 import newsref.dashboard.ui.theme.primaryContainerDark
 import newsref.dashboard.utils.modifyIfNotNull
 
-@OptIn(ExperimentalLayoutApi::class)
+@OptIn(ExperimentalLayoutApi::class, ExperimentalFoundationApi::class)
 @Composable
 fun <T> DataTable(
     name: String,
     rows: List<T>,
     columns: List<TableColumn<T>>,
+    isNew: ((T) -> Boolean)? = null,
     color: Color = primaryContainerDark.darken(.5f),
     glowFunction: ((T) -> Float?)? = null,
     onClickRow: ((T) -> Unit)? = null
@@ -67,8 +78,17 @@ fun <T> DataTable(
             val bgColor =  glowFunction?.let { function ->
                 function(item)?.let { color.scaleBrightness(it * .5f) }
             } ?: color
+
+            var alpha = remember { Animatable(1f) } // Start fully transparent
+
+            LaunchedEffect(item) {
+                if (isNew != null && isNew(item)) alpha.snapTo(0f)
+                alpha.animateTo(1f, animationSpec = tween(1000, easing = FastOutSlowInEasing))
+            }
+
             FlowRow(
                 modifier = Modifier.modifyIfNotNull(onClickRow) { this.clickable { it(item) } }
+                    .alpha(alpha.value)
                     .border(2.dp, Color.White.copy(alpha = 0.2f), roundedCorners)
                     .clip(roundedCorners)
                     .background(bgColor)

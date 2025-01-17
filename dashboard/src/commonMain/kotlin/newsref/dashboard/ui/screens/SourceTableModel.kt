@@ -31,7 +31,8 @@ class SourceTableModel(
         editState { it.copy(
             items = (items + stateNow.items).take(100),
             count = count,
-            topId = topId
+            topId = topId,
+            previousTopId = stateNow.topId
         ) }
     }
 }
@@ -40,4 +41,5 @@ data class SourceTableState(
     val items: List<SourceInfo> = emptyList(),
     val count: Long = 0,
     val topId: Long = 0,
+    val previousTopId: Long = 0,
 )
