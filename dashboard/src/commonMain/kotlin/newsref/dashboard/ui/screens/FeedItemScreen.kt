@@ -13,6 +13,10 @@ import compose.icons.tablericons.ExternalLink
 import androidx.compose.ui.Alignment
 import kotlinx.datetime.Clock
 import androidx.compose.material3.*
+import androidx.compose.ui.platform.ClipboardManager
+import androidx.compose.ui.platform.LocalClipboardManager
+import androidx.compose.ui.text.buildAnnotatedString
+import compose.icons.tablericons.Copy
 import kotlinx.serialization.Serializable
 import newsref.dashboard.*
 import newsref.dashboard.ui.controls.*
@@ -79,15 +83,19 @@ fun FeedRowProperties(
     changeTrackPosition: (Boolean) -> Unit,
 ) {
     val uriHandler = LocalUriHandler.current
+    val clipboardManager = LocalClipboardManager.current
     PropertyTable(
         name = name,
         item = item,
         properties = listOf(
             PropertyRow<Feed>("href") { TextFieldCell(href, changeHref) }
                 .addControl(TablerIcons.ExternalLink) { uriHandler.openUri(item.url.toString()) },
-            PropertyRow(name = "selector") { TextFieldCell(item.selector, changeSelector) },
+            PropertyRow<Feed>("selector") { TextFieldCell(item.selector, changeSelector) }
+                .addControl(TablerIcons.Copy) { clipboardManager.setRawText(it.selector) },
             PropertyRow("external") { BooleanCell(item.external, changeExternal) },
             PropertyRow("track position") { BooleanCell(item.trackPosition, changeTrackPosition)}
         )
     )
 }
+
+fun ClipboardManager.setRawText(text: String) = setText(buildAnnotatedString { append(text) })

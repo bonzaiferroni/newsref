@@ -28,12 +28,18 @@ import androidx.compose.runtime.setValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
+import androidx.navigation.NavController
 import androidx.navigation.NavGraphBuilder
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.toRoute
+import compose.icons.TablerIcons
+import compose.icons.tablericons.FileInfo
+import compose.icons.tablericons.Rss
+import newsref.dashboard.ui.screens.FeedTableRoute
+import newsref.dashboard.ui.screens.SourceTableRoute
 import newsref.dashboard.ui.theme.surfaceDark
 
 @Composable
@@ -50,8 +56,7 @@ fun AppNavigator(
             TopBar(
                 context = context,
                 route = route,
-                canNavigateBack = navController.previousBackStackEntry != null,
-                navigateUp = { navController.navigateUp() },
+                navController = navController,
             )
         }
     ) { innerPadding ->
@@ -77,8 +82,7 @@ fun AppNavigator(
 fun TopBar(
     context: AppContext,
     route: ScreenRoute,
-    canNavigateBack: Boolean,
-    navigateUp: () -> Unit,
+    navController: NavController,
     modifier: Modifier = Modifier
 ) {
     TopAppBar(
@@ -88,8 +92,8 @@ fun TopBar(
         ),
         modifier = modifier,
         navigationIcon = {
-            if (canNavigateBack) {
-                IconButton(onClick = navigateUp) {
+            if (navController.previousBackStackEntry != null) {
+                IconButton(onClick = { navController.navigateUp() }) {
                     Icon(
                         imageVector = Icons.AutoMirrored.Filled.ArrowBack,
                         contentDescription = "Back"
@@ -98,6 +102,12 @@ fun TopBar(
             }
         },
         actions = {
+            IconButton(onClick = { navController.navigate(SourceTableRoute) }) {
+                Icon(imageVector = TablerIcons.FileInfo, contentDescription = "Source Table")
+            }
+            IconButton(onClick = { navController.navigate(FeedTableRoute) }) {
+                Icon(imageVector = TablerIcons.Rss, contentDescription = "Feed Table")
+            }
             IconButton(onClick = context.exitApp) {
                 Icon(imageVector = Icons.Default.Close, contentDescription = "Close App")
             }

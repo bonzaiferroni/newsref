@@ -19,6 +19,8 @@ import newsref.dashboard.ui.screens.FeedTableRoute
 import newsref.dashboard.ui.screens.FeedTableScreen
 import newsref.dashboard.ui.screens.HelloRoute
 import newsref.dashboard.ui.screens.HelloScreen
+import newsref.dashboard.ui.screens.SourceItemRoute
+import newsref.dashboard.ui.screens.SourceItemScreen
 import newsref.dashboard.ui.screens.SourceTableRoute
 import newsref.dashboard.ui.screens.SourceTableScreen
 
@@ -33,6 +35,11 @@ fun NavGraphBuilder.navGraph(
     routeComposable<SourceTableRoute>(routeState) {
         DefaultSurface {
             SourceTableScreen(navController)
+        }
+    }
+    routeComposable<SourceItemRoute>(routeState) { route ->
+        DefaultSurface {
+            SourceItemScreen(route, navController)
         }
     }
     routeComposable<FeedTableRoute>(routeState) {
