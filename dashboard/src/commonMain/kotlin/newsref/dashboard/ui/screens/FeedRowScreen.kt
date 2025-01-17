@@ -13,11 +13,15 @@ import compose.icons.tablericons.ExternalLink
 import androidx.compose.ui.Alignment
 import kotlinx.datetime.Clock
 import androidx.compose.material3.*
+import kotlinx.serialization.Serializable
 import newsref.dashboard.*
 import newsref.dashboard.ui.controls.*
 import newsref.dashboard.ui.table.*
 import newsref.model.data.*
 import kotlin.time.Duration.Companion.minutes
+
+@Serializable
+data class FeedRowRoute(val feedId: Int) : ScreenRoute("Feed Row")
 
 @Composable
 fun FeedRowScreen(

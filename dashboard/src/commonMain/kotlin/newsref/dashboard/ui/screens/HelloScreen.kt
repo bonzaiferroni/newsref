@@ -13,8 +13,11 @@ import androidx.navigation.NavHostController
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
-import newsref.dashboard.HelloRoute
-import newsref.dashboard.StartRoute
+import kotlinx.serialization.Serializable
+import newsref.dashboard.ScreenRoute
+
+@Serializable
+data class HelloRoute(val name: String) : ScreenRoute("Hello")
 
 @Composable
 fun HelloScreen(

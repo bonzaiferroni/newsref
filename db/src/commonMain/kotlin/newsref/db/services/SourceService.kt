@@ -19,108 +19,109 @@ import org.jetbrains.exposed.sql.SqlExpressionBuilder
 import kotlin.time.Duration
 
 class SourceService : DbService() {
-	suspend fun getSourceCollection(id: Long) = dbQuery {
-		SourceTable.getCollections { SourceTable.id eq id }.firstOrNull()
-	}
+    suspend fun getSourceCollection(id: Long) = dbQuery {
+        SourceTable.getCollections { SourceTable.id eq id }.firstOrNull()
+    }
 
-	suspend fun getSourceInfo(id: Long) = dbQuery {
-		sourceInfoTables.where { SourceTable.id eq id }.map { it.toSourceInfo() }
-	}
+    suspend fun getSourceInfo(id: Long) = dbQuery {
+        sourceInfoTables.where { SourceTable.id eq id }
+            .firstOrNull()?.toSourceInfo()
+    }
 
-	suspend fun getTopSources(duration: Duration, limit: Int) = dbQuery {
-		val time = (Clock.System.now() - duration).toLocalDateTimeUtc()
-		FeedSourceTable.select(FeedSourceTable.json)
-			.where {FeedSourceTable.createdAt greaterEq time}
-			.orderBy(FeedSourceTable.score, SortOrder.DESC)
-			.limit(limit)
-			.map { it[FeedSourceTable.json] }
-	}
+    suspend fun getTopSources(duration: Duration, limit: Int) = dbQuery {
+        val time = (Clock.System.now() - duration).toLocalDateTimeUtc()
+        FeedSourceTable.select(FeedSourceTable.json)
+            .where { FeedSourceTable.createdAt greaterEq time }
+            .orderBy(FeedSourceTable.score, SortOrder.DESC)
+            .limit(limit)
+            .map { it[FeedSourceTable.json] }
+    }
 }
 
 internal fun SourceTable.getCollections(block: SqlExpressionBuilder.() -> Op<Boolean>): List<SourceCollection> {
-	val sourceInfos = sourceInfoTables
-		.where(block)
-		.map { it.toSourceInfo() }
-	return sourceInfos.map { sourceInfo ->
-		val scoreRows = SourceScoreRow.find { SourceScoreTable.sourceId.eq(sourceInfo.sourceId) }
-			.orderBy(Pair(SourceScoreTable.scoredAt, SortOrder.ASC))
-		val inLinks = LinkTable.getLinkInfos { LeadTable.sourceId.eq(sourceInfo.sourceId) }
-		val outLinks = LinkTable.getLinkInfos { LinkTable.sourceId.eq(sourceInfo.sourceId) }
-		val authors = SourceRow.findById(sourceInfo.sourceId)?.authors?.map { it.name }
-		val notes = noteInfoJoins
-			.where { SourceNoteTable.sourceId eq sourceInfo.sourceId}
-			.map { it.toNoteInfo() }
+    val sourceInfos = sourceInfoTables
+        .where(block)
+        .map { it.toSourceInfo() }
+    return sourceInfos.map { sourceInfo ->
+        val scoreRows = SourceScoreRow.find { SourceScoreTable.sourceId.eq(sourceInfo.sourceId) }
+            .orderBy(Pair(SourceScoreTable.scoredAt, SortOrder.ASC))
+        val inLinks = LinkTable.getLinkInfos { LeadTable.sourceId.eq(sourceInfo.sourceId) }
+        val outLinks = LinkTable.getLinkInfos { LinkTable.sourceId.eq(sourceInfo.sourceId) }
+        val authors = SourceRow.findById(sourceInfo.sourceId)?.authors?.map { it.name }
+        val notes = noteInfoJoins
+            .where { SourceNoteTable.sourceId eq sourceInfo.sourceId }
+            .map { it.toNoteInfo() }
 
-		SourceCollection(
-			info = sourceInfo,
-			inLinks = inLinks,
-			outLinks = outLinks,
-			scores = scoreRows.map { ScoreInfo(it.score, it.scoredAt.toInstantUtc()) },
-			authors = authors,
-			notes = notes
-		)
-	}
+        SourceCollection(
+            info = sourceInfo,
+            inLinks = inLinks,
+            outLinks = outLinks,
+            scores = scoreRows.map { ScoreInfo(it.score, it.scoredAt.toInstantUtc()) },
+            authors = authors,
+            notes = notes
+        )
+    }
 }
 
 internal fun LinkTable.getLinkInfos(block: SqlExpressionBuilder.() -> Op<Boolean>): List<LinkInfo> {
-	val linkInfos = this.leftJoin(SourceTable).leftJoin(HostTable)
-		.leftJoin(LeadTable, this.leadId, LeadTable.id)
-		.leftJoin(ArticleTable)
-		.leftJoin(ContentTable)
-		.select(
-			url,
-			urlText,
-			sourceId,
-			LeadTable.sourceId,
-			ContentTable.text,
-			SourceTable.url,
-			SourceTable.seenAt,
-			SourceTable.publishedAt,
-			ArticleTable.headline,
-			HostTable.name,
-			HostTable.core,
-		)
-		.where(block)
+    val linkInfos = this.leftJoin(SourceTable).leftJoin(HostTable)
+        .leftJoin(LeadTable, this.leadId, LeadTable.id)
+        .leftJoin(ArticleTable)
+        .leftJoin(ContentTable)
+        .select(
+            url,
+            urlText,
+            sourceId,
+            LeadTable.sourceId,
+            ContentTable.text,
+            SourceTable.url,
+            SourceTable.seenAt,
+            SourceTable.publishedAt,
+            ArticleTable.headline,
+            HostTable.name,
+            HostTable.core,
+        )
+        .where(block)
 //		.also { println(it.prepareSQL(QueryBuilder(false))) }
-		.map { row ->
-			LinkInfo(
-				sourceId = row[sourceId].value,
-				leadSourceId = row[LeadTable.sourceId]?.value,
-				url = row[url],
-				urlText = row[urlText],
-				context = row.getOrNull(ContentTable.text),
-				sourceUrl = row[SourceTable.url],
-				hostName = row.getOrNull(HostTable.name),
-				hostCore = row[HostTable.core],
-				seenAt = row[SourceTable.seenAt].toInstantUtc(),
-				publishedAt = row.getOrNull(SourceTable.publishedAt)?.toInstantUtc(),
-				headline = row.getOrNull(ArticleTable.headline),
-				authors = null
-			)
-		}
-	return linkInfos.map { linkInfo ->
-		val authors = AuthorTable.getAuthors { SourceAuthorTable.sourceId.eq(linkInfo.sourceId) }
-			.takeIf { it.isNotEmpty() }
-		val snippet = linkInfo.context?.findContainingSentence(linkInfo.urlText)
-		linkInfo.copy(authors = authors, context = snippet)
-	}
+        .map { row ->
+            LinkInfo(
+                sourceId = row[sourceId].value,
+                leadSourceId = row[LeadTable.sourceId]?.value,
+                url = row[url],
+                urlText = row[urlText],
+                context = row.getOrNull(ContentTable.text),
+                sourceUrl = row[SourceTable.url],
+                hostName = row.getOrNull(HostTable.name),
+                hostCore = row[HostTable.core],
+                seenAt = row[SourceTable.seenAt].toInstantUtc(),
+                publishedAt = row.getOrNull(SourceTable.publishedAt)?.toInstantUtc(),
+                headline = row.getOrNull(ArticleTable.headline),
+                authors = null
+            )
+        }
+    return linkInfos.map { linkInfo ->
+        val authors = AuthorTable.getAuthors { SourceAuthorTable.sourceId.eq(linkInfo.sourceId) }
+            .takeIf { it.isNotEmpty() }
+        val snippet = linkInfo.context?.findContainingSentence(linkInfo.urlText)
+        linkInfo.copy(authors = authors, context = snippet)
+    }
 }
 
 internal fun AuthorTable.getAuthors(block: SqlExpressionBuilder.() -> Op<Boolean>): List<PageAuthor> {
-	return this.leftJoin(SourceAuthorTable).leftJoin(HostAuthorTable)
-		.select(name, id, SourceAuthorTable.sourceId)
-		.where(block)
-		.mapNotNull { row -> PageAuthor(name = row[name], url = row.getOrNull(url)) }
+    return this.leftJoin(SourceAuthorTable).leftJoin(HostAuthorTable)
+        .select(name, id, SourceAuthorTable.sourceId)
+        .where(block)
+        .mapNotNull { row -> PageAuthor(name = row[name], url = row.getOrNull(url)) }
 }
 
 fun String.findContainingSentence(substring: String): String? {
-	val sentencePattern = """[^.!?]*[.!?]["”']?""".toRegex()
-	return sentencePattern.findAll(this)
-		.map { it.value.trim() }
-		.firstOrNull { it.contains(substring, ignoreCase = true) }
-		?.let { sentence ->
-			if (sentence.first().isUpperCase() || openingChars.contains(sentence.first())) sentence else "...$sentence"
-		}
+    val sentencePattern = """[^.!?]*[.!?]["”']?""".toRegex()
+    return sentencePattern.findAll(this)
+        .map { it.value.trim() }
+        .firstOrNull { it.contains(substring, ignoreCase = true) }
+        ?.let { sentence ->
+            if (sentence.first().isUpperCase() || openingChars.contains(sentence.first())) sentence else "...$sentence"
+        }
 }
 
 private val openingChars = setOf('“', '\"')

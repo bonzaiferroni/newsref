@@ -8,12 +8,16 @@ import androidx.compose.runtime.getValue
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import kotlinx.datetime.Clock
-import newsref.dashboard.FeedRowRoute
+import kotlinx.serialization.Serializable
+import newsref.dashboard.ScreenRoute
 import newsref.dashboard.ui.table.CountCell
 import newsref.dashboard.ui.table.DataTable
 import newsref.dashboard.ui.table.TableColumn
 import newsref.dashboard.ui.table.TextCell
 import newsref.dashboard.ui.table.glowOverDay
+
+@Serializable
+object FeedTableRoute : ScreenRoute("Feed Table")
 
 @Composable
 fun FeedTableScreen(

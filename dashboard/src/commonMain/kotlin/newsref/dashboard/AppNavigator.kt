@@ -61,36 +61,10 @@ fun AppNavigator(
             modifier = Modifier
                 .padding(innerPadding)
                 .fillMaxSize()
-                .background(surfaceDark)
+                .background(MaterialTheme.colorScheme.surface)
                 // .verticalScroll(rememberScrollState())
         ) {
             navGraph(routeState, navController)
-        }
-    }
-}
-
-inline fun <reified T: ScreenRoute> NavGraphBuilder.routeComposable(
-    routeState: MutableState<ScreenRoute>,
-    crossinline content: @Composable (T) -> Unit
-) {
-    composable<T> { backStackEntry ->
-        val route: T = backStackEntry.toRoute()
-        routeState.value = route
-        content(route)
-    }
-}
-
-@Composable
-fun DefaultSurface(
-    padding: PaddingValues = basePadding,
-    content: @Composable() () -> Unit
-) {
-    Surface(
-        modifier = Modifier
-            .padding(padding)
-    ) {
-        Column(verticalArrangement = Arrangement.spacedBy(halfSpacing)) {
-            content()
         }
     }
 }
