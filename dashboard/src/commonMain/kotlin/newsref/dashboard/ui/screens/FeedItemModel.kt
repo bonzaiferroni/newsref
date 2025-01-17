@@ -10,11 +10,10 @@ import newsref.db.services.LeadService
 import newsref.model.core.toUrlOrNull
 import newsref.model.data.Feed
 import newsref.model.data.LeadInfo
-import kotlin.time.Duration
 import kotlin.time.Duration.Companion.minutes
 
-class FeedRowModel(
-    private val route: FeedRowRoute,
+class FeedItemModel(
+    private val route: FeedItemRoute,
     private val feedService: FeedService = FeedService(),
     private val leadService: LeadService = LeadService(),
 ) : ScreenModel<FeedRowState>(FeedRowState(route.feedId)) {

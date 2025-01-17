@@ -21,13 +21,13 @@ import newsref.model.data.*
 import kotlin.time.Duration.Companion.minutes
 
 @Serializable
-data class FeedRowRoute(val feedId: Int) : ScreenRoute("Feed Row")
+data class FeedItemRoute(val feedId: Int) : ScreenRoute("Feed Row")
 
 @Composable
-fun FeedRowScreen(
-    route: FeedRowRoute,
+fun FeedItemScreen(
+    route: FeedItemRoute,
     navController: NavController,
-    viewModel: FeedRowModel = viewModel { FeedRowModel(route) }
+    viewModel: FeedItemModel = viewModel { FeedItemModel(route) }
 ) {
     val state by viewModel.state.collectAsState()
     val item = state.updatedFeed

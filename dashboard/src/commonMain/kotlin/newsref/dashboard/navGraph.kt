@@ -13,8 +13,8 @@ import androidx.navigation.NavHostController
 import androidx.navigation.compose.composable
 import androidx.navigation.toRoute
 import kotlinx.serialization.Serializable
-import newsref.dashboard.ui.screens.FeedRowRoute
-import newsref.dashboard.ui.screens.FeedRowScreen
+import newsref.dashboard.ui.screens.FeedItemRoute
+import newsref.dashboard.ui.screens.FeedItemScreen
 import newsref.dashboard.ui.screens.FeedTableRoute
 import newsref.dashboard.ui.screens.FeedTableScreen
 import newsref.dashboard.ui.screens.HelloRoute
@@ -38,9 +38,9 @@ fun NavGraphBuilder.navGraph(
             HelloScreen(route, navController)
         }
     }
-    routeComposable<FeedRowRoute>(routeState) { route ->
+    routeComposable<FeedItemRoute>(routeState) { route ->
         DefaultSurface {
-            FeedRowScreen(route, navController)
+            FeedItemScreen(route, navController)
         }
     }
 }

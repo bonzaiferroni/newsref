@@ -12,15 +12,15 @@ import newsref.dashboard.ui.table.PropertyRow
 import newsref.dashboard.ui.table.PropertyTable
 import newsref.dashboard.ui.table.TextCell
 
-data class SourceRowRoute(
+data class SourceItemRoute(
     val sourceId: Long
 )
 
 @Composable
-fun SourceRowScreen(
-    route: SourceRowRoute,
+fun SourceItemScreen(
+    route: SourceItemRoute,
     navController: NavController,
-    viewModel: SourceRowModel = viewModel { SourceRowModel(route) }
+    viewModel: SourceItemModel = viewModel { SourceItemModel(route) }
 ) {
     val state by viewModel.state.collectAsState()
     val item = state.source

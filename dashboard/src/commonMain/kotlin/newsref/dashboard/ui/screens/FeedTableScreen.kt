@@ -7,7 +7,6 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
-import kotlinx.datetime.Clock
 import kotlinx.serialization.Serializable
 import newsref.dashboard.ScreenRoute
 import newsref.dashboard.ui.table.CountCell
@@ -41,7 +40,7 @@ fun FeedTableScreen(
     DataTable(
         name = "Feed Table",
         rows = state.items,
-        onClickRow = { navController.navigate(FeedRowRoute(it.id))},
+        onClickRow = { navController.navigate(FeedItemRoute(it.id))},
         glowFunction = { glowOverDay(it.createdAt) },
         columns = listOf(
             TableColumn(name = "Core", width = 200) { TextCell(it.url.core) },

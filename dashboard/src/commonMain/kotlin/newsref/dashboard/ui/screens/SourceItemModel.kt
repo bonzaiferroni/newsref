@@ -8,10 +8,10 @@ import kotlinx.datetime.Instant
 import newsref.db.services.SourceService
 import newsref.model.dto.SourceInfo
 
-class SourceRowModel(
-    sourceRowRoute: SourceRowRoute,
+class SourceItemModel(
+    sourceItemRoute: SourceItemRoute,
     private val sourceService: SourceService = SourceService(),
-) : ScreenModel<SourceRowState>(SourceRowState(sourceRowRoute.sourceId)) {
+) : ScreenModel<SourceRowState>(SourceRowState(sourceItemRoute.sourceId)) {
     init {
         viewModelScope.launch {
             refreshItem()
