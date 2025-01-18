@@ -37,6 +37,7 @@ import newsref.dashboard.innerPadding
 import newsref.dashboard.roundedCorners
 import newsref.dashboard.roundedHeader
 import newsref.dashboard.ui.theme.primaryContainerDark
+import newsref.dashboard.utils.ToolTip
 import newsref.dashboard.utils.modifyIfNotNull
 
 @OptIn(ExperimentalLayoutApi::class, ExperimentalFoundationApi::class)
@@ -140,7 +141,7 @@ data class TableColumn<T>(
     val alignCell: AlignCell? = null,
     val alpha: Float = 1f,
     val weight: Float? = null,
-    val headerTip: String? = null,
+    val headerTip: ToolTip? = null,
     val onClickCell: ((T) -> Unit)? = null,
     val controls: List<CellControl<T>> = emptyList(),
     val content: @Composable (T) -> Unit

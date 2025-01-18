@@ -28,6 +28,7 @@ import androidx.compose.ui.unit.dp
 import newsref.dashboard.innerPadding
 import newsref.dashboard.ui.theme.primaryDark
 import newsref.dashboard.utils.SetToolTip
+import newsref.dashboard.utils.ToolTip
 import newsref.dashboard.utils.modifyIfNotNull
 
 @Composable
@@ -37,7 +38,7 @@ fun <T> RowScope.TableCell(
     color: Color = Color(0f, 0f, 0f, 0f),
     alignCell: AlignCell? = null,
     weight: Float? = null,
-    toolTip: String? = null,
+    toolTip: ToolTip? = null,
     onClickCell: ((T) -> Unit)? = null,
     controls: List<CellControl<T>> = emptyList(),
     padding: PaddingValues = innerPadding,

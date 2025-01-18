@@ -5,6 +5,7 @@ import androidx.compose.animation.core.EaseOut
 import androidx.compose.animation.core.tween
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.interaction.collectIsHoveredAsState
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -12,6 +13,7 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
+import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
@@ -28,6 +30,9 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.lifecycle.viewmodel.compose.viewModel
+import compose.icons.TablerIcons
+import compose.icons.tablericons.Click
+import compose.icons.tablericons.InfoCircle
 import newsref.dashboard.halfPadding
 import newsref.dashboard.halfSpacing
 import newsref.dashboard.ui.screens.ScreenModel
@@ -62,42 +67,58 @@ fun ToolTipper(
                 .fillMaxWidth()
         ) {
             Row(
-                modifier = Modifier.padding(halfPadding)
+                horizontalArrangement = Arrangement.spacedBy(halfSpacing),
+                modifier = Modifier.padding(halfPadding),
             ) {
-                Text(state.tooltip)
+                val icon = when (state.tooltip.type) {
+                    TipType.Information -> TablerIcons.InfoCircle
+                    TipType.Action -> TablerIcons.Click
+                }
+                Icon(icon, "Tip Icon")
+                Text(state.tooltip.text)
             }
         }
     }
 }
 
 class ToolTipperModel : ScreenModel<ToolTipperState>(ToolTipperState()) {
-    fun setTip(tip: String) {
+    fun setTip(tip: ToolTip) {
         setState { it.copy(tooltip = tip, isVisible = true) }
     }
 
-    fun releaseTip(tip: String) {
+    fun releaseTip(tip: ToolTip) {
         if (stateNow.tooltip != tip) return
-        setState { it.copy(isVisible = false) }
+        setState { it.copy(tooltip = tip, isVisible = false) }
     }
 }
 
 @Composable
-fun SetToolTip(text: String): MutableInteractionSource {
+fun SetToolTip(tip: ToolTip): MutableInteractionSource {
     val interactionSource = remember { MutableInteractionSource() }
     val isHovered by interactionSource.collectIsHoveredAsState()
     val toolTipper = LocalToolTipper.current
     if (isHovered) {
-        toolTipper.setTip(text)
+        toolTipper.setTip(tip)
     } else {
-        toolTipper.releaseTip(text)
+        toolTipper.releaseTip(tip)
     }
     return interactionSource
 }
 
 data class ToolTipperState(
-    val tooltip: String = "Hello cupcake",
-    val isVisible: Boolean = false
+    val tooltip: ToolTip = ToolTip("Hello Cupcake"),
+    val isVisible: Boolean = false,
 )
+
+data class ToolTip(
+    val text: String,
+    val type: TipType = TipType.Information,
+)
+
+enum class TipType {
+    Information,
+    Action
+}
 
 val LocalToolTipper = compositionLocalOf<ToolTipperModel> {
     error("No MyObject provided")
