@@ -21,7 +21,7 @@ class SourceItemModel(
 
     private suspend fun refreshItem() {
         val source = sourceService.getSourceInfo(stateNow.sourceId)
-        editState { it.copy(
+        setState { it.copy(
             source = source
         ) }
     }

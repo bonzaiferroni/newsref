@@ -11,7 +11,6 @@ import newsref.model.core.toUrlOrNull
 import newsref.model.data.Feed
 import kotlin.collections.plus
 import kotlin.time.Duration.Companion.minutes
-import kotlin.time.Duration.Companion.seconds
 
 class FeedTableModel(
     private val feedService: FeedService = FeedService(),
@@ -41,7 +40,7 @@ class FeedTableModel(
             val addition = count - currentCount
             additions[feed.id] = addition
         }
-        editState {
+        setState {
             it.copy(
                 leadCounts = leadCounts,
                 leadAdditions = it.leadAdditions + additions,
@@ -52,7 +51,7 @@ class FeedTableModel(
 
     fun changeHref(value: String) {
         val updatedUrl = value.toUrlOrNull()
-        editState {
+        setState {
             it.copy(
                 newItem = it.newItem.copy(url = updatedUrl ?: it.newItem.url),
                 newHref = value
@@ -61,22 +60,22 @@ class FeedTableModel(
     }
 
     fun changeSelector(value: String) {
-        editState { it.copy(newItem = it.newItem.copy(selector = value)) }
+        setState { it.copy(newItem = it.newItem.copy(selector = value)) }
     }
 
     fun changeExternal(value: Boolean) {
-        editState { it.copy(newItem = it.newItem.copy(external = value)) }
+        setState { it.copy(newItem = it.newItem.copy(external = value)) }
     }
 
     fun changeTrackPosition(value: Boolean) {
-        editState { it.copy(newItem = it.newItem.copy(trackPosition = value)) }
+        setState { it.copy(newItem = it.newItem.copy(trackPosition = value)) }
     }
 
     fun addNewItem() {
         if (!stateNow.canAddItem) return
         viewModelScope.launch {
             feedService.create(stateNow.newItem)
-            editState { it.copy(newItem = emptyFeed) }
+            setState { it.copy(newItem = emptyFeed) }
             refresh()
         }
     }

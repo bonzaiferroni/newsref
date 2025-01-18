@@ -30,7 +30,7 @@ class FeedItemModel(
     private suspend fun refreshItem() {
         val feed = feedService.read(route.feedId)
         val leadInfos = leadService.getLeadsFromFeed(route.feedId).sortedByDescending { it.id }
-        editState { it.copy(
+        setState { it.copy(
             feed = feed,
             updatedFeed = feed,
             updatedHref = feed?.url.toString(),
@@ -41,22 +41,22 @@ class FeedItemModel(
 
     fun changeHref(value: String) {
         val updatedUrl = value.toUrlOrNull()
-        editState { it.copy(
+        setState { it.copy(
             updatedFeed = it.updatedFeed?.copy(url = updatedUrl ?: it.updatedFeed.url),
             updatedHref = value
         )}
     }
 
     fun changeSelector(value: String) {
-        editState { it.copy(updatedFeed = it.updatedFeed?.copy(selector = value)) }
+        setState { it.copy(updatedFeed = it.updatedFeed?.copy(selector = value)) }
     }
 
     fun changeExternal(value: Boolean) {
-        editState { it.copy(updatedFeed = it.updatedFeed?.copy(external = value)) }
+        setState { it.copy(updatedFeed = it.updatedFeed?.copy(external = value)) }
     }
 
     fun changeTrackPosition(value: Boolean) {
-        editState { it.copy(updatedFeed = it.updatedFeed?.copy(trackPosition = value)) }
+        setState { it.copy(updatedFeed = it.updatedFeed?.copy(trackPosition = value)) }
     }
 
     fun updateItem() {

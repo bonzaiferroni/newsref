@@ -78,7 +78,7 @@ fun SourceTableScreen(
                 .onClick { /* todo: open host */ },
             TableColumn("Words", 60, AlignCell.Right) { NumberCell(it.wordCount) },
             TableColumn("seenAt", 120, AlignCell.Right, .8f) { DurationAgoCell(it.seenAt) },
-            TableColumn("Ds", 30) { EmojiCell("📃", it.description) },
+            TableColumn("Ds", 30, headerTip = "ℹ Description") { EmojiCell("📃", it.description) },
             TableColumn("HL", 30) { EmojiCell("💈", it.hostLogo) },
             TableColumn("Im", 30) { EmojiCell("🖼", it.image) },
             TableColumn("Th", 30) { EmojiCell("💅", it.thumbnail) },

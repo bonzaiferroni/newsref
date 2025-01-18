@@ -2,11 +2,10 @@ package newsref.dashboard
 
 import org.jetbrains.compose.ui.tooling.preview.Preview
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
-import newsref.dashboard.ui.screens.FeedTableRoute
 import newsref.dashboard.ui.screens.SourceTableRoute
 
 import newsref.dashboard.ui.theme.AppTheme
+import newsref.dashboard.utils.ToolTipper
 import newsref.db.initDb
 
 @Composable
@@ -17,7 +16,9 @@ fun App(
     initDb()
     val context = AppContext(exitApp)
     AppTheme(true) {
-        AppNavigator(SourceTableRoute, context)
+        ToolTipper {
+            AppNavigator(SourceTableRoute, context)
+        }
     }
 }
 

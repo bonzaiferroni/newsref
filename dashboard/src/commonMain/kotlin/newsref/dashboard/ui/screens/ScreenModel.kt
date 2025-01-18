@@ -9,7 +9,7 @@ abstract class ScreenModel<State>(initialState: State) : ViewModel() {
     val state = _state.asStateFlow()
     val stateNow get() = state.value
 
-    protected fun editState(block: (State) -> State) {
+    protected fun setState(block: (State) -> State) {
         _state.value = block(state.value)
     }
 }

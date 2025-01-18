@@ -7,6 +7,8 @@ import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.interaction.MutableInteractionSource
+import androidx.compose.foundation.interaction.collectIsHoveredAsState
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.ExperimentalLayoutApi
 import androidx.compose.foundation.layout.FlowRow
@@ -83,6 +85,7 @@ fun <T> DataTable(
                         color = bgColor,
                         alignCell = column.alignCell,
                         weight = column.weight,
+                        toolTip = column.headerTip,
                         modifier = Modifier.alpha(column.alpha)
                     ) {
                         TextCell(text = column.name)
@@ -137,6 +140,7 @@ data class TableColumn<T>(
     val alignCell: AlignCell? = null,
     val alpha: Float = 1f,
     val weight: Float? = null,
+    val headerTip: String? = null,
     val onClickCell: ((T) -> Unit)? = null,
     val controls: List<CellControl<T>> = emptyList(),
     val content: @Composable (T) -> Unit

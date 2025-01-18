@@ -17,6 +17,9 @@ import newsref.dashboard.emptyEmoji
 import newsref.dashboard.utils.changeFocusWithTab
 import newsref.dashboard.utils.modifyIfNotNull
 import newsref.dashboard.utils.twoDigits
+import kotlin.time.Duration.Companion.days
+import kotlin.time.Duration.Companion.hours
+import kotlin.time.Duration.Companion.minutes
 
 @Composable
 fun TextCell(
@@ -45,19 +48,14 @@ fun DurationAgoCell(
         Text(emptyEmoji)
     } else {
         val duration = Clock.System.now() - instant
-        val formatted = buildString {
-            val years = duration.inWholeDays / 365
-            if (years > 0) append(years, "y ")
-            val days = duration.inWholeDays % 365
-            if (days > 0) append(days, "d ")
-            val hours = duration.inWholeHours
-            if (hours > 0) append((hours % 24).twoDigits(), ":")
-            val minutes = duration.inWholeMinutes
-            if (minutes > 0) append((minutes % 60).twoDigits(), ":")
-            val seconds = duration.inWholeSeconds
-            append((seconds % 60).twoDigits())
+        val content = when {
+            duration >= 365.days -> "${duration.inWholeDays / 365}y"
+            duration >= 1.days -> "${duration.inWholeDays}d"
+            duration >= 1.hours -> "${duration.inWholeHours}h"
+            duration >= 1.minutes -> "${duration.inWholeMinutes}m"
+            else -> "${duration.inWholeSeconds}s"
         }
-        Text(text = formatted)
+        Text(text = content)
     }
 }
 

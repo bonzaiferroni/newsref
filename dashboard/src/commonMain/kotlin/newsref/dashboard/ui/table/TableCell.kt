@@ -2,6 +2,9 @@ package newsref.dashboard.ui.table
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.hoverable
+import androidx.compose.foundation.interaction.MutableInteractionSource
+import androidx.compose.foundation.interaction.collectIsHoveredAsState
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.PaddingValues
@@ -15,6 +18,8 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.IconButtonDefaults
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.focusProperties
@@ -22,6 +27,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import newsref.dashboard.innerPadding
 import newsref.dashboard.ui.theme.primaryDark
+import newsref.dashboard.utils.SetToolTip
 import newsref.dashboard.utils.modifyIfNotNull
 
 @Composable
@@ -31,24 +37,32 @@ fun <T> RowScope.TableCell(
     color: Color = Color(0f, 0f, 0f, 0f),
     alignCell: AlignCell? = null,
     weight: Float? = null,
+    toolTip: String? = null,
     onClickCell: ((T) -> Unit)? = null,
     controls: List<CellControl<T>> = emptyList(),
     padding: PaddingValues = innerPadding,
     modifier: Modifier = Modifier,
     content: @Composable () -> Unit
 ) {
+    val interactionSource = toolTip?.let { SetToolTip(it) }
+
     Row(
         modifier = modifier
             .modifyIfNotNull(width) { this.width(it.dp) }
             .modifyIfNotNull(weight) { this.weight(it) }
             .background(color = color)
             .padding(padding)
+            .modifyIfNotNull(interactionSource) { this.hoverable(it) }
     ) {
         Box(
             modifier = Modifier.weight(1f)
                 .modifyIfNotNull(onClickCell) { this.clickable(onClick = { it(item!!) }) }
         ) {
-            val alignment = if (alignCell == AlignCell.Right) { Alignment.TopEnd } else { Alignment.TopStart }
+            val alignment = if (alignCell == AlignCell.Right) {
+                Alignment.TopEnd
+            } else {
+                Alignment.TopStart
+            }
             Box(modifier = Modifier.align(alignment)) {
                 content()
             }

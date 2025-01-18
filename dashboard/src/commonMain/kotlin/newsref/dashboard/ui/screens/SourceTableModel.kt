@@ -4,11 +4,8 @@ package newsref.dashboard.ui.screens
 import androidx.lifecycle.viewModelScope
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
-import kotlinx.datetime.Clock
-import kotlinx.datetime.Instant
 import newsref.db.services.SourceService
 import newsref.model.dto.SourceInfo
-import kotlin.time.Duration.Companion.minutes
 
 class SourceTableModel(
     private val sourceService: SourceService = SourceService()
@@ -29,23 +26,23 @@ class SourceTableModel(
         val count = sourceService.getSourceCount()
         if (count == stateNow.count) return
         if (stateNow.paused || firstVisibleIndex > 0) {
-            editState { it.copy(count = count) }
+            setState { it.copy(count = count) }
             return
         }
         val items = sourceService.getSourceInfos(stateNow.topId, 100).sortedByDescending { it.sourceId }
         val topId = items.firstOrNull()?.sourceId ?: 0
 
-        editState { it.copy(
+        setState { it.copy(
             items = (items + stateNow.items).take(100),
             count = count,
             countShown = count,
             topId = topId,
-            previousTopId = stateNow.topId
+            previousTopId = if (stateNow.topId > 0) { stateNow.topId } else { topId }
         ) }
     }
 
     fun togglePause() {
-        editState { it.copy(paused = !it.paused) }
+        setState { it.copy(paused = !it.paused) }
     }
 
     fun trackIndex(index: Int) {
