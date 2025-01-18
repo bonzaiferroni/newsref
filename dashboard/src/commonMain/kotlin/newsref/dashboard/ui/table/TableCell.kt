@@ -72,9 +72,13 @@ fun <T> RowScope.TableCell(
         if (controls.isNotEmpty()) {
             Row() {
                 for (control in controls) {
+                    val controlInteractionSource = control.toolTip?.let { SetToolTip(it) }
+
                     IconButton(
                         onClick = { control.onClick(item!!) },
-                        modifier = Modifier.size(24.dp).focusProperties { canFocus = false },
+                        modifier = Modifier.size(24.dp)
+                            .focusProperties { canFocus = false }
+                            .modifyIfNotNull(controlInteractionSource) { this.hoverable(it) },
                         colors = IconButtonDefaults.iconButtonColors(contentColor = primaryDark),
                     ) {
                         Icon(imageVector = control.icon, contentDescription = "cell control")

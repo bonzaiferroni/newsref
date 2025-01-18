@@ -25,6 +25,7 @@ import newsref.dashboard.halfSpacing
 import newsref.dashboard.innerPadding
 import newsref.dashboard.roundedCorners
 import newsref.dashboard.ui.theme.secondaryContainerDark
+import newsref.dashboard.utils.ToolTip
 
 @Composable
 fun <T> PropertyTable(
@@ -75,10 +76,11 @@ data class PropertyRow<T>(
 
 fun <T> PropertyRow<T>.onClick(block: (T) -> Unit) = this.copy(onClick = block)
 
-fun <T> PropertyRow<T>.addControl(icon: ImageVector, block: (T) -> Unit) =
-    this.copy(controls = this.controls + CellControl(icon, block))
+fun <T> PropertyRow<T>.addControl(icon: ImageVector, toolTip: ToolTip? = null, block: (T) -> Unit) =
+    this.copy(controls = this.controls + CellControl(icon, toolTip, block))
 
 data class CellControl<T>(
     val icon: ImageVector,
+    val toolTip: ToolTip? = null,
     val onClick: (T) -> Unit,
 )

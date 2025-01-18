@@ -123,6 +123,7 @@ fun <T> DataTable(
                         color = bgColor,
                         alignCell = column.alignCell,
                         weight = column.weight,
+                        toolTip = column.cellTip,
                         onClickCell = column.onClickCell,
                         controls = column.controls,
                         modifier = Modifier.alpha(column.alpha)
@@ -142,14 +143,16 @@ data class TableColumn<T>(
     val alpha: Float = 1f,
     val weight: Float? = null,
     val headerTip: ToolTip? = null,
+    val cellTip: ToolTip? = null,
     val onClickCell: ((T) -> Unit)? = null,
     val controls: List<CellControl<T>> = emptyList(),
     val content: @Composable (T) -> Unit
 )
 
-fun <T> TableColumn<T>.onClick(block: (T) -> Unit) = this.copy(onClickCell = block)
-fun <T> TableColumn<T>.addControl(icon: ImageVector, block: (T) -> Unit) =
-    this.copy(controls = this.controls + CellControl(icon, block))
+fun <T> TableColumn<T>.onClick(toolTip: ToolTip? = null, block: (T) -> Unit) =
+    this.copy(onClickCell = block, cellTip = toolTip)
+fun <T> TableColumn<T>.addControl(icon: ImageVector, toolTip: ToolTip? = null, block: (T) -> Unit) =
+    this.copy(controls = this.controls + CellControl(icon, toolTip, block))
 
 fun Color.darken(factor: Float = 0.8f) = this.scaleBrightness(-factor)
 

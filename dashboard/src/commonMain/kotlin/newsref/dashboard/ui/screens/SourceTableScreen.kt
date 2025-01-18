@@ -28,6 +28,7 @@ import newsref.dashboard.ui.table.TextCell
 import newsref.dashboard.ui.table.addControl
 import newsref.dashboard.ui.table.glowOverMin
 import newsref.dashboard.ui.table.onClick
+import newsref.dashboard.utils.TipType
 import newsref.dashboard.utils.ToolTip
 import newsref.dashboard.utils.setRawText
 import newsref.model.dto.SourceInfo
@@ -71,18 +72,18 @@ fun SourceTableScreen(
         onFirstVisibleIndex = viewModel::trackIndex,
         columns = listOf(
             TableColumn<SourceInfo>("headline") { TextCell(it.headline ?: it.pageTitle) }
-                .onClick { navController.navigate(SourceItemRoute(it.sourceId)) },
+                .onClick(ToolTip("Go to source", TipType.Action)) { navController.navigate(SourceItemRoute(it.sourceId)) },
             TableColumn<SourceInfo>("url", alpha = .8f) { TextCell(it.url) }
-                .onClick { uriHandler.openUri(it.url) }
-                .addControl(TablerIcons.Copy) { clipboardManager.setRawText(it.url) },
+                .onClick(ToolTip("Open in browser", TipType.Action)) { uriHandler.openUri(it.url) }
+                .addControl(TablerIcons.Copy, ToolTip("Copy Url", TipType.Action)) { clipboardManager.setRawText(it.url) },
             TableColumn<SourceInfo>("Host", weight = 1f) { TextCell(it.hostName ?: it.hostCore) }
-                .onClick { /* todo: open host */ },
+                .onClick(ToolTip("Go to host")) { /* todo: open host */ },
             TableColumn("Words", 60, AlignCell.Right) { NumberCell(it.wordCount) },
             TableColumn("seenAt", 120, AlignCell.Right, .8f) { DurationAgoCell(it.seenAt) },
             TableColumn("Ds", 30, headerTip = ToolTip("Description")) { EmojiCell("📃", it.description) },
-            TableColumn("HL", 30) { EmojiCell("💈", it.hostLogo) },
-            TableColumn("Im", 30) { EmojiCell("🖼", it.image) },
-            TableColumn("Th", 30) { EmojiCell("💅", it.thumbnail) },
+            TableColumn("HL", 30, headerTip = ToolTip("Host Logo")) { EmojiCell("💈", it.hostLogo) },
+            TableColumn("Im", 30, headerTip = ToolTip("Featured Image")) { EmojiCell("🖼", it.image) },
+            TableColumn("Th", 30, headerTip = ToolTip("Thumbnail")) { EmojiCell("💅", it.thumbnail) },
         )
     )
 }
