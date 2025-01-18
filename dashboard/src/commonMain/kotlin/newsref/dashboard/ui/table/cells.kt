@@ -14,6 +14,7 @@ import androidx.compose.ui.graphics.SolidColor
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
+import com.sun.rowset.internal.Row
 import kotlinx.datetime.Clock
 import kotlinx.datetime.Instant
 import newsref.dashboard.emptyEmoji
@@ -30,7 +31,7 @@ fun <T> TableCell(
     color: Color = Color(0f, 0f, 0f, 0f),
     alignContent: AlignContent? = null,
     onClickCell: ((T) -> Unit)? = null,
-    controls: (List<CellControl<T>>)? = null,
+    controls: List<CellControl<T>> = emptyList(),
     modifier: Modifier = Modifier,
     content: @Composable () -> Unit
 ) {
@@ -38,7 +39,7 @@ fun <T> TableCell(
         horizontalArrangement =
             if (alignContent == AlignContent.Right) {
                 Arrangement.End
-            } else if (controls != null) {
+            } else if (controls.isNotEmpty()) {
                 Arrangement.SpaceBetween
             } else {
                 Arrangement.Start
@@ -46,13 +47,17 @@ fun <T> TableCell(
         modifier = modifier
             .modifyIfNotNull(width, elseBlock = { this.fillMaxWidth() }) { this.width(it.dp) }
             .background(color = color)
-            .modifyIfNotNull(onClickCell) { this.clickable(onClick = { it(item!!) }) }
             .padding(innerPadding)
     ) {
-        content()
+        Box(
+            modifier = Modifier.weight(1f)
+                .modifyIfNotNull(onClickCell) { this.clickable(onClick = { it(item!!) }) }
+        ) {
+            content()
+        }
 
-        if (controls != null) {
-            Row {
+        if (controls.isNotEmpty()) {
+            Row() {
                 for (control in controls) {
                     IconButton(
                         onClick = { control.onClick(item!!) },

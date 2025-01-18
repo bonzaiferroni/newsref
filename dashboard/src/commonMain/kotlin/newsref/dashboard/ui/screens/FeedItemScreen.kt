@@ -21,6 +21,7 @@ import kotlinx.serialization.Serializable
 import newsref.dashboard.*
 import newsref.dashboard.ui.controls.*
 import newsref.dashboard.ui.table.*
+import newsref.dashboard.utils.setRawText
 import newsref.model.data.*
 import kotlin.time.Duration.Companion.minutes
 
@@ -97,5 +98,3 @@ fun FeedRowProperties(
         )
     )
 }
-
-fun ClipboardManager.setRawText(text: String) = setText(buildAnnotatedString { append(text) })

@@ -26,6 +26,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.unit.dp
 import kotlinx.datetime.Clock
 import kotlinx.datetime.Instant
@@ -98,7 +99,7 @@ fun <T> DataTable(
 
             LaunchedEffect(item) {
                 if (isNew != null && isNew(item)) alpha.snapTo(0f)
-                alpha.animateTo(1f, animationSpec = tween(1000, easing = EaseOut))
+                alpha.animateTo(1f, animationSpec = tween(500, delayMillis = 200, easing = EaseOut))
             }
 
             FlowRow(
@@ -117,6 +118,7 @@ fun <T> DataTable(
                         color = bgColor,
                         alignContent = column.alignContent,
                         onClickCell = column.onClickCell,
+                        controls = column.controls,
                         modifier = Modifier.alpha(column.alpha)
                     ) {
                         column.content(item)
@@ -133,10 +135,13 @@ data class TableColumn<T>(
     val alignContent: AlignContent? = null,
     val alpha: Float = 1f,
     val onClickCell: ((T) -> Unit)? = null,
+    val controls: List<CellControl<T>> = emptyList(),
     val content: @Composable (T) -> Unit
 )
 
 fun <T> TableColumn<T>.onClick(block: (T) -> Unit) = this.copy(onClickCell = block)
+fun <T> TableColumn<T>.addControl(icon: ImageVector, block: (T) -> Unit) =
+    this.copy(controls = this.controls + CellControl(icon, block))
 
 fun Color.darken(factor: Float = 0.8f) = this.scaleBrightness(-factor)
 
