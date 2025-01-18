@@ -2,8 +2,10 @@ package newsref.dashboard.ui.table
 
 import androidx.compose.animation.core.Animatable
 import androidx.compose.animation.core.CubicBezierEasing
+import androidx.compose.animation.core.EaseOut
 import androidx.compose.animation.core.FastOutSlowInEasing
 import androidx.compose.animation.core.LinearEasing
+import androidx.compose.animation.core.LinearOutSlowInEasing
 import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.animation.core.tween
 import androidx.compose.foundation.ExperimentalFoundationApi
@@ -13,6 +15,7 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.ExperimentalLayoutApi
 import androidx.compose.foundation.layout.FlowRow
+import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
@@ -69,7 +72,8 @@ fun <T> DataTable(
                     TableCell<T>(
                         width = column.width,
                         color = bgColor,
-                        alignContent = column.alignContent
+                        alignContent = column.alignContent,
+                        modifier = Modifier.alpha(column.alpha)
                     ) {
                         TextCell(text = column.name)
                     }
@@ -86,12 +90,13 @@ fun <T> DataTable(
 
             LaunchedEffect(item) {
                 if (isNew != null && isNew(item)) alpha.snapTo(0f)
-                alpha.animateTo(1f, animationSpec = tween(1200, easing = CubicBezierEasing(0.2f, 0.0f, 0.8f, 1.0f)))
+                alpha.animateTo(1f, animationSpec = tween(1000, easing = EaseOut))
             }
 
             FlowRow(
                 modifier = Modifier.modifyIfNotNull(onClickRow) { this.clickable { it(item) } }
                     .alpha(alpha.value)
+                    .offset(x = ((1 - alpha.value) * 10).dp)
                     .border(2.dp, Color.White.copy(alpha = 0.2f), roundedCorners)
                     .clip(roundedCorners)
                     .background(bgColor)
@@ -103,7 +108,8 @@ fun <T> DataTable(
                         item = item,
                         color = bgColor,
                         alignContent = column.alignContent,
-                        onClickCell = column.onClickCell
+                        onClickCell = column.onClickCell,
+                        modifier = Modifier.alpha(column.alpha)
                     ) {
                         column.content(item)
                     }
@@ -117,6 +123,7 @@ data class TableColumn<T>(
     val name: String,
     val width: Int? = null,
     val alignContent: AlignContent? = null,
+    val alpha: Float = 1f,
     val onClickCell: ((T) -> Unit)? = null,
     val content: @Composable (T) -> Unit
 )

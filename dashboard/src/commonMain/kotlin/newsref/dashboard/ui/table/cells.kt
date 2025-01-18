@@ -75,11 +75,13 @@ enum class AlignContent {
 @Composable
 fun TextCell(
     text: String?,
+    color: Color = MaterialTheme.colorScheme.onSurface,
     modifier: Modifier = Modifier,
     onClick: (() -> Unit)? = null,
 ) {
     Text(
         text = text ?: emptyEmoji,
+        color = color,
         maxLines = 1,
         overflow = TextOverflow.Ellipsis,
         modifier = modifier.modifyIfNotNull(onClick) { this.clickable(onClick = it) }

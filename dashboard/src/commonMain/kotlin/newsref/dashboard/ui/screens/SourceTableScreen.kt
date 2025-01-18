@@ -1,5 +1,6 @@
 package newsref.dashboard.ui.screens
 
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
@@ -46,8 +47,8 @@ fun SourceTableScreen(
         glowFunction = { glowOverMin(it.seenAt) },
         columns = listOf(
             TableColumn("headline") { TextCell(it.headline ?: it.pageTitle) },
-            TableColumn("url") { TextCell(it.url) },
-            TableColumn("seenAt") { DurationAgoCell(it.seenAt) }
+            TableColumn("url", alpha = .8f) { TextCell(it.url) },
+            TableColumn("seenAt", alpha = .8f) { DurationAgoCell(it.seenAt) }
         )
     )
 }
