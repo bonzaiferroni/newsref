@@ -13,9 +13,7 @@ import compose.icons.tablericons.ExternalLink
 import androidx.compose.ui.Alignment
 import kotlinx.datetime.Clock
 import androidx.compose.material3.*
-import androidx.compose.ui.platform.ClipboardManager
 import androidx.compose.ui.platform.LocalClipboardManager
-import androidx.compose.ui.text.buildAnnotatedString
 import compose.icons.tablericons.Copy
 import kotlinx.serialization.Serializable
 import newsref.dashboard.*
@@ -62,12 +60,12 @@ fun FeedItemScreen(
             glowFunction = { glowOverHour(it.freshAt) },
             columns = listOf(
                 TableColumn("Headline") { TextCell(it.feedHeadline) { uriHandler.openUri(it.url.href) } },
-                TableColumn("Fresh", 100, AlignContent.Right) { DurationAgoCell(it.freshAt) },
-                TableColumn("Attempt", 100, AlignContent.Right) { DurationAgoCell(it.lastAttemptAt) },
+                TableColumn("Fresh", 100, AlignCell.Right) { DurationAgoCell(it.freshAt) },
+                TableColumn("Attempt", 100, AlignCell.Right) { DurationAgoCell(it.lastAttemptAt) },
                 TableColumn("Ext", 50) { BooleanCell(it.isExternal) },
-                TableColumn("Links", 50, AlignContent.Right) { TextCell(it.linkCount.toString())},
+                TableColumn("Links", 50, AlignCell.Right) { TextCell(it.linkCount.toString())},
                 TableColumn("Src", 50) { NullableIdCell(it.targetId) { navController.navigate(SourceItemRoute(it)) } },
-                TableColumn("Pos", 50, AlignContent.Right) { TextCell(it.feedPosition) }
+                TableColumn("Pos", 50, AlignCell.Right) { TextCell(it.feedPosition) }
             )
         )
     }

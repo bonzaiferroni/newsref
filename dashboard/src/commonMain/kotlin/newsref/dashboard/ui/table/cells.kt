@@ -1,81 +1,22 @@
 package newsref.dashboard.ui.table
 
-import androidx.compose.foundation.background
-import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.text.BasicTextField
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.focus.focusProperties
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.SolidColor
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
-import com.sun.rowset.internal.Row
 import kotlinx.datetime.Clock
 import kotlinx.datetime.Instant
 import newsref.dashboard.emptyEmoji
-import newsref.dashboard.innerPadding
-import newsref.dashboard.ui.theme.primaryDark
 import newsref.dashboard.utils.changeFocusWithTab
 import newsref.dashboard.utils.modifyIfNotNull
 import newsref.dashboard.utils.twoDigits
-
-@Composable
-fun <T> TableCell(
-    width: Int? = null,
-    item: T? = null,
-    color: Color = Color(0f, 0f, 0f, 0f),
-    alignContent: AlignContent? = null,
-    onClickCell: ((T) -> Unit)? = null,
-    controls: List<CellControl<T>> = emptyList(),
-    modifier: Modifier = Modifier,
-    content: @Composable () -> Unit
-) {
-    Row(
-        horizontalArrangement =
-            if (alignContent == AlignContent.Right) {
-                Arrangement.End
-            } else if (controls.isNotEmpty()) {
-                Arrangement.SpaceBetween
-            } else {
-                Arrangement.Start
-            },
-        modifier = modifier
-            .modifyIfNotNull(width, elseBlock = { this.fillMaxWidth() }) { this.width(it.dp) }
-            .background(color = color)
-            .padding(innerPadding)
-    ) {
-        Box(
-            modifier = Modifier.weight(1f)
-                .modifyIfNotNull(onClickCell) { this.clickable(onClick = { it(item!!) }) }
-        ) {
-            content()
-        }
-
-        if (controls.isNotEmpty()) {
-            Row() {
-                for (control in controls) {
-                    IconButton(
-                        onClick = { control.onClick(item!!) },
-                        modifier = Modifier.size(24.dp).focusProperties { canFocus = false },
-                        colors = IconButtonDefaults.iconButtonColors(contentColor = primaryDark),
-                    ) {
-                        Icon(imageVector = control.icon, contentDescription = "cell control")
-                    }
-                }
-            }
-        }
-    }
-}
-
-enum class AlignContent {
-    Left,
-    Right
-}
 
 @Composable
 fun TextCell(
@@ -172,4 +113,26 @@ fun NullableIdCell(
     } else {
         Text("👉", modifier = Modifier.clickable { action(id) })
     }
+}
+
+@Composable
+fun <T> EmojiCell(
+    emoji: String,
+    item: T?
+) {
+    val content = if (item == null) { emptyEmoji } else { emoji }
+    Text(content)
+}
+
+@Composable
+fun NumberCell(
+    number: Int?
+) {
+    val content = when {
+        number == null -> emptyEmoji
+        number > 1_000_000 -> "%.1fm".format(number / 1_000_000.0)
+        number > 1_000 -> "%.1fk".format(number / 1_000.0)
+        else -> "$number"
+    }
+    Text(content)
 }
