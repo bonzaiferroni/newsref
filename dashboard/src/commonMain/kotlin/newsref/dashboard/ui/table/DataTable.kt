@@ -82,6 +82,7 @@ fun <T> DataTable(
                         width = column.width,
                         color = bgColor,
                         alignCell = column.alignCell,
+                        weight = column.weight,
                         modifier = Modifier.alpha(column.alpha)
                     ) {
                         TextCell(text = column.name)
@@ -117,6 +118,7 @@ fun <T> DataTable(
                         item = item,
                         color = bgColor,
                         alignCell = column.alignCell,
+                        weight = column.weight,
                         onClickCell = column.onClickCell,
                         controls = column.controls,
                         modifier = Modifier.alpha(column.alpha)
@@ -134,6 +136,7 @@ data class TableColumn<T>(
     val width: Int? = null,
     val alignCell: AlignCell? = null,
     val alpha: Float = 1f,
+    val weight: Float? = null,
     val onClickCell: ((T) -> Unit)? = null,
     val controls: List<CellControl<T>> = emptyList(),
     val content: @Composable (T) -> Unit

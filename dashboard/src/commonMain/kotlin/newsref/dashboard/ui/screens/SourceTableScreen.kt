@@ -74,7 +74,7 @@ fun SourceTableScreen(
             TableColumn<SourceInfo>("url", alpha = .8f) { TextCell(it.url) }
                 .onClick { uriHandler.openUri(it.url) }
                 .addControl(TablerIcons.Copy) { clipboardManager.setRawText(it.url) },
-            TableColumn<SourceInfo>("Host", 200) { TextCell(it.hostName ?: it.hostCore) }
+            TableColumn<SourceInfo>("Host", weight = 1f) { TextCell(it.hostName ?: it.hostCore) }
                 .onClick { /* todo: open host */ },
             TableColumn("Words", 60, AlignCell.Right) { NumberCell(it.wordCount) },
             TableColumn("seenAt", 120, AlignCell.Right, .8f) { DurationAgoCell(it.seenAt) },

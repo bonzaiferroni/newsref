@@ -20,6 +20,7 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.unit.dp
+import newsref.dashboard.halfPadding
 import newsref.dashboard.halfSpacing
 import newsref.dashboard.innerPadding
 import newsref.dashboard.roundedCorners
@@ -36,31 +37,26 @@ fun <T> PropertyTable(
         Text(text = name, style = MaterialTheme.typography.headlineSmall)
         Spacer(modifier = Modifier.height(halfSpacing))
 
-        Row(
+        Column(
             modifier = Modifier.clip(roundedCorners)
                 .border(2.dp, Color.White.copy(alpha = 0.2f), roundedCorners)
         ) {
-            Column(
-                modifier = Modifier.width(IntrinsicSize.Max)
-                    .background(color.darken(.5f))
-                    .padding(innerPadding)
-            ) {
-                for (property in properties) {
-                    TableCell<T>() {
+            for (property in properties) {
+                Row {
+                    TableCell<T>(
+                        color = color.darken(.5f),
+                        width = 100,
+                        alignCell = AlignCell.Right,
+                        padding = halfPadding
+                    ) {
                         TextCell(property.name)
                     }
-                }
-            }
-            Column(
-                modifier = Modifier
-                    .background(color)
-                    .padding(innerPadding)
-            ) {
-                for (property in properties) {
                     TableCell<T>(
                         item = item,
+                        color = color,
                         onClickCell = property.onClick,
-                        controls = property.controls
+                        controls = property.controls,
+                        padding = halfPadding
                     ) {
                         property.content(item)
                     }

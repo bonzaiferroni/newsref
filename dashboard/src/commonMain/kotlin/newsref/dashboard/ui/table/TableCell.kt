@@ -4,7 +4,9 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.RowScope
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
@@ -23,21 +25,24 @@ import newsref.dashboard.ui.theme.primaryDark
 import newsref.dashboard.utils.modifyIfNotNull
 
 @Composable
-fun <T> TableCell(
+fun <T> RowScope.TableCell(
     width: Int? = null,
     item: T? = null,
     color: Color = Color(0f, 0f, 0f, 0f),
     alignCell: AlignCell? = null,
+    weight: Float? = null,
     onClickCell: ((T) -> Unit)? = null,
     controls: List<CellControl<T>> = emptyList(),
+    padding: PaddingValues = innerPadding,
     modifier: Modifier = Modifier,
     content: @Composable () -> Unit
 ) {
     Row(
         modifier = modifier
-            .modifyIfNotNull(width, elseBlock = { this.fillMaxWidth() }) { this.width(it.dp) }
+            .modifyIfNotNull(width) { this.width(it.dp) }
+            .modifyIfNotNull(weight) { this.weight(it) }
             .background(color = color)
-            .padding(innerPadding)
+            .padding(padding)
     ) {
         Box(
             modifier = Modifier.weight(1f)
