@@ -1,12 +1,7 @@
 package newsref.dashboard.ui.table
 
 import androidx.compose.animation.core.Animatable
-import androidx.compose.animation.core.CubicBezierEasing
 import androidx.compose.animation.core.EaseOut
-import androidx.compose.animation.core.FastOutSlowInEasing
-import androidx.compose.animation.core.LinearEasing
-import androidx.compose.animation.core.LinearOutSlowInEasing
-import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.animation.core.tween
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.background
@@ -19,15 +14,14 @@ import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.SideEffect
+import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.draw.clip
@@ -51,10 +45,24 @@ fun <T> DataTable(
     isNew: ((T) -> Boolean)? = null,
     color: Color = primaryContainerDark.darken(.5f),
     glowFunction: ((T) -> Float?)? = null,
+    onFirstVisibleIndex: ((Int) -> Unit)? = null,
     onClickRow: ((T) -> Unit)? = null
 ) {
+    // Create a LazyListState
+    val listState = rememberLazyListState()
+
+    // Observe scroll position using derived state
+    val firstVisibleIndex by remember {
+        derivedStateOf { listState.firstVisibleItemIndex }
+    }
+
+    LaunchedEffect(firstVisibleIndex) {
+        if (onFirstVisibleIndex != null) onFirstVisibleIndex(firstVisibleIndex)
+    }
+
     LazyColumn(
-        verticalArrangement = Arrangement.spacedBy(halfSpacing)
+        verticalArrangement = Arrangement.spacedBy(halfSpacing),
+        state = listState
     ) {
         item {
             Text(text = name, style = MaterialTheme.typography.headlineSmall)
