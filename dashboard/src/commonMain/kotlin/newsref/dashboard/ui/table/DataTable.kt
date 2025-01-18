@@ -1,6 +1,7 @@
 package newsref.dashboard.ui.table
 
 import androidx.compose.animation.core.Animatable
+import androidx.compose.animation.core.CubicBezierEasing
 import androidx.compose.animation.core.FastOutSlowInEasing
 import androidx.compose.animation.core.LinearEasing
 import androidx.compose.animation.core.animateFloatAsState
@@ -19,6 +20,7 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.SideEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -33,6 +35,7 @@ import kotlinx.datetime.Instant
 import newsref.dashboard.halfSpacing
 import newsref.dashboard.innerPadding
 import newsref.dashboard.roundedCorners
+import newsref.dashboard.roundedHeader
 import newsref.dashboard.ui.theme.primaryContainerDark
 import newsref.dashboard.utils.modifyIfNotNull
 
@@ -57,8 +60,8 @@ fun <T> DataTable(
             val bgColor = color.darken(.5f)
             FlowRow(
                 modifier = Modifier
-                    .border(2.dp, Color.White.copy(alpha = 0.2f), roundedCorners)
-                    .clip(roundedCorners)
+                    .border(2.dp, Color.White.copy(alpha = 0.2f), roundedHeader)
+                    .clip(roundedHeader)
                     .background(bgColor)
                     .padding(innerPadding)
             ) {
@@ -78,12 +81,12 @@ fun <T> DataTable(
             val bgColor =  glowFunction?.let { function ->
                 function(item)?.let { color.scaleBrightness(it * .5f) }
             } ?: color
-
-            var alpha = remember { Animatable(1f) } // Start fully transparent
+            val initialValue = if (isNew != null && isNew(item)) 0f else 1f
+            var alpha = remember { Animatable(initialValue) } // Start fully transparent
 
             LaunchedEffect(item) {
                 if (isNew != null && isNew(item)) alpha.snapTo(0f)
-                alpha.animateTo(1f, animationSpec = tween(1000, easing = FastOutSlowInEasing))
+                alpha.animateTo(1f, animationSpec = tween(1200, easing = CubicBezierEasing(0.2f, 0.0f, 0.8f, 1.0f)))
             }
 
             FlowRow(
