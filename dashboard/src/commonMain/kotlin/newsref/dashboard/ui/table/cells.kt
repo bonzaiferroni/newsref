@@ -105,8 +105,10 @@ fun DurationAgoCell(
     } else {
         val duration = Clock.System.now() - instant
         val formatted = buildString {
-            val days = duration.inWholeDays
-            if (days > 0) append(days, ":")
+            val years = duration.inWholeDays / 365
+            if (years > 0) append(years, "y ")
+            val days = duration.inWholeDays % 365
+            if (days > 0) append(days, "d ")
             val hours = duration.inWholeHours
             if (hours > 0) append((hours % 24).twoDigits(), ":")
             val minutes = duration.inWholeMinutes
