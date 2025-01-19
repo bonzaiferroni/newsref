@@ -25,10 +25,15 @@ class SourceItemModel(
             source = source
         ) }
     }
+
+    fun changePage(page: String) {
+        setState { it.copy(page = page) }
+    }
 }
 
 data class SourceRowState(
     val sourceId: Long,
     val nextRefresh: Instant = Instant.DISTANT_PAST,
     val source: SourceInfo? = null,
+    val page: String = "",
 )

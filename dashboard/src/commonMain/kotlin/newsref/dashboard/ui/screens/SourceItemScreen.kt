@@ -9,6 +9,8 @@ import androidx.navigation.NavController
 import androidx.lifecycle.viewmodel.compose.viewModel
 import kotlinx.serialization.Serializable
 import newsref.dashboard.ScreenRoute
+import newsref.dashboard.ui.controls.TabFolder
+import newsref.dashboard.ui.controls.TabPage
 import newsref.dashboard.ui.table.DurationAgoCell
 import newsref.dashboard.ui.table.PropertyRow
 import newsref.dashboard.ui.table.PropertyTable
@@ -31,21 +33,16 @@ fun SourceItemScreen(
     if (item == null) {
         Text("Fetching Source with id: ${route.sourceId}")
     } else {
-        PropertyTable(
-            name = "Source ${route.sourceId}",
-            item = item,
-            properties = listOf(
-                PropertyRow("Url") { TextCell(it.url) },
-                PropertyRow("Title") { TextCell(it.pageTitle) },
-                PropertyRow("Headline") { TextCell(it.headline) },
-                PropertyRow("Score") { TextCell(it.score) },
-                PropertyRow("Description") { TextCell(it.description) },
-                PropertyRow("Host") { TextCell(it.hostCore) },
-                PropertyRow("Section") { TextCell(it.section) },
-                PropertyRow("Image") { TextCell(it.image) },
-                PropertyRow("Thumbnail") { TextCell(it.thumbnail) },
-                PropertyRow("Seen") { DurationAgoCell(it.seenAt) },
-                PropertyRow("Published") { DurationAgoCell(it.publishedAt) }
+        TabFolder(
+            currentPageName = state.page,
+            onChangePage = viewModel::changePage,
+            pages = listOf(
+                TabPage("Data") {
+                    SourceDataView(item)
+                },
+                TabPage("Article") {
+                    Text("Eyyyy")
+                }
             )
         )
     }
