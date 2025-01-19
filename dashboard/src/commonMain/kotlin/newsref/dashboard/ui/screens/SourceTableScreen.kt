@@ -35,9 +35,6 @@ import newsref.dashboard.utils.ToolTip
 import newsref.dashboard.utils.setRawText
 import newsref.model.dto.SourceInfo
 
-@Serializable
-object SourceTableRoute : ScreenRoute("Sources")
-
 @Composable
 fun SourceTableScreen(
     navController: NavController,

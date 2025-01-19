@@ -23,9 +23,6 @@ import newsref.dashboard.utils.setRawText
 import newsref.model.data.*
 import kotlin.time.Duration.Companion.minutes
 
-@Serializable
-data class FeedItemRoute(val feedId: Int) : ScreenRoute("Feed Item")
-
 @Composable
 fun FeedItemScreen(
     route: FeedItemRoute,

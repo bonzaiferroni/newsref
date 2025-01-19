@@ -10,9 +10,6 @@ import newsref.dashboard.*
 import newsref.dashboard.ui.table.*
 import androidx.compose.material3.*
 
-@Serializable
-object FeedTableRoute : ScreenRoute("Feed Table")
-
 @Composable
 fun FeedTableScreen(
     navController: NavController,

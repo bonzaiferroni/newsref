@@ -35,9 +35,6 @@ import compose.icons.TablerIcons
 import compose.icons.tablericons.FileInfo
 import compose.icons.tablericons.Home
 import compose.icons.tablericons.Rss
-import newsref.dashboard.ui.screens.FeedTableRoute
-import newsref.dashboard.ui.screens.SourceTableRoute
-import newsref.dashboard.ui.screens.StartRoute
 import newsref.dashboard.utils.LocalToolTipper
 import newsref.dashboard.utils.ToolTipperModel
 
@@ -45,6 +42,7 @@ import newsref.dashboard.utils.ToolTipperModel
 fun Navigator(
     startRoute: ScreenRoute,
     context: AppContext,
+    changeRoute: (ScreenRoute) -> Unit,
     navController: NavHostController = rememberNavController(),
     viewModel: NavigatorModel = viewModel { NavigatorModel(startRoute) }
 ) {
@@ -54,6 +52,7 @@ fun Navigator(
     LaunchedEffect(destination) {
         if (destination != null) {
             navController.navigate(destination)
+            changeRoute(destination)
         }
     }
 

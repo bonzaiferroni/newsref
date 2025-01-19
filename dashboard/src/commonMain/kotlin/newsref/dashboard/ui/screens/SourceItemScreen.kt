@@ -25,6 +25,7 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import coil3.compose.AsyncImage
 import kotlinx.serialization.Serializable
 import newsref.dashboard.ScreenRoute
+import newsref.dashboard.SourceItemRoute
 import newsref.dashboard.baseSpacing
 import newsref.dashboard.halfPadding
 import newsref.dashboard.halfSpacing

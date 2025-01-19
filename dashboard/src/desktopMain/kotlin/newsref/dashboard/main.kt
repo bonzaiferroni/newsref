@@ -8,19 +8,27 @@ import androidx.compose.ui.window.rememberWindowState
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.json.Json
 import kotlinx.serialization.serializer
+import newsref.dashboard.AppData
 import java.io.File
 
 fun main() = application {
     // look for a file appdata.json and get initial width and height
-    val appData = getAppData()
+    var appData = getAppData() ?: AppData()
 
     val windowState = rememberWindowState(
-        width = (appData?.width ?: 600).dp,
-        height = (appData?.height ?: 800).dp,
+        width = appData.width.dp,
+        height = appData.height.dp,
     )
 
     LaunchedEffect(windowState.size) {
-        saveSize(windowState.size)
+        val size = windowState.size
+        appData = appData.copy(width = size.width.value.toInt(), height = size.height.value.toInt())
+        saveAppData(appData)
+    }
+
+    val cacheRoute = { route: ScreenRoute ->
+        appData = appData.copy(route = route)
+        saveAppData(appData)
     }
 
     Window(
@@ -29,6 +37,6 @@ fun main() = application {
         title = "Newsref Dashboard",
         undecorated = true,
     ) {
-        App(::exitApplication)
+        App(appData.route, cacheRoute, ::exitApplication)
     }
 }

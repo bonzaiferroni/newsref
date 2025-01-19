@@ -7,14 +7,9 @@ import kotlinx.datetime.Clock
 import kotlinx.datetime.Instant
 import kotlinx.serialization.Serializable
 import newsref.dashboard.ScreenRoute
+import newsref.dashboard.SourceItemRoute
 import newsref.db.services.SourceService
 import newsref.model.dto.SourceInfo
-
-@Serializable
-data class SourceItemRoute(
-    val sourceId: Long,
-    val pageName: String = "",
-) : ScreenRoute("Source Item")
 
 class SourceItemModel(
     route: SourceItemRoute,

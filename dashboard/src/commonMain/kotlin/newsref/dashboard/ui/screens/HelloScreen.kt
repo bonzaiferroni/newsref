@@ -13,10 +13,9 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.serialization.Serializable
+import newsref.dashboard.HelloRoute
 import newsref.dashboard.ScreenRoute
-
-@Serializable
-data class HelloRoute(val name: String) : ScreenRoute("Hello")
+import newsref.dashboard.StartRoute
 
 @Composable
 fun HelloScreen(

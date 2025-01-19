@@ -16,13 +16,11 @@ import androidx.compose.ui.Modifier
 import androidx.navigation.NavHostController
 import kotlinx.serialization.Serializable
 import newsref.dashboard.Greeting
+import newsref.dashboard.HelloRoute
 import newsref.dashboard.ScreenRoute
 import newsref.dashboard.generated.resources.Res
 import newsref.dashboard.generated.resources.compose_multiplatform
 import org.jetbrains.compose.resources.painterResource
-
-@Serializable
-object StartRoute : ScreenRoute("Start")
 
 @Composable
 fun StartScreen(navController: NavHostController) {

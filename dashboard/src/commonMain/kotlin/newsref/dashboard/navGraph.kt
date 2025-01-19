@@ -13,17 +13,11 @@ import androidx.navigation.NavHostController
 import androidx.navigation.compose.composable
 import androidx.navigation.toRoute
 import kotlinx.serialization.Serializable
-import newsref.dashboard.ui.screens.FeedItemRoute
 import newsref.dashboard.ui.screens.FeedItemScreen
-import newsref.dashboard.ui.screens.FeedTableRoute
 import newsref.dashboard.ui.screens.FeedTableScreen
-import newsref.dashboard.ui.screens.HelloRoute
 import newsref.dashboard.ui.screens.HelloScreen
-import newsref.dashboard.ui.screens.SourceItemRoute
 import newsref.dashboard.ui.screens.SourceItemScreen
-import newsref.dashboard.ui.screens.SourceTableRoute
 import newsref.dashboard.ui.screens.SourceTableScreen
-import newsref.dashboard.ui.screens.StartRoute
 import newsref.dashboard.ui.screens.StartScreen
 
 fun NavGraphBuilder.navGraph(
