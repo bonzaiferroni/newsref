@@ -9,7 +9,7 @@ import newsref.model.dto.SourceInfo
 class SourceContentModel(
     source: SourceInfo,
     private val contentService: ContentService = ContentService(),
-) : ScreenModel<SourceContentState>(SourceContentState(source)) {
+) : StateModel<SourceContentState>(SourceContentState(source)) {
 
     init {
         viewModelScope.launch {

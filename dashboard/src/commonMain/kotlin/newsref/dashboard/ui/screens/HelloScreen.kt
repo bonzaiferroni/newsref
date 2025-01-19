@@ -7,7 +7,6 @@ import androidx.compose.material3.TextField
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
-import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -25,7 +24,7 @@ fun HelloScreen(
     navController: NavHostController,
     viewModel: HelloModel = viewModel { HelloModel(route) },
 ) {
-    val uiState by viewModel.uiState.collectAsState()
+    val uiState by viewModel.state.collectAsState()
     Column {
         TextField(value = uiState.name, onValueChange = viewModel::changeName)
         Text("Hello ${uiState.name}!")
@@ -35,12 +34,10 @@ fun HelloScreen(
     }
 }
 
-class HelloModel(route: HelloRoute) : ViewModel() {
-    private val _uiState = MutableStateFlow(HelloState(route.name))
-    val uiState: StateFlow<HelloState> = _uiState.asStateFlow()
+class HelloModel(route: HelloRoute) : StateModel<HelloState>(HelloState(route.name)) {
 
     fun changeName(newName: String) {
-        _uiState.value = _uiState.value.copy(name = newName)
+        setState { it.copy(name = newName) }
     }
 }
 

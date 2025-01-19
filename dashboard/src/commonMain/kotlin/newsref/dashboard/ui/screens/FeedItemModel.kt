@@ -16,7 +16,7 @@ class FeedItemModel(
     private val route: FeedItemRoute,
     private val feedService: FeedService = FeedService(),
     private val leadService: LeadService = LeadService(),
-) : ScreenModel<FeedItemState>(FeedItemState(route.feedId)) {
+) : StateModel<FeedItemState>(FeedItemState(route.feedId)) {
     
     init {
         viewModelScope.launch {

@@ -15,7 +15,7 @@ import kotlin.time.Duration.Companion.minutes
 class FeedTableModel(
     private val feedService: FeedService = FeedService(),
     private val leadService: LeadService = LeadService(),
-) : ScreenModel<FeedTableState>(FeedTableState()) {
+) : StateModel<FeedTableState>(FeedTableState()) {
 
     init {
         viewModelScope.launch {

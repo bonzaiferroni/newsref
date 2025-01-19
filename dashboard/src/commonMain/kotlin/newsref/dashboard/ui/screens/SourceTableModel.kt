@@ -9,7 +9,7 @@ import newsref.model.dto.SourceInfo
 
 class SourceTableModel(
     private val sourceService: SourceService = SourceService()
-) : ScreenModel<SourceTableState>(SourceTableState()) {
+) : StateModel<SourceTableState>(SourceTableState()) {
 
     private var firstVisibleIndex = 0
 

@@ -19,7 +19,7 @@ data class SourceItemRoute(
 class SourceItemModel(
     route: SourceItemRoute,
     private val sourceService: SourceService = SourceService(),
-) : ScreenModel<SourceRowState>(
+) : StateModel<SourceRowState>(
     SourceRowState(
         sourceId = route.sourceId,
         page = route.pageName

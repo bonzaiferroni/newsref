@@ -4,16 +4,12 @@ import androidx.compose.animation.core.Animatable
 import androidx.compose.animation.core.EaseOut
 import androidx.compose.animation.core.tween
 import androidx.compose.foundation.interaction.InteractionSource
-import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.interaction.collectIsHoveredAsState
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.width
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
@@ -24,19 +20,17 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.compositionLocalOf
-import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
-import androidx.compose.ui.input.pointer.pointerInput
 import androidx.lifecycle.viewmodel.compose.viewModel
 import compose.icons.TablerIcons
 import compose.icons.tablericons.Click
 import compose.icons.tablericons.InfoCircle
 import newsref.dashboard.halfPadding
 import newsref.dashboard.halfSpacing
-import newsref.dashboard.ui.screens.ScreenModel
+import newsref.dashboard.ui.screens.StateModel
 
 @Composable
 fun ToolTipper(
@@ -82,7 +76,7 @@ fun ToolTipper(
     }
 }
 
-class ToolTipperModel : ScreenModel<ToolTipperState>(ToolTipperState()) {
+class ToolTipperModel : StateModel<ToolTipperState>(ToolTipperState()) {
     fun setTip(tip: ToolTip) {
         setState { it.copy(tooltip = tip, isVisible = true) }
     }
