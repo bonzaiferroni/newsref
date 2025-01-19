@@ -1,12 +1,15 @@
 package newsref.dashboard.ui.screens
 
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.text.selection.SelectionContainer
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.lifecycle.viewmodel.compose.viewModel
+import coil3.compose.AsyncImage
 import newsref.dashboard.halfSpacing
 import newsref.model.dto.SourceInfo
 
@@ -19,8 +22,17 @@ fun SourceContentView(
     Column(
         verticalArrangement = Arrangement.spacedBy(halfSpacing)
     ) {
+        val image = state.source.image
+        if (image != null) {
+            AsyncImage(
+                model = image,
+                contentDescription = null,
+            )
+        }
         for (content in state.contents) {
-            Text(content.text)
+            SelectionContainer {
+                Text(content.text)
+            }
         }
     }
 }
