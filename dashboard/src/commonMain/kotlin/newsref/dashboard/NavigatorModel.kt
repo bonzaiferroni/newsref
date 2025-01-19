@@ -7,7 +7,7 @@ class NavigatorModel(
 ) : StateModel<NavigatorState>(NavigatorState(initialRoute)) {
 
     fun go(route: ScreenRoute) {
-        setState { state -> state.copy(destination = route) }
+        setState { state -> state.copy(route = route, destination = route) }
     }
 
     fun setRoute(route: ScreenRoute) {

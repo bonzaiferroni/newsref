@@ -35,6 +35,7 @@ import compose.icons.TablerIcons
 import compose.icons.tablericons.FileInfo
 import compose.icons.tablericons.Home
 import compose.icons.tablericons.Rss
+import kotlinx.coroutines.flow.MutableStateFlow
 import newsref.dashboard.utils.LocalToolTipper
 import newsref.dashboard.utils.ToolTipperModel
 
@@ -52,8 +53,10 @@ fun Navigator(
     LaunchedEffect(destination) {
         if (destination != null) {
             navController.navigate(destination)
-            changeRoute(destination)
         }
+    }
+    LaunchedEffect(state.route) {
+        changeRoute(state.route)
     }
 
     CompositionLocalProvider(LocalNavigator provides viewModel) {

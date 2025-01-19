@@ -16,6 +16,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.material3.*
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalUriHandler
@@ -24,6 +25,7 @@ import androidx.navigation.NavController
 import androidx.lifecycle.viewmodel.compose.viewModel
 import coil3.compose.AsyncImage
 import kotlinx.serialization.Serializable
+import newsref.dashboard.LocalNavigator
 import newsref.dashboard.ScreenRoute
 import newsref.dashboard.SourceItemRoute
 import newsref.dashboard.baseSpacing
@@ -44,6 +46,8 @@ fun SourceItemScreen(
     val state by viewModel.state.collectAsState()
     val item = state.source
     val uriHandler = LocalUriHandler.current
+    val nav = LocalNavigator.current
+
     if (item == null) {
         Text("Fetching Source with id: ${route.sourceId}")
     } else {
@@ -92,7 +96,10 @@ fun SourceItemScreen(
             }
             TabFolder(
                 currentPageName = state.page,
-                onChangePage = viewModel::changePage,
+                onChangePage = {
+                    viewModel.changePage(it)
+                    nav.setRoute(route.copy(pageName = it))
+                },
                 pages = listOf(
                     TabPage("Data") {
                         SourceDataView(item)

@@ -1,19 +1,18 @@
 package newsref.dashboard
 
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Window
 import androidx.compose.ui.window.application
 import androidx.compose.ui.window.rememberWindowState
-import kotlinx.serialization.Serializable
-import kotlinx.serialization.json.Json
-import kotlinx.serialization.serializer
-import newsref.dashboard.AppData
-import java.io.File
 
 fun main() = application {
     // look for a file appdata.json and get initial width and height
-    var appData = getAppData() ?: AppData()
+    var appData by remember { mutableStateOf(getAppData() ?: AppData()) }
 
     val windowState = rememberWindowState(
         width = appData.width.dp,
@@ -27,8 +26,10 @@ fun main() = application {
     }
 
     val cacheRoute = { route: ScreenRoute ->
-        appData = appData.copy(route = route)
-        saveAppData(appData)
+        if (route != appData.route) {
+            appData = appData.copy(route = route)
+            saveAppData(appData)
+        }
     }
 
     Window(
