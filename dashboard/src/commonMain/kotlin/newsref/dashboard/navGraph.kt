@@ -23,36 +23,38 @@ import newsref.dashboard.ui.screens.SourceItemRoute
 import newsref.dashboard.ui.screens.SourceItemScreen
 import newsref.dashboard.ui.screens.SourceTableRoute
 import newsref.dashboard.ui.screens.SourceTableScreen
-
-@Serializable
-open class ScreenRoute(val title: String = "Title") {
-}
+import newsref.dashboard.ui.screens.StartRoute
+import newsref.dashboard.ui.screens.StartScreen
 
 fun NavGraphBuilder.navGraph(
-    routeState: MutableState<ScreenRoute>,
     navController: NavHostController
 ) {
-    routeComposable<SourceTableRoute>(routeState) {
+    routeComposable<StartRoute> {
+        DefaultSurface {
+            StartScreen(navController)
+        }
+    }
+    routeComposable<SourceTableRoute> {
         DefaultSurface {
             SourceTableScreen(navController)
         }
     }
-    routeComposable<SourceItemRoute>(routeState) { route ->
+    routeComposable<SourceItemRoute> { route ->
         DefaultSurface {
             SourceItemScreen(route, navController)
         }
     }
-    routeComposable<FeedTableRoute>(routeState) {
+    routeComposable<FeedTableRoute> {
         DefaultSurface {
             FeedTableScreen(navController)
         }
     }
-    routeComposable<HelloRoute>(routeState) { route ->
+    routeComposable<HelloRoute> { route ->
         DefaultSurface {
             HelloScreen(route, navController)
         }
     }
-    routeComposable<FeedItemRoute>(routeState) { route ->
+    routeComposable<FeedItemRoute> { route ->
         DefaultSurface {
             FeedItemScreen(route, navController)
         }
@@ -60,12 +62,10 @@ fun NavGraphBuilder.navGraph(
 }
 
 inline fun <reified T: ScreenRoute> NavGraphBuilder.routeComposable(
-    routeState: MutableState<ScreenRoute>,
     crossinline content: @Composable (T) -> Unit
 ) {
     composable<T> { backStackEntry ->
         val route: T = backStackEntry.toRoute()
-        routeState.value = route
         content(route)
     }
 }

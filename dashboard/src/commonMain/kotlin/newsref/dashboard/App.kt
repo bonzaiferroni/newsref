@@ -2,8 +2,7 @@ package newsref.dashboard
 
 import org.jetbrains.compose.ui.tooling.preview.Preview
 import androidx.compose.runtime.Composable
-import newsref.dashboard.ui.screens.SourceItemRoute
-import newsref.dashboard.ui.screens.SourceTableRoute
+import newsref.dashboard.ui.screens.StartRoute
 
 import newsref.dashboard.ui.theme.AppTheme
 import newsref.dashboard.utils.ToolTipper
@@ -18,7 +17,7 @@ fun App(
     val context = AppContext(exitApp)
     AppTheme(true) {
         ToolTipper {
-            AppNavigator(SourceItemRoute(57974, "Content"), context)
+            Navigator(StartRoute, context)
         }
     }
 }

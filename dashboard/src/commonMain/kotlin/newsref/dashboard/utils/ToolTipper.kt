@@ -87,17 +87,6 @@ class ToolTipperModel : StateModel<ToolTipperState>(ToolTipperState()) {
     }
 }
 
-@Composable
-fun SetToolTip(tip: ToolTip, interactionSource: InteractionSource) {
-    val isHovered by interactionSource.collectIsHoveredAsState()
-    val toolTipper = LocalToolTipper.current
-    if (isHovered) {
-        toolTipper.setTip(tip)
-    } else {
-        toolTipper.releaseTip(tip)
-    }
-}
-
 data class ToolTipperState(
     val tooltip: ToolTip = ToolTip("Hello Cupcake"),
     val isVisible: Boolean = false,
@@ -111,6 +100,17 @@ data class ToolTip(
 enum class TipType {
     Information,
     Action
+}
+
+@Composable
+fun SetToolTip(tip: ToolTip, interactionSource: InteractionSource) {
+    val isHovered by interactionSource.collectIsHoveredAsState()
+    val toolTipper = LocalToolTipper.current
+    if (isHovered) {
+        toolTipper.setTip(tip)
+    } else {
+        toolTipper.releaseTip(tip)
+    }
 }
 
 val LocalToolTipper = compositionLocalOf<ToolTipperModel> {

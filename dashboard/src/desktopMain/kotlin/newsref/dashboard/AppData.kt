@@ -3,6 +3,7 @@ package newsref.dashboard
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.json.Json
 import kotlinx.serialization.serializer
+import newsref.dashboard.ui.screens.StartRoute
 import java.io.File
 
 fun getAppData(): AppData? {
@@ -16,10 +17,15 @@ fun saveSize(size: androidx.compose.ui.unit.DpSize) {
     File(fileName).writeText(Json.encodeToString(serializer(), appData))
 }
 
+fun cacheRoute(route: ScreenRoute) {
+
+}
+
 private const val fileName = "appdata.json"
 
 @Serializable
 class AppData(
     val width: Int?,
     val height: Int?,
+    val route: ScreenRoute = StartRoute,
 )
