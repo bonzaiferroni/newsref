@@ -1,44 +1,85 @@
 package newsref.dashboard.ui.screens
 
-import androidx.compose.animation.AnimatedVisibility
-import androidx.compose.foundation.Image
+import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.IntrinsicSize
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.material3.Button
-import androidx.compose.material3.Text
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.text.selection.SelectionContainer
+import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.navigation.NavHostController
-import kotlinx.serialization.Serializable
-import newsref.dashboard.Greeting
-import newsref.dashboard.HelloRoute
+import androidx.compose.ui.unit.dp
+import androidx.lifecycle.viewmodel.compose.viewModel
+import coil3.compose.AsyncImage
 import newsref.dashboard.LocalNavigator
-import newsref.dashboard.ScreenRoute
-import newsref.dashboard.generated.resources.Res
-import newsref.dashboard.generated.resources.compose_multiplatform
-import org.jetbrains.compose.resources.painterResource
+import newsref.dashboard.SourceItemRoute
+import newsref.dashboard.StartRoute
+import newsref.dashboard.halfPadding
+import newsref.dashboard.halfSpacing
 
 @Composable
-fun StartScreen() {
+fun StartScreen(
+    route: StartRoute,
+    viewModel: StartModel = viewModel { StartModel(route) }
+) {
+    val state by viewModel.state.collectAsState()
     val nav = LocalNavigator.current
-    var showContent by remember { mutableStateOf(false) }
-    Column(Modifier.fillMaxWidth(), horizontalAlignment = Alignment.CenterHorizontally) {
-        Button(onClick = { nav.go(HelloRoute("cowboy")) }) {
-            Text("Go to Hello")
-        }
-        Button(onClick = { showContent = !showContent }) {
-            Text("Click me!")
-        }
-        AnimatedVisibility(showContent) {
-            val greeting = remember { Greeting().greet() }
-            Column(Modifier.fillMaxWidth(), horizontalAlignment = Alignment.CenterHorizontally) {
-                Image(painterResource(Res.drawable.compose_multiplatform), null)
-                Text("Compose: $greeting")
+    LazyColumn(
+        verticalArrangement = Arrangement.spacedBy(halfSpacing)
+    ) {
+        items(state.sources, { it.sourceId }) { item ->
+            Row(
+                horizontalArrangement = Arrangement.spacedBy(halfSpacing),
+                modifier = Modifier.fillMaxWidth()
+                    .animateItem(),
+            ) {
+                Row(
+                    horizontalArrangement = Arrangement.spacedBy(halfSpacing),
+                    modifier = Modifier.height(IntrinsicSize.Max)
+                ) {
+                    Box(
+                        modifier = Modifier.background(MaterialTheme.colorScheme.surfaceContainer)
+                            .padding(halfPadding)
+                            .width(24.dp)
+                            .fillMaxHeight()
+                    ) {
+                        Text(
+                            text = item.score.toString(),
+                            modifier = Modifier.align(Alignment.Center)
+                        )
+                    }
+                    item.thumbnail?.let {
+                        AsyncImage(
+                            model = it,
+                            contentDescription = null,
+                            modifier = Modifier.height(50.dp)
+                        )
+                    }
+                }
+                Column {
+                    Text(
+                        text = item.headline ?: item.pageTitle ?: item.url,
+                        style = MaterialTheme.typography.headlineSmall,
+                        modifier = Modifier.clickable { nav.go(SourceItemRoute(item.sourceId)) }
+                    )
+                    Text(
+                        text = item.hostCore,
+                        style = MaterialTheme.typography.labelMedium
+                    )
+                }
             }
         }
     }

@@ -38,6 +38,13 @@ class SourceService : DbService() {
             .map { it.toSourceInfo() }
     }
 
+    suspend fun getTopSourceInfos(limit: Int = 100) = dbQuery {
+        sourceInfoTables
+            .orderBy(SourceTable.score, SortOrder.DESC_NULLS_LAST)
+            .limit(limit)
+            .map { it.toSourceInfo() }
+    }
+
     suspend fun getSourceCount() = dbQuery {
         SourceTable.selectAll().count()
     }

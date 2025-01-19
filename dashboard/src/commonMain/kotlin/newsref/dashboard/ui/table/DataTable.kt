@@ -46,6 +46,7 @@ fun <T> DataTable(
     name: String,
     rows: List<T>,
     columns: List<TableColumn<T>>,
+    getKey: ((T) -> Any)? = null,
     isNew: ((T) -> Boolean)? = null,
     color: Color = primaryContainerDark.darken(.5f),
     glowFunction: ((T) -> Float?)? = null,
@@ -95,7 +96,7 @@ fun <T> DataTable(
             }
         }
 
-        items(rows) { item ->
+        items(rows, getKey) { item ->
             val bgColor =  glowFunction?.let { function ->
                 function(item)?.let { color.scaleBrightness(it * .5f) }
             } ?: color
@@ -109,6 +110,7 @@ fun <T> DataTable(
 
             FlowRow(
                 modifier = Modifier.modifyIfNotNull(onClickRow) { this.clickable { it(item) } }
+                    .animateItem()
                     .alpha(alpha.value)
                     .offset(x = ((1 - alpha.value) * 10).dp)
                     .border(2.dp, Color.White.copy(alpha = 0.2f), roundedCorners)

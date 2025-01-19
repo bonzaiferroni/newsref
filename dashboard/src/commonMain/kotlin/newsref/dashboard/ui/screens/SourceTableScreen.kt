@@ -70,6 +70,7 @@ fun SourceTableScreen(
         name = "Sources",
         rows = state.items,
         isNew = { it.sourceId > state.previousTopId},
+        getKey = { it.sourceId },
         glowFunction = { glowOverMin(it.seenAt) },
         onFirstVisibleIndex = viewModel::trackIndex,
         columns = listOf(
