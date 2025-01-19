@@ -7,7 +7,7 @@ import kotlin.test.Test
 class SourceContentService : DbTest(true) {
 	@Test
 	fun `explore code`() = runBlocking {
-		val content = ContentService().getSourceContent(1)
+		val content = ContentService().getSourceContentText(1)
 		println("content:\n\n${content}")
 	}
 }

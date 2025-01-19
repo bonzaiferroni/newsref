@@ -5,13 +5,26 @@ import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import kotlinx.datetime.Clock
 import kotlinx.datetime.Instant
+import kotlinx.serialization.Serializable
+import newsref.dashboard.ScreenRoute
 import newsref.db.services.SourceService
 import newsref.model.dto.SourceInfo
 
+@Serializable
+data class SourceItemRoute(
+    val sourceId: Long,
+    val pageName: String = "",
+) : ScreenRoute("Source Item")
+
 class SourceItemModel(
-    sourceItemRoute: SourceItemRoute,
+    route: SourceItemRoute,
     private val sourceService: SourceService = SourceService(),
-) : ScreenModel<SourceRowState>(SourceRowState(sourceItemRoute.sourceId)) {
+) : ScreenModel<SourceRowState>(
+    SourceRowState(
+        sourceId = route.sourceId,
+        page = route.pageName
+    )
+) {
     init {
         viewModelScope.launch {
             refreshItem()
@@ -21,9 +34,11 @@ class SourceItemModel(
 
     private suspend fun refreshItem() {
         val source = sourceService.getSourceInfo(stateNow.sourceId)
-        setState { it.copy(
-            source = source
-        ) }
+        setState {
+            it.copy(
+                source = source
+            )
+        }
     }
 
     fun changePage(page: String) {

@@ -17,7 +17,7 @@ class SourceTableModel(
         viewModelScope.launch {
             while (true) {
                 refreshItems()
-                delay(200)
+                delay(1000)
             }
         }
     }

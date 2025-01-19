@@ -42,7 +42,7 @@ class SourceEmbedder(
 		val token = environment["OPENAI_KEY"]
 			?: throw IllegalStateException("Token missing from environment: OPENAI_KEY")
 		val source = embeddingService.findNextJob() ?: return
-		val content = contentService.getSourceContent(source.id).take(10000)
+		val content = contentService.getSourceContentText(source.id).take(10000)
 		val model = "text-embedding-3-small"
 		val request = EmbeddingRequest(
 			model = model,

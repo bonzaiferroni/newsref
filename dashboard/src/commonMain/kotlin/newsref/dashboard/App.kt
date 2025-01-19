@@ -18,7 +18,7 @@ fun App(
     val context = AppContext(exitApp)
     AppTheme(true) {
         ToolTipper {
-            AppNavigator(SourceItemRoute(56577), context)
+            AppNavigator(SourceItemRoute(56577, "Content"), context)
         }
     }
 }

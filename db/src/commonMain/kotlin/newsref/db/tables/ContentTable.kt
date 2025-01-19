@@ -7,6 +7,7 @@ import org.jetbrains.exposed.dao.id.CompositeIdTable
 import org.jetbrains.exposed.dao.id.EntityID
 import org.jetbrains.exposed.dao.id.LongIdTable
 import org.jetbrains.exposed.sql.ReferenceOption
+import org.jetbrains.exposed.sql.*
 
 internal object ContentTable : LongIdTable("content") {
     val text = text("text").uniqueIndex()
@@ -33,3 +34,8 @@ internal fun ContentRow.toData() = Content(
 internal fun ContentRow.fromData(content: String) {
     text = content
 }
+
+internal fun ResultRow.toContent() = Content(
+    id = this[ContentTable.id].value,
+    text = this[ContentTable.text],
+)

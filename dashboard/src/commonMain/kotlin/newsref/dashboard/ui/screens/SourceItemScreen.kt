@@ -16,11 +16,6 @@ import newsref.dashboard.ui.table.PropertyRow
 import newsref.dashboard.ui.table.PropertyTable
 import newsref.dashboard.ui.table.TextCell
 
-@Serializable
-data class SourceItemRoute(
-    val sourceId: Long
-) : ScreenRoute("Source Item")
-
 @Composable
 fun SourceItemScreen(
     route: SourceItemRoute,
@@ -40,8 +35,8 @@ fun SourceItemScreen(
                 TabPage("Data") {
                     SourceDataView(item)
                 },
-                TabPage("Article") {
-                    Text("Eyyyy")
+                TabPage("Content") {
+                    SourceContentView(item)
                 }
             )
         )
