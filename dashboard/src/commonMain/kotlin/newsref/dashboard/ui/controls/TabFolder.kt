@@ -1,15 +1,31 @@
 package newsref.dashboard.ui.controls
 
+import androidx.compose.foundation.ScrollbarStyle
+import androidx.compose.foundation.VerticalScrollbar
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.gestures.Orientation
+import androidx.compose.foundation.gestures.rememberScrollableState
+import androidx.compose.foundation.gestures.scrollable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.rememberScrollbarAdapter
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.unit.dp
+import newsref.dashboard.basePadding
+import newsref.dashboard.baseSpacing
+import newsref.dashboard.halfPadding
 
 @Composable
 fun TabFolder(
@@ -34,23 +50,40 @@ fun TabFolder(
         Row {
             for (page in pages) {
                 val background = when {
-                    currentPage.name == page.name -> MaterialTheme.colorScheme.surfaceTint
+                    currentPage.name == page.name -> MaterialTheme.colorScheme.primaryContainer
                     else -> MaterialTheme.colorScheme.surfaceDim
                 }
                 Box(
                     modifier = Modifier
-                        .background(background)
-                        .weight(1f)
                         .clickable { onChangePage(page.name) }
+                        .background(background)
+                        .padding(halfPadding)
+                        .weight(1f)
                 ) {
-                    Text(page.name)
+                    Text(
+                        text = page.name,
+                        modifier = Modifier.align(Alignment.Center)
+                    )
                 }
             }
         }
+        val scrollState = rememberScrollState()
+//        val scrollbarColor = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.5f)
         Box(
-            modifier = Modifier.fillMaxSize()
+
         ) {
-            currentPage.content()
+            Column(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .verticalScroll(scrollState)
+            ) {
+                Spacer(modifier = Modifier.height(baseSpacing))
+                currentPage.content()
+            }
+            VerticalScrollbar(
+                adapter = rememberScrollbarAdapter(scrollState),
+                modifier = Modifier.align(Alignment.CenterEnd),
+            )
         }
     }
 }
