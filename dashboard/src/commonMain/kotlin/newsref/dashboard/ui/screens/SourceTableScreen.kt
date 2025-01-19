@@ -1,8 +1,10 @@
 package newsref.dashboard.ui.screens
 
 import androidx.compose.foundation.layout.Row
+import androidx.compose.material3.Button
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
@@ -57,11 +59,14 @@ fun SourceTableScreen(
     )
     Row {
         IconButton(onClick = viewModel::togglePause) {
-            if (state.paused) {
-                Icon(imageVector = TablerIcons.PlayerPlay, contentDescription = "Play")
-            } else {
-                Icon(imageVector = TablerIcons.PlayerPause, contentDescription = "Pause")
+            val icon = when (state.paused) {
+                true -> TablerIcons.PlayerPlay
+                false -> TablerIcons.PlayerPause
             }
+            Icon(imageVector = icon, contentDescription = "Play/Pause")
+        }
+        Button(onClick = { }) {
+            Text("Button")
         }
     }
     DataTable(

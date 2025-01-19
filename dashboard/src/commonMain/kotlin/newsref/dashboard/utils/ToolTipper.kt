@@ -3,6 +3,7 @@ package newsref.dashboard.utils
 import androidx.compose.animation.core.Animatable
 import androidx.compose.animation.core.EaseOut
 import androidx.compose.animation.core.tween
+import androidx.compose.foundation.interaction.InteractionSource
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.interaction.collectIsHoveredAsState
 import androidx.compose.foundation.layout.Arrangement
@@ -93,8 +94,7 @@ class ToolTipperModel : ScreenModel<ToolTipperState>(ToolTipperState()) {
 }
 
 @Composable
-fun SetToolTip(tip: ToolTip): MutableInteractionSource {
-    val interactionSource = remember { MutableInteractionSource() }
+fun SetToolTip(tip: ToolTip, interactionSource: InteractionSource) {
     val isHovered by interactionSource.collectIsHoveredAsState()
     val toolTipper = LocalToolTipper.current
     if (isHovered) {
@@ -102,7 +102,6 @@ fun SetToolTip(tip: ToolTip): MutableInteractionSource {
     } else {
         toolTipper.releaseTip(tip)
     }
-    return interactionSource
 }
 
 data class ToolTipperState(
