@@ -13,6 +13,7 @@ fun SourceDataView(sourceInfo: SourceInfo) {
         name = "Source ${sourceInfo.sourceId}",
         item = sourceInfo,
         properties = listOf(
+            PropertyRow("Id", { sourceInfo.sourceId.toString() }) { TextCell(it.sourceId.toString()) },
             PropertyRow("Url") { TextCell(it.url) },
             PropertyRow("Title") { TextCell(it.pageTitle) },
             PropertyRow("Headline") { TextCell(it.headline) },

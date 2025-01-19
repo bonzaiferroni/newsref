@@ -22,10 +22,9 @@ fun SourceContentView(
     Column(
         verticalArrangement = Arrangement.spacedBy(halfSpacing)
     ) {
-        val image = state.source.image
-        if (image != null) {
+        state.source.image?.let {
             AsyncImage(
-                model = image,
+                model = it,
                 contentDescription = null,
             )
         }

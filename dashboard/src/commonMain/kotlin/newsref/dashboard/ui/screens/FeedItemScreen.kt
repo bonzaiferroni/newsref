@@ -82,15 +82,13 @@ fun FeedRowProperties(
     changeTrackPosition: (Boolean) -> Unit,
 ) {
     val uriHandler = LocalUriHandler.current
-    val clipboardManager = LocalClipboardManager.current
     PropertyTable(
         name = name,
         item = item,
         properties = listOf(
             PropertyRow<Feed>("href") { TextFieldCell(href, changeHref) }
                 .addControl(TablerIcons.ExternalLink) { uriHandler.openUri(item.url.toString()) },
-            PropertyRow<Feed>("selector") { TextFieldCell(item.selector, changeSelector) }
-                .addControl(TablerIcons.Copy) { clipboardManager.setRawText(it.selector) },
+            PropertyRow<Feed>("selector", { item.selector }) { TextFieldCell(item.selector, changeSelector) },
             PropertyRow("external") { BooleanCell(item.external, changeExternal) },
             PropertyRow("track position") { BooleanCell(item.trackPosition, changeTrackPosition)}
         )
