@@ -26,12 +26,12 @@ import kotlin.time.Duration.Companion.minutes
 @Composable
 fun FeedItemScreen(
     route: FeedItemRoute,
-    navController: NavController,
     viewModel: FeedItemModel = viewModel { FeedItemModel(route) }
 ) {
     val state by viewModel.state.collectAsState()
     val item = state.updatedFeed
     val uriHandler = LocalUriHandler.current
+    val nav = LocalNavigator.current
     if (item == null) {
         Text("Fetching Feed with id: ${route.feedId}")
     } else {
@@ -48,7 +48,7 @@ fun FeedItemScreen(
             Button(onClick = viewModel::updateItem, enabled = state.canUpdateItem) {
                 Text("Update")
             }
-            ConfirmButton("Delete", onConfirm = { viewModel.deleteFeed { navController.navigate(FeedTableRoute) }})
+            ConfirmButton("Delete", onConfirm = { viewModel.deleteFeed { nav.go(FeedTableRoute) }})
             Countdown(Clock.System.now() + 1.minutes)
         }
         DataTable(
@@ -61,7 +61,7 @@ fun FeedItemScreen(
                 TableColumn("Attempt", 100, AlignCell.Right) { DurationAgoCell(it.lastAttemptAt) },
                 TableColumn("Ext", 50) { BooleanCell(it.isExternal) },
                 TableColumn("Links", 50, AlignCell.Right) { TextCell(it.linkCount.toString())},
-                TableColumn("Src", 50) { NullableIdCell(it.targetId) { navController.navigate(SourceItemRoute(it)) } },
+                TableColumn("Src", 50) { NullableIdCell(it.targetId) { nav.go(SourceItemRoute(it)) } },
                 TableColumn("Pos", 50, AlignCell.Right) { TextCell(it.feedPosition) }
             )
         )

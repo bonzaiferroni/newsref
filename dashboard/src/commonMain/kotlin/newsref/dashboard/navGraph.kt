@@ -20,37 +20,35 @@ import newsref.dashboard.ui.screens.SourceItemScreen
 import newsref.dashboard.ui.screens.SourceTableScreen
 import newsref.dashboard.ui.screens.StartScreen
 
-fun NavGraphBuilder.navGraph(
-    navController: NavHostController
-) {
+fun NavGraphBuilder.navGraph() {
     routeComposable<StartRoute> {
         DefaultSurface {
-            StartScreen(navController)
+            StartScreen()
         }
     }
     routeComposable<SourceTableRoute> {
         DefaultSurface {
-            SourceTableScreen(navController)
+            SourceTableScreen()
         }
     }
     routeComposable<SourceItemRoute> { route ->
         DefaultSurface {
-            SourceItemScreen(route, navController)
+            SourceItemScreen(route)
         }
     }
     routeComposable<FeedTableRoute> {
         DefaultSurface {
-            FeedTableScreen(navController)
+            FeedTableScreen()
         }
     }
     routeComposable<HelloRoute> { route ->
         DefaultSurface {
-            HelloScreen(route, navController)
+            HelloScreen(route)
         }
     }
     routeComposable<FeedItemRoute> { route ->
         DefaultSurface {
-            FeedItemScreen(route, navController)
+            FeedItemScreen(route)
         }
     }
 }

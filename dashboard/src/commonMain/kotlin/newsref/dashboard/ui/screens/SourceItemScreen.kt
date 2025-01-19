@@ -39,7 +39,6 @@ import newsref.dashboard.ui.table.TextCell
 @Composable
 fun SourceItemScreen(
     route: SourceItemRoute,
-    navController: NavController,
     viewModel: SourceItemModel = viewModel { SourceItemModel(route) }
 ) {
     val state by viewModel.state.collectAsState()

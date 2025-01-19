@@ -17,16 +17,18 @@ import androidx.navigation.NavHostController
 import kotlinx.serialization.Serializable
 import newsref.dashboard.Greeting
 import newsref.dashboard.HelloRoute
+import newsref.dashboard.LocalNavigator
 import newsref.dashboard.ScreenRoute
 import newsref.dashboard.generated.resources.Res
 import newsref.dashboard.generated.resources.compose_multiplatform
 import org.jetbrains.compose.resources.painterResource
 
 @Composable
-fun StartScreen(navController: NavHostController) {
+fun StartScreen() {
+    val nav = LocalNavigator.current
     var showContent by remember { mutableStateOf(false) }
     Column(Modifier.fillMaxWidth(), horizontalAlignment = Alignment.CenterHorizontally) {
-        Button(onClick = { navController.navigate(HelloRoute("cowboy")) }) {
+        Button(onClick = { nav.go(HelloRoute("cowboy")) }) {
             Text("Go to Hello")
         }
         Button(onClick = { showContent = !showContent }) {

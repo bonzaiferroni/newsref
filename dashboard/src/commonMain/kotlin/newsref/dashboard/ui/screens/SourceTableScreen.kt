@@ -37,11 +37,11 @@ import newsref.model.dto.SourceInfo
 
 @Composable
 fun SourceTableScreen(
-    navController: NavController,
     viewModel: SourceTableModel = viewModel { SourceTableModel() }
 ) {
     val uriHandler = LocalUriHandler.current
     val clipboardManager = LocalClipboardManager.current
+    val nav = LocalNavigator.current
     val state by viewModel.state.collectAsState()
     PropertyTable(
         name = "Source Table",
@@ -74,7 +74,7 @@ fun SourceTableScreen(
         onFirstVisibleIndex = viewModel::trackIndex,
         columns = listOf(
             TableColumn<SourceInfo>("headline") { TextCell(it.headline ?: it.pageTitle) }
-                .onClick(ToolTip("Go to source", TipType.Action)) { navController.navigate(SourceItemRoute(it.sourceId)) },
+                .onClick(ToolTip("Go to source", TipType.Action)) { nav.go(SourceItemRoute(it.sourceId)) },
             TableColumn<SourceInfo>("url", alpha = .8f) { TextCell(it.url) }
                 .onClick(ToolTip("Open in browser", TipType.Action)) { uriHandler.openUri(it.url) }
                 .addControl(TablerIcons.Copy, ToolTip("Copy Url", TipType.Action)) { clipboardManager.setRawText(it.url) },

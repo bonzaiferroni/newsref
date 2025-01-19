@@ -76,7 +76,7 @@ fun Navigator(
                     .background(MaterialTheme.colorScheme.surface)
                 // .verticalScroll(rememberScrollState())
             ) {
-                navGraph(navController)
+                navGraph()
             }
         }
     }

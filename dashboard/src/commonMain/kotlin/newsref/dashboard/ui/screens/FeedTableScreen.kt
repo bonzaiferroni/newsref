@@ -12,10 +12,10 @@ import androidx.compose.material3.*
 
 @Composable
 fun FeedTableScreen(
-    navController: NavController,
     viewModel: FeedTableModel = viewModel { FeedTableModel() }
 ) {
     val state by viewModel.state.collectAsState()
+    val nav = LocalNavigator.current
 
     FeedRowProperties(
         name = "New Feed",
@@ -32,7 +32,7 @@ fun FeedTableScreen(
     DataTable(
         name = "Feed Table",
         rows = state.items,
-        onClickRow = { navController.navigate(FeedItemRoute(it.id))},
+        onClickRow = { nav.go(FeedItemRoute(it.id))},
         glowFunction = { glowOverDay(it.createdAt) },
         columns = listOf(
             TableColumn(name = "Core", width = 200) { TextCell(it.url.core) },

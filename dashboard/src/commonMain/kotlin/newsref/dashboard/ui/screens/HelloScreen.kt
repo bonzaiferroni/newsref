@@ -14,20 +14,21 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.serialization.Serializable
 import newsref.dashboard.HelloRoute
+import newsref.dashboard.LocalNavigator
 import newsref.dashboard.ScreenRoute
 import newsref.dashboard.StartRoute
 
 @Composable
 fun HelloScreen(
     route: HelloRoute,
-    navController: NavHostController,
     viewModel: HelloModel = viewModel { HelloModel(route) },
 ) {
     val uiState by viewModel.state.collectAsState()
+    val nav = LocalNavigator.current
     Column {
         TextField(value = uiState.name, onValueChange = viewModel::changeName)
         Text("Hello ${uiState.name}!")
-        Button(onClick = { navController.navigate(StartRoute)}) {
+        Button(onClick = { nav.go(StartRoute)}) {
             Text("Go to Start")
         }
     }
