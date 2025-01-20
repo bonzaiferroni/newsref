@@ -17,27 +17,22 @@ import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.compositionLocalOf
-import androidx.compose.runtime.remember
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.setValue
-import androidx.compose.runtime.mutableStateOf
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.rememberNavController
-import androidx.navigation.toRoute
 import compose.icons.TablerIcons
 import compose.icons.tablericons.FileInfo
 import compose.icons.tablericons.Home
 import compose.icons.tablericons.Rss
-import kotlinx.coroutines.flow.MutableStateFlow
-import newsref.dashboard.utils.LocalToolTipper
-import newsref.dashboard.utils.ToolTipperModel
+import newsref.dashboard.utils.modifyIfNotNull
 
 @Composable
 fun Navigator(
@@ -63,10 +58,14 @@ fun Navigator(
         Scaffold(
             topBar = {
                 TopBar(
-                    context = context,
                     navigator = viewModel,
-                    route = state.route,
                     navController = navController,
+                    links = listOf(
+                        TopBarLink(TablerIcons.Home, StartRoute),
+                        TopBarLink(TablerIcons.FileInfo, SourceTableRoute),
+                        TopBarLink(TablerIcons.Rss, FeedTableRoute),
+                        TopBarLink(Icons.Default.Close) { context.exitApp() }
+                    )
                 )
             }
         ) { innerPadding ->
@@ -91,14 +90,15 @@ fun Navigator(
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun TopBar(
-    context: AppContext,
-    route: ScreenRoute?,
     navigator: NavigatorModel,
     navController: NavController,
+    links: List<TopBarLink>,
     modifier: Modifier = Modifier
 ) {
+    val state by navigator.state.collectAsState()
+
     TopAppBar(
-        title = { Text(route?.title ?: "Welcome") },
+        title = { Text(state.route.title) },
         colors = TopAppBarDefaults.mediumTopAppBarColors(
             containerColor = MaterialTheme.colorScheme.primaryContainer
         ),
@@ -114,21 +114,33 @@ fun TopBar(
             }
         },
         actions = {
-            IconButton(onClick = { navigator.go(StartRoute) }) {
-                Icon(imageVector = TablerIcons.Home, contentDescription = "Start Screen")
-            }
-            IconButton(onClick = { navigator.go(SourceTableRoute) }) {
-                Icon(imageVector = TablerIcons.FileInfo, contentDescription = "Source Table")
-            }
-            IconButton(onClick = { navigator.go(FeedTableRoute) }) {
-                Icon(imageVector = TablerIcons.Rss, contentDescription = "Feed Table")
-            }
-            IconButton(onClick = context.exitApp) {
-                Icon(imageVector = Icons.Default.Close, contentDescription = "Close App")
+            for (link in links) {
+                val color = when {
+                    link.route?.title == state.route.title -> Color.White.copy(alpha = 1f)
+                    else -> Color.White.copy(alpha = .5f)
+                }
+                IconButton(
+                    onClick = {
+                        if (link.route != null) navigator.go(link.route)
+                        else if (link.onClick != null) link.onClick()
+                    }
+                ) {
+                    Icon(
+                        imageVector = link.icon,
+                        contentDescription = null,
+                        tint = color
+                    )
+                }
             }
         }
     )
 }
+
+data class TopBarLink(
+    val icon: ImageVector,
+    val route: ScreenRoute? = null,
+    val onClick: (() -> Unit)? = null,
+)
 
 val LocalNavigator = compositionLocalOf<NavigatorModel> {
     error("No MyObject provided")
