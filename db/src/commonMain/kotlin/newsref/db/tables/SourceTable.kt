@@ -126,12 +126,17 @@ internal fun SourceRow.addContents(contentEntities: List<ContentRow>) {
 // source score
 internal object SourceScoreTable : LongIdTable("source_score") {
     val sourceId = reference("source_id", SourceTable, ReferenceOption.CASCADE)
+    val originId = reference("origin_id", SourceTable, ReferenceOption.CASCADE).nullable()
+    val feedId = reference("feed_id", FeedTable, ReferenceOption.CASCADE).nullable()
     val score = integer("score")
     val scoredAt = datetime("scored_at")
 }
 
 internal class SourceScoreRow(id: EntityID<Long>) : LongEntity(id) {
     companion object : EntityClass<Long, SourceScoreRow>(SourceScoreTable)
+
+    var origin by SourceRow optionalReferencedOn SourceScoreTable.originId
+    var feed by FeedRow optionalReferencedOn SourceScoreTable.feedId
 
     var source by SourceRow referencedOn SourceScoreTable.sourceId
     var score by SourceScoreTable.score
@@ -140,12 +145,16 @@ internal class SourceScoreRow(id: EntityID<Long>) : LongEntity(id) {
 
 internal fun SourceScoreRow.toData() = SourceScore(
     sourceId = this.source.id.value,
+    originId = this.origin?.id?.value,
+    feedId = this.feed?.id?.value,
     score = this.score,
     scoredAt = this.scoredAt.toInstant(UtcOffset.ZERO)
 )
 
 internal fun ResultRow.toSourceScore() = SourceScore(
     sourceId = this[SourceScoreTable.sourceId].value,
+    originId = this[SourceScoreTable.originId]?.value,
+    feedId = this[SourceScoreTable.feedId]?.value,
     score = this[SourceScoreTable.score],
     scoredAt = this[SourceScoreTable.scoredAt].toInstantUtc(),
 )

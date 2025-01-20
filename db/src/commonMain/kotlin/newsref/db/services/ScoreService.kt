@@ -11,6 +11,7 @@ import newsref.db.utils.createOrUpdate
 import newsref.db.utils.toInstantUtc
 import newsref.db.utils.toLocalDateTimeUtc
 import newsref.db.utils.toSqlString
+import newsref.model.data.SourceScore
 import org.jetbrains.exposed.dao.id.IdTable
 import org.jetbrains.exposed.sql.*
 import org.jetbrains.exposed.sql.SqlExpressionBuilder.eq
@@ -32,7 +33,8 @@ class ScoreService : DbService() {
 		LeadTable.leftJoin(LinkTable).leftJoin(LeadJobTable)
 			.leftJoin(SourceTable, LinkTable.sourceId, SourceTable.id)
 			.select(LeadTable.sourceId, LeadTable.id, LeadTable.url, SourceTable.id, SourceTable.hostId, SourceTable.score,
-				SourceTable.publishedAt, SourceTable.seenAt, LeadJobTable.freshAt, LeadJobTable.feedPosition
+				SourceTable.publishedAt, SourceTable.seenAt, LeadJobTable.freshAt, LeadJobTable.feedPosition,
+				LeadJobTable.feedId
 			)
 			.where {
 				((SourceTable.publishedAt.isNull() and SourceTable.seenAt.greater(time)) or
@@ -51,26 +53,28 @@ class ScoreService : DbService() {
 					linkedAt = (it.getOrNull(SourceTable.publishedAt)
 						?: it.getOrNull(SourceTable.seenAt) ?: it.getOrNull(LeadJobTable.freshAt))!!.toInstantUtc(),
 					feedPosition = it.getOrNull(LeadJobTable.feedPosition),
+					feedId = it.getOrNull(LeadJobTable.feedId)?.value,
 					linkId = it.getOrNull(LinkTable.id)?.value,
 				)
 			}
 	}
 
 	suspend fun addScores(scores: List<CalculatedScore>) = dbQuery {
-		val now = Clock.System.now().toLocalDateTimeUtc()
-		val scoreRows = scores.mapNotNull { (sourceId, score) ->
+		val scoreRows = scores.mapNotNull { (sourceId, score, scores) ->
 			val sourceRow = SourceRow.findById(sourceId)
 				?: throw IllegalArgumentException("source not found: $sourceId")
 			val currentScore = sourceRow.score
-			if (currentScore != null && currentScore >= score) return@mapNotNull null
+			// if (currentScore != null && currentScore >= score) return@mapNotNull null
 			sourceRow.score = score
 
 			if (score < MINIMUM_SCORE_RECORD) return@mapNotNull null
-
-			SourceScoreTable.insert {
-				it[SourceScoreTable.sourceId] = sourceId
-				it[SourceScoreTable.score] = score
-				it[SourceScoreTable.scoredAt] = now
+			SourceScoreTable.deleteWhere { SourceScoreTable.sourceId eq sourceId }
+			SourceScoreTable.batchInsert(scores) {
+				this[SourceScoreTable.sourceId] = it.sourceId
+				this[SourceScoreTable.originId] = it.originId
+				this[SourceScoreTable.feedId] = it.feedId
+				this[SourceScoreTable.score] = it.score
+				this[SourceScoreTable.scoredAt] = it.scoredAt.toLocalDateTimeUtc()
 			}
 
 			val sourceCollection = SourceTable.getCollections { SourceTable.id.eq(sourceId) }.firstOrNull()
@@ -99,10 +103,11 @@ data class ScoreSignal(
 	val originHostId: Int?,
 	val linkedAt: Instant,
 	val feedPosition: Int?,
+	val feedId: Int?,
 	val originScore: Int?,
 	val originId: Long?,
 	val linkId: Long?,
 )
-data class CalculatedScore(val sourceId: Long, val score: Int)
+data class CalculatedScore(val sourceId: Long, val score: Int, val scores: List<SourceScore>)
 
 const val MINIMUM_SCORE_RECORD = 3

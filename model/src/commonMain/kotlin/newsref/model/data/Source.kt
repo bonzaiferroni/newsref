@@ -27,7 +27,9 @@ data class Source(
 data class SourceScore(
 	val sourceId: Long,
 	val score: Int,
-	val scoredAt: Instant
+	val scoredAt: Instant,
+	val originId: Long?,
+	val feedId: Int?,
 )
 
 @Serializable

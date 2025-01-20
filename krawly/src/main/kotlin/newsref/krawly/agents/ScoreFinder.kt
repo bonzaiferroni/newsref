@@ -9,7 +9,8 @@ import newsref.db.log.dim
 import newsref.db.log.toGreen
 import newsref.db.services.CalculatedScore
 import newsref.db.services.ScoreService
-import newsref.db.utils.profile
+import newsref.db.services.ScoreSignal
+import newsref.model.data.SourceScore
 import kotlin.time.Duration.Companion.days
 import kotlin.time.Duration.Companion.minutes
 
@@ -37,19 +38,35 @@ class ScoreFinder(
 		val signals = scoreService.findScoreSignals(30.days)
 		console.log("found ${signals.size} score signals")
 
-		val calculatedScores = signals.groupBy { it.targetId }.map {
-			val linkScore = it.value.filter { it.originHostId != null }
-				.groupBy { it.originHostId }.values
-				.sumOf { it.maxOf { it.originScore?.coerceIn(0..MAX_LINK_SIGNAL) ?: 1 } }
-			val lowestFeedPosition = it.value.filter { it.feedPosition != null }
+		val calculatedScores = signals.groupBy { it.targetId }.map { (targetId, list) ->
+			val scores = mutableListOf<SourceScore>()
+			val lowestFeedPosition = list.filter { it.feedPosition != null }
 				.sortedBy { it.feedPosition }
 				.firstOrNull()
 
-			val feedScore = lowestFeedPosition?.let { MAX_FEED_SIGNAL - it.feedPosition!! }
-				?.coerceIn(0..MAX_FEED_SIGNAL)
-				?: 0
+			var score = if (lowestFeedPosition != null) {
+				val feedScore = (MAX_FEED_SIGNAL - lowestFeedPosition.feedPosition!!)
+					.coerceIn(0..MAX_FEED_SIGNAL)
+				scores.add(SourceScore(targetId, feedScore, lowestFeedPosition.linkedAt, null, lowestFeedPosition.feedId))
+				feedScore
+			} else { 0 }
 
-			CalculatedScore(it.key, linkScore + feedScore)
+			val topSignals = list.filter { it.originHostId != null }
+				.groupBy { it.originHostId }.values.map {
+					it.sortedWith (
+						compareByDescending<ScoreSignal> { it.originScore ?: 0 }
+							.thenBy { it.linkedAt }
+					).first()
+				}
+				.sortedBy { it.linkedAt }
+
+			for (signal in topSignals) {
+				val signalScore = (signal.originScore ?: 1).coerceIn(1..MAX_LINK_SIGNAL)
+				score += signalScore
+				scores.add(SourceScore(targetId, score, signal.linkedAt, signal.originId, null))
+			}
+
+			CalculatedScore(targetId, score, scores)
 		}
 
 		scoreService.addScores(calculatedScores)
