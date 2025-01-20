@@ -19,6 +19,13 @@ import kotlin.time.Duration
 private val console = globalConsole.getHandle("ScoreService")
 
 class ScoreService : DbService() {
+	suspend fun readScores(sourceId: Long) = dbQuery {
+		SourceScoreTable.select(SourceScoreTable.columns)
+			.where { SourceScoreTable.sourceId eq sourceId }
+			.orderBy(SourceScoreTable.scoredAt, SortOrder.ASC)
+			.map { it.toSourceScore() }
+	}
+
 	suspend fun findScoreSignals(duration: Duration) = dbQuery {
 		val time = (Clock.System.now() - duration).toLocalDateTimeUtc()
 

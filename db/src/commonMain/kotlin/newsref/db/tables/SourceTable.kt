@@ -144,6 +144,12 @@ internal fun SourceScoreRow.toData() = SourceScore(
     scoredAt = this.scoredAt.toInstant(UtcOffset.ZERO)
 )
 
+internal fun ResultRow.toSourceScore() = SourceScore(
+    sourceId = this[SourceScoreTable.sourceId].value,
+    score = this[SourceScoreTable.score],
+    scoredAt = this[SourceScoreTable.scoredAt].toInstantUtc(),
+)
+
 // feed source
 internal object FeedSourceTable : IntIdTable("feed_source") {
     val sourceId = reference("source_id", SourceTable, ReferenceOption.CASCADE)

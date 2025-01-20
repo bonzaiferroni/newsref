@@ -1,1 +1,1 @@
-{"width":567,"height":975,"route":{"type":"newsref.dashboard.SourceTableRoute"}}
+{"width":567,"height":975,"route":{"type":"newsref.dashboard.SourceItemRoute","title":"Source Item","sourceId":34,"pageName":"Data"}}

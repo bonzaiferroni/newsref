@@ -102,7 +102,7 @@ fun SourceItemScreen(
                 },
                 pages = listOf(
                     TabPage("Data") {
-                        SourceDataView(item)
+                        SourceDataView(item, state.scores)
                     },
                     TabPage("Content") {
                         SourceContentView(item)
