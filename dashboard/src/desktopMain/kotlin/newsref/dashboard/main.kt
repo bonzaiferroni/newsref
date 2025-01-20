@@ -1,10 +1,6 @@
 package newsref.dashboard
 
 import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Window
 import androidx.compose.ui.window.application
@@ -12,7 +8,7 @@ import androidx.compose.ui.window.rememberWindowState
 
 fun main() = application {
     // look for a file appdata.json and get initial width and height
-    var appData by remember { mutableStateOf(getAppData() ?: AppData()) }
+    var appData = getAppData() ?: AppData()
 
     val windowState = rememberWindowState(
         width = appData.width.dp,
