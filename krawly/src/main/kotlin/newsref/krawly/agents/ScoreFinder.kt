@@ -34,30 +34,28 @@ class ScoreFinder(
 	}
 
 	private suspend fun findScores() {
-		val signals = profile("find signals", true) { scoreService.findScoreSignals(30.days) }
+		val signals = scoreService.findScoreSignals(30.days)
 		console.log("found ${signals.size} score signals")
 
-		val sourceTracers = profile("calculate scores", true) {
-			signals.groupBy { it.targetId }.map {
-				val linkScore = it.value.filter { it.originHostId != null }
-					.groupBy { it.originHostId }.values
-					.sumOf { it.maxOf { it.originScore?.coerceIn(0..maxLinkSignal) ?: 1 } }
-				val lowestFeedPosition = it.value.filter { it.feedPosition != null }
-					.sortedBy { it.feedPosition }
-					.firstOrNull()
+		val calculatedScores = signals.groupBy { it.targetId }.map {
+			val linkScore = it.value.filter { it.originHostId != null }
+				.groupBy { it.originHostId }.values
+				.sumOf { it.maxOf { it.originScore?.coerceIn(0..MAX_LINK_SIGNAL) ?: 1 } }
+			val lowestFeedPosition = it.value.filter { it.feedPosition != null }
+				.sortedBy { it.feedPosition }
+				.firstOrNull()
 
-				val feedScore = lowestFeedPosition?.let { maxFeedSignal - it.feedPosition!! }
-					?.coerceIn(0..maxFeedSignal)
-					?: 0
+			val feedScore = lowestFeedPosition?.let { MAX_FEED_SIGNAL - it.feedPosition!! }
+				?.coerceIn(0..MAX_FEED_SIGNAL)
+				?: 0
 
-				CalculatedScore(it.key, linkScore + feedScore)
-			}
+			CalculatedScore(it.key, linkScore + feedScore)
 		}
 
-		scoreService.addScores(sourceTracers)
+		scoreService.addScores(calculatedScores)
 
-		val top = sourceTracers.takeIf{ it.isNotEmpty()}?.sortedByDescending { it.score }?.take(10)
-		var msg = "looked at ${signals.size} links, added ${sourceTracers.size} scores, top: ${top?.firstOrNull()?.score ?: 0}".toGreen()
+		val top = calculatedScores.takeIf{ it.isNotEmpty()}?.sortedByDescending { it.score }?.take(10)
+		var msg = "looked at ${signals.size} links, added ${calculatedScores.size} scores, top: ${top?.firstOrNull()?.score ?: 0}".toGreen()
 		top?.forEach { (id, score) -> signals.firstOrNull { it.targetId == id }.let {
 			msg += "\n${score.toString().padStart(4)}: ${it?.url.toString().dim()}"
 		}}
@@ -65,5 +63,5 @@ class ScoreFinder(
 	}
 }
 
-val maxLinkSignal = 3
-val maxFeedSignal = 3
+const val MAX_LINK_SIGNAL = 3
+const val MAX_FEED_SIGNAL = 3
