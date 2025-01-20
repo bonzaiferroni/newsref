@@ -29,8 +29,8 @@ class HomeModel(
 	}
 
 	private suspend fun refreshSources() {
-		sources = sourceStore.getFeed(sv.newsSpan).sortedByDescending { it.score }
-		sv = sv.copy(refreshed = Clock.System.now())
+//		sources = sourceStore.getFeed(sv.newsSpan).sortedByDescending { it.score }
+//		sv = sv.copy(refreshed = Clock.System.now())
 	}
 
 	fun changeSpan(newsSpan: NewsSpan) {

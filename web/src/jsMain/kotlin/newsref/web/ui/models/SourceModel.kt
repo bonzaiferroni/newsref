@@ -2,6 +2,7 @@ package newsref.web.ui.models
 
 import kotlinx.coroutines.launch
 import newsref.model.data.FeedSource
+import newsref.model.dto.SourceCollection
 import newsref.model.dto.SourceInfo
 import newsref.web.core.StateModel
 import newsref.web.io.stores.SourceStore
@@ -32,7 +33,7 @@ class SourceModel(
 }
 
 data class SourceState(
-	val source: SourceInfo? = null,
+	val source: SourceCollection? = null,
 	val showMoreInbound: Boolean = false,
 	val showMoreOutbound: Boolean = false,
 )

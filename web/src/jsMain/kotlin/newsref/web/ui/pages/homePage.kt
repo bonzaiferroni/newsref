@@ -44,7 +44,7 @@ fun Container.homePage(context: AppContext): PortalEvents? {
 			val cache = ChartCache()
 			feedChart(state, cache)
 			for (source in state.sources) {
-				feedSource(source, cache)
+				// feedSource(source, cache)
 			}
 		}
 	}

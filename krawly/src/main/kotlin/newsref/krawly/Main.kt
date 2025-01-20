@@ -32,7 +32,7 @@ fun crawl(args: Array<String>) {
 		leadFollower.start()
 		scoreFinder.start()
 		// noteWriter.start()
-		sourceEmbedder.start()
+		// sourceEmbedder.start()
 		"Starting spider 🕷"
 	}
 	args.map { it.split('=') }

@@ -10,8 +10,7 @@ import newsref.db.tables.SourceTable
 import newsref.db.utils.createOrUpdate
 import newsref.db.utils.toInstantUtc
 import newsref.db.utils.toLocalDateTimeUtc
-import newsref.model.data.Link
-import newsref.model.data.SourceScore
+import newsref.db.utils.toSqlString
 import org.jetbrains.exposed.dao.id.IdTable
 import org.jetbrains.exposed.sql.*
 import org.jetbrains.exposed.sql.SqlExpressionBuilder.eq
@@ -20,33 +19,39 @@ import kotlin.time.Duration
 private val console = globalConsole.getHandle("ScoreService")
 
 class ScoreService : DbService() {
-	suspend fun findNewLinksSince(duration: Duration) = dbQuery {
+	suspend fun findScoreSignals(duration: Duration) = dbQuery {
 		val time = (Clock.System.now() - duration).toLocalDateTimeUtc()
 
 		LeadTable.leftJoin(LinkTable).leftJoin(LeadJobTable)
 			.leftJoin(SourceTable, LinkTable.sourceId, SourceTable.id)
-			.select(
-				LinkTable.columns + LeadTable.sourceId + LeadJobTable.feedPosition + SourceTable.hostId
-						+ SourceTable.seenAt + SourceTable.publishedAt
+			.select(LeadTable.sourceId, LeadTable.id, LeadTable.url, SourceTable.id, SourceTable.hostId, SourceTable.score,
+				SourceTable.publishedAt, SourceTable.seenAt, LeadJobTable.freshAt, LeadJobTable.feedPosition
 			)
 			.where {
-				// SourceTable.seenAt.greaterEq(time) and
+				((SourceTable.publishedAt.isNull() and SourceTable.seenAt.greater(time)) or
+						SourceTable.publishedAt.greater(time) or LeadJobTable.freshAt.greater(time)) and
 						LinkTable.isExternal.eq(true) and LeadTable.sourceId.isNotNull()
 			}
-			// .also { println(it.prepareSQL(QueryBuilder(false))) }
+			.toSqlString { console.log(it) }
 			.map {
-				LinkTracer(
-					link = it.toLink(),
-					sourceId = it.getOrNull(LeadTable.sourceId)!!.value,
-					hostId = it[SourceTable.hostId].value,
-					linkedAt = (it.getOrNull(SourceTable.publishedAt) ?: it[SourceTable.seenAt]).toInstantUtc(),
+				ScoreSignal(
+					targetId = it[LeadTable.sourceId]!!.value,
+					leadId = it[LeadTable.id].value,
+					url = it[LeadTable.url],
+					originHostId = it.getOrNull(SourceTable.hostId)?.value,
+					originId = it.getOrNull(SourceTable.id)?.value,
+					originScore = it.getOrNull(SourceTable.score),
+					linkedAt = (it.getOrNull(SourceTable.publishedAt)
+						?: it.getOrNull(SourceTable.seenAt) ?: it.getOrNull(LeadJobTable.freshAt))!!.toInstantUtc(),
 					feedPosition = it.getOrNull(LeadJobTable.feedPosition),
+					linkId = it.getOrNull(LinkTable.id)?.value,
 				)
 			}
 	}
 
-	suspend fun addScores(tracers: List<SourceTracer>) = dbQuery {
-		val scoreRows = tracers.mapNotNull { (sourceId, score, scores) ->
+	suspend fun addScores(scores: List<CalculatedScore>) = dbQuery {
+		val now = Clock.System.now().toLocalDateTimeUtc()
+		val scoreRows = scores.mapNotNull { (sourceId, score) ->
 			val sourceRow = SourceRow.findById(sourceId)
 				?: throw IllegalArgumentException("source not found: $sourceId")
 			val currentScore = sourceRow.score
@@ -54,12 +59,11 @@ class ScoreService : DbService() {
 			sourceRow.score = score
 
 			if (score < MINIMUM_SCORE_RECORD) return@mapNotNull null
-			SourceScoreTable.deleteWhere { SourceScoreTable.sourceId eq sourceId }
-			SourceScoreTable.batchInsert(scores) {
-				this[SourceScoreTable.sourceId] = it.sourceId
-				this[SourceScoreTable.linkId] = it.linkId
-				this[SourceScoreTable.score] = it.score
-				this[SourceScoreTable.scoredAt] = it.scoredAt.toLocalDateTimeUtc()
+
+			SourceScoreTable.insert {
+				it[SourceScoreTable.sourceId] = sourceId
+				it[SourceScoreTable.score] = score
+				it[SourceScoreTable.scoredAt] = now
 			}
 
 			val sourceCollection = SourceTable.getCollections { SourceTable.id.eq(sourceId) }.firstOrNull()
@@ -81,13 +85,17 @@ internal fun <T : Comparable<T>> ColumnSet.leftJoin(
 	otherIdColumn: Expression<*>?,
 ) = this.join(table, JoinType.LEFT, idColumn, otherIdColumn)
 
-data class LinkTracer(
-	val link: Link,
-	val sourceId: Long,
-	val hostId: Int,
+data class ScoreSignal(
+	val targetId: Long,
+	val leadId: Long,
+	val url: String,
+	val originHostId: Int?,
 	val linkedAt: Instant,
 	val feedPosition: Int?,
+	val originScore: Int?,
+	val originId: Long?,
+	val linkId: Long?,
 )
-data class SourceTracer(val sourceId: Long, val score: Int, val scores: List<SourceScore>)
+data class CalculatedScore(val sourceId: Long, val score: Int)
 
 const val MINIMUM_SCORE_RECORD = 3

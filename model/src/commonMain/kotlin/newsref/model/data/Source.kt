@@ -26,7 +26,6 @@ data class Source(
 
 data class SourceScore(
 	val sourceId: Long,
-	val linkId: Long,
 	val score: Int,
 	val scoredAt: Instant
 )

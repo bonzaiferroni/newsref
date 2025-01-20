@@ -4,14 +4,12 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
-import kotlinx.datetime.Clock
 import newsref.db.globalConsole
 import newsref.db.log.dim
 import newsref.db.log.toGreen
-import newsref.db.services.LinkTracer
+import newsref.db.services.CalculatedScore
 import newsref.db.services.ScoreService
-import newsref.db.services.SourceTracer
-import newsref.model.data.SourceScore
+import newsref.db.utils.profile
 import kotlin.time.Duration.Companion.days
 import kotlin.time.Duration.Companion.minutes
 
@@ -36,32 +34,36 @@ class ScoreFinder(
 	}
 
 	private suspend fun findScores() {
-		val linkTracers = scoreService.findNewLinksSince(30.days)
-		val hostTally = mutableMapOf<Long, MutableList<LinkTracer>>()
-		for (tracer in linkTracers) {
-			val set = hostTally.getOrPut(tracer.sourceId) { mutableListOf() }
-			set.add(tracer)
-		}
-		val sourceTracers = hostTally.map { (sourceId, links) ->
-			val hostIdSet = mutableSetOf<Int>()
-			val scores = mutableListOf<SourceScore>()
-			var score = 0
-			for (tracer in links.sortedBy { it.linkedAt }) {
-				if (hostIdSet.contains(tracer.hostId)) continue
-				hostIdSet.add(tracer.hostId)
-				score++
-				scores.add(SourceScore(sourceId, tracer.link.id, score, tracer.linkedAt))
+		val signals = profile("find signals", true) { scoreService.findScoreSignals(30.days) }
+		console.log("found ${signals.size} score signals")
+
+		val sourceTracers = profile("calculate scores", true) {
+			signals.groupBy { it.targetId }.map {
+				val linkScore = it.value.filter { it.originHostId != null }
+					.groupBy { it.originHostId }.values
+					.sumOf { it.maxOf { it.originScore?.coerceIn(0..maxLinkSignal) ?: 1 } }
+				val lowestFeedPosition = it.value.filter { it.feedPosition != null }
+					.sortedBy { it.feedPosition }
+					.firstOrNull()
+
+				val feedScore = lowestFeedPosition?.let { maxFeedSignal - it.feedPosition!! }
+					?.coerceIn(0..maxFeedSignal)
+					?: 0
+
+				CalculatedScore(it.key, linkScore + feedScore)
 			}
-			SourceTracer(sourceId, score, scores)
 		}
 
 		scoreService.addScores(sourceTracers)
 
 		val top = sourceTracers.takeIf{ it.isNotEmpty()}?.sortedByDescending { it.score }?.take(10)
-		var msg = "looked at ${linkTracers.size} links, added ${sourceTracers.size} scores, top: ${top?.firstOrNull()?.score ?: 0}".toGreen()
-		top?.forEach { (id, score) -> linkTracers.firstOrNull { it.sourceId == id }.let {
-			msg += "\n${score.toString().padStart(4)}: ${it?.link?.url.toString().dim()}"
+		var msg = "looked at ${signals.size} links, added ${sourceTracers.size} scores, top: ${top?.firstOrNull()?.score ?: 0}".toGreen()
+		top?.forEach { (id, score) -> signals.firstOrNull { it.targetId == id }.let {
+			msg += "\n${score.toString().padStart(4)}: ${it?.url.toString().dim()}"
 		}}
 		console.log(msg)
 	}
 }
+
+val maxLinkSignal = 3
+val maxFeedSignal = 3

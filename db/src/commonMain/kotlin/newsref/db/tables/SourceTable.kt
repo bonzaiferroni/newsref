@@ -126,7 +126,6 @@ internal fun SourceRow.addContents(contentEntities: List<ContentRow>) {
 // source score
 internal object SourceScoreTable : LongIdTable("source_score") {
     val sourceId = reference("source_id", SourceTable, ReferenceOption.CASCADE)
-    val linkId = reference("link_id", LinkTable, ReferenceOption.CASCADE)
     val score = integer("score")
     val scoredAt = datetime("scored_at")
 }
@@ -135,14 +134,12 @@ internal class SourceScoreRow(id: EntityID<Long>) : LongEntity(id) {
     companion object : EntityClass<Long, SourceScoreRow>(SourceScoreTable)
 
     var source by SourceRow referencedOn SourceScoreTable.sourceId
-    var link by LinkRow referencedOn SourceScoreTable.linkId
     var score by SourceScoreTable.score
     var scoredAt by SourceScoreTable.scoredAt
 }
 
 internal fun SourceScoreRow.toData() = SourceScore(
     sourceId = this.source.id.value,
-    linkId = this.link.id.value,
     score = this.score,
     scoredAt = this.scoredAt.toInstant(UtcOffset.ZERO)
 )
