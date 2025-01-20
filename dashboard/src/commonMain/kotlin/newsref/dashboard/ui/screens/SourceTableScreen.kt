@@ -98,11 +98,14 @@ fun SourceTable(
             TableColumn<SourceInfo>("Host", weight = 1f) { TextCell(it.hostName ?: it.hostCore) }
                 .onClick(ToolTip("Go to host")) { /* todo: open host */ },
             TableColumn("Words", 60, AlignCell.Right) { NumberCell(it.wordCount) },
-            TableColumn("seenAt", 60, AlignCell.Right, .8f) { DurationAgoCell(it.seenAt) },
+            TableColumn("seen", 60, AlignCell.Right, .8f) { DurationAgoCell(it.seenAt) },
             TableColumn("Ds", 30, headerTip = ToolTip("Description")) { EmojiCell("📃", it.description) },
             TableColumn("HL", 30, headerTip = ToolTip("Host Logo")) { EmojiCell("💈", it.hostLogo) },
             TableColumn("Im", 30, headerTip = ToolTip("Featured Image")) { EmojiCell("🖼", it.image) },
             TableColumn("Th", 30, headerTip = ToolTip("Thumbnail")) { EmojiCell("💅", it.thumbnail) },
+            TableColumn("Section", alpha = .8f) { TextCell(it.section ?: "") },
+            TableColumn("", 60) { },
+            TableColumn("pub", 60) { DurationAgoCell(it.publishedAt) }
         )
     )
 }
