@@ -37,50 +37,5 @@ fun StartScreen(
 ) {
     val state by viewModel.state.collectAsState()
     val nav = LocalNavigator.current
-    LazyColumn(
-        verticalArrangement = Arrangement.spacedBy(halfSpacing)
-    ) {
-        items(state.sources, { it.sourceId }) { item ->
-            Row(
-                horizontalArrangement = Arrangement.spacedBy(halfSpacing),
-                modifier = Modifier.fillMaxWidth()
-                    .animateItem(),
-            ) {
-                Row(
-                    horizontalArrangement = Arrangement.spacedBy(halfSpacing),
-                    modifier = Modifier.height(IntrinsicSize.Max)
-                ) {
-                    Box(
-                        modifier = Modifier.background(MaterialTheme.colorScheme.surfaceContainer)
-                            .padding(halfPadding)
-                            .width(24.dp)
-                            .fillMaxHeight()
-                    ) {
-                        Text(
-                            text = item.score.toString(),
-                            modifier = Modifier.align(Alignment.Center)
-                        )
-                    }
-                    item.thumbnail?.let {
-                        AsyncImage(
-                            model = it,
-                            contentDescription = null,
-                            modifier = Modifier.height(50.dp)
-                        )
-                    }
-                }
-                Column {
-                    Text(
-                        text = item.headline ?: item.pageTitle ?: item.url,
-                        style = MaterialTheme.typography.headlineSmall,
-                        modifier = Modifier.clickable { nav.go(SourceItemRoute(item.sourceId)) }
-                    )
-                    Text(
-                        text = item.hostCore,
-                        style = MaterialTheme.typography.labelMedium
-                    )
-                }
-            }
-        }
-    }
+    SourceTable(state.sources, nav)
 }

@@ -39,8 +39,6 @@ import newsref.model.dto.SourceInfo
 fun SourceTableScreen(
     viewModel: SourceTableModel = viewModel { SourceTableModel() }
 ) {
-    val uriHandler = LocalUriHandler.current
-    val clipboardManager = LocalClipboardManager.current
     val nav = LocalNavigator.current
     val state by viewModel.state.collectAsState()
     PropertyTable(
@@ -66,15 +64,33 @@ fun SourceTableScreen(
             Text("Button")
         }
     }
+    SourceTable(
+        sources = state.items,
+        nav = nav,
+        isNew = { it.sourceId > state.previousTopId},
+        onFirstVisibleIndex = viewModel::trackIndex,
+    )
+}
+
+@Composable
+fun SourceTable(
+    sources: List<SourceInfo>,
+    nav: NavigatorModel,
+    isNew: ((SourceInfo) -> Boolean )? = null,
+    onFirstVisibleIndex: ((Int) -> Unit)? = null,
+) {
+    val uriHandler = LocalUriHandler.current
+    val clipboardManager = LocalClipboardManager.current
     DataTable(
         name = "Sources",
-        rows = state.items,
-        isNew = { it.sourceId > state.previousTopId},
+        rows = sources,
+        isNew = isNew,
         getKey = { it.sourceId },
         glowFunction = { glowOverMin(it.seenAt) },
-        onFirstVisibleIndex = viewModel::trackIndex,
+        onFirstVisibleIndex = onFirstVisibleIndex,
         columns = listOf(
-            TableColumn<SourceInfo>("headline") { TextCell(it.headline ?: it.pageTitle) }
+            TableColumn("Scr", 40, alpha = .8f) { TextCell(it.score) },
+            TableColumn<SourceInfo>("headline", weight = 1f) { TextCell(it.headline ?: it.pageTitle) }
                 .onClick(ToolTip("Go to source", TipType.Action)) { nav.go(SourceItemRoute(it.sourceId)) },
             TableColumn<SourceInfo>("url", alpha = .8f) { TextCell(it.url) }
                 .onClick(ToolTip("Open in browser", TipType.Action)) { uriHandler.openUri(it.url) }
@@ -82,7 +98,7 @@ fun SourceTableScreen(
             TableColumn<SourceInfo>("Host", weight = 1f) { TextCell(it.hostName ?: it.hostCore) }
                 .onClick(ToolTip("Go to host")) { /* todo: open host */ },
             TableColumn("Words", 60, AlignCell.Right) { NumberCell(it.wordCount) },
-            TableColumn("seenAt", 120, AlignCell.Right, .8f) { DurationAgoCell(it.seenAt) },
+            TableColumn("seenAt", 60, AlignCell.Right, .8f) { DurationAgoCell(it.seenAt) },
             TableColumn("Ds", 30, headerTip = ToolTip("Description")) { EmojiCell("📃", it.description) },
             TableColumn("HL", 30, headerTip = ToolTip("Host Logo")) { EmojiCell("💈", it.hostLogo) },
             TableColumn("Im", 30, headerTip = ToolTip("Featured Image")) { EmojiCell("🖼", it.image) },
