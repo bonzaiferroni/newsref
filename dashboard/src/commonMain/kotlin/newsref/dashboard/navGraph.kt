@@ -23,7 +23,7 @@ import newsref.dashboard.ui.screens.StartScreen
 fun NavGraphBuilder.navGraph() {
     routeComposable<StartRoute> {
         DefaultSurface {
-            StartScreen(StartRoute)
+            StartScreen(StartRoute())
         }
     }
     routeComposable<SourceTableRoute> {

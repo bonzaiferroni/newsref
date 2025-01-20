@@ -61,7 +61,7 @@ fun Navigator(
                     navigator = viewModel,
                     navController = navController,
                     links = listOf(
-                        TopBarLink(TablerIcons.Home, StartRoute),
+                        TopBarLink(TablerIcons.Home, StartRoute()),
                         TopBarLink(TablerIcons.FileInfo, SourceTableRoute),
                         TopBarLink(TablerIcons.Rss, FeedTableRoute),
                         TopBarLink(Icons.Default.Close) { context.exitApp() }

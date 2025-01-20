@@ -40,7 +40,7 @@ fun HelloScreen(
     var showContent by remember { mutableStateOf(false) }
     Column {
         TextField(value = uiState.name, onValueChange = viewModel::changeName)
-        Button(onClick = { nav.go(StartRoute)}) {
+        Button(onClick = { nav.go(StartRoute())}) {
             Text("Go to Start")
         }
         Button(onClick = { showContent = !showContent }) {

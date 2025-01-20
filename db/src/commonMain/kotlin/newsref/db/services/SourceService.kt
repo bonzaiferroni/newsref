@@ -38,8 +38,10 @@ class SourceService : DbService() {
             .map { it.toSourceInfo() }
     }
 
-    suspend fun getTopSourceInfos(limit: Int = 100) = dbQuery {
+    suspend fun getTopSourceInfos(duration: Duration, limit: Int = 100) = dbQuery {
+        val time = (Clock.System.now() - duration).toLocalDateTimeUtc()
         sourceInfoTables
+            .where { SourceTable.seenAt.greater(time) }
             .orderBy(SourceTable.score, SortOrder.DESC_NULLS_LAST)
             .limit(limit)
             .map { it.toSourceInfo() }

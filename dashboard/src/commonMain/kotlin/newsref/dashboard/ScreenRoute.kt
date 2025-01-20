@@ -2,6 +2,8 @@ package newsref.dashboard
 
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.modules.SerializersModule
+import kotlin.time.Duration
+import kotlin.time.Duration.Companion.days
 
 @Serializable
 sealed class ScreenRoute(val title: String = "Title") {
@@ -26,4 +28,6 @@ data class SourceItemRoute(
 object SourceTableRoute : ScreenRoute("Sources")
 
 @Serializable
-object StartRoute : ScreenRoute("Start")
+data class StartRoute(
+    val days: Int = 7
+) : ScreenRoute("Start")

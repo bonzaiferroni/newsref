@@ -22,5 +22,5 @@ private const val fileName = "appdata.json"
 data class AppData(
     val width: Int = 600,
     val height: Int = 800,
-    val route: ScreenRoute = StartRoute,
+    val route: ScreenRoute = StartRoute(),
 )
