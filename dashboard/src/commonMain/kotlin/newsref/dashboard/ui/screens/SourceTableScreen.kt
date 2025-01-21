@@ -11,14 +11,13 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.platform.LocalClipboardManager
 import androidx.compose.ui.platform.LocalUriHandler
 import androidx.lifecycle.viewmodel.compose.viewModel
-import androidx.navigation.NavController
 import compose.icons.TablerIcons
 import compose.icons.tablericons.Copy
 import compose.icons.tablericons.PlayerPause
 import compose.icons.tablericons.PlayerPlay
-import kotlinx.serialization.Serializable
 import newsref.dashboard.*
 import newsref.dashboard.ui.table.AlignCell
+import newsref.dashboard.ui.table.ColumnGroup
 import newsref.dashboard.ui.table.DataTable
 import newsref.dashboard.ui.table.DurationAgoCell
 import newsref.dashboard.ui.table.EmojiCell
@@ -89,23 +88,31 @@ fun SourceTable(
         glowFunction = { glowOverMin(it.seenAt) },
         onFirstVisibleIndex = onFirstVisibleIndex,
         columns = listOf(
-            TableColumn("Scr", 40, alpha = .8f) { TextCell(it.score) },
-            TableColumn<SourceInfo>("headline", weight = 1f) { TextCell(it.headline ?: it.pageTitle) }
-                .onClick(ToolTip("Go to source", TipType.Action)) { nav.go(SourceItemRoute(it.sourceId)) },
-            TableColumn<SourceInfo>("url", alpha = .8f) { TextCell(it.url) }
-                .onClick(ToolTip("Open in browser", TipType.Action)) { uriHandler.openUri(it.url) }
-                .addControl(TablerIcons.Copy, ToolTip("Copy Url", TipType.Action)) { clipboardManager.setRawText(it.url) },
-            TableColumn<SourceInfo>("Host", weight = 1f) { TextCell(it.hostName ?: it.hostCore) }
-                .onClick(ToolTip("Go to host")) { /* todo: open host */ },
-            TableColumn("Words", 60, AlignCell.Right) { NumberCell(it.wordCount) },
-            TableColumn("seen", 60, AlignCell.Right, .8f) { DurationAgoCell(it.seenAt) },
-            TableColumn("Ds", 30, headerTip = ToolTip("Description")) { EmojiCell("📃", it.description) },
-            TableColumn("HL", 30, headerTip = ToolTip("Host Logo")) { EmojiCell("💈", it.hostLogo) },
-            TableColumn("Im", 30, headerTip = ToolTip("Featured Image")) { EmojiCell("🖼", it.image) },
-            TableColumn("Th", 30, headerTip = ToolTip("Thumbnail")) { EmojiCell("💅", it.thumbnail) },
-            TableColumn("Section", alpha = .8f) { TextCell(it.section ?: "") },
-            TableColumn("", 60) { },
-            TableColumn("pub", 60) { DurationAgoCell(it.publishedAt) }
+            ColumnGroup(
+                TableColumn("Scr", 40, alpha = .8f) { TextCell(it.score) },
+                TableColumn<SourceInfo>("headline", weight = 1f) { TextCell(it.headline ?: it.pageTitle) }
+                    .onClick(ToolTip("Go to source", TipType.Action)) { nav.go(SourceItemRoute(it.sourceId)) },
+            ),
+            ColumnGroup(
+                TableColumn<SourceInfo>("url", alpha = .8f) { TextCell(it.url) }
+                    .onClick(ToolTip("Open in browser", TipType.Action)) { uriHandler.openUri(it.url) }
+                    .addControl(TablerIcons.Copy, ToolTip("Copy Url", TipType.Action)) { clipboardManager.setRawText(it.url) },
+            ),
+            ColumnGroup(
+                TableColumn<SourceInfo>("Host", weight = 1f) { TextCell(it.hostName ?: it.hostCore) }
+                    .onClick(ToolTip("Go to host")) { /* todo: open host */ },
+                TableColumn("Words", 60, AlignCell.Right) { NumberCell(it.wordCount) },
+                TableColumn("Ds", 30, headerTip = ToolTip("Description")) { EmojiCell("📃", it.description) },
+                TableColumn("HL", 30, headerTip = ToolTip("Host Logo")) { EmojiCell("💈", it.hostLogo) },
+                TableColumn("Im", 30, headerTip = ToolTip("Featured Image")) { EmojiCell("🖼", it.image) },
+                TableColumn("Th", 30, headerTip = ToolTip("Thumbnail")) { EmojiCell("💅", it.thumbnail) },
+                TableColumn("pub", 60, AlignCell.Right) { DurationAgoCell(it.publishedAt) },
+            ),
+            ColumnGroup(
+                TableColumn("Section", weight = 1f, alpha = .8f) { TextCell(it.section ?: "") },
+                TableColumn("", 60) { },
+                TableColumn("seen", 60, AlignCell.Right, .8f) { DurationAgoCell(it.seenAt) }
+            )
         )
     )
 }

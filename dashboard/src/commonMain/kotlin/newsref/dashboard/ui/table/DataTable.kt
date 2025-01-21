@@ -7,11 +7,12 @@ import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.interaction.MutableInteractionSource
-import androidx.compose.foundation.interaction.collectIsHoveredAsState
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.ExperimentalLayoutApi
 import androidx.compose.foundation.layout.FlowRow
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.RowScope
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
@@ -45,7 +46,7 @@ import newsref.dashboard.utils.modifyIfNotNull
 fun <T> DataTable(
     name: String,
     rows: List<T>,
-    columns: List<TableColumn<T>>,
+    columns: List<ColumnDefinition<T>>,
     getKey: ((T) -> Any)? = null,
     isNew: ((T) -> Boolean)? = null,
     color: Color = primaryContainerDark.darken(.5f),
@@ -82,15 +83,19 @@ fun <T> DataTable(
                     .padding(innerPadding)
             ) {
                 for (column in columns) {
-                    TableCell<T>(
-                        width = column.width,
-                        color = bgColor,
-                        alignCell = column.alignCell,
-                        weight = column.weight,
-                        toolTip = column.headerTip,
-                        modifier = Modifier.alpha(column.alpha)
-                    ) {
-                        TextCell(text = column.name)
+                    when (column) {
+                        is ColumnGroup<T> -> {
+                            Row(
+                                modifier = Modifier.fillMaxWidth()
+                            ) {
+                                for (groupColumn in column.columns) {
+                                    HeaderCell(groupColumn, bgColor)
+                                }
+                            }
+                        }
+                        is TableColumn<T> -> {
+                            HeaderCell(column, bgColor)
+                        }
                     }
                 }
             }
@@ -119,22 +124,54 @@ fun <T> DataTable(
                     .padding(innerPadding)
             ) {
                 for (column in columns) {
-                    TableCell<T>(
-                        width = column.width,
-                        item = item,
-                        color = bgColor,
-                        alignCell = column.alignCell,
-                        weight = column.weight,
-                        toolTip = column.cellTip,
-                        onClickCell = column.onClickCell,
-                        controls = column.controls,
-                        modifier = Modifier.alpha(column.alpha)
-                    ) {
-                        column.content(item)
+                    when (column) {
+                        is ColumnGroup<T> -> {
+                            Row(
+                                modifier = Modifier.fillMaxWidth()
+                            ) {
+                                for (groupColumn in column.columns) {
+                                    DataCell(groupColumn, bgColor, item)
+                                }
+                            }
+                        }
+                        is TableColumn<T> -> {
+                            DataCell(column, bgColor, item)
+                        }
                     }
                 }
             }
         }
+    }
+}
+
+@Composable
+fun <T> RowScope.HeaderCell(column: TableColumn<T>, bgColor: Color) {
+    TableCell<T>(
+        width = column.width,
+        color = bgColor,
+        alignCell = column.alignCell,
+        weight = column.weight,
+        toolTip = column.headerTip,
+        modifier = Modifier.alpha(column.alpha)
+    ) {
+        TextCell(text = column.name)
+    }
+}
+
+@Composable
+fun <T> RowScope.DataCell(column: TableColumn<T>, bgColor: Color, item: T) {
+    TableCell<T>(
+        width = column.width,
+        item = item,
+        color = bgColor,
+        alignCell = column.alignCell,
+        weight = column.weight,
+        toolTip = column.cellTip,
+        onClickCell = column.onClickCell,
+        controls = column.controls,
+        modifier = Modifier.alpha(column.alpha)
+    ) {
+        column.content(item)
     }
 }
 
@@ -149,7 +186,13 @@ data class TableColumn<T>(
     val onClickCell: ((T) -> Unit)? = null,
     val controls: List<CellControl<T>> = emptyList(),
     val content: @Composable (T) -> Unit
-)
+) : ColumnDefinition<T>()
+
+class ColumnGroup<T>(
+    vararg val columns: TableColumn<T>
+) : ColumnDefinition<T>()
+
+sealed class ColumnDefinition<T>
 
 fun <T> TableColumn<T>.onClick(toolTip: ToolTip? = null, block: (T) -> Unit) =
     this.copy(onClickCell = block, cellTip = toolTip)
