@@ -30,6 +30,7 @@ import kotlinx.datetime.toLocalDateTime
 import newsref.dashboard.baseSpacing
 import newsref.dashboard.halfPadding
 import newsref.dashboard.roundedCorners
+import newsref.dashboard.ui.controls.ScoreChart
 import newsref.dashboard.ui.table.DurationAgoCell
 import newsref.dashboard.ui.table.PropertyRow
 import newsref.dashboard.ui.table.PropertyTable
@@ -72,70 +73,6 @@ fun SourceDataView(
 
         if (scores != null && !scores.isEmpty()) {
             ScoreChart(scores)
-        }
-    }
-}
-
-@OptIn(ExperimentalKoalaPlotApi::class)
-@Composable
-fun ScoreChart(
-    scores: List<SourceScore>
-) {
-    if (scores.isEmpty()) {
-        Text("No scores")
-        return
-    }
-
-    data class ChartInfo(
-        val data: List<DefaultPoint<Float, Float>>,
-        val timeStart: Instant,
-        val intervalCount: Int,
-        val interval: Duration
-    )
-
-    val tz = TimeZone.currentSystemDefault()
-
-    val (data, timeStart, intervalCount, interval) = remember(scores.size) {
-        val timeStart = scores.first().scoredAt.toLocalDateTime(tz).date
-            .atStartOfDayIn(tz)
-        val timeEnd = (scores.last().scoredAt + 1.days).toLocalDateTime(tz).date
-            .atStartOfDayIn(tz)
-        val totalInterval = timeEnd - timeStart
-        val interval = when {
-            totalInterval > 2.days -> 1.days
-            else -> 6.hours
-        }
-        val data = scores.map {
-            val intervalsToPoint = ((it.scoredAt - timeStart) / interval).toFloat()
-            DefaultPoint(intervalsToPoint, it.score.toFloat())
-        }
-
-        ChartInfo(data, timeStart, (totalInterval / interval).toInt(), interval)
-    }
-
-    Box(
-        modifier = Modifier
-            .clip(roundedCorners)
-            .background(MaterialTheme.colorScheme.surfaceDim)
-            .padding(halfPadding)
-    ) {
-        XYGraph(
-            FloatLinearAxisModel(0f..intervalCount.toFloat()),
-            rememberFloatLinearAxisModel(data.autoScaleYRange()),
-            verticalMinorGridLineStyle = null,
-            horizontalMinorGridLineStyle = null,
-            xAxisLabels = {
-                (timeStart + (interval * it.toInt())).toLocalDateTime(tz).toString()
-            },
-            modifier = Modifier.height(300.dp)
-        ) {
-            LinePlot(
-                data,
-                lineStyle = LineStyle(
-                    brush = SolidColor(MaterialTheme.colorScheme.primary),
-                    strokeWidth = 3.dp
-                )
-            )
         }
     }
 }

@@ -64,7 +64,7 @@ class ScoreService : DbService() {
 			val sourceRow = SourceRow.findById(sourceId)
 				?: throw IllegalArgumentException("source not found: $sourceId")
 			val currentScore = sourceRow.score
-			// if (currentScore != null && currentScore >= score) return@mapNotNull null
+			if (currentScore != null && currentScore >= score) return@mapNotNull null
 			sourceRow.score = score
 
 			if (score < MINIMUM_SCORE_RECORD) return@mapNotNull null
