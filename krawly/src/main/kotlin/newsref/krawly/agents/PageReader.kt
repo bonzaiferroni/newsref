@@ -10,7 +10,7 @@ import newsref.model.data.*
 import newsref.db.models.PageInfo
 import newsref.db.models.PageLink
 import newsref.db.models.WebResult
-import newsref.db.services.cacheContent
+import newsref.db.services.isNewsContent
 import newsref.krawly.models.NewsArticle
 import newsref.model.dto.PageAuthor
 
@@ -144,7 +144,7 @@ class PageReader(
 				type = sourceType,
 				thumbnail = thumbnail,
 				imageUrl = imageUrl?.href,
-				contentCount = if (cacheContent(sourceType, language)) contentWordCount else 0,
+				contentCount = if (isNewsContent(sourceType, language)) contentWordCount else 0,
 				seenAt = lead.freshAt ?: now,
 				accessedAt = now,
 				publishedAt = publishedAt

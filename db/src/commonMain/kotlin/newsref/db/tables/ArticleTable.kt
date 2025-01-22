@@ -7,6 +7,7 @@ import org.jetbrains.exposed.dao.LongEntity
 import org.jetbrains.exposed.dao.id.EntityID
 import org.jetbrains.exposed.dao.id.LongIdTable
 import org.jetbrains.exposed.sql.ReferenceOption
+import org.jetbrains.exposed.sql.ResultRow
 import org.jetbrains.exposed.sql.kotlin.datetime.datetime
 
 // todo: make all tables and rows internal
@@ -58,6 +59,22 @@ internal fun ArticleRow.toData() = Article(
     language = this.language,
     commentCount = this.commentCount,
     modifiedAt = this.modifiedAt?.toInstant(UtcOffset.ZERO)
+)
+
+internal fun ResultRow.toArticle() = Article(
+    id = this[ArticleTable.id].value,
+    sourceId = this[ArticleTable.sourceId].value,
+    headline = this[ArticleTable.headline],
+    alternativeHeadline = this[ArticleTable.alternativeHeadline],
+    description = this[ArticleTable.description],
+    cannonUrl = this[ArticleTable.cannonUrl],
+    section = this[ArticleTable.section],
+    keywords = this[ArticleTable.keywords],
+    wordCount = this[ArticleTable.wordCount],
+    isFree = this[ArticleTable.isFree],
+    language = this[ArticleTable.language],
+    commentCount = this[ArticleTable.commentCount],
+    modifiedAt = this[ArticleTable.modifiedAt]?.toInstant(UtcOffset.ZERO)
 )
 
 internal fun ArticleRow.fromData(article: Article, sourceRow: SourceRow) {

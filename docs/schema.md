@@ -65,3 +65,16 @@ SourceInfo
 -seenAt
 -score
 -publishedAt
+
+Article
+*sourceId
+-headline
+-alternativeHeadline
+-description
+-cannonUrl
+-keywords
+-wordCount
+-isFree
+-language
+-commentCount
+-modifiedAt

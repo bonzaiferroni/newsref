@@ -11,25 +11,25 @@ import androidx.compose.runtime.getValue
 import androidx.lifecycle.viewmodel.compose.viewModel
 import coil3.compose.AsyncImage
 import newsref.dashboard.halfSpacing
+import newsref.model.data.Content
 import newsref.model.data.Source
 import newsref.model.dto.SourceInfo
 
 @Composable
 fun SourceContentView(
     source: Source,
-    viewModel: SourceContentModel = viewModel { SourceContentModel(source) }
+    contents: List<Content>,
 ) {
-    val state by viewModel.state.collectAsState()
     Column(
         verticalArrangement = Arrangement.spacedBy(halfSpacing)
     ) {
-        state.source.imageUrl?.let {
+        source.imageUrl?.let {
             AsyncImage(
                 model = it,
                 contentDescription = null,
             )
         }
-        for (content in state.contents) {
+        for (content in contents) {
             SelectionContainer {
                 Text(content.text)
             }

@@ -75,14 +75,14 @@ class ConsumeSourceService : DbService() {
 			LeadRow.createOrUpdateAndLink(page.source.url, sourceRow)
 		}
 
+		// exit here if not content we are interested in
+		if (!isNewsContent(sourceRow.type, page.language))
+			return@dbQuery sourceRow.id.value
+
 		// create or update document
 		val articleRow = page.article?.let { article ->
 			ArticleRow.createOrUpdate(ArticleTable.sourceId eq sourceRow.id) { fromData(article, sourceRow) }
 		}
-
-		// exit here if not content we are interested in
-		if (!cacheContent(sourceRow.type, page.language))
-			return@dbQuery sourceRow.id.value
 
 		// create author
 		val authorRows = page.authors?.map { pageAuthor ->
@@ -123,7 +123,7 @@ class ConsumeSourceService : DbService() {
 	}
 }
 
-fun cacheContent(type: SourceType?, language: String?) =
+fun isNewsContent(type: SourceType?, language: String?) =
 	(type == SourceType.ARTICLE || type == SourceType.SOCIAL_POST)
 			&& language?.startsWith("en") == true
 

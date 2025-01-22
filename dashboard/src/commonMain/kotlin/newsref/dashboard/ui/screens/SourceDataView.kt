@@ -50,12 +50,34 @@ fun SourceDataView(
                 PropertyRow("Accessed") { DurationAgoCell(it.accessedAt) },
                 PropertyRow("ContentCount") { TextCell(it.contentCount) },
                 PropertyRow("Scores") { TextCell(scores?.size ?: 0) },
-                PropertyRow("Contents") { TextCell(contents?.size ?: 0) }
+                PropertyRow("Contents") { TextCell(contents.size) },
             )
         )
 
         if (scores != null && !scores.isEmpty()) {
             ScoreChart(scores)
+        }
+
+        val article = state.article
+        if (article != null) {
+            PropertyTable(
+                name = "Article",
+                item = article,
+                properties = listOf(
+                    textRow("Id", article.id.toString()),
+                    textRow("Headline", article.headline),
+                    textRow("Alternative Headline", article.alternativeHeadline),
+                    textRow("Description", article.description),
+                    textRow("Cannon Url", article.cannonUrl),
+                    textRow("Section", article.section),
+                    textRow("Keywords", article.keywords?.joinToString(", ")),
+                    textRow("Word Count", article.wordCount.toString()),
+                    textRow("Is Free", article.isFree.toString()),
+                    textRow("Language", article.language),
+                    textRow("Comment Count", article.commentCount.toString()),
+                    PropertyRow("Modified At") { DurationAgoCell(it.modifiedAt) },
+                )
+            )
         }
     }
 }
