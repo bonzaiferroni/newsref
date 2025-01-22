@@ -5,18 +5,19 @@ import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import kotlinx.datetime.Clock
 import kotlinx.datetime.Instant
-import kotlinx.serialization.Serializable
-import newsref.dashboard.ScreenRoute
 import newsref.dashboard.SourceItemRoute
+import newsref.db.services.ContentService
 import newsref.db.services.ScoreService
 import newsref.db.services.SourceService
+import newsref.model.data.Content
 import newsref.model.data.SourceScore
 import newsref.model.dto.SourceInfo
 
 class SourceItemModel(
     route: SourceItemRoute,
     private val sourceService: SourceService = SourceService(),
-    private val scoreService: ScoreService = ScoreService()
+    private val scoreService: ScoreService = ScoreService(),
+    private val contentService: ContentService = ContentService(),
 ) : StateModel<SourceRowState>(
     SourceRowState(
         sourceId = route.sourceId,
@@ -33,7 +34,8 @@ class SourceItemModel(
     private suspend fun refreshItem() {
         val source = sourceService.getSourceInfo(stateNow.sourceId)
         val scores = scoreService.readScores(stateNow.sourceId)
-        setState { it.copy(source = source, scores = scores) }
+        val contents = contentService.getSourceContent(stateNow.sourceId)
+        setState { it.copy(source = source, scores = scores, contents = contents) }
     }
 
     fun changePage(page: String) {
@@ -46,5 +48,6 @@ data class SourceRowState(
     val nextRefresh: Instant = Instant.DISTANT_PAST,
     val source: SourceInfo? = null,
     val scores: List<SourceScore>? = null,
+    val contents: List<Content>? = null,
     val page: String = "",
 )

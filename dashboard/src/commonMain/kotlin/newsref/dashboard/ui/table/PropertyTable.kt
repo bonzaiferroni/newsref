@@ -53,7 +53,7 @@ fun <T> PropertyTable(
                         property.copyText != null -> property.controls + CellControl(
                             icon = TablerIcons.Copy,
                             toolTip = ToolTip("Copy content", TipType.Action),
-                            onClick = { clipboardManager.setRawText(property.copyText()) }
+                            onClick = { clipboardManager.setRawText(property.copyText(item)) }
                         )
                         else -> property.controls
                     }
@@ -74,7 +74,7 @@ fun <T> PropertyTable(
 
 data class PropertyRow<T>(
     val name: String,
-    val copyText: (() -> String)? = null,
+    val copyText: ((T) -> String)? = null,
     val onClick: ((T) -> Unit)? = null,
     val controls: List<CellControl<T>> = emptyList(),
     val content: @Composable (T) -> Unit
@@ -90,3 +90,17 @@ data class CellControl<T>(
     val toolTip: ToolTip? = null,
     val onClick: (T) -> Unit,
 )
+
+fun <T> textRow(
+    name: String,
+    text: String?,
+    vararg controls: CellControl<T>,
+    onClick: ((T) -> Unit)? = null
+) = PropertyRow<T>(
+    name = name,
+    copyText = text?.let { { text } },
+    onClick = onClick,
+    controls = controls.toList()
+) {
+    TextCell(text)
+}
