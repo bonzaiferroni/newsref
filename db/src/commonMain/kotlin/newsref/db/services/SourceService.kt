@@ -30,6 +30,12 @@ class SourceService : DbService() {
             .firstOrNull()?.toSourceInfo()
     }
 
+    suspend fun getSource(id: Long) = dbQuery {
+        SourceTable.select(SourceTable.columns)
+            .where { SourceTable.id eq id }
+            .firstOrNull()?.toSource()
+    }
+
     suspend fun getSourceInfos(afterId: Long? = null, limit: Int = 100) = dbQuery {
         sourceInfoTables
             .applyIfNotNull(afterId) { this.where { SourceTable.id greater it } }

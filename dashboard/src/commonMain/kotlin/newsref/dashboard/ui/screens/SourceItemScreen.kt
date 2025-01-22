@@ -84,12 +84,12 @@ fun SourceItemScreen(
                 Column {
                     SelectionContainer {
                         Text(
-                            text = item.headline ?: item.pageTitle ?: item.url,
+                            text = item.title ?: item.url.href,
                             style = MaterialTheme.typography.headlineSmall
                         )
                     }
                     Text(
-                        text = item.hostCore,
+                        text = item.url.core,
                         style = MaterialTheme.typography.labelMedium
                     )
                 }

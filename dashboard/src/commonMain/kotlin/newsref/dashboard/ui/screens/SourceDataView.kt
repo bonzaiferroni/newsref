@@ -33,24 +33,24 @@ fun SourceDataView(
         verticalArrangement = Arrangement.spacedBy(baseSpacing)
     ) {
         PropertyTable(
-            name = "Source ${source.sourceId}",
+            name = "Source ${source.id}",
             item = source,
             properties = listOf(
-                textRow("Id", source.sourceId.toString()),
-                textRow("Url", source.url, openExternalLink(uriHandler) { it.url }),
-                textRow("Title", source.pageTitle),
-                textRow("Headline", source.headline),
+                textRow("Id", source.id.toString()),
+                textRow("Url", source.url.href, openExternalLink(uriHandler) { it.url.href }),
+                textRow("Title", source.title),
+                textRow("Type", source.type?.toString()),
                 PropertyRow("Score") { TextCell(it.score) },
-                textRow("Description", source.description),
-                textRow("Host", source.hostCore),
-                textRow("Section", source.section),
-                textRow("Image", source.image),
+                textRow("Host", source.url.core),
+                textRow("Image", source.imageUrl),
                 textRow("Thumbnail", source.thumbnail),
+                textRow("embed", source.embed),
                 PropertyRow("Seen") { DurationAgoCell(it.seenAt) },
                 PropertyRow("Published") { DurationAgoCell(it.publishedAt) },
+                PropertyRow("Accessed") { DurationAgoCell(it.accessedAt) },
+                PropertyRow("ContentCount") { TextCell(it.contentCount) },
                 PropertyRow("Scores") { TextCell(scores?.size ?: 0) },
-                PropertyRow("Contents") { TextCell(contents?.size ?: 0) },
-                PropertyRow("WordCount") { TextCell(it.wordCount) }
+                PropertyRow("Contents") { TextCell(contents?.size ?: 0) }
             )
         )
 

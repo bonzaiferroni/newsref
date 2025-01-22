@@ -10,6 +10,7 @@ import newsref.db.services.ContentService
 import newsref.db.services.ScoreService
 import newsref.db.services.SourceService
 import newsref.model.data.Content
+import newsref.model.data.Source
 import newsref.model.data.SourceScore
 import newsref.model.dto.SourceInfo
 
@@ -32,7 +33,7 @@ class SourceItemModel(
     }
 
     private suspend fun refreshItem() {
-        val source = sourceService.getSourceInfo(stateNow.sourceId)
+        val source = sourceService.getSource(stateNow.sourceId)
         val scores = scoreService.readScores(stateNow.sourceId)
         val contents = contentService.getSourceContent(stateNow.sourceId)
         setState { it.copy(source = source, scores = scores, contents = contents) }
@@ -46,7 +47,7 @@ class SourceItemModel(
 data class SourceRowState(
     val sourceId: Long,
     val nextRefresh: Instant = Instant.DISTANT_PAST,
-    val source: SourceInfo? = null,
+    val source: Source? = null,
     val scores: List<SourceScore>? = null,
     val contents: List<Content>? = null,
     val page: String = "",
