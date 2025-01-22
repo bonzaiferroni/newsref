@@ -68,7 +68,7 @@ fun <T> DataTable(
 
     LazyColumn(
         verticalArrangement = Arrangement.spacedBy(halfSpacing),
-        state = listState
+        state = listState,
     ) {
         item {
             Text(text = name, style = MaterialTheme.typography.headlineSmall)
@@ -198,6 +198,8 @@ fun <T> TableColumn<T>.onClick(toolTip: ToolTip? = null, block: (T) -> Unit) =
     this.copy(onClickCell = block, cellTip = toolTip)
 fun <T> TableColumn<T>.addControl(icon: ImageVector, toolTip: ToolTip? = null, block: (T) -> Unit) =
     this.copy(controls = this.controls + CellControl(icon, toolTip, block))
+fun <T> TableColumn<T>.addControl(control: CellControl<T>) =
+    this.copy(controls = this.controls + control)
 
 fun Color.darken(factor: Float = 0.8f) = this.scaleBrightness(-factor)
 

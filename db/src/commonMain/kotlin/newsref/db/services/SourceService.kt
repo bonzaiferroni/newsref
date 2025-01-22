@@ -74,8 +74,8 @@ internal fun SourceTable.getCollections(block: SqlExpressionBuilder.() -> Op<Boo
     return sourceInfos.map { sourceInfo ->
         val scoreRows = SourceScoreRow.find { SourceScoreTable.sourceId.eq(sourceInfo.sourceId) }
             .orderBy(Pair(SourceScoreTable.scoredAt, SortOrder.ASC))
-        val inLinks = LinkTable.getLinkInfos { LeadTable.sourceId.eq(sourceInfo.sourceId) }
-        val outLinks = LinkTable.getLinkInfos { LinkTable.sourceId.eq(sourceInfo.sourceId) }
+        val inLinks = LinkTable.readLinkCollections { LeadTable.sourceId.eq(sourceInfo.sourceId) }
+        val outLinks = LinkTable.readLinkCollections { LinkTable.sourceId.eq(sourceInfo.sourceId) }
         val authors = SourceRow.findById(sourceInfo.sourceId)?.authors?.map { it.name }
         val notes = noteInfoJoins
             .where { SourceNoteTable.sourceId eq sourceInfo.sourceId }
@@ -92,49 +92,6 @@ internal fun SourceTable.getCollections(block: SqlExpressionBuilder.() -> Op<Boo
     }
 }
 
-internal fun LinkTable.getLinkInfos(block: SqlExpressionBuilder.() -> Op<Boolean>): List<LinkInfo> {
-    val linkInfos = this.leftJoin(SourceTable).leftJoin(HostTable)
-        .leftJoin(LeadTable, this.leadId, LeadTable.id)
-        .leftJoin(ArticleTable)
-        .leftJoin(ContentTable)
-        .select(
-            url,
-            urlText,
-            sourceId,
-            LeadTable.sourceId,
-            ContentTable.text,
-            SourceTable.url,
-            SourceTable.seenAt,
-            SourceTable.publishedAt,
-            ArticleTable.headline,
-            HostTable.name,
-            HostTable.core,
-        )
-        .where(block)
-//		.also { println(it.prepareSQL(QueryBuilder(false))) }
-        .map { row ->
-            LinkInfo(
-                sourceId = row[sourceId].value,
-                leadSourceId = row[LeadTable.sourceId]?.value,
-                url = row[url],
-                urlText = row[urlText],
-                context = row.getOrNull(ContentTable.text),
-                sourceUrl = row[SourceTable.url],
-                hostName = row.getOrNull(HostTable.name),
-                hostCore = row[HostTable.core],
-                seenAt = row[SourceTable.seenAt].toInstantUtc(),
-                publishedAt = row.getOrNull(SourceTable.publishedAt)?.toInstantUtc(),
-                headline = row.getOrNull(ArticleTable.headline),
-                authors = null
-            )
-        }
-    return linkInfos.map { linkInfo ->
-        val authors = AuthorTable.getAuthors { SourceAuthorTable.sourceId.eq(linkInfo.sourceId) }
-            .takeIf { it.isNotEmpty() }
-        val snippet = linkInfo.context?.findContainingSentence(linkInfo.urlText)
-        linkInfo.copy(authors = authors, context = snippet)
-    }
-}
 
 internal fun AuthorTable.getAuthors(block: SqlExpressionBuilder.() -> Op<Boolean>): List<PageAuthor> {
     return this.leftJoin(SourceAuthorTable).leftJoin(HostAuthorTable)

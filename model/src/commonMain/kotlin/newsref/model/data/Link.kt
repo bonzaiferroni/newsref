@@ -10,4 +10,5 @@ data class Link(
     val url: CheckedUrl,
     val text: String,
     val isExternal: Boolean,
+    // todo: add startIndex
 )

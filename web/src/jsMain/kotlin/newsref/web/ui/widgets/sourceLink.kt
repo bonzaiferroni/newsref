@@ -1,12 +1,12 @@
 package newsref.web.ui.widgets
 
 import io.kvision.core.Container
-import newsref.model.dto.LinkInfo
+import newsref.model.dto.LinkCollection
 import newsref.web.ui.css.*
 import newsref.web.utils.replaceWithAnchor
 import newsref.web.utils.sinceDescription
 
-fun Container.sourceLink(link: LinkInfo) {
+fun Container.sourceLink(link: LinkCollection) {
 	div(className = "pb-4") {
 		quote(link.context.replaceWithAnchor(link.urlText, link.url), rich = true)
 		val authors = link.authors?.map{

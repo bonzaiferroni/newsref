@@ -8,10 +8,12 @@ import kotlinx.datetime.Instant
 import newsref.dashboard.SourceItemRoute
 import newsref.db.services.ArticleService
 import newsref.db.services.ContentService
+import newsref.db.services.LinkService
 import newsref.db.services.ScoreService
 import newsref.db.services.SourceService
 import newsref.model.data.Article
 import newsref.model.data.Content
+import newsref.model.data.Link
 import newsref.model.data.Source
 import newsref.model.data.SourceScore
 
@@ -21,6 +23,7 @@ class SourceItemModel(
     private val scoreService: ScoreService = ScoreService(),
     private val contentService: ContentService = ContentService(),
     private val articleService: ArticleService = ArticleService(),
+    private val linkService: LinkService = LinkService()
 ) : StateModel<SourceItemState>(
     SourceItemState(
         sourceId = route.sourceId,
@@ -39,11 +42,15 @@ class SourceItemModel(
         val scores = scoreService.readScores(stateNow.sourceId)
         val contents = contentService.getSourceContent(stateNow.sourceId)
         val article = articleService.readBySource(stateNow.sourceId)
+        val outbound = linkService.readOutboundLinks(stateNow.sourceId)
+        val inbound = linkService.readInboundLinks(stateNow.sourceId)
         setState { it.copy(
             source = source,
             scores = scores,
             contents = contents,
-            article = article
+            article = article,
+            outbound = outbound,
+            inbound = inbound,
         ) }
     }
 
@@ -59,5 +66,7 @@ data class SourceItemState(
     val article: Article? = null,
     val scores: List<SourceScore>? = null,
     val contents: List<Content> = emptyList(),
+    val outbound: List<Link> = emptyList(),
+    val inbound: List<Link> = emptyList(),
     val page: String = "",
 )

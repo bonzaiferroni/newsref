@@ -78,3 +78,11 @@ Article
 -language
 -commentCount
 -modifiedAt
+
+Link
+*sourceId
+*contentId?
+*leadId?
+-url
+-text
+-isExternal

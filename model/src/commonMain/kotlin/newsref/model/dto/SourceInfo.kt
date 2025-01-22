@@ -2,7 +2,6 @@ package newsref.model.dto
 
 import kotlinx.datetime.Instant
 import kotlinx.serialization.Serializable
-import newsref.model.data.Note
 
 @Serializable
 data class SourceInfo(
@@ -28,16 +27,16 @@ data class SourceInfo(
 data class SourceCollection(
 	val info: SourceInfo,
 	val authors: List<String>?,
-	val inLinks: List<LinkInfo>,
-	val outLinks: List<LinkInfo>,
+	val inLinks: List<LinkCollection>,
+	val outLinks: List<LinkCollection>,
 	val notes: List<NoteInfo>,
 	val scores: List<ScoreInfo>
 )
 
 @Serializable
 data class LinkInfo(
-	val sourceId: Long,
-	val leadSourceId: Long?,
+	val originId: Long,
+	val targetId: Long?,
 	val url: String,
 	val urlText: String,
 	val context: String?,
@@ -45,9 +44,14 @@ data class LinkInfo(
 	val hostName: String?,
 	val hostCore: String,
 	val headline: String?,
-	val authors: List<PageAuthor>?,
 	val seenAt: Instant,
 	val publishedAt: Instant?,
+)
+
+@Serializable
+data class LinkCollection(
+	val info: LinkInfo,
+	val authors: List<PageAuthor>?,
 )
 
 @Serializable
