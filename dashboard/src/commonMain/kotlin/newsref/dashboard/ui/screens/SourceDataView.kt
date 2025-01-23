@@ -92,47 +92,5 @@ fun SourceDataView(
                 )
             )
         }
-
-        if (state.outbound.isNotEmpty()) {
-            LinkTable(
-                name = "Outbound Links",
-                links = state.outbound,
-                uriHandler = uriHandler,
-            )
-        }
-
-        if (state.inbound.isNotEmpty()) {
-            LinkTable(
-                name = "Inbound Links",
-                links = state.inbound,
-                uriHandler = uriHandler,
-            )
-        }
-    }
-}
-
-@Composable
-fun LinkTable(
-    name: String,
-    links: List<Link>,
-    uriHandler: UriHandler,
-) {
-    Box(
-        modifier = Modifier.height(400.dp)
-    ) {
-        DataTable(
-            name = name,
-            rows = links,
-            columns = listOf(
-                ColumnGroup(
-                    TableColumn<Link>("Url", weight = 1f) { TextCell(it.url.href) }
-                        .addControl(openExternalLink(uriHandler) { it.url.href })
-                ),
-                ColumnGroup(
-                    TableColumn("Text", weight = 1f) { TextCell(it.text) },
-                    TableColumn("Ext", width = 40) { BooleanCell(it.isExternal) },
-                )
-            )
-        )
     }
 }

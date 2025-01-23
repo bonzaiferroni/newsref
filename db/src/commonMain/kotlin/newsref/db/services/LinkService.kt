@@ -17,15 +17,15 @@ import org.jetbrains.exposed.sql.and
 
 class LinkService() : DbService() {
     suspend fun readOutboundLinks(sourceId: Long) = dbQuery {
-        LinkTable.select(LinkTable.columns)
+        linkInfoJoins.select(linkInfoColumns)
             .where { LinkTable.sourceId eq sourceId }
-            .map { it.toLink() }
+            .map { it.toLinkInfo() }
     }
 
     suspend fun readInboundLinks(sourceId: Long) = dbQuery {
-        LeadTable.leftJoin(LinkTable).select(LinkTable.columns)
+        linkInfoJoins.select(linkInfoColumns)
             .where { LeadTable.sourceId eq sourceId and LinkTable.id.isNotNull() }
-            .map { it.toLink() }
+            .map { it.toLinkInfo() }
     }
 }
 

@@ -16,6 +16,7 @@ import newsref.model.data.Content
 import newsref.model.data.Link
 import newsref.model.data.Source
 import newsref.model.data.SourceScore
+import newsref.model.dto.LinkInfo
 
 class SourceItemModel(
     route: SourceItemRoute,
@@ -66,7 +67,7 @@ data class SourceItemState(
     val article: Article? = null,
     val scores: List<SourceScore>? = null,
     val contents: List<Content> = emptyList(),
-    val outbound: List<Link> = emptyList(),
-    val inbound: List<Link> = emptyList(),
+    val outbound: List<LinkInfo> = emptyList(),
+    val inbound: List<LinkInfo> = emptyList(),
     val page: String = "",
 )

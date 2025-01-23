@@ -86,3 +86,16 @@ Link
 -url
 -text
 -isExternal
+
+LinkInfo
+*originId
+*targetId
+-url
+-urlText
+-context
+-sourceUrl
+-hostName
+-hostCore
+-headline
+-seenAt
+-publishedAt

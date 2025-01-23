@@ -37,6 +37,7 @@ import newsref.dashboard.baseSpacing
 import newsref.dashboard.generated.resources.Res
 import newsref.dashboard.generated.resources.compose_multiplatform
 import newsref.dashboard.halfPadding
+import newsref.dashboard.utils.modifyIfNotNull
 import org.jetbrains.compose.resources.painterResource
 
 @Composable
@@ -79,7 +80,10 @@ fun TabFolder(
                 }
             }
         }
-        val scrollState = rememberScrollState()
+        val scrollState = when (currentPage.scrollbar) {
+            true -> rememberScrollState()
+            else -> null
+        }
 //        val scrollbarColor = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.5f)
         Box(
 
@@ -87,20 +91,24 @@ fun TabFolder(
             Column(
                 modifier = Modifier
                     .fillMaxSize()
-                    .verticalScroll(scrollState)
+                    .modifyIfNotNull(scrollState) { this.verticalScroll(it) }
+
             ) {
                 Spacer(modifier = Modifier.height(baseSpacing))
                 currentPage.content()
             }
-            VerticalScrollbar(
-                adapter = rememberScrollbarAdapter(scrollState),
-                modifier = Modifier.align(Alignment.CenterEnd),
-            )
+            scrollState?.let {
+                VerticalScrollbar(
+                    adapter = rememberScrollbarAdapter(it),
+                    modifier = Modifier.align(Alignment.CenterEnd),
+                )
+            }
         }
     }
 }
 
 data class TabPage(
     val name: String,
+    val scrollbar: Boolean = true,
     val content: @Composable () -> Unit,
 )

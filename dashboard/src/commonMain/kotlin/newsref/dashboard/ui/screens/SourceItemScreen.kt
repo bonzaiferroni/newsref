@@ -18,7 +18,6 @@ import androidx.compose.runtime.getValue
 import androidx.compose.material3.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.platform.LocalUriHandler
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import coil3.compose.AsyncImage
@@ -29,6 +28,7 @@ import newsref.dashboard.halfPadding
 import newsref.dashboard.halfSpacing
 import newsref.dashboard.ui.controls.TabFolder
 import newsref.dashboard.ui.controls.TabPage
+import newsref.model.data.Source
 
 @Composable
 fun SourceItemScreen(
@@ -45,60 +45,73 @@ fun SourceItemScreen(
         Column(
             verticalArrangement = Arrangement.spacedBy(baseSpacing)
         ) {
-            Row(
-                horizontalArrangement = Arrangement.spacedBy(halfSpacing),
-                modifier = Modifier.fillMaxWidth(),
-            ) {
-                Row(
-                    horizontalArrangement = Arrangement.spacedBy(halfSpacing),
-                    modifier = Modifier.height(IntrinsicSize.Max)
-                ) {
-                    Box(
-                        modifier = Modifier.background(MaterialTheme.colorScheme.surfaceContainer)
-                            .padding(halfPadding)
-                            .width(24.dp)
-                            .fillMaxHeight()
-                    ) {
-                        Text(
-                            text = (source.score ?: 0).toString(),
-                            modifier = Modifier.align(Alignment.Center)
-                        )
-                    }
-                    source.thumbnail?.let {
-                        AsyncImage(
-                            model = it,
-                            contentDescription = null,
-                            modifier = Modifier.height(50.dp)
-                        )
-                    }
-                }
-                Column {
-                    SelectionContainer {
-                        Text(
-                            text = source.title ?: source.url.href,
-                            style = MaterialTheme.typography.headlineSmall
-                        )
-                    }
-                    Text(
-                        text = source.url.core,
-                        style = MaterialTheme.typography.labelMedium
-                    )
-                }
-            }
+            ItemHeader(source)
             TabFolder(
                 currentPageName = state.page,
                 onChangePage = {
                     viewModel.changePage(it)
                     nav.setRoute(route.copy(pageName = it))
                 },
-                pages = listOf(
+                pages = mutableListOf(
                     TabPage("Data") {
                         SourceDataView(viewModel)
                     },
                     TabPage("Content") {
                         SourceContentView(source, state.contents)
-                    }
+                    },
+                ).apply {
+                    if (state.inbound.isNotEmpty()) this.add(
+                        TabPage("Inbound", false) {
+                            LinkInfoView("Inbound Links", state.inbound)
+                        }
+                    )
+                }
+            )
+        }
+    }
+}
+
+@Composable
+fun ItemHeader(
+    source: Source
+) {
+    Row(
+        horizontalArrangement = Arrangement.spacedBy(halfSpacing),
+        modifier = Modifier.fillMaxWidth(),
+    ) {
+        Row(
+            horizontalArrangement = Arrangement.spacedBy(halfSpacing),
+            modifier = Modifier.height(IntrinsicSize.Max)
+        ) {
+            Box(
+                modifier = Modifier.background(MaterialTheme.colorScheme.surfaceContainer)
+                    .padding(halfPadding)
+                    .width(24.dp)
+                    .fillMaxHeight()
+            ) {
+                Text(
+                    text = (source.score ?: 0).toString(),
+                    modifier = Modifier.align(Alignment.Center)
                 )
+            }
+            source.thumbnail?.let {
+                AsyncImage(
+                    model = it,
+                    contentDescription = null,
+                    modifier = Modifier.height(50.dp)
+                )
+            }
+        }
+        Column {
+            SelectionContainer {
+                Text(
+                    text = source.title ?: source.url.href,
+                    style = MaterialTheme.typography.headlineSmall
+                )
+            }
+            Text(
+                text = source.url.core,
+                style = MaterialTheme.typography.labelMedium
             )
         }
     }
