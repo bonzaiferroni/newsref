@@ -41,6 +41,9 @@ fun TextCell(
 fun TextCell(number: Int?) = TextCell(number?.toString())
 
 @Composable
+fun TextCell(number: Long?) = TextCell(number?.toString())
+
+@Composable
 fun DurationAgoCell(
     instant: Instant?,
 ) {

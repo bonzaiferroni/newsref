@@ -14,6 +14,8 @@ import newsref.db.services.isNewsContent
 import newsref.krawly.models.NewsArticle
 import newsref.model.dto.PageAuthor
 
+private val console = globalConsole.getHandle("PageReader")
+
 class PageReader(
 	private val hostAgent: HostAgent,
 	private val elementReader: ElementReader = ElementReader(),
@@ -109,6 +111,7 @@ class PageReader(
 				val info = PageLink(
 					url = linkUrl,
 					anchorText = text,
+					textIndex = element.findLinkTextIndex(href, text, content.text),
 					context = if (cacheContent) content.text else null,
 					isExternal = isExternal
 				)
@@ -186,6 +189,33 @@ class PageReader(
 		if (articleType == ArticleType.POLICY) return SourceType.WEBSITE
 		return sourceType
 	}
+}
+
+private fun DocElement.findLinkTextIndex(href: String, text: String, context: String): Int {
+	val parts = context.split(text)
+	if (parts.size == 2) return parts[0].length
+	var currentIndex = 0
+	val html = this.html
+	var i = 0
+	while (i < html.length) {
+		val char = html[i]
+		if (char == '<') {
+			val closingBracketIndex = html.indexOf('>', i)
+			if (closingBracketIndex < 0) return -1
+			val elementHtml = html.substring(i, closingBracketIndex + 1)
+			if (elementHtml.length < 3) return -1
+			if (elementHtml[1] == 'a' && elementHtml.contains(href)
+				&& context.substring(currentIndex, currentIndex + text.length) == text) {
+				return currentIndex
+			}
+			i = closingBracketIndex + 1
+		} else {
+			i++
+			currentIndex++
+		}
+	}
+	console.logError("Unable to find index")
+	return -1
 }
 
 private val contentTags = setOf("p", "li", "span", "blockquote")

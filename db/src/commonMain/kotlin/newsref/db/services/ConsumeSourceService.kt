@@ -107,7 +107,12 @@ class ConsumeSourceService : DbService() {
 		val linkRows = page.links.map { info ->
 
 			// update or create links
-			val link = Link(url = info.url, text = info.anchorText, isExternal = info.isExternal)
+			val link = Link(
+				url = info.url,
+				text = info.anchorText,
+				textIndex = info.textIndex,
+				isExternal = info.isExternal
+			)
 			val contentRow = contentRows.firstOrNull { it.text == info.context }
 			val linkRow = LinkRow.find {
 				(LinkTable.url.sameUrl(info.url)) and

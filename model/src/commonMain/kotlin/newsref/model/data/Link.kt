@@ -9,6 +9,7 @@ data class Link(
     val leadId: Long? = null,
     val url: CheckedUrl,
     val text: String,
+    val textIndex: Int,
     val isExternal: Boolean,
     // todo: add startIndex
 )

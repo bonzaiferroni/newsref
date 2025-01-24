@@ -24,6 +24,7 @@ internal object LinkTable: LongIdTable("link") {
     val contentId = reference("content_id", ContentTable, ReferenceOption.SET_NULL).nullable().index()
     val url = text("url")
     val urlText = text("url_text")
+    val textIndex = integer("text_index").default(-1)
     val isExternal = bool("is_external")
 }
 
@@ -36,6 +37,7 @@ internal class LinkRow(id: EntityID<Long>): LongEntity(id) {
 
     var url by LinkTable.url
     var urlText by LinkTable.urlText
+    var textIndex by LinkTable.textIndex
     var isExternal by LinkTable.isExternal
 }
 
@@ -46,6 +48,7 @@ internal fun LinkRow.toData() = Link(
     contentId = this.content?.id?.value,
     url = this.url.toCheckedFromTrusted(),
     text = this.urlText,
+    textIndex = this.textIndex,
     isExternal = this.isExternal
 )
 
@@ -56,43 +59,8 @@ internal fun ResultRow.toLink() = Link(
     contentId = this[LinkTable.contentId]?.value,
     url = this[LinkTable.url].toCheckedFromTrusted(),
     text = this[LinkTable.urlText],
+    textIndex = this[LinkTable.textIndex],
     isExternal = this[LinkTable.isExternal]
-)
-
-// link info
-
-internal val linkInfoJoins get() =
-    LinkTable.leftJoin(SourceTable).leftJoin(HostTable)
-        .leftJoin(LeadTable, LinkTable.leadId, LeadTable.id)
-        .leftJoin(ArticleTable)
-        .leftJoin(ContentTable)
-
-internal val linkInfoColumns = listOf(
-    LinkTable.url,
-    LinkTable.urlText,
-    LinkTable.sourceId,
-    LeadTable.sourceId,
-    ContentTable.text,
-    SourceTable.url,
-    SourceTable.seenAt,
-    SourceTable.publishedAt,
-    ArticleTable.headline,
-    HostTable.name,
-    HostTable.core,
-)
-
-internal fun ResultRow.toLinkInfo() = LinkInfo(
-    originId = this[sourceId].value,
-    targetId = this[LeadTable.sourceId]?.value,
-    url = this[url],
-    urlText = this[urlText],
-    context = this.getOrNull(ContentTable.text),
-    sourceUrl = this[SourceTable.url],
-    hostName = this.getOrNull(HostTable.name),
-    hostCore = this[HostTable.core],
-    seenAt = this[SourceTable.seenAt].toInstantUtc(),
-    publishedAt = this.getOrNull(SourceTable.publishedAt)?.toInstantUtc(),
-    headline = this.getOrNull(ArticleTable.headline),
 )
 
 internal fun LinkRow.fromData(data: Link, sourceRow: SourceRow, contentRow: ContentRow?) {
@@ -110,3 +78,41 @@ internal fun LinkRow.Companion.setLeadOnSameLinks(url: CheckedUrl, leadRow: Lead
     }
     return rows.count() > 0
 }
+
+// link info
+
+internal val linkInfoJoins get() =
+    LinkTable.leftJoin(SourceTable).leftJoin(HostTable)
+        .leftJoin(LeadTable, LinkTable.leadId, LeadTable.id)
+        .leftJoin(ArticleTable)
+        .leftJoin(ContentTable)
+
+internal val linkInfoColumns = listOf(
+    LinkTable.url,
+    LinkTable.urlText,
+    LinkTable.textIndex,
+    LinkTable.sourceId,
+    LeadTable.sourceId,
+    ContentTable.text,
+    SourceTable.url,
+    SourceTable.seenAt,
+    SourceTable.publishedAt,
+    ArticleTable.headline,
+    HostTable.name,
+    HostTable.core,
+)
+
+internal fun ResultRow.toLinkInfo() = LinkInfo(
+    originId = this[sourceId].value,
+    targetId = this[LeadTable.sourceId]?.value,
+    url = this[url],
+    urlText = this[urlText],
+    textIndex = this[LinkTable.textIndex],
+    context = this.getOrNull(ContentTable.text),
+    originUrl = this[SourceTable.url],
+    hostName = this.getOrNull(HostTable.name),
+    hostCore = this[HostTable.core],
+    seenAt = this[SourceTable.seenAt].toInstantUtc(),
+    publishedAt = this.getOrNull(SourceTable.publishedAt)?.toInstantUtc(),
+    headline = this.getOrNull(ArticleTable.headline),
+)

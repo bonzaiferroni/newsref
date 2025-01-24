@@ -59,6 +59,7 @@ data class PageInfo(
 data class PageLink(
     val url: CheckedUrl,
     val anchorText: String,
+	val textIndex: Int,
     val context: String?,
 	val isExternal: Boolean,
 )

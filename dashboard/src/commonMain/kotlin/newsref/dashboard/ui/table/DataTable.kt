@@ -33,6 +33,7 @@ import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.unit.dp
 import kotlinx.datetime.Clock
 import kotlinx.datetime.Instant
+import newsref.dashboard.emptyEmoji
 import newsref.dashboard.halfSpacing
 import newsref.dashboard.innerPadding
 import newsref.dashboard.roundedCorners
@@ -222,3 +223,16 @@ fun Color.addBrightness(factor: Float) = Color(
 fun glowOverDay(instant: Instant?) = instant?.let { (24 - (Clock.System.now() - it).inWholeHours) / 24f }
 fun glowOverHour(instant: Instant?) = instant?.let { (60 - (Clock.System.now() - it).inWholeMinutes) / 60f }
 fun glowOverMin(instant: Instant?) = instant?.let { (60 - (Clock.System.now() - it).inWholeMinutes) / 60f }
+
+fun <T> textColumn(
+    name: String,
+    width: Int? = null,
+    weight: Float? = null,
+    alpha: Float = 1f,
+    block: (T) -> String?
+) = TableColumn<T>(
+    name = name,
+    width = width,
+    weight = weight,
+    alpha = alpha,
+) { TextCell(block(it) ?: emptyEmoji)}
