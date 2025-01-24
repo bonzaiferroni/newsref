@@ -32,6 +32,7 @@ fun LinkInfoView(
         rows = links,
         columns = listOf(
             ColumnGroup(
+                TableColumn<LinkInfo>("Ext", width = 30) { TextCell(if (it.isExternal) "⤴" else "🔃")},
                 TableColumn<LinkInfo>("Headline", weight = 1f) { TextCell(it.headline) }
                     .addControl(openExternalLink(uriHandler) { it.url })
             ),

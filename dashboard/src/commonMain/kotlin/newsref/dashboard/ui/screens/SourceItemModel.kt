@@ -17,6 +17,7 @@ import newsref.model.data.Link
 import newsref.model.data.Source
 import newsref.model.data.SourceScore
 import newsref.model.dto.LinkInfo
+import kotlin.time.Duration.Companion.minutes
 
 class SourceItemModel(
     route: SourceItemRoute,
@@ -52,6 +53,7 @@ class SourceItemModel(
             article = article,
             outbound = outbound,
             inbound = inbound,
+            nextRefresh = Clock.System.now() + 1.minutes
         ) }
     }
 

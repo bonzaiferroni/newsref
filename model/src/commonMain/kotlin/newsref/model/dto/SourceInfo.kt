@@ -40,6 +40,7 @@ data class LinkInfo(
 	val url: String,
 	val urlText: String,
 	val textIndex: Int,
+	val isExternal: Boolean,
 	val context: String?,
 	val originUrl: String,
 	val hostName: String?,

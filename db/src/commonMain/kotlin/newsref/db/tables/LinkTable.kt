@@ -68,6 +68,7 @@ internal fun LinkRow.fromData(data: Link, sourceRow: SourceRow, contentRow: Cont
     content = contentRow
     url = data.url.toString()
     urlText = data.text
+    textIndex = data.textIndex
     isExternal = data.isExternal
 }
 
@@ -88,11 +89,12 @@ internal val linkInfoJoins get() =
         .leftJoin(ContentTable)
 
 internal val linkInfoColumns = listOf(
+    LinkTable.sourceId,
+    LeadTable.sourceId,
     LinkTable.url,
     LinkTable.urlText,
     LinkTable.textIndex,
-    LinkTable.sourceId,
-    LeadTable.sourceId,
+    LinkTable.isExternal,
     ContentTable.text,
     SourceTable.url,
     SourceTable.seenAt,
@@ -108,6 +110,7 @@ internal fun ResultRow.toLinkInfo() = LinkInfo(
     url = this[url],
     urlText = this[urlText],
     textIndex = this[LinkTable.textIndex],
+    isExternal = this[LinkTable.isExternal],
     context = this.getOrNull(ContentTable.text),
     originUrl = this[SourceTable.url],
     hostName = this.getOrNull(HostTable.name),

@@ -65,6 +65,12 @@ fun SourceItemScreen(
                             LinkInfoView("Inbound Links", state.inbound)
                         }
                     )
+                }.apply {
+                    if (state.outbound.isNotEmpty()) this.add(
+                        TabPage("Outbound", false) {
+                            LinkInfoView("Outbound Links", state.outbound)
+                        }
+                    )
                 }
             )
         }
