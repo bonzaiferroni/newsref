@@ -37,7 +37,6 @@ internal object SourceTable : LongIdTable("source") {
     val thumbnail = text("thumbnail").nullable()
     val embed = text("embed").nullable()
     val contentCount = integer("content_count").nullable()
-    val embedding = vector("embedding", 1536).nullable()
     val seenAt = datetime("seen_at").index()
     val accessedAt = datetime("accessed_at").nullable()
     val publishedAt = datetime("published_at").nullable().index()
@@ -58,7 +57,6 @@ internal class SourceRow(id: EntityID<Long>) : LongEntity(id) {
     var thumbnail by SourceTable.thumbnail
     var embed by SourceTable.embed
     var contentCount by SourceTable.contentCount
-    var embedding by SourceTable.embedding
     var seenAt by SourceTable.seenAt
     var accessedAt by SourceTable.accessedAt
     var publishedAt by SourceTable.publishedAt

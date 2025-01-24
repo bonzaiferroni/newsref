@@ -1,14 +1,10 @@
 package newsref.krawly
 
-import io.github.cdimascio.dotenv.dotenv
 import newsref.db.globalConsole
 import newsref.db.initDb
 import newsref.db.log.ConsoleConfig
 import newsref.db.utils.initProfiler
 import newsref.krawly.agents.*
-import newsref.krawly.utils.pwFetch
-import newsref.krawly.utils.pwFetchRedirect
-import newsref.model.core.toUrl
 
 fun main(args: Array<String>) {
 	println(args.joinToString(", "))
@@ -24,7 +20,7 @@ fun crawl(args: Array<String>) {
 	val hostAgent = HostAgent(web)
 	val leadMaker = LeadMaker()
 	val noteWriter = NoteWriter()
-	val sourceEmbedder = SourceEmbedder()
+	val distanceFinder = DistanceFinder()
 	val feedChecker = FeedChecker(web, hostAgent, leadMaker)
 	val leadFollower = LeadFollower(web = web, leadMaker = leadMaker, hostAgent = hostAgent)
 	globalConsole.addCommand("start") {
@@ -32,7 +28,7 @@ fun crawl(args: Array<String>) {
 		leadFollower.start()
 		scoreFinder.start()
 		// noteWriter.start()
-		// sourceEmbedder.start()
+		distanceFinder.start()
 		"Starting spider 🕷"
 	}
 	args.map { it.split('=') }

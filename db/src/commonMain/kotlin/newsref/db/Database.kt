@@ -4,9 +4,7 @@ import kotlinx.coroutines.runBlocking
 import newsref.db.core.PgVectorManager
 import newsref.db.services.UserService
 import newsref.db.tables.*
-import newsref.model.core.UserRole
 import org.jetbrains.exposed.sql.*
-import org.jetbrains.exposed.sql.SqlExpressionBuilder.eq
 import org.jetbrains.exposed.sql.transactions.TransactionManager
 import org.jetbrains.exposed.sql.transactions.transaction
 
@@ -47,6 +45,9 @@ val dbTables = listOf(
 	FeedSourceTable,
 	NoteTable,
 	SourceNoteTable,
+	SourceVectorTable,
+	VectorModelTable,
+	SourceDistanceTable,
 )
 
 const val URL = "jdbc:postgresql://localhost:5432/newsrefdb"

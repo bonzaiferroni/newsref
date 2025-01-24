@@ -41,7 +41,7 @@ class ScoreService : DbService() {
 						SourceTable.publishedAt.greater(time) or LeadJobTable.freshAt.greater(time)) and
 						LinkTable.isExternal.eq(true) and LeadTable.sourceId.isNotNull()
 			}
-			.toSqlString { console.log(it) }
+			// .toSqlString { console.log(it) }
 			.map {
 				ScoreSignal(
 					targetId = it[LeadTable.sourceId]!!.value,
