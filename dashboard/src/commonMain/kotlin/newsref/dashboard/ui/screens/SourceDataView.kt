@@ -64,6 +64,7 @@ fun SourceDataView(
                 PropertyRow("Contents") { TextCell(contents.size) },
                 PropertyRow("Outbound links") { TextCell(state.outbound.size) },
                 PropertyRow("Inbound links") { TextCell(state.inbound.size) },
+                PropertyRow("Distances") { TextCell(state.distances.size) }
             )
         )
 

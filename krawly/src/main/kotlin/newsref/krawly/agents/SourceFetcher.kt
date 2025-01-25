@@ -81,7 +81,6 @@ class SourceFetcher(
 				junkParams = firstParam,
 			)
 		} else {
-			// handle strategy swap
 			var strategy = decideStrategy(pastResults)
 			var failedStrategy: FetchStrategy? = null
 			var result = web.fetch(leadUrl, strategy)

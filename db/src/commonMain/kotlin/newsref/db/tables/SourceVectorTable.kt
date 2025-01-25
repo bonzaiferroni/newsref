@@ -1,10 +1,13 @@
 package newsref.db.tables
 
+import newsref.db.core.DistanceInfo
 import newsref.db.core.SourceDistance
 import newsref.db.core.vector
+import newsref.db.utils.toCheckedFromTrusted
 import org.jetbrains.exposed.dao.id.IntIdTable
 import org.jetbrains.exposed.dao.id.LongIdTable
 import org.jetbrains.exposed.sql.ReferenceOption
+import org.jetbrains.exposed.sql.ResultRow
 import org.jetbrains.exposed.sql.statements.InsertStatement
 
 internal object SourceVectorTable : LongIdTable("source_vector") {
@@ -30,3 +33,26 @@ internal fun InsertStatement<*>.fromData(data: SourceDistance) {
 	this[SourceDistanceTable.modelId] = data.modelId
 	this[SourceDistanceTable.distance] = data.distance
 }
+
+internal fun ResultRow.toSourceDistance() = SourceDistance(
+	originId = this[SourceDistanceTable.originId].value,
+	targetId = this[SourceDistanceTable.targetId].value,
+	modelId = this[SourceDistanceTable.modelId].value,
+	distance = this[SourceDistanceTable.distance]
+)
+
+internal val distanceInfoColumns = listOf(
+	SourceDistanceTable.modelId,
+	SourceDistanceTable.distance,
+	SourceTable.id,
+	SourceTable.url,
+	SourceTable.title,
+)
+
+internal fun ResultRow.toDistanceInfo() = DistanceInfo(
+	sourceId = this[SourceTable.id].value,
+	modelId = this[SourceDistanceTable.modelId].value,
+	distance = this[SourceDistanceTable.distance],
+	title = this[SourceTable.title],
+	url = this[SourceTable.url].toCheckedFromTrusted(),
+)

@@ -111,7 +111,7 @@ class PageReader(
 				val info = PageLink(
 					url = linkUrl,
 					anchorText = text,
-					textIndex = element.findLinkTextIndex(href, text, content.text),
+					textIndex = element.findLinkTextIndex(href, text, content.text, lead.url),
 					context = if (cacheContent) content.text else null,
 					isExternal = isExternal
 				)
@@ -191,7 +191,12 @@ class PageReader(
 	}
 }
 
-private fun DocElement.findLinkTextIndex(href: String, text: String, context: String): Int {
+private fun DocElement.findLinkTextIndex(
+	href: String,
+	text: String,
+	context: String,
+	leadUrl: CheckedUrl,
+): Int {
 	val parts = context.split(text)
 	if (parts.size == 2) return parts[0].length
 	var currentIndex = 0
@@ -204,8 +209,10 @@ private fun DocElement.findLinkTextIndex(href: String, text: String, context: St
 			if (closingBracketIndex < 0) return -1
 			val elementHtml = html.substring(i, closingBracketIndex + 1)
 			if (elementHtml.length < 3) return -1
+			val textEndIndex = currentIndex + text.length
+			if (textEndIndex > context.length) return -1
 			if (elementHtml[1] == 'a' && elementHtml.contains(href)
-				&& context.substring(currentIndex, currentIndex + text.length) == text) {
+				&& context.substring(currentIndex, textEndIndex) == text) {
 				return currentIndex
 			}
 			i = closingBracketIndex + 1
@@ -214,7 +221,7 @@ private fun DocElement.findLinkTextIndex(href: String, text: String, context: St
 			currentIndex++
 		}
 	}
-	console.logError("Unable to find index")
+	console.logError("${leadUrl.core}: Unable to find index")
 	return -1
 }
 

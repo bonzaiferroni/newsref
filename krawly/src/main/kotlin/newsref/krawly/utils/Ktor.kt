@@ -13,6 +13,7 @@ import io.ktor.http.*
 import io.ktor.network.sockets.SocketTimeoutException
 import io.ktor.util.network.*
 import kotlinx.coroutines.supervisorScope
+import kotlinx.coroutines.withTimeout
 import newsref.db.globalConsole
 import newsref.db.log.toBlue
 import newsref.db.log.toPurple
@@ -70,13 +71,15 @@ private val client = HttpClient(Apache) {
 
 suspend fun ktorFetchAsync(url: Url): WebResult = supervisorScope {
 	return@supervisorScope try {
-		val response: HttpResponse = client.get(url.href)
-		val content: String = response.body()
-		WebResult(
-			status = response.status.value,
-			pageHref = response.call.request.url.toString(),
-			content = content,
-		)
+		withTimeout(40_000) {
+			val response: HttpResponse = client.get(url.href)
+			val content: String = response.body()
+			WebResult(
+				status = response.status.value,
+				pageHref = response.call.request.url.toString(),
+				content = content,
+			)
+		}
 	} catch (e: Exception) {
 		when (e) {
 			// extra-serious exceptions

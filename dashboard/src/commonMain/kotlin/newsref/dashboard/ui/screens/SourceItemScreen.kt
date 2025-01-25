@@ -71,6 +71,12 @@ fun SourceItemScreen(
                             LinkInfoView("Outbound Links", state.outbound)
                         }
                     )
+                }.apply {
+                    if (state.distances.isNotEmpty()) this.add(
+                        TabPage("Distances", false) {
+                            SourceDistanceView(state.distances)
+                        }
+                    )
                 }
             )
         }

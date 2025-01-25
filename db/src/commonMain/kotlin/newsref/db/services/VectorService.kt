@@ -8,8 +8,11 @@ import newsref.db.tables.SourceVectorTable
 import newsref.db.tables.SourceTable
 import newsref.db.tables.VectorModelTable
 import newsref.db.tables.SourceDistanceTable
+import newsref.db.tables.distanceInfoColumns
 import newsref.db.tables.fromData
+import newsref.db.tables.toDistanceInfo
 import newsref.db.tables.toSource
+import newsref.db.tables.toSourceDistance
 import org.jetbrains.exposed.sql.*
 
 private val console = globalConsole.getHandle("VectorService")
@@ -17,7 +20,7 @@ private val console = globalConsole.getHandle("VectorService")
 class VectorService : DbService() {
 	suspend fun findNextJob() = dbQuery {
 		SourceTable.leftJoin(SourceVectorTable).select(SourceTable.columns)
-			.where { SourceVectorTable.id.isNull() and SourceTable.contentCount.greater(500) and
+			.where { SourceVectorTable.id.isNull() and SourceTable.contentCount.greater(100) and
 					SourceTable.contentCount.less(5000) }
 			.orderBy(SourceTable.score, SortOrder.DESC_NULLS_LAST)
 			.firstOrNull()?.toSource()
@@ -44,7 +47,7 @@ class VectorService : DbService() {
 
 		val cosineDistance = SourceVectorTable.vector.cosineDistance(vector).alias("cosine_distance")
 		val distances = SourceVectorTable.select(SourceVectorTable.sourceId, SourceVectorTable.modelId, cosineDistance)
-			.where { SourceVectorTable.modelId eq modelId }
+			.where { SourceVectorTable.modelId.eq(modelId) and SourceVectorTable.sourceId.neq(sourceId) }
 			.map { SourceDistance(
 				originId = sourceId,
 				targetId = it[SourceVectorTable.sourceId].value,
@@ -55,6 +58,19 @@ class VectorService : DbService() {
 		SourceDistanceTable.batchInsert(distances) { this.fromData(it) }
 
 		console.log("Inserted ${distances.size} distances from origin: $sourceId")
+	}
+
+	suspend fun readDistances(sourceId: Long) = dbQuery {
+		val fromOriginDistances = SourceDistanceTable.join(SourceTable, JoinType.LEFT, SourceDistanceTable.targetId, SourceTable.id)
+			.select(distanceInfoColumns)
+			.where { SourceDistanceTable.originId.eq(sourceId)}
+			.map { it.toDistanceInfo() }
+		val fromTargetDistances = SourceDistanceTable.join(SourceTable, JoinType.LEFT, SourceDistanceTable.originId, SourceTable.id)
+			.select(distanceInfoColumns)
+			.where { SourceDistanceTable.targetId.eq(sourceId)}
+			.map { it.toDistanceInfo() }
+
+		(fromOriginDistances + fromTargetDistances).sortedBy { it.distance }
 	}
 }
 

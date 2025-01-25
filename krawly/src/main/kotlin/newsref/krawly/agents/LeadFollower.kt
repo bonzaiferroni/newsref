@@ -38,6 +38,7 @@ class LeadFollower(
 	private val console = globalConsole.getHandle("LeadFollower", true)
 	private val fetched = Collections.synchronizedList(mutableListOf<FetchInfo>())
 	private val nest = Collections.synchronizedList(((0 until maxSpiders).map { Spider(it) }).toMutableList())
+	private val awayFromNest = Collections.synchronizedList(mutableListOf<Spider>())
 	private val leads = LinkedList<LeadInfo>()
 	private val hosts = mutableMapOf<String, Instant>()
 	private var refreshed = Instant.DISTANT_PAST
@@ -111,7 +112,7 @@ class LeadFollower(
 		while (leads.isNotEmpty()) {
 			val now = Clock.System.now()
 			if (now - refreshed > 2.minutes) {
-				refreshLeads()
+				break
 			}
 
 			val lead = getNextLead()
@@ -133,19 +134,31 @@ class LeadFollower(
 			followCount++
 
 			val spider = nest.removeLast()
+			awayFromNest.add(spider)
+			spider.url = url.href
 			spider.crawl {
 				val newFetch = spider.sourceFetcher.fetch(lead, url, host, pastResults)
+				spider.url = null
 				if (newFetch.result?.noConnection != true || isNetworkAvailable()) {
 					fetched.add(newFetch)
 				} else {
 					console.logError("Choppy waters! (internet unavailable)")
 				}
+				awayFromNest.remove(spider)
 				nest.add(spider) // return home, spidey
 			}
 			delay(100)
 		}
 
+		val startedAt = Clock.System.now()
 		while (nest.size < maxSpiders) {
+			val waiting = Clock.System.now() - startedAt
+			if (waiting > 1.minutes) {
+				for (spider in awayFromNest) {
+					console.log(spider.url)
+				}
+				delay(10.seconds)
+			}
 			icon = "🥱"
 			delay(10)
 		}
@@ -183,6 +196,7 @@ class LeadFollower(
 		val sourceFetcher: SourceFetcher = SourceFetcher(spindex, web)
 	) {
 		val console = globalConsole.getHandle("spider $spindex")
+		var url: String? = null
 
 		fun crawl(block: suspend () -> Unit) {
 			CoroutineScope(Dispatchers.Default).launch {
