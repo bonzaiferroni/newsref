@@ -21,7 +21,7 @@ class VectorService : DbService() {
 	suspend fun findNextJob() = dbQuery {
 		SourceTable.leftJoin(SourceVectorTable).select(SourceTable.columns)
 			.where { SourceVectorTable.id.isNull() and SourceTable.contentCount.greater(100) and
-					SourceTable.contentCount.less(5000) }
+					SourceTable.contentCount.less(2000) }
 			.orderBy(SourceTable.score, SortOrder.DESC_NULLS_LAST)
 			.firstOrNull()?.toSource()
 	}

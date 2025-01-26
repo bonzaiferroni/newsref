@@ -30,3 +30,4 @@ newsref.properties
 **/.kotlin-js-store/
 
 /.kotlin/
+.aider*

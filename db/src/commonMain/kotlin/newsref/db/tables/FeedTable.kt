@@ -14,6 +14,7 @@ import org.jetbrains.exposed.dao.id.LongIdTable
 import org.jetbrains.exposed.sql.Expression
 import org.jetbrains.exposed.sql.QueryBuilder
 import org.jetbrains.exposed.sql.ResultRow
+import org.jetbrains.exposed.sql.kotlin.datetime.CurrentDateTime
 import org.jetbrains.exposed.sql.kotlin.datetime.datetime
 
 internal object FeedTable : IntIdTable("feed") {
@@ -21,7 +22,7 @@ internal object FeedTable : IntIdTable("feed") {
     val selector = text("selector")
     val external = bool("external").default(false)
     val trackPosition = bool("track_position").default(false)
-    val createdAt = datetime("created_at").defaultExpression(nowExpression)
+    val createdAt = datetime("created_at").defaultExpression(CurrentDateTime)
 }
 
 val nowExpression = object : Expression<LocalDateTime>() {

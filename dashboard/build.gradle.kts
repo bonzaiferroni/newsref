@@ -2,6 +2,7 @@ import org.gradle.kotlin.dsl.project
 import org.jetbrains.compose.desktop.application.dsl.TargetFormat
 import org.jetbrains.kotlin.gradle.ExperimentalWasmDsl
 import org.jetbrains.kotlin.gradle.targets.js.webpack.KotlinWebpackConfig
+val ktor_version: String by project
 
 plugins {
     alias(libs.plugins.kotlinMultiplatform)
@@ -50,6 +51,12 @@ kotlin {
             implementation("io.coil-kt.coil3:coil-compose:3.0.4")
             implementation("io.coil-kt.coil3:coil-network-okhttp:3.0.4")
             implementation("io.github.koalaplot:koalaplot-core:0.8.0")
+            implementation("io.ktor:ktor-client-core:$ktor_version")
+            implementation("io.ktor:ktor-client-cio:$ktor_version")
+            implementation("io.ktor:ktor-serialization-kotlinx-json:$ktor_version")
+            implementation("io.ktor:ktor-client-resources:$ktor_version")
+            implementation("io.ktor:ktor-client-content-negotiation:$ktor_version")
+            implementation("uk.co.caprica:vlcj:4.7.0")
 
             implementation(project(":model"))
             implementation(project(":db"))
