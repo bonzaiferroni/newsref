@@ -12,7 +12,6 @@ import newsref.db.tables.distanceInfoColumns
 import newsref.db.tables.fromData
 import newsref.db.tables.toDistanceInfo
 import newsref.db.tables.toSource
-import newsref.db.tables.toSourceDistance
 import org.jetbrains.exposed.sql.*
 
 private val console = globalConsole.getHandle("VectorService")
@@ -20,8 +19,8 @@ private val console = globalConsole.getHandle("VectorService")
 class VectorService : DbService() {
 	suspend fun findNextJob() = dbQuery {
 		SourceTable.leftJoin(SourceVectorTable).select(SourceTable.columns)
-			.where { SourceVectorTable.id.isNull() and SourceTable.contentCount.greater(100) and
-					SourceTable.contentCount.less(2000) }
+			.where { SourceVectorTable.id.isNull() and SourceTable.contentCount.greater(VECTOR_MIN_WORDS) and
+					SourceTable.contentCount.less(VECTOR_MAX_WORDS) }
 			.orderBy(SourceTable.score, SortOrder.DESC_NULLS_LAST)
 			.firstOrNull()?.toSource()
 	}
@@ -77,3 +76,7 @@ class VectorService : DbService() {
 internal fun VectorModelTable.readModelIdByName(name: String) = this.select(VectorModelTable.id)
 	.where { VectorModelTable.name eq name }
 	.firstOrNull()?.let { it[VectorModelTable.id].value }
+
+const val VECTOR_MIN_WORDS = 100
+const val VECTOR_MAX_WORDS = 4000
+const val VECTOR_MAX_CHARACTERS = 10000

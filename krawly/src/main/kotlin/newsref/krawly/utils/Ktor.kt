@@ -32,7 +32,7 @@ import javax.net.ssl.SSLHandshakeException
 
 private var console = globalConsole.getHandle("ktor")
 
-private val client = HttpClient(Apache) {
+private val client = HttpClient(CIO) {
 	defaultRequest {
 		headers {
 			set(HttpHeaders.UserAgent, chromeLinuxAgent)
@@ -49,28 +49,13 @@ private val client = HttpClient(Apache) {
 	install(HttpSend) {
 		maxSendCount = 40
 	}
-//	engine {
-//		requestTimeout = 30_000 // Timeout in milliseconds (30 seconds here)
-//	}
-	install(HttpTimeout) {
-		requestTimeoutMillis = 30_000 // Set request timeout
-		connectTimeoutMillis = 30_000 // Set connection timeout
-		socketTimeoutMillis = 30_000  // Set socket timeout
-	}
 	engine {
-		followRedirects = true
-		socketTimeout = 30000
-		connectTimeout = 30000
-		connectionRequestTimeout = 30000
-		customizeClient {
-			setMaxConnTotal(1000)
-			setMaxConnPerRoute(100)
-		}
+		requestTimeout = 30_000 // Timeout in milliseconds (30 seconds here)
 	}
 }
 
-suspend fun ktorFetchAsync(url: Url): WebResult = supervisorScope {
-	return@supervisorScope try {
+suspend fun ktorFetchAsync(url: Url): WebResult {
+	return try {
 		withTimeout(40_000) {
 			val response: HttpResponse = client.get(url.href)
 			val content: String = response.body()

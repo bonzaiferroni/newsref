@@ -65,21 +65,3 @@ https://abcnews.go.com/,a>h2[id*=headline],false,2025-01-14 23:40:54.908344,true
 https://www.politico.com/,h3.headline>a,false,2025-01-14 23:40:54.908344,true
 https://www.cbsnews.com/,a.item__anchor>div.item__title-wrapper>h4.item__hed,false,2025-01-14 23:40:54.908344,true
 https://www.axios.com/,"a[data-cy=""top-table-story-headline""]",false,2025-01-14 23:40:54.908344,true
-
-
-
-
-
-bot blocked:
-https://www.sfchronicle.com/,h2>a
-https://www.houstonchronicle.com/,h2>a
-https://www.azcentral.com/,"div[aria-label=""Top Headlines""]>a"
-https://www.cincinnati.com/,"div[aria-label=""Top Headlines""]>a"
-https://www.wsj.com/us-news,h3>a
-https://www.thebulwark.com/,div.home-page>div>div>div>div>div>div>div>div>div>div>a
-https://www.bloomberg.com/,"div[class*=""Headline""]"
-https://old.reddit.com/r/conservative/new,p.title,true
-https://old.reddit.com/r/politics/new,p.title,true
-https://www.timesunion.com/,h2>a,false
-
-
