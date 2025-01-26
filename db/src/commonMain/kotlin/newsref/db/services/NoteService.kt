@@ -10,6 +10,7 @@ import newsref.db.tables.SourceRow
 import newsref.db.tables.SourceTable
 import newsref.db.tables.toData
 import newsref.model.data.Note
+import newsref.model.data.Source
 import org.jetbrains.exposed.sql.SortOrder
 import org.jetbrains.exposed.sql.SqlExpressionBuilder.eq
 import org.jetbrains.exposed.sql.and
