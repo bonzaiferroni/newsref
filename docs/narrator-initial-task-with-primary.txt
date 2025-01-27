@@ -1,0 +1,3 @@
+Your task is to write a description of an event. You will be given a primary source that might be a news article, press release, tweet, or some other kind of report or information. Then you will be given a news article about the event.
+
+Write a basic description of the event based on your primary source and the news article. Give all the important details, including what happened, when it happened, where it happened (if relevant), and who was involved. Keep your description below 500 words.

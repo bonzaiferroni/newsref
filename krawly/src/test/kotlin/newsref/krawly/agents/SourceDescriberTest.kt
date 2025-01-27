@@ -7,7 +7,7 @@ import kotlin.test.Test
 class SourceDescriberTest {
 	@Test
 	fun `explore code`() = runBlocking {
-		val content = ContentService().getSourceContentText(382)
+		val content = ContentService().readSourceContentText(382)
 		println(content)
 	}
 }

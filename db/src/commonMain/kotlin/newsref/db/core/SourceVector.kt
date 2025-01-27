@@ -9,7 +9,7 @@ import newsref.model.core.Url
 //	val model: String,
 //)
 
-data class EmbeddingModel(
+data class VectorModel(
 	val id: Int,
 	val name: String,
 )

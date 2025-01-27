@@ -11,7 +11,7 @@ class ContentService : DbService() {
 		ContentRow.find { ContentTable.text eq content}.empty()
 	}
 
-	suspend fun getSourceContentText(sourceId: Long) = dbQuery {
+	suspend fun readSourceContentText(sourceId: Long) = dbQuery {
 		val contents = SourceContentTable.leftJoin(ContentTable)
 			.select(ContentTable.text)
 			.where{ SourceContentTable.sourceId eq sourceId}

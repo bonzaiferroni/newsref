@@ -11,12 +11,15 @@ import androidx.compose.ui.text.SpanStyle
 import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.text.withStyle
+import newsref.dashboard.LocalNavigator
+import newsref.dashboard.SourceItemRoute
 import newsref.dashboard.emptyEmoji
 import newsref.dashboard.ui.table.ColumnGroup
 import newsref.dashboard.ui.table.DataTable
 import newsref.dashboard.ui.table.TableColumn
 import newsref.dashboard.ui.table.TextCell
 import newsref.dashboard.ui.table.addControl
+import newsref.dashboard.ui.table.onClick
 import newsref.dashboard.ui.table.openExternalLink
 import newsref.model.dto.LinkInfo
 
@@ -26,6 +29,7 @@ fun LinkInfoView(
     links: List<LinkInfo>,
 ) {
     val uriHandler = LocalUriHandler.current
+    val nav = LocalNavigator.current
 
     DataTable(
         name = name,
@@ -37,11 +41,13 @@ fun LinkInfoView(
                     .addControl(openExternalLink(uriHandler) { it.url })
             ),
             ColumnGroup(
-                TableColumn<LinkInfo>("Origin", width = 60) { TextCell(it.originId) },
+                TableColumn<LinkInfo>("Origin", width = 60) { TextCell(it.originId) }
+                    .onClick { nav.go(SourceItemRoute(it.originId, "Content")) },
                 TableColumn<LinkInfo>("Origin Url", weight = 1f) { TextCell(it.originUrl) },
             ),
             ColumnGroup(
-                TableColumn<LinkInfo>("Target", width = 60) { TextCell(it.targetId) },
+                TableColumn<LinkInfo>("Target", width = 60) { TextCell(it.targetId) }
+                    .onClick { nav.go(SourceItemRoute(it.originId, "Content")) },
                 TableColumn<LinkInfo>("Target Url", weight = 1f) { TextCell(it.url) },
             ),
             ColumnGroup(

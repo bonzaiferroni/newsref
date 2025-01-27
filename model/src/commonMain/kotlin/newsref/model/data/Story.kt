@@ -22,12 +22,22 @@ data class Chapter(
 data class ChapterSource(
     val id: Long,
     val chapterId: Long,
+    val sourceId: Long,
     val relevance: String,
     val contrast: String,
+    val type: StorySourceType,
 )
 
 data class Narrator(
-    val id: Int,
+    val id: Int = 0,
+    val vectorModelId: Int = 0,
     val name: String,
     val bio: String,
+    val chatModelUrl: String,
+    val chatToken: String,
 )
+
+enum class StorySourceType {
+    Primary,
+    Secondary,
+}

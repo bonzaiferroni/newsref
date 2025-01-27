@@ -12,11 +12,23 @@ import newsref.db.tables.distanceInfoColumns
 import newsref.db.tables.fromData
 import newsref.db.tables.toDistanceInfo
 import newsref.db.tables.toSource
+import newsref.db.tables.toSourceDistance
 import org.jetbrains.exposed.sql.*
 
 private val console = globalConsole.getHandle("VectorService")
 
 class VectorService : DbService() {
+	suspend fun readOrCreateModel(modelName: String) = dbQuery {
+		VectorModelTable.readModelIdByName(modelName)
+			?: VectorModelTable.insertAndGetId { it[VectorModelTable.name] = modelName }.value
+	}
+
+	suspend fun readVector(sourceId: Long, modelId: Int) = dbQuery {
+		SourceVectorTable.select(SourceVectorTable.vector)
+			.where { SourceVectorTable.sourceId.eq(sourceId) and SourceVectorTable.modelId.eq(modelId)}
+			.firstOrNull()?.toSource()
+	}
+
 	suspend fun findNextJob() = dbQuery {
 		SourceTable.leftJoin(SourceVectorTable).select(SourceTable.columns)
 			.where { SourceVectorTable.id.isNull() and SourceTable.contentCount.greater(VECTOR_MIN_WORDS) and
@@ -70,6 +82,33 @@ class VectorService : DbService() {
 			.map { it.toDistanceInfo() }
 
 		(fromOriginDistances + fromTargetDistances).sortedBy { it.distance }
+	}
+
+	suspend fun readGeneratedDistances(sourceIds: List<Long>) = dbQuery {
+		SourceDistanceTable.select(SourceDistanceTable.columns)
+			.where { SourceDistanceTable.targetId.inList(sourceIds) and SourceDistanceTable.originId.inList(sourceIds) }
+			.map { it.toSourceDistance() }
+	}
+
+	suspend fun readDistances(sourceIds: List<Long>, modelId: Int) = dbQuery {
+		val vectors = SourceVectorTable.select(SourceVectorTable.vector)
+			.where { SourceVectorTable.sourceId.inList(sourceIds) and SourceVectorTable.modelId.eq(modelId) }
+			.map { Pair(it[SourceVectorTable.sourceId].value, it[SourceVectorTable.vector]) }
+
+		val map = mutableMapOf<Long, List<SourceDistance>>()
+		for ((id, vector) in vectors) {
+			val cosine = SourceVectorTable.vector.cosineDistance(vector).alias("cosine_distance")
+			val distances = SourceVectorTable.select(cosine, SourceVectorTable.sourceId)
+				.where { SourceVectorTable.sourceId.neq(id) and SourceVectorTable.sourceId.inList(sourceIds)}
+				.map { SourceDistance(
+					originId = id,
+					targetId = it[SourceVectorTable.sourceId].value,
+					modelId = modelId,
+					distance = it[cosine],
+				)}
+			map[id] = distances
+		}
+		map
 	}
 }
 

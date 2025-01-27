@@ -2,6 +2,8 @@ package newsref.db.tables
 
 import newsref.db.utils.*
 import newsref.model.data.Chapter
+import newsref.model.data.ChapterSource
+import newsref.model.data.StorySourceType
 import org.jetbrains.exposed.dao.id.*
 import org.jetbrains.exposed.sql.*
 import org.jetbrains.exposed.sql.kotlin.datetime.datetime
@@ -28,4 +30,16 @@ fun ResultRow.toChapter() = Chapter(
 object ChapterSourceTable : LongIdTable("chapter_source") {
     val chapterId = reference("chapter_id", ChapterTable, ReferenceOption.CASCADE).index()
     val sourceId = reference("source_id", SourceTable, ReferenceOption.CASCADE).index()
+    val relevance = text("relevance")
+    val contrast = text("contrast")
+    val type = enumeration("type", StorySourceType::class)
 }
+
+fun ResultRow.toChapterSource() = ChapterSource(
+    id = this[ChapterSourceTable.id].value,
+    chapterId = this[ChapterSourceTable.chapterId].value,
+    sourceId = this[ChapterSourceTable.sourceId].value,
+    relevance = this[ChapterSourceTable.relevance],
+    contrast = this[ChapterSourceTable.contrast],
+    type = this[ChapterSourceTable.type],
+)

@@ -1,13 +1,10 @@
 package newsref.db.tables
 
-import newsref.db.core.DistanceInfo
-import newsref.db.core.SourceDistance
-import newsref.db.core.vector
-import newsref.db.utils.toCheckedFromTrusted
+import newsref.db.core.*
+import newsref.db.utils.*
 import org.jetbrains.exposed.dao.id.IntIdTable
 import org.jetbrains.exposed.dao.id.LongIdTable
-import org.jetbrains.exposed.sql.ReferenceOption
-import org.jetbrains.exposed.sql.ResultRow
+import org.jetbrains.exposed.sql.*
 import org.jetbrains.exposed.sql.statements.InsertStatement
 
 internal object SourceVectorTable : LongIdTable("source_vector") {
@@ -20,18 +17,16 @@ internal object VectorModelTable : IntIdTable("vector_model") {
 	val name = text("name")
 }
 
+internal fun ResultRow.toVectorModel() = VectorModel(
+	id = this[VectorModelTable.id].value,
+	name = this[VectorModelTable.name]
+)
+
 internal object SourceDistanceTable : LongIdTable("source_distance") {
 	val originId = reference("origin_id", SourceTable, ReferenceOption.CASCADE)
 	val targetId = reference("target_id", SourceTable, ReferenceOption.CASCADE)
 	val modelId = reference("model_id", VectorModelTable, ReferenceOption.CASCADE)
 	val distance = float("distance")
-}
-
-internal fun InsertStatement<*>.fromData(data: SourceDistance) {
-	this[SourceDistanceTable.originId] = data.originId
-	this[SourceDistanceTable.targetId] = data.targetId
-	this[SourceDistanceTable.modelId] = data.modelId
-	this[SourceDistanceTable.distance] = data.distance
 }
 
 internal fun ResultRow.toSourceDistance() = SourceDistance(
@@ -40,6 +35,13 @@ internal fun ResultRow.toSourceDistance() = SourceDistance(
 	modelId = this[SourceDistanceTable.modelId].value,
 	distance = this[SourceDistanceTable.distance]
 )
+
+internal fun InsertStatement<*>.fromData(data: SourceDistance) {
+	this[SourceDistanceTable.originId] = data.originId
+	this[SourceDistanceTable.targetId] = data.targetId
+	this[SourceDistanceTable.modelId] = data.modelId
+	this[SourceDistanceTable.distance] = data.distance
+}
 
 internal val distanceInfoColumns = listOf(
 	SourceDistanceTable.modelId,
