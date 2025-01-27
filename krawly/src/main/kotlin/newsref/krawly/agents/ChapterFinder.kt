@@ -6,9 +6,8 @@ import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import newsref.db.*
 import newsref.db.services.*
-import newsref.krawly.clients.AiClient
+import newsref.db.utils.*
 import newsref.model.data.*
-import java.io.File
 import kotlin.time.Duration.Companion.minutes
 
 private val console = globalConsole.getHandle("ChapterFinder")
@@ -40,28 +39,36 @@ class ChapterFinder(
             return
         }
 
-        val concurrentSources = chapterService.readConcurrentSources(origin)
-
-        val inboundSources = chapterService.findInboundSources(origin.id)
+        val inboundSources = chapterService.readInboundSources(origin.id)
         if (inboundSources.isEmpty()) {
             console.log("no inbounds")
             return
         }
 
+        val vectors = mutableMapOf<Long, FloatArray>()
         for (source in inboundSources) {
-            if (vectorService.readVector(source.id, modelId) != null) continue
+            val cachedVector = vectorService.readVector(source.id, modelId)
+            if (cachedVector != null) {
+                vectors[source.id] = cachedVector
+                continue
+            }
             val content = contentService.readSourceContentText(source.id)
             if (content.length < VECTOR_MIN_WORDS) throw error("content too small: ${content.length}")
             val vector = vectorClient.fetchVector(origin, defaultModelName, content) ?: error("unable to fetch vector")
             vectorService.insertVector(source.id, defaultModelName, vector)
+            vectors[source.id] = vector
         }
 
-        val inboundSourceIds = inboundSources.map { it.id }
-        val distances = vectorService.readDistances(inboundSourceIds, modelId)
-        val centralSource = inboundSources.minBy { source ->
-            val sourceDistances = distances.getValue(source.id)
-            sourceDistances.sumOf { it.distance.toDouble() } / sourceDistances.size
+        fun Float.format() = String.format("%.2f", this)
+        val average = averageAndNormalize(vectors.values.toList())
+        for((id, vector) in vectors) {
+            val cosineSimilarity = cosineSimilarity(average, vector)
+            val dotProduct = dotProduct(average, vector)
+            console.log("$id: ${cosineSimilarity.format()} / ${dotProduct.format()}")
         }
+
+
+        // val concurrentSources = chapterService.readConcurrentSources(origin)
         // val primarySources = chapterService.findPrimarySources(inboundSourceIds)
     }
 }

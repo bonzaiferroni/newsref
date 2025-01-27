@@ -34,7 +34,6 @@ data class Narrator(
     val name: String,
     val bio: String,
     val chatModelUrl: String,
-    val chatToken: String,
 )
 
 enum class StorySourceType {

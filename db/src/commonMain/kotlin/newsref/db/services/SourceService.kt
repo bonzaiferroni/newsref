@@ -1,6 +1,7 @@
 package newsref.db.services
 
 import kotlinx.datetime.Clock
+import kotlinx.datetime.Instant
 import newsref.db.DbService
 import newsref.db.tables.*
 import newsref.db.tables.ArticleTable
@@ -17,6 +18,8 @@ import newsref.model.dto.*
 import org.jetbrains.exposed.sql.Op
 import org.jetbrains.exposed.sql.SortOrder
 import org.jetbrains.exposed.sql.SqlExpressionBuilder
+import org.jetbrains.exposed.sql.and
+import org.jetbrains.exposed.sql.or
 import org.jetbrains.exposed.sql.selectAll
 import kotlin.time.Duration
 
@@ -111,3 +114,12 @@ fun String.findContainingSentence(substring: String): String? {
 }
 
 private val openingChars = setOf('“', '\"')
+
+internal fun SourceTable.withinTimeRange(start: Instant, end: Instant): Op<Boolean> {
+    val timeStart = start.toLocalDateTimeUtc()
+    val timeEnd = end.toLocalDateTimeUtc()
+    return Op.build {
+        (publishedAt.greaterEq(timeStart) and publishedAt.less(timeEnd)) or
+                (publishedAt.isNull() and seenAt.greater(timeStart) and seenAt.less(timeEnd))
+    }
+}

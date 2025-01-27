@@ -1,5 +1,6 @@
 package newsref.db.tables
 
+import newsref.db.core.vector
 import newsref.db.utils.*
 import newsref.model.data.Chapter
 import newsref.model.data.ChapterSource
@@ -14,6 +15,7 @@ object ChapterTable : LongIdTable("chapter") {
     val narrative = text("narrative")
     val createdAt = datetime("created_at").index()
     val score = integer("score")
+    val average = vector("average")
 }
 
 fun ResultRow.toChapter() = Chapter(

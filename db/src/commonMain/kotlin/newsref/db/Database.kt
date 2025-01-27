@@ -48,6 +48,8 @@ val dbTables = listOf(
 	SourceVectorTable,
 	VectorModelTable,
 	SourceDistanceTable,
+	ChapterTable,
+	ChapterSourceTable,
 )
 
 const val URL = "jdbc:postgresql://localhost:5432/newsrefdb"

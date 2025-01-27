@@ -26,7 +26,7 @@ class VectorService : DbService() {
 	suspend fun readVector(sourceId: Long, modelId: Int) = dbQuery {
 		SourceVectorTable.select(SourceVectorTable.vector)
 			.where { SourceVectorTable.sourceId.eq(sourceId) and SourceVectorTable.modelId.eq(modelId)}
-			.firstOrNull()?.toSource()
+			.firstOrNull()?.let { it[SourceVectorTable.vector] }
 	}
 
 	suspend fun findNextJob() = dbQuery {
