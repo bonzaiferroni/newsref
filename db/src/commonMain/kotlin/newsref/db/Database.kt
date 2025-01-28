@@ -48,6 +48,7 @@ val dbTables = listOf(
 	SourceVectorTable,
 	VectorModelTable,
 	SourceDistanceTable,
+	StoryTable,
 	ChapterTable,
 	ChapterSourceTable,
 )

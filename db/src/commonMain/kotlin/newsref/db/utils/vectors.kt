@@ -32,7 +32,7 @@ fun weightedAverageAndNormalize(
     return weightedAverage.map { (it / magnitude).toFloat() }.toFloatArray()
 }
 
-fun cosineSimilarity(vec1: FloatArray, vec2: FloatArray): Float {
+fun cosineDistance(vec1: FloatArray, vec2: FloatArray): Float {
     require(vec1.size == vec2.size) { "Vectors must be the same size" }
 
     // Calculate dot product
@@ -43,15 +43,17 @@ fun cosineSimilarity(vec1: FloatArray, vec2: FloatArray): Float {
     val magnitude2 = kotlin.math.sqrt(vec2.sumOf { (it * it).toDouble() })
 
     // Check for zero magnitudes to avoid division by zero
-    require(magnitude1 > 0 && magnitude2 > 0) { "Cannot calculate cosine similarity for zero vectors!" }
+    require(magnitude1 > 0 && magnitude2 > 0) { "Cannot calculate cosine distance for zero vectors!" }
 
-    return (dotProduct / (magnitude1 * magnitude2)).toFloat()
+    return 1 - (dotProduct / (magnitude1 * magnitude2)).toFloat()
 }
 
 fun dotProduct(vec1: FloatArray, vec2: FloatArray): Float {
     require(vec1.size == vec2.size) { "Vectors must be the same size" }
     return vec1.zip(vec2).sumOf { (a, b) -> (a * b).toDouble() }.toFloat()
 }
+
+fun distance(vec1: FloatArray, vec2: FloatArray) = 1 - dotProduct(vec1, vec2)
 
 fun averageAndNormalize(vectors: List<FloatArray>): FloatArray {
     require(vectors.isNotEmpty()) { "The list of vectors cannot be empty" }

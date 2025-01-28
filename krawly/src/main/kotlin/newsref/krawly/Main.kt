@@ -19,6 +19,7 @@ fun crawl(args: Array<String>) {
 	val scoreFinder = ScoreFinder()
 	val hostAgent = HostAgent(web)
 	val leadMaker = LeadMaker()
+	val chapterFinder = ChapterFinder()
 	val noteWriter = NoteWriter()
 	val distanceFinder = DistanceFinder()
 	val feedChecker = FeedChecker(web, hostAgent, leadMaker)
@@ -27,8 +28,9 @@ fun crawl(args: Array<String>) {
 		feedChecker.start()
 		leadFollower.start()
 		scoreFinder.start()
+		// chapterFinder.start()
 		// noteWriter.start()
-		distanceFinder.start()
+		// distanceFinder.start()
 		"Starting spider 🕷"
 	}
 	args.map { it.split('=') }

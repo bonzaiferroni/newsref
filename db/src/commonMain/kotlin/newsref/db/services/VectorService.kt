@@ -110,6 +110,13 @@ class VectorService : DbService() {
 		}
 		map
 	}
+
+	suspend fun findDistances(vector: FloatArray, modelId: Int) = dbQuery {
+		val cosine = SourceVectorTable.vector.cosineDistance(vector).alias("cosine_distance")
+		SourceVectorTable.select(cosine, SourceVectorTable.sourceId)
+			.where { SourceVectorTable.modelId.eq(modelId) }
+			.map { Pair(it[SourceVectorTable.sourceId].value, it[cosine])}
+	}
 }
 
 internal fun VectorModelTable.readModelIdByName(name: String) = this.select(VectorModelTable.id)
@@ -118,4 +125,4 @@ internal fun VectorModelTable.readModelIdByName(name: String) = this.select(Vect
 
 const val VECTOR_MIN_WORDS = 100
 const val VECTOR_MAX_WORDS = 4000
-const val VECTOR_MAX_CHARACTERS = 10000
+const val VECTOR_MAX_CHARACTERS = 16000

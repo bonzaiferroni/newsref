@@ -14,8 +14,8 @@ object ChapterTable : LongIdTable("chapter") {
     val title = text("title")
     val narrative = text("narrative")
     val createdAt = datetime("created_at").index()
+    val happenedAt = datetime("happened_at").index()
     val score = integer("score")
-    val average = vector("average")
 }
 
 fun ResultRow.toChapter() = Chapter(
@@ -24,6 +24,7 @@ fun ResultRow.toChapter() = Chapter(
     title = this[ChapterTable.title],
     narrative = this[ChapterTable.narrative],
     createdAt = this[ChapterTable.createdAt].toInstantUtc(),
+    happenedAt = this[ChapterTable.happenedAt].toInstantUtc(),
     score = this[ChapterTable.score],
 )
 

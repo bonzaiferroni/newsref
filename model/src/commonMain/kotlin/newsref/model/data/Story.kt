@@ -11,11 +11,12 @@ data class Story(
 )
 
 data class Chapter(
-    val id: Long,
-    val storyId: Long,
+    val id: Long = 0,
+    val storyId: Long = 0,
     val title: String,
-    val narrative: String,
+    val narrative: String? = null,
     val createdAt: Instant,
+    val happenedAt: Instant,
     val score: Int,
 )
 
