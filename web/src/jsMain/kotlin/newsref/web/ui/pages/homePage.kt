@@ -143,7 +143,7 @@ fun Container.feedChart(state: HomeState, cache: ChartCache) {
 		if (finalScore < lastScore) console.log(source)
 		cache.maxY = maxOf(finalScore, cache.maxY)
 		sourceBuckets[bucket] = finalScore
-		cache.scores[source.sourceId] = sourceBuckets
+		cache.scores[source.info.sourceId] = sourceBuckets
 	}
 
 	val labels = when (state.newsSpan) {

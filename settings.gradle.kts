@@ -42,7 +42,7 @@ dependencyResolutionManagement {
 
 include(":model")
 include(":server")
-include(":web")
+// include(":web")
 include(":krawly")
 include(":db")
 include(":scoop")

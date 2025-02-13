@@ -12,8 +12,9 @@ open class DbTest(
 ) {
 	@BeforeTest
 	fun setup() {
+		val env = readEnvFromDirectory("../.env")
 		if (useRealDb) {
-			connectDb()
+			connectDb(env)
 		} else {
 			TestDatabase.connect()
 			TestDatabase.initDatabase(*dbTables.toTypedArray())
