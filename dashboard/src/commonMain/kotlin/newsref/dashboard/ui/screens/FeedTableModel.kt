@@ -1,21 +1,24 @@
 package newsref.dashboard.ui.screens
 
 import androidx.lifecycle.viewModelScope
-import kotlinx.coroutines.delay
-import kotlinx.coroutines.launch
-import kotlinx.datetime.Instant
-import newsref.db.services.FeedService
-import newsref.db.services.LeadService
-import newsref.model.core.toUrl
-import newsref.model.core.toUrlOrNull
-import newsref.model.data.Feed
+import kotlinx.collections.immutable.*
+import kotlinx.coroutines.*
+import kotlinx.datetime.*
+import newsref.dashboard.*
+import newsref.dashboard.utils.*
+import newsref.db.services.*
+import newsref.model.core.*
+import newsref.model.data.*
 import kotlin.collections.plus
 import kotlin.time.Duration.Companion.minutes
 
 class FeedTableModel(
+    private val route: FeedTableRoute,
     private val feedService: FeedService = FeedService(),
     private val leadService: LeadService = LeadService(),
-) : StateModel<FeedTableState>(FeedTableState()) {
+) : StateModel<FeedTableState>(FeedTableState(page = route.page)) {
+
+    var sorting: Sorting = null to null
 
     init {
         viewModelScope.launch {
@@ -27,24 +30,16 @@ class FeedTableModel(
     }
 
     suspend fun refresh() {
-        val items = feedService.readAll().sortedByDescending { it.id }
-        val additions = mutableMapOf<Int, Int?>()
-        val previousCounts = stateNow.leadCounts
+        val items = feedService.readAll().sort(sorting).toImmutableList()
         val leadCounts = leadService.getAllFeedLeads().groupBy { it.feedId }
             .filterKeys { it != null }
             .mapKeys { it.key!! }
             .mapValues { it.value.size }
-        for (feed in items) {
-            val count = leadCounts[feed.id] ?: 0
-            val currentCount = previousCounts[feed.id] ?: 0
-            val addition = count - currentCount
-            additions[feed.id] = addition
-        }
+            .toImmutableMap()
         setState {
             it.copy(
-                leadCounts = leadCounts,
-                leadAdditions = it.leadAdditions + additions,
                 items = items,
+                leadCounts = leadCounts
             )
         }
     }
@@ -59,16 +54,11 @@ class FeedTableModel(
         }
     }
 
-    fun changeSelector(value: String) {
-        setState { it.copy(newItem = it.newItem.copy(selector = value)) }
-    }
+    fun changeNewItem(item: Feed) { setState { it.copy(newItem = item) } }
 
-    fun changeExternal(value: Boolean) {
-        setState { it.copy(newItem = it.newItem.copy(external = value)) }
-    }
-
-    fun changeTrackPosition(value: Boolean) {
-        setState { it.copy(newItem = it.newItem.copy(trackPosition = value)) }
+    fun changeSorting(sorting: Sorting) {
+        this.sorting = sorting
+        setState { it.copy(items = stateNow.items.sort(sorting))}
     }
 
     fun addNewItem() {
@@ -79,16 +69,41 @@ class FeedTableModel(
             refresh()
         }
     }
+
+    private fun List<Feed>.sort(sorting: Sorting) = when (sorting.first) {
+        DataSort.Id -> this.sortedByDirection(sorting.second) { it.id }
+        DataSort.Time -> this.sortedByDirection(sorting.second) { it.checkAt }
+        DataSort.Name -> this.sortedByDirection(sorting.second) { it.url.core }
+        DataSort.Score -> this.sortedByDirection(sorting.second) { stateNow.leadCounts[it.id] ?: 0 }
+        null -> this.sortedByDirection(sorting.second) { it.checkAt }
+    }.toImmutableList()
+
+    fun changePage(page: String) { setState { it.copy(page = page) } }
+
+    fun changeShowDisabled(value: Boolean) { setState { it.copy(showDisabled = value) } }
+
+    fun changeShowExternal(value: Boolean) { setState { it.copy(showExternal = value) } }
+
+    fun changeShowTrackPosition(value: Boolean) { setState { it.copy(showTrackPosition = value) } }
+
+    fun changeShowDebug(value: Boolean) { setState { it.copy(showDebug = value) } }
+
+    fun changeShowSelector(value: Boolean) { setState { it.copy(showSelector = value) } }
 }
 
 data class FeedTableState(
     val newItem: Feed = emptyFeed,
     val newHref: String = emptyFeed.url.href,
-    val items: List<Feed> = emptyList(),
-    val leadCounts: Map<Int, Int> = emptyMap(),
-    val leadAdditions: List<Map<Int, Int?>> = emptyList()
+    val page: String? = null,
+    val showDisabled: Boolean = false,
+    val showExternal: Boolean = true,
+    val showTrackPosition: Boolean = true,
+    val showDebug: Boolean = true,
+    val showSelector: Boolean = true,
+    val items: ImmutableList<Feed> = emptyImmutableList(),
+    val leadCounts: ImmutableMap<Int, Int> = emptyImmutableMap(),
 ) {
-    val canAddItem get() = newHref.toUrlOrNull() != null && newItem.selector.isNotBlank()
+    val canAddItem get() = newHref.toUrlOrNull() != null && !newItem.selector.isNullOrBlank()
 }
 
 private val emptyFeed = Feed(
@@ -97,5 +112,7 @@ private val emptyFeed = Feed(
     selector = "",
     external = false,
     trackPosition = false,
-    createdAt = Instant.DISTANT_PAST
+    debug = true,
+    createdAt = Clock.System.now(),
+    checkAt = Clock.System.now(),
 )

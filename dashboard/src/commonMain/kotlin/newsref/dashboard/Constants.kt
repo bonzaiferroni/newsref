@@ -12,6 +12,7 @@ val halfPadding = PaddingValues(halfSpacing)
 val innerPadding = PaddingValues(4.dp)
 val emptyEmoji = "🕳"
 val roundedCorners = RoundedCornerShape(cornerRadius)
+val pillShape = RoundedCornerShape(percent = 50)
 val roundedHeader = RoundedCornerShape(
     topStart = cornerRadius, // Round top-left corner
     topEnd = cornerRadius,   // Round top-right corner

@@ -3,8 +3,8 @@ package newsref.krawly.agents
 import kotlinx.datetime.Clock
 import newsref.db.globalConsole
 import newsref.db.services.LeadService
-import newsref.db.log.toPink
-import newsref.db.log.toYellow
+import newsref.db.console.toPink
+import newsref.db.console.toYellow
 import newsref.model.core.CheckedUrl
 import newsref.db.models.CrawlInfo
 import newsref.db.services.CreateLeadResult

@@ -1,17 +1,8 @@
 package newsref.krawly.agents
 
-import io.ktor.http.*
 import kotlinx.coroutines.runBlocking
 import newsref.db.globalConsole
-import newsref.db.log.forestNightBg
-import newsref.db.log.toCyan
-import newsref.db.utils.RESOURCE_PATH
-import newsref.krawly.SpiderWeb
-import newsref.krawly.utils.pwFetch
-import newsref.model.core.toUrl
-import newsref.model.core.toUrlOrNull
 import newsref.model.data.FetchStrategy
-import java.io.File
 import kotlin.test.Test
 import kotlin.time.Duration
 import kotlin.time.measureTime

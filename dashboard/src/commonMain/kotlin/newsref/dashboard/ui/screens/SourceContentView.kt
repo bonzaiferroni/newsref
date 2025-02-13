@@ -1,73 +1,104 @@
 package newsref.dashboard.ui.screens
 
-import androidx.compose.foundation.Image
+import androidx.compose.foundation.ExperimentalFoundationApi
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.relocation.BringIntoViewRequester
+import androidx.compose.foundation.relocation.bringIntoViewRequester
 import androidx.compose.foundation.text.selection.SelectionContainer
-import androidx.compose.material3.Button
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.awt.SwingPanel
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import coil3.compose.AsyncImage
+import newsref.dashboard.LocalNavigator
+import newsref.dashboard.SourceItemRoute
+import newsref.dashboard.baseSpacing
 import newsref.dashboard.halfSpacing
-import newsref.dashboard.utils.AudioPlayer
+import newsref.dashboard.ui.controls.ScrollBox
+import newsref.dashboard.utils.SpeechPlayer
 import newsref.model.data.Content
 import newsref.model.data.Source
 import newsref.model.dto.SourceInfo
-import uk.co.caprica.vlcj.factory.discovery.NativeDiscovery
-import uk.co.caprica.vlcj.player.component.CallbackMediaPlayerComponent
-import uk.co.caprica.vlcj.player.component.EmbeddedMediaPlayerComponent
-import java.awt.Component
-import java.io.ByteArrayInputStream
-import java.util.Locale
 
+@OptIn(ExperimentalFoundationApi::class)
 @Composable
 fun SourceContentView(
     source: Source,
     contents: List<Content>,
-    viewModel: SourceContentModel = viewModel { SourceContentModel(source, contents)}
+    route: SourceItemRoute,
+    viewModel: SourceContentModel = viewModel { SourceContentModel(source, contents) }
 ) {
     val state by viewModel.state.collectAsState()
+    val nav = LocalNavigator.current
     Column(
-        verticalArrangement = Arrangement.spacedBy(halfSpacing)
+        horizontalAlignment = Alignment.CenterHorizontally
     ) {
-        source.imageUrl?.let {
-            AsyncImage(
-                model = it,
-                contentDescription = null,
-            )
-        }
-        if (!state.speak) {
-            Button(onClick = viewModel::speak) {
-                Text("Speak")
-            }
-        } else {
-            Box(modifier = Modifier.height(10.dp)) {
-                state.files?.let {
-                    AudioPlayer(it)
+        ScrollBox(
+            modifier = Modifier.fillMaxWidth()
+                .weight(1f)
+        ) {
+            Column(
+                verticalArrangement = Arrangement.spacedBy(halfSpacing)
+            ) {
+                Spacer(modifier = Modifier.height(baseSpacing))
+                source.imageUrl?.let {
+                    AsyncImage(
+                        model = it,
+                        contentDescription = null,
+                    )
+                }
+
+                for (content in contents) {
+                    val bringIntoViewRequester = remember { BringIntoViewRequester() }
+
+                    LaunchedEffect(state.playingText) {
+                        if (state.playingText == content.text) {
+                            bringIntoViewRequester.bringIntoView()
+                        }
+                    }
+
+                    SelectionContainer(
+                        modifier = Modifier.bringIntoViewRequester(bringIntoViewRequester)
+                    ) {
+                        val background = when {
+                            state.playingText == content.text -> MaterialTheme.colorScheme.secondaryContainer
+                            else -> Color.Transparent
+                        }
+                        Text(
+                            text = content.text,
+                            modifier = Modifier.background(background)
+                        )
+                    }
                 }
             }
         }
-
-        for (content in contents) {
-            SelectionContainer {
-                Text(content.text)
+        SpeechPlayer(
+            contents = state.contents,
+            autoPlay = route.nextSpeakContent != null,
+            onPlayText = viewModel::onPlayText,
+            onFinished = route.nextSpeakContent?.createSpeakRoute()?.let {
+                { nav.go(it) }
             }
-        }
+        )
     }
 }
+
+fun List<Long>.createSpeakRoute(): SourceItemRoute? {
+    if (this.isEmpty()) return null
+    val next = this.first()
+    return SourceItemRoute(sourceId = next, pageName = "Content", nextSpeakContent = this - next)
+}
+
+fun List<SourceInfo>.toSpeakRoute() = this.map { it.sourceId }.createSpeakRoute()

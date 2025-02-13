@@ -10,6 +10,8 @@ import io.ktor.server.auth.*
 import io.ktor.server.auth.jwt.*
 import io.ktor.server.response.*
 import io.ktor.server.routing.*
+import newsref.db.Environment
+import newsref.db.readEnvFromDirectory
 import newsref.model.core.UserRole
 import newsref.model.core.toClaimValue
 import newsref.server.db.VariableStore
@@ -20,7 +22,7 @@ fun Application.configureSecurity() {
     val audience = "http://localhost:8080/"
     val issuer = "http://localhost:8080/"
     val jwtRealm = "newsref api"
-    val jwtSecret = VariableStore().appSecret
+    val jwtSecret = VariableStore(env).appSecret
     authentication {
         jwt(TOKEN_NAME) {
             realm = jwtRealm
@@ -64,10 +66,12 @@ const val TOKEN_NAME = "auth-jwt"
 const val CLAIM_USERNAME = "username"
 const val CLAIM_ROLES = "roles"
 
+private val env = readEnvFromDirectory("../.env")
+
 fun createJWT(username: String, roles: Set<UserRole>): String {
     val audience = "http://localhost:8080/"
     val issuer = "http://localhost:8080/"
-    val secret = VariableStore().appSecret
+    val secret = VariableStore(env).appSecret
     return JWT.create()
         .withAudience(audience)
         .withIssuer(issuer)

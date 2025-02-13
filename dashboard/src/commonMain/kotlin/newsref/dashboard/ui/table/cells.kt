@@ -16,22 +16,21 @@ import kotlinx.datetime.Instant
 import newsref.dashboard.emptyEmoji
 import newsref.dashboard.utils.changeFocusWithTab
 import newsref.dashboard.utils.modifyIfNotNull
-import newsref.dashboard.utils.twoDigits
-import kotlin.time.Duration.Companion.days
-import kotlin.time.Duration.Companion.hours
-import kotlin.time.Duration.Companion.minutes
+import newsref.dashboard.utils.formatDecimals
+import newsref.model.utils.agoFormat
 
 @Composable
 fun TextCell(
     text: String?,
     color: Color = MaterialTheme.colorScheme.onSurface,
+    lines: Int = 1,
     modifier: Modifier = Modifier,
     onClick: (() -> Unit)? = null,
 ) {
     Text(
         text = text ?: emptyEmoji,
         color = color,
-        maxLines = 1,
+        maxLines = lines,
         overflow = TextOverflow.Ellipsis,
         modifier = modifier.modifyIfNotNull(onClick) { this.clickable(onClick = it) }
     )
@@ -44,6 +43,9 @@ fun TextCell(number: Int?) = TextCell(number?.toString())
 fun TextCell(number: Long?) = TextCell(number?.toString())
 
 @Composable
+fun TextCell(number: Float?) = TextCell(number?.formatDecimals())
+
+@Composable
 fun DurationAgoCell(
     instant: Instant?,
 ) {
@@ -51,14 +53,19 @@ fun DurationAgoCell(
         Text(emptyEmoji)
     } else {
         val duration = Clock.System.now() - instant
-        val content = when {
-            duration >= 365.days -> "${duration.inWholeDays / 365}y"
-            duration >= 1.days -> "${duration.inWholeDays}d"
-            duration >= 1.hours -> "${duration.inWholeHours}h"
-            duration >= 1.minutes -> "${duration.inWholeMinutes}m"
-            else -> "${duration.inWholeSeconds}s"
-        }
-        Text(text = content)
+        Text(text = duration.agoFormat())
+    }
+}
+
+@Composable
+fun DurationUntilCell(
+    instant: Instant?,
+) {
+    if (instant == null) {
+        Text(emptyEmoji)
+    } else {
+        val duration = instant - Clock.System.now()
+        Text(text = duration.agoFormat())
     }
 }
 
@@ -75,25 +82,6 @@ fun TextFieldCell(
         cursorBrush = SolidColor(LocalContentColor.current),
         modifier = Modifier.changeFocusWithTab(LocalFocusManager.current)
     )
-}
-
-@Composable
-fun CountCell(
-    id: Int,
-    counts: Map<Int, Int>,
-    additions: List<Map<Int, Int?>>
-) {
-    val count = counts[id] ?: 0
-    Row {
-        Text(text = "$count")
-        for (addition in additions) {
-            val added = addition[id]
-            if (added == count || added == 0) continue
-            Spacer(modifier = Modifier.width(8.dp))
-            val additionText = addition[id]?.let { "+${it}" } ?: ""
-            Text(text = additionText, modifier = Modifier.widthIn(min = 30.dp))
-        }
-    }
 }
 
 @Composable

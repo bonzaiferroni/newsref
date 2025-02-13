@@ -1,5 +1,6 @@
 package newsref.db.tables
 
+import kotlinx.datetime.Instant
 import kotlinx.datetime.UtcOffset
 import kotlinx.datetime.toInstant
 import kotlinx.serialization.json.Json
@@ -18,12 +19,14 @@ internal object SourceTable : LongIdTable("source") {
     val noteId = reference("note_id", NoteTable, ReferenceOption.SET_NULL).nullable().index()
     val url = text("url").uniqueIndex()
     val title = text("title").nullable()
-    val score = integer("score").nullable()
     val type = enumeration("source_type", SourceType::class).nullable()
+    val score = integer("score").nullable()
+    val feedPosition = integer("feed_position").nullable()
     val imageUrl = text("image_url").nullable()
     val thumbnail = text("thumbnail").nullable()
     val embed = text("embed").nullable()
     val contentCount = integer("content_count").nullable()
+    val okResponse = bool("ok_response").default(false)
     val seenAt = datetime("seen_at").index()
     val accessedAt = datetime("accessed_at").nullable()
     val publishedAt = datetime("published_at").nullable().index()
@@ -38,12 +41,14 @@ internal class SourceRow(id: EntityID<Long>) : LongEntity(id) {
 
     var url by SourceTable.url
     var title by SourceTable.title
-    var score by SourceTable.score
     var type by SourceTable.type
+    var score by SourceTable.score
+    var feedPosition by SourceTable.feedPosition
     var imageUrl by SourceTable.imageUrl
     var thumbnail by SourceTable.thumbnail
     var embed by SourceTable.embed
     var contentCount by SourceTable.contentCount
+    var okResponse by SourceTable.okResponse
     var seenAt by SourceTable.seenAt
     var accessedAt by SourceTable.accessedAt
     var publishedAt by SourceTable.publishedAt
@@ -60,12 +65,14 @@ internal fun SourceRow.toData() = Source(
     noteId = this.note?.id?.value,
     url = this.url.toCheckedFromTrusted(),
     title = this.title,
-    score = this.score,
     type = this.type,
+    score = this.score,
+    feedPosition = this.feedPosition,
     imageUrl = this.imageUrl,
     thumbnail = this.thumbnail,
     embed = this.embed,
     contentCount = this.contentCount,
+    okResponse = this.okResponse,
     seenAt = this.seenAt.toInstantUtc(),
     accessedAt = this.accessedAt?.toInstantUtc(),
     publishedAt = this.publishedAt?.toInstantUtc(),
@@ -77,12 +84,14 @@ internal fun ResultRow.toSource() = Source(
     noteId = this.getOrNull(SourceTable.noteId)?.value,
     url = this[SourceTable.url].toCheckedFromTrusted(),
     title = this[SourceTable.title],
-    score = this[SourceTable.score],
     type = this[SourceTable.type],
+    score = this[SourceTable.score],
+    feedPosition = this[SourceTable.feedPosition],
     imageUrl = this[SourceTable.imageUrl],
     thumbnail = this[SourceTable.thumbnail],
     embed = this[SourceTable.embed],
     contentCount = this[SourceTable.contentCount],
+    okResponse = this[SourceTable.okResponse],
     seenAt = this[SourceTable.seenAt].toInstantUtc(),
     accessedAt = this[SourceTable.accessedAt]?.toInstantUtc(),
     publishedAt = this[SourceTable.publishedAt]?.toInstantUtc(),
@@ -107,6 +116,12 @@ internal fun SourceRow.fromData(source: Source, hostRow: HostRow, isUpdate: Bool
 internal fun SourceRow.addContents(contentEntities: List<ContentRow>) {
     contents = SizedCollection(contentEntities)
 }
+
+internal fun SourceTable.existedAfter(instant: Instant) = instant.toLocalDateTimeUtc().let {
+    Op.build { (SourceTable.publishedAt.isNull() and SourceTable.seenAt.greater(it)) or
+            SourceTable.publishedAt.greater(it) }
+}
+
 
 // source score
 internal object SourceScoreTable : LongIdTable("source_score") {
@@ -144,23 +159,23 @@ internal fun ResultRow.toSourceScore() = SourceScore(
     scoredAt = this[SourceScoreTable.scoredAt].toInstantUtc(),
 )
 
-// feed source
-internal object FeedSourceTable : IntIdTable("feed_source") {
+// source cache
+internal object SourceCacheTable : IntIdTable("source_cache") {
     val sourceId = reference("source_id", SourceTable, ReferenceOption.CASCADE)
     val score = integer("score")
     val createdAt = datetime("created_at")
     val json = json<SourceCollection>("source", Json.Default)
 }
 
-internal class FeedSourceRow(id: EntityID<Int>) : IntEntity(id) {
-    companion object : IntEntityClass<FeedSourceRow>(FeedSourceTable)
-    var source by SourceRow referencedOn FeedSourceTable.sourceId
-    var score by FeedSourceTable.score
-    var createdAt by FeedSourceTable.createdAt
-    var json by FeedSourceTable.json
+internal class SourceCacheRow(id: EntityID<Int>) : IntEntity(id) {
+    companion object : IntEntityClass<SourceCacheRow>(SourceCacheTable)
+    var source by SourceRow referencedOn SourceCacheTable.sourceId
+    var score by SourceCacheTable.score
+    var createdAt by SourceCacheTable.createdAt
+    var json by SourceCacheTable.json
 }
 
-internal fun FeedSourceRow.toData() = FeedSource(
+internal fun SourceCacheRow.toData() = SourceCache(
     id = this.id.value,
     sourceId = this.source.id.value,
     score = this.score,
@@ -168,11 +183,11 @@ internal fun FeedSourceRow.toData() = FeedSource(
     json = this.json,
 )
 
-internal fun FeedSourceRow.fromData(feedSource: FeedSource, sourceRow: SourceRow) {
+internal fun SourceCacheRow.fromData(sourceCache: SourceCache, sourceRow: SourceRow) {
     source = sourceRow
-    score = feedSource.score
-    createdAt = feedSource.createdAt.toLocalDateTimeUtc()
-    json = feedSource.json
+    score = sourceCache.score
+    createdAt = sourceCache.createdAt.toLocalDateTimeUtc()
+    json = sourceCache.json
 }
 
 // sourceInfo

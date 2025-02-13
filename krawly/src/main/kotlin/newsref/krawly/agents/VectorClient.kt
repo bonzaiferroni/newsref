@@ -1,33 +1,45 @@
 package newsref.krawly.agents
 
+import io.ktor.client.plugins.HttpRequestTimeoutException
+import kotlinx.coroutines.delay
 import newsref.db.core.*
 import newsref.db.*
 import newsref.krawly.clients.*
 import newsref.model.data.*
 import java.io.File
+import kotlin.time.Duration.Companion.seconds
 
 private val console = globalConsole.getHandle("VectorClient")
 
 class VectorClient(
-    private val client: AiClient = AiClient(),
+    private val env: Environment
 ) {
 
-    suspend fun fetchVector(source: Source, model: String, content: String): FloatArray? {
+    suspend fun fetchVector(source: Source, model: String, content: String, maxAttempts: Int = 3): FloatArray? {
         val cachedVector = readFromCache(source.url.href, model, content.length)
         if (cachedVector != null) return cachedVector
 
-        val token = environment["OPENAI_KEY"]
-            ?: throw IllegalStateException("Token missing from environment: OPENAI_KEY")
+        val token = env.read("OPENAI_KEY")
+        val client = AiClient("https://api.openai.com/v1/embeddings", model, token)
 
         val request = EmbeddingRequest(
             model = model,
             input = content
         )
-        val result: EmbeddingResult? = client.request(request, "https://api.openai.com/v1/embeddings", token)
-            ?: return null
-        val vector = result?.data?.firstOrNull()?.embedding ?: throw IllegalStateException("no embedding found")
-        saveToCache(source.url.href, model, content.length, vector)
-        return vector
+
+        for (i in 0..maxAttempts) {
+            val result: EmbeddingResult? = client.request(request)
+            if (result == null) {
+                console.logWarning("No vector returned, resting for next attempt (attempts left: ${maxAttempts - i})")
+                console.logWarning("content size: ${content.length}")
+                delay(10.seconds)
+                continue
+            }
+            val vector = result.data.firstOrNull()?.embedding ?: error("no embedding found")
+            saveToCache(source.url.href, model, content.length, vector)
+            return vector
+        }
+        return null
     }
 }
 

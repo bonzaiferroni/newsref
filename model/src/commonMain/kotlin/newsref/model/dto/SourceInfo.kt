@@ -21,7 +21,9 @@ data class SourceInfo(
 	val seenAt: Instant,
 	val score: Int,
 	val publishedAt: Instant?,
-)
+) {
+	val existedAt get() = publishedAt ?: seenAt
+}
 
 @Serializable
 data class SourceCollection(

@@ -1,1 +1,1 @@
-{"width":567,"height":975,"route":{"type":"newsref.dashboard.SourceItemRoute","title":"Source Item","sourceId":1031,"pageName":"Distances"}}
+{"width":567,"height":975,"route":{"type":"newsref.dashboard.ChartBoardRoute","title":"Chart Board"}}

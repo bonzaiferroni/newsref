@@ -33,5 +33,5 @@ class StartModel(
 
 data class StartState(
     val since: Duration,
-    val sources: List<SourceInfo> = emptyList()
+    val sources: List<SourceInfo> = emptyList(),
 )

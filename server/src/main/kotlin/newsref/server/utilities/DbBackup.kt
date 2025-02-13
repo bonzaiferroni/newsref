@@ -6,6 +6,7 @@ import kotlinx.serialization.json.Json
 import newsref.server.db.VariableStore
 import newsref.server.db.services.UserService
 import newsref.db.models.User
+import newsref.db.readEnvFromDirectory
 import java.io.File
 import kotlin.reflect.KClass
 
@@ -22,7 +23,7 @@ object DbBackup {
     suspend fun restore() {
         suspend fun createAdmin() {
             println("creating admin")
-            val admin = VariableStore().admin
+            val admin = VariableStore(env).admin
             UserService().create(admin)
         }
 
@@ -73,6 +74,8 @@ object DbBackup {
 //        }
     }
 }
+
+private val env = readEnvFromDirectory("../.env")
 
 object IdMap {
     private val map = mutableMapOf<KClass<*>, MutableMap<Int, Int>>()

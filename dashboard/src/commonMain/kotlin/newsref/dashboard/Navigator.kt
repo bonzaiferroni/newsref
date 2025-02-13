@@ -30,9 +30,14 @@ import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.rememberNavController
 import compose.icons.TablerIcons
+import compose.icons.tablericons.Book
+import compose.icons.tablericons.ChartLine
 import compose.icons.tablericons.FileInfo
+import compose.icons.tablericons.GitBranch
 import compose.icons.tablericons.Home
+import compose.icons.tablericons.News
 import compose.icons.tablericons.Rss
+import compose.icons.tablericons.Separator
 import newsref.dashboard.utils.modifyIfNotNull
 
 @Composable
@@ -63,8 +68,12 @@ fun Navigator(
                     navController = navController,
                     links = listOf(
                         TopBarLink(TablerIcons.Home, StartRoute()),
+                        TopBarLink(TablerIcons.Book, StoryTableRoute()),
+                        TopBarLink(TablerIcons.ChartLine, ChartBoardRoute()),
+                        TopBarLink(TablerIcons.GitBranch, ChapterTableRoute),
                         TopBarLink(TablerIcons.FileInfo, SourceTableRoute),
-                        TopBarLink(TablerIcons.Rss, FeedTableRoute),
+                        TopBarLink(TablerIcons.News, HostTableRoute()),
+                        TopBarLink(TablerIcons.Rss, FeedTableRoute()),
                         TopBarLink(Icons.Default.Close) { context.exitApp() }
                     )
                 )

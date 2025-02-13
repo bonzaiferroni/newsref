@@ -1,9 +1,9 @@
 Exception in thread "DefaultDispatcher-worker-6" java.util.ConcurrentModificationException
 	at java.base/java.util.ArrayList$Itr.checkForComodification(ArrayList.java:1095)
 	at java.base/java.util.ArrayList$Itr.next(ArrayList.java:1049)
-	at newsref.db.log.LogConsole.renderLog(LogConsole.kt:93)
-	at newsref.db.log.LogConsole.access$renderLog(LogConsole.kt:10)
-	at newsref.db.log.LogConsole$startQueueConsumer$1.invokeSuspend(LogConsole.kt:73)
+	at newsref.db.console.LogConsole.renderLog(LogConsole.kt:93)
+	at newsref.db.console.LogConsole.access$renderLog(LogConsole.kt:10)
+	at newsref.db.console.LogConsole$startQueueConsumer$1.invokeSuspend(LogConsole.kt:73)
 	at kotlin.coroutines.jvm.internal.BaseContinuationImpl.resumeWith(ContinuationImpl.kt:33)
 	at kotlinx.coroutines.DispatchedTask.run(DispatchedTask.kt:101)
 	at kotlinx.coroutines.scheduling.CoroutineScheduler.runSafely(CoroutineScheduler.kt:589)
@@ -28,3 +28,100 @@ Caused by: java.lang.ClassNotFoundException: newsref.db.services.NexusService$cr
 	at java.base/jdk.internal.loader.BuiltinClassLoader.loadClass(BuiltinClassLoader.java:641)
 	at java.base/jdk.internal.loader.ClassLoaders$AppClassLoader.loadClass(ClassLoaders.java:188)
 	at java.base/java.lang.ClassLoader.loadClass(ClassLoader.java:526)
+	
+Caused by: java.sql.BatchUpdateException: Batch entry 0 INSERT INTO "source" (host_id, url, title, source_type, image_url, content_count, seen_at, accessed_at, published_at) VALUES (('8579'::int4), ('https://www.fox29.com/news/police-man-24-shot-and-killed-inside-kensington-corner-store'), ('Police: Man, 24, shot and killed inside Kensington candy store | FOX 29 Philadelphia'), ('1'::int4), ('https://static.fox29.com/www.fox29.com/content/uploads/2022/10/IMG_7779.jpg'), ('96'::int4), ('2025-01-14 10:00:00-07'), ('2025-01-28 14:30:03-07'), ('2022-10-21 23:55:11-06'))
+RETURNING * was aborted: ERROR: duplicate key value violates unique constraint "source_url_unique"
+  Detail: Key (url)=(https://www.fox29.com/news/police-man-24-shot-and-killed-inside-kensington-corner-store) already exists.  Call getNextException to see other errors in the batch.
+	at org.postgresql.jdbc.BatchResultHandler.handleError(BatchResultHandler.java:165)
+	at org.postgresql.core.v3.QueryExecutorImpl.processResults(QueryExecutorImpl.java:2413)
+	at org.postgresql.core.v3.QueryExecutorImpl.execute(QueryExecutorImpl.java:579)
+	at org.postgresql.jdbc.PgStatement.internalExecuteBatch(PgStatement.java:912)
+	at org.postgresql.jdbc.PgStatement.executeBatch(PgStatement.java:936)
+	at org.postgresql.jdbc.PgPreparedStatement.executeBatch(PgPreparedStatement.java:1733)
+	at org.jetbrains.exposed.sql.statements.jdbc.JdbcPreparedStatementImpl.executeBatch(JdbcPreparedStatementImpl.kt:97)
+	at org.jetbrains.exposed.sql.statements.InsertStatement.execInsertFunction(InsertStatement.kt:230)
+	at org.jetbrains.exposed.sql.statements.InsertStatement.executeInternal(InsertStatement.kt:242)
+	at org.jetbrains.exposed.sql.statements.InsertStatement.executeInternal(InsertStatement.kt:19)
+	at org.jetbrains.exposed.sql.statements.Statement.executeIn$exposed_core(Statement.kt:97)
+	... 38 common frames omitted
+Caused by: org.postgresql.util.PSQLException: ERROR: duplicate key value violates unique constraint "source_url_unique"
+  Detail: Key (url)=(https://www.fox29.com/news/police-man-24-shot-and-killed-inside-kensington-corner-store) already exists.
+	at org.postgresql.core.v3.QueryExecutorImpl.receiveErrorResponse(QueryExecutorImpl.java:2725)
+	at org.postgresql.core.v3.QueryExecutorImpl.processResults(QueryExecutorImpl.java:2412)
+	... 47 common frames omitted
+
+Exception in thread "DefaultDispatcher-worker-6" java.lang.IllegalStateException: unable to fetch vector
+	at newsref.krawly.agents.ChapterFinder.findNewChapter$readOrFetchVector(ChapterFinder.kt:82)
+	at newsref.krawly.agents.ChapterFinder.access$findNewChapter$readOrFetchVector(ChapterFinder.kt:17)
+	at newsref.krawly.agents.ChapterFinder$findNewChapter$readOrFetchVector$1.invokeSuspend(ChapterFinder.kt)
+	at kotlin.coroutines.jvm.internal.BaseContinuationImpl.resumeWith(ContinuationImpl.kt:33)
+	at kotlinx.coroutines.DispatchedTask.run(DispatchedTask.kt:101)
+	at kotlinx.coroutines.internal.LimitedDispatcher$Worker.run(LimitedDispatcher.kt:113)
+	at kotlinx.coroutines.scheduling.TaskImpl.run(Tasks.kt:89)
+	at kotlinx.coroutines.scheduling.CoroutineScheduler.runSafely(CoroutineScheduler.kt:589)
+	at kotlinx.coroutines.scheduling.CoroutineScheduler$Worker.executeTask(CoroutineScheduler.kt:823)
+	at kotlinx.coroutines.scheduling.CoroutineScheduler$Worker.runWorker(CoroutineScheduler.kt:720)
+	at kotlinx.coroutines.scheduling.CoroutineScheduler$Worker.run(CoroutineScheduler.kt:707)
+	Suppressed: kotlinx.coroutines.internal.DiagnosticCoroutineContextException: [StandaloneCoroutine{Cancelling}@11d8ceb9, Dispatchers.IO]
+AiClient Request failed:
+{"error":{"message":"Timed out generating response. Please try again with a shorter prompt or with `max_tokens` set to a lower value.","type":"internal_error","param":null,"code":"request_timeout"}}
+
+
+Transaction attempt #0 failed: org.postgresql.util.PSQLException: ERROR: deadlock detected
+  Detail: Process 445220 waits for ShareLock on transaction 964892; blocked by process 445219.
+Process 445219 waits for ShareLock on transaction 964893; blocked by process 445220.
+  Hint: See server log for query details.
+  Where: while updating tuple (1923,39) in relation "chapter". Statement(s): UPDATE chapter SET story_id=? WHERE chapter.id != ?
+org.jetbrains.exposed.exceptions.ExposedSQLException: org.postgresql.util.PSQLException: ERROR: deadlock detected
+  Detail: Process 445220 waits for ShareLock on transaction 964892; blocked by process 445219.
+Process 445219 waits for ShareLock on transaction 964893; blocked by process 445220.
+  Hint: See server log for query details.
+  Where: while updating tuple (1923,39) in relation "chapter"
+	at org.jetbrains.exposed.sql.statements.Statement.executeIn$exposed_core(Statement.kt:99)
+	at org.jetbrains.exposed.sql.Transaction.exec(Transaction.kt:292)
+	at org.jetbrains.exposed.sql.Transaction.exec(Transaction.kt:269)
+	at org.jetbrains.exposed.sql.statements.Statement.execute(Statement.kt:59)
+	at newsref.db.services.StoryComposerService$updateStory$2.invokeSuspend(StoryComposerService.kt:169)
+	at newsref.db.services.StoryComposerService$updateStory$2.invoke(StoryComposerService.kt)
+	at newsref.db.services.StoryComposerService$updateStory$2.invoke(StoryComposerService.kt)
+	at newsref.db.DbService$dbQuery$2.invokeSuspend(DbService.kt:9)
+	at newsref.db.DbService$dbQuery$2.invoke(DbService.kt)
+	at newsref.db.DbService$dbQuery$2.invoke(DbService.kt)
+	at org.jetbrains.exposed.sql.transactions.experimental.SuspendedKt$suspendedTransactionAsyncInternal$1.invokeSuspend(Suspended.kt:193)
+	at kotlin.coroutines.jvm.internal.BaseContinuationImpl.resumeWith(ContinuationImpl.kt:33)
+	at kotlinx.coroutines.DispatchedTask.run(DispatchedTask.kt:101)
+	at kotlinx.coroutines.internal.LimitedDispatcher$Worker.run(LimitedDispatcher.kt:113)
+	at kotlinx.coroutines.scheduling.TaskImpl.run(Tasks.kt:89)
+	at kotlinx.coroutines.scheduling.CoroutineScheduler.runSafely(CoroutineScheduler.kt:589)
+	at kotlinx.coroutines.scheduling.CoroutineScheduler$Worker.executeTask(CoroutineScheduler.kt:823)
+	at kotlinx.coroutines.scheduling.CoroutineScheduler$Worker.runWorker(CoroutineScheduler.kt:720)
+	at kotlinx.coroutines.scheduling.CoroutineScheduler$Worker.run(CoroutineScheduler.kt:707)
+Caused by: org.postgresql.util.PSQLException: ERROR: deadlock detected
+  Detail: Process 445220 waits for ShareLock on transaction 964892; blocked by process 445219.
+Process 445219 waits for ShareLock on transaction 964893; blocked by process 445220.
+  Hint: See server log for query details.
+  Where: while updating tuple (1923,39) in relation "chapter"
+	at org.postgresql.core.v3.QueryExecutorImpl.receiveErrorResponse(QueryExecutorImpl.java:2725)
+	at org.postgresql.core.v3.QueryExecutorImpl.processResults(QueryExecutorImpl.java:2412)
+	at org.postgresql.core.v3.QueryExecutorImpl.execute(QueryExecutorImpl.java:371)
+	at org.postgresql.jdbc.PgStatement.executeInternal(PgStatement.java:502)
+	at org.postgresql.jdbc.PgStatement.execute(PgStatement.java:419)
+	at org.postgresql.jdbc.PgPreparedStatement.executeWithFlags(PgPreparedStatement.java:194)
+
+08:22:54.024 [                       Exposed] Transaction attempt #0 failed: org.postgresql.util.PSQLException: ERROR: invalid byte sequence for encoding "UTF8": 0x00
+  Where: unnamed portal parameter $1. Statement(s): SELECT "content".id, "content"."text" FROM "content" WHERE "content"."text" = ?
+org.jetbrains.exposed.exceptions.ExposedSQLException: org.postgresql.util.PSQLException: ERROR: invalid byte sequence for encoding "UTF8": 0x00
+  Where: unnamed portal parameter $1
+	at org.jetbrains.exposed.sql.statements.Statement.executeIn$exposed_core(Statement.kt:99)
+	at org.jetbrains.exposed.sql.Transaction.exec(Transaction.kt:292)
+	at org.jetbrains.exposed.sql.Transaction.exec(Transaction.kt:269)
+	at org.jetbrains.exposed.sql.Query.empty(Query.kt:483)
+	at org.jetbrains.exposed.sql.IterableExKt$mapLazy$1.empty(IterableEx.kt:207)
+	at newsref.db.services.ContentService$isFresh$2.invokeSuspend(ContentService.kt:11)
+	at newsref.db.services.ContentService$isFresh$2.invoke(ContentService.kt)
+	at newsref.db.services.ContentService$isFresh$2.invoke(ContentService.kt)
+	at newsref.db.DbService$dbQuery$2.invokeSuspend(DbService.kt:9)
+	at newsref.db.DbService$dbQuery$2.invoke(DbService.kt)
+	at newsref.db.DbService$dbQuery$2.invoke(DbService.kt)
+	at org.jetbrains.exposed.sql.transactions.experimental.SuspendedKt$suspendedTransactionAsyncInternal$1.invokeSuspend(Suspended.kt:193)
+	at kotlin.coroutines.jvm.internal.BaseContinuationImpl.resumeWith(ContinuationImpl.kt:33)

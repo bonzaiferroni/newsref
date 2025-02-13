@@ -1,11 +1,8 @@
 package newsref.dashboard.ui.screens
 
-import androidx.compose.foundation.clickable
-import androidx.compose.foundation.layout.Column
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalUriHandler
 import androidx.compose.ui.text.SpanStyle
 import androidx.compose.ui.text.buildAnnotatedString
@@ -14,11 +11,10 @@ import androidx.compose.ui.text.withStyle
 import newsref.dashboard.LocalNavigator
 import newsref.dashboard.SourceItemRoute
 import newsref.dashboard.emptyEmoji
-import newsref.dashboard.ui.table.ColumnGroup
 import newsref.dashboard.ui.table.DataTable
 import newsref.dashboard.ui.table.TableColumn
 import newsref.dashboard.ui.table.TextCell
-import newsref.dashboard.ui.table.addControl
+import newsref.dashboard.ui.table.columns
 import newsref.dashboard.ui.table.onClick
 import newsref.dashboard.ui.table.openExternalLink
 import newsref.model.dto.LinkInfo
@@ -33,27 +29,29 @@ fun LinkInfoView(
 
     DataTable(
         name = name,
-        rows = links,
-        columns = listOf(
-            ColumnGroup(
+        items = links,
+        columnGroups = listOf(
+            columns(
                 TableColumn<LinkInfo>("Ext", width = 30) { TextCell(if (it.isExternal) "⤴" else "🔃")},
-                TableColumn<LinkInfo>("Headline", weight = 1f) { TextCell(it.headline) }
-                    .addControl(openExternalLink(uriHandler) { it.url })
+                TableColumn<LinkInfo>(
+                    name = "Headline", weight = 1f,
+                    controls = listOf( openExternalLink { it.url } )
+                ) { TextCell(it.headline) }
             ),
-            ColumnGroup(
+            columns(
                 TableColumn<LinkInfo>("Origin", width = 60) { TextCell(it.originId) }
                     .onClick { nav.go(SourceItemRoute(it.originId, "Content")) },
                 TableColumn<LinkInfo>("Origin Url", weight = 1f) { TextCell(it.originUrl) },
             ),
-            ColumnGroup(
+            columns(
                 TableColumn<LinkInfo>("Target", width = 60) { TextCell(it.targetId) }
                     .onClick { nav.go(SourceItemRoute(it.originId, "Content")) },
                 TableColumn<LinkInfo>("Target Url", weight = 1f) { TextCell(it.url) },
             ),
-            ColumnGroup(
+            columns(
                 TableColumn<LinkInfo>("textIndex") { TextCell(it.textIndex) }
             ),
-            ColumnGroup(
+            columns(
                 TableColumn<LinkInfo>("Text", weight = 1f) { LinkSnippet(it) }
             )
         )

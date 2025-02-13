@@ -1,9 +1,7 @@
 package newsref.web.ui.models
 
 import kotlinx.coroutines.launch
-import newsref.model.data.FeedSource
 import newsref.model.dto.SourceCollection
-import newsref.model.dto.SourceInfo
 import newsref.web.core.StateModel
 import newsref.web.io.stores.SourceStore
 

@@ -57,6 +57,7 @@ kotlin {
             implementation("io.ktor:ktor-client-resources:$ktor_version")
             implementation("io.ktor:ktor-client-content-negotiation:$ktor_version")
             implementation("uk.co.caprica:vlcj:4.7.0")
+            implementation("org.jetbrains.kotlinx:kotlinx-collections-immutable:0.3.8")
 
             implementation(project(":model"))
             implementation(project(":db"))
@@ -71,7 +72,6 @@ kotlin {
     }
 }
 
-
 compose.desktop {
     application {
         mainClass = "newsref.dashboard.MainKt"
@@ -79,7 +79,7 @@ compose.desktop {
         nativeDistributions {
             targetFormats(TargetFormat.Dmg, TargetFormat.Msi, TargetFormat.Deb)
             packageName = "newsref.dashboard"
-            packageVersion = "1.0.0"
+            packageVersion = "1.0.1"
         }
     }
 }

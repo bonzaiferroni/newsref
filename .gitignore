@@ -22,7 +22,8 @@ test.mv.db.backup
 test.trace.db
 backup.json
 newsref.properties
-.env
+**/.env
+**/env
 /www/uploads
 /dump
 /cache

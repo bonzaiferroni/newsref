@@ -11,6 +11,7 @@ data class Host(
 	val logo: String? = null,
 	val robotsTxt: String? = null,
 	val isRedirect: Boolean? = null,
+	val score: Int,
 	val domains: Set<String>,
 	val bannedPaths: Set<String> = emptySet(),
 	val junkParams: Set<String> = emptySet(),

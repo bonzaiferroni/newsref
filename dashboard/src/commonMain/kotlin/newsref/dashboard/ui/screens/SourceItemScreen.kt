@@ -1,34 +1,17 @@
 package newsref.dashboard.ui.screens
 
 import androidx.compose.foundation.background
-import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.IntrinsicSize
-import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.fillMaxHeight
-import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.text.selection.SelectionContainer
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.collectAsState
-import androidx.compose.runtime.getValue
+import androidx.compose.runtime.*
 import androidx.compose.material3.*
-import androidx.compose.ui.Alignment
-import androidx.compose.ui.Modifier
+import androidx.compose.ui.*
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import coil3.compose.AsyncImage
-import newsref.dashboard.LocalNavigator
-import newsref.dashboard.SourceItemRoute
-import newsref.dashboard.baseSpacing
-import newsref.dashboard.halfPadding
-import newsref.dashboard.halfSpacing
-import newsref.dashboard.ui.controls.TabFolder
-import newsref.dashboard.ui.controls.TabPage
-import newsref.model.data.Source
+import newsref.dashboard.*
+import newsref.dashboard.ui.controls.*
+import newsref.model.data.*
 
 @Composable
 fun SourceItemScreen(
@@ -41,45 +24,37 @@ fun SourceItemScreen(
 
     if (source == null) {
         Text("Fetching Source with id: ${route.sourceId}")
-    } else {
-        Column(
-            verticalArrangement = Arrangement.spacedBy(baseSpacing)
-        ) {
-            ItemHeader(source)
-            TabFolder(
-                currentPageName = state.page,
-                onChangePage = {
-                    viewModel.changePage(it)
-                    nav.setRoute(route.copy(pageName = it))
+        return
+    }
+
+    Column(
+        verticalArrangement = Arrangement.spacedBy(baseSpacing)
+    ) {
+        ItemHeader(source)
+        TabPages(
+            currentPageName = state.page,
+            onChangePage = {
+                viewModel.changePage(it)
+                nav.setRoute(route.copy(pageName = it))
+            },
+            pages = pages(
+                TabPage("Data") {
+                    SourceDataView(viewModel)
                 },
-                pages = mutableListOf(
-                    TabPage("Data") {
-                        SourceDataView(viewModel)
-                    },
-                    TabPage("Content") {
-                        SourceContentView(source, state.contents)
-                    },
-                ).apply {
-                    if (state.inbound.isNotEmpty()) this.add(
-                        TabPage("Inbound", false) {
-                            LinkInfoView("Inbound Links", state.inbound)
-                        }
-                    )
-                }.apply {
-                    if (state.outbound.isNotEmpty()) this.add(
-                        TabPage("Outbound", false) {
-                            LinkInfoView("Outbound Links", state.outbound)
-                        }
-                    )
-                }.apply {
-                    if (state.distances.isNotEmpty()) this.add(
-                        TabPage("Distances", false) {
-                            SourceDistanceView(state.distances)
-                        }
-                    )
+                TabPage("Content", false) {
+                    SourceContentView(source, state.contents, route)
+                },
+                TabPage("Inbound", false, state.inbound.isNotEmpty()) {
+                    LinkInfoView("Inbound Links", state.inbound)
+                },
+                TabPage("Outbound", false, state.outbound.isNotEmpty()) {
+                    LinkInfoView("Outbound Links", state.outbound)
+                },
+                TabPage("Distances", false, state.distances.isNotEmpty()) {
+                    SourceDistanceView(state.distances)
                 }
             )
-        }
+        )
     }
 }
 

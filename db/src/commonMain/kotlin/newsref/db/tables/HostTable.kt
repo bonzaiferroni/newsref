@@ -8,6 +8,7 @@ import org.jetbrains.exposed.dao.IntEntity
 import org.jetbrains.exposed.dao.id.EntityID
 import org.jetbrains.exposed.dao.id.IntIdTable
 import org.jetbrains.exposed.sql.ReferenceOption
+import org.jetbrains.exposed.sql.ResultRow
 
 internal object HostTable : IntIdTable("host") {
 	val nexusId = reference("nexus_id", NexusTable, ReferenceOption.SET_NULL).nullable().index()
@@ -17,6 +18,7 @@ internal object HostTable : IntIdTable("host") {
 	val logo = text("logo").nullable()
 	val robotsTxt = text("robots_txt").nullable()
 	val isRedirect = bool("is_redirect").nullable()
+	val score = integer("score").default(0)
 	val disallowed = array<String>("disallowed")
 	val domains = array<String>("domains")
 	val junkParams = array<String>("junk_params")
@@ -33,6 +35,7 @@ internal class HostRow(id: EntityID<Int>) : IntEntity(id) {
 	var logo by HostTable.logo
 	var robotsTxt by HostTable.robotsTxt
 	var isRedirect by HostTable.isRedirect
+	var score by HostTable.score
 	var bannedPaths by HostTable.disallowed
 	var domains by HostTable.domains
 	var junkParams by HostTable.junkParams
@@ -51,10 +54,26 @@ internal fun HostRow.toData() = Host(
 	logo = this.logo,
 	robotsTxt = this.robotsTxt,
 	isRedirect = this.isRedirect,
+	score = this.score,
 	bannedPaths = this.bannedPaths.toSet(),
 	domains = this.domains.toSet(),
 	junkParams = this.junkParams.toSet(),
 	navParams = this.navParams.toSet(),
+)
+
+internal fun ResultRow.toHost() = Host(
+	id = this[HostTable.id].value,
+	nexusId = this[HostTable.nexusId]?.value,
+	core = this[HostTable.core],
+	name = this[HostTable.name],
+	logo = this[HostTable.logo],
+	robotsTxt = this[HostTable.robotsTxt],
+	isRedirect = this[HostTable.isRedirect],
+	score = this[HostTable.score],
+	bannedPaths = this[HostTable.disallowed].toSet(),
+	domains = this[HostTable.domains].toSet(),
+	junkParams = this[HostTable.junkParams].toSet(),
+	navParams = this[HostTable.navParams].toSet(),
 )
 
 internal fun HostRow.fromData(host: Host, nexusRow: NexusRow? = null) {
@@ -64,6 +83,7 @@ internal fun HostRow.fromData(host: Host, nexusRow: NexusRow? = null) {
 	logo = host.logo
 	robotsTxt = host.robotsTxt
 	isRedirect = host.isRedirect
+	score = host.score
 	bannedPaths = host.bannedPaths.toList()
 	domains = host.domains.toList()
 	junkParams = host.junkParams.toList()

@@ -9,5 +9,3 @@ import newsref.dashboard.utils.TipType
 import newsref.dashboard.utils.ToolTip
 import newsref.dashboard.utils.setRawText
 
-fun <T> openExternalLink(uriHandler: UriHandler, toolTip: String = "Open external link", block: (T) -> String) =
-    CellControl<T>(TablerIcons.ExternalLink, ToolTip(toolTip, TipType.Action)) { uriHandler.openUri(block(it)) }

@@ -4,6 +4,7 @@ import io.ktor.server.application.*
 import newsref.db.globalConsole
 import newsref.db.initDb
 import newsref.db.models.User
+import newsref.db.readEnvFromDirectory
 import newsref.db.tables.UserRow
 import newsref.db.tables.UserTable
 import newsref.db.tables.fromData
@@ -15,7 +16,8 @@ import org.jetbrains.exposed.sql.SqlExpressionBuilder.eq
 import java.io.File
 
 fun Application.configureDatabases() {
-    initDb()
+    val env = readEnvFromDirectory("../.env")
+    initDb(env)
 }
 
 

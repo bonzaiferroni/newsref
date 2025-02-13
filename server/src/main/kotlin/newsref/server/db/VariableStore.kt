@@ -1,33 +1,31 @@
 package newsref.server.db
 
 import kotlinx.datetime.Clock
-import newsref.db.environment
+import newsref.db.Environment
 import newsref.db.models.User
 import newsref.model.core.UserRole
 
-class VariableStore {
+class VariableStore(
+    private val env: Environment
+) {
 
-    val appSecret by lazy { getEnvVariable("NEWSREF_APP_SECRET") }
+    val appSecret by lazy { env.read("NEWSREF_APP_SECRET") }
     val admin by lazy {
         User(
-            name = getEnvVariable("NEWSREF_ADMIN_NAME"),
-            username = getEnvVariable("NEWSREF_ADMIN_USERNAME"),
+            name = env.read("NEWSREF_ADMIN_NAME"),
+            username = env.read("NEWSREF_ADMIN_USERNAME"),
             hashedPassword = getHashedPassword(),
-            salt = getEnvVariable("NEWSREF_ADMIN_SALT"),
-            email = getEnvVariable("NEWSREF_ADMIN_EMAIL"),
+            salt = env.read("NEWSREF_ADMIN_SALT"),
+            email = env.read("NEWSREF_ADMIN_EMAIL"),
             roles = setOf(UserRole.ADMIN, UserRole.USER),
             createdAt = Clock.System.now(),
             updatedAt = Clock.System.now(),
         )
     }
 
-    private fun getEnvVariable(key: String): String {
-        return environment[key] ?: throw IllegalStateException("Missing environment variable: $key")
-    }
-
     private fun getHashedPassword(): String {
-        val salt = getEnvVariable("NEWSREF_ADMIN_SALT")
-        val password = getEnvVariable("NEWSREF_ADMIN_PASSWORD")
+        val salt = env.read("NEWSREF_ADMIN_SALT")
+        val password = env.read("NEWSREF_ADMIN_PASSWORD")
         return hashPassword(password, salt.base64ToByteArray())
     }
 }

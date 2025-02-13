@@ -25,7 +25,8 @@ class ConsumeSourceService : DbService() {
 
 		val source = crawl.page?.source ?: Source(
 			url = lead.url,
-			seenAt = crawl.fetch.lead.freshAt ?: now
+			seenAt = crawl.fetch.lead.freshAt ?: now,
+			okResponse = false,
 		)
 
 		// find and update host
@@ -34,6 +35,7 @@ class ConsumeSourceService : DbService() {
 
 		// update or create source
 		val sourceRow = SourceRow.createOrUpdate(SourceTable.url.sameUrl(source.url)) { isModify ->
+			// console.log("${crawl.fetch.lead.id} $isModify ${source.url.href.take(40)}")
 			fromData(source, hostRow, isModify)
 		}
 

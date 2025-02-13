@@ -9,6 +9,7 @@ import newsref.db.utils.sameUrl
 import newsref.db.utils.toCheckedFromTrusted
 import newsref.db.utils.toSqlString
 import newsref.model.core.CheckedUrl
+import newsref.model.core.Url
 import newsref.model.data.LeadJob
 import newsref.model.data.LeadInfo
 import org.jetbrains.exposed.sql.*
@@ -30,19 +31,7 @@ class LeadService : DbService() {
 
     suspend fun createOrLinkLead(url: CheckedUrl, leadJob: LeadJob?, createIfFresh: Boolean) = dbQuery {
         var leadRow = LeadRow.find(LeadTable.url.sameUrl(url)).firstOrNull()
-        val leadId = leadRow?.id?.value
-        if (leadRow != null && leadId != null) {
-            // assign FeedPosition for scoring purposes
-            val feedPosition = leadJob?.feedPosition
-            if (feedPosition != null) {
-                val leadJobRow = LeadJobRow.find { LeadJobTable.leadId eq leadId }.firstOrNull()
-                if (leadJobRow != null) {
-                    // take lowest index of FeedPosition
-                    leadJobRow.feedPosition = leadJobRow.feedPosition?.let { minOf(it, feedPosition) }
-                } else {
-                    LeadJobRow.new { fromData(leadJob, leadRow!!, null) }
-                }
-            }
+        if (leadRow != null) {
             // assign lead to links that might already exist from other sources
             val affirmed = LinkRow.setLeadOnSameLinks(url, leadRow)
             return@dbQuery if (affirmed) CreateLeadResult.AFFIRMED else CreateLeadResult.IRRELEVANT
@@ -71,6 +60,11 @@ class LeadService : DbService() {
 
     suspend fun getAllFeedLeads() = dbQuery {
         LeadJobTable.selectAll().where { LeadJobTable.feedId.isNotNull() }.map { it.toLeadJob() }
+    }
+
+    suspend fun readLeadInfoByUrl(url: Url) = dbQuery {
+        leadInfoJoin.where { LeadTable.url.sameUrl(url) }
+            .toLeadInfos().firstOrNull()
     }
 }
 

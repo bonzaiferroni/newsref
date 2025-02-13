@@ -1,50 +1,18 @@
 package newsref.dashboard.ui.controls
 
-import androidx.compose.animation.AnimatedVisibility
-import androidx.compose.animation.fadeIn
-import androidx.compose.foundation.Image
-import androidx.compose.foundation.ScrollbarStyle
-import androidx.compose.foundation.VerticalScrollbar
-import androidx.compose.foundation.background
-import androidx.compose.foundation.clickable
-import androidx.compose.foundation.gestures.Orientation
-import androidx.compose.foundation.gestures.rememberScrollableState
-import androidx.compose.foundation.gestures.scrollable
-import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.rememberScrollState
-import androidx.compose.foundation.rememberScrollbarAdapter
-import androidx.compose.foundation.verticalScroll
-import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Text
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
-import androidx.compose.ui.Alignment
-import androidx.compose.ui.Modifier
-import androidx.compose.ui.unit.dp
-import newsref.dashboard.Greeting
-import newsref.dashboard.basePadding
-import newsref.dashboard.baseSpacing
-import newsref.dashboard.generated.resources.Res
-import newsref.dashboard.generated.resources.compose_multiplatform
-import newsref.dashboard.halfPadding
-import newsref.dashboard.utils.modifyIfNotNull
-import org.jetbrains.compose.resources.painterResource
+import kotlinx.collections.immutable.*
+import androidx.compose.foundation.*
+import androidx.compose.foundation.layout.*
+import androidx.compose.material3.*
+import androidx.compose.runtime.*
+import androidx.compose.ui.*
+import newsref.dashboard.*
 
 @Composable
-fun TabFolder(
-    currentPageName: String,
-    pages: List<TabPage>,
+fun TabPages(
+    currentPageName: String?,
     onChangePage: (String) -> Unit,
+    pages: ImmutableList<TabPage>,
     modifier: Modifier = Modifier
 ) {
     if (pages.isEmpty()) return
@@ -62,6 +30,7 @@ fun TabFolder(
     ) {
         Row {
             for (page in pages) {
+                if (!page.isVisible) continue
                 val background = when {
                     currentPage.name == page.name -> MaterialTheme.colorScheme.primaryContainer
                     else -> MaterialTheme.colorScheme.surfaceDim
@@ -80,28 +49,18 @@ fun TabFolder(
                 }
             }
         }
-        val scrollState = when (currentPage.scrollbar) {
-            true -> rememberScrollState()
-            else -> null
-        }
-//        val scrollbarColor = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.5f)
-        Box(
-
-        ) {
+        if (currentPage.scrollbar) {
+            ScrollBox(
+                modifier = Modifier.fillMaxSize()
+            ) {
+                currentPage.content()
+            }
+        } else {
             Column(
-                modifier = Modifier
-                    .fillMaxSize()
-                    .modifyIfNotNull(scrollState) { this.verticalScroll(it) }
-
+                modifier = Modifier.fillMaxSize()
             ) {
                 Spacer(modifier = Modifier.height(baseSpacing))
                 currentPage.content()
-            }
-            scrollState?.let {
-                VerticalScrollbar(
-                    adapter = rememberScrollbarAdapter(it),
-                    modifier = Modifier.align(Alignment.CenterEnd),
-                )
             }
         }
     }
@@ -110,5 +69,8 @@ fun TabFolder(
 data class TabPage(
     val name: String,
     val scrollbar: Boolean = true,
+    val isVisible: Boolean = true,
     val content: @Composable () -> Unit,
 )
+
+fun pages(vararg elements: TabPage) = elements.toImmutableList()

@@ -1,4 +1,6 @@
 alias crawl='./scripts/crawl.sh'
 alias serve='./gradlew run -p server'
+alias kokoro='fastapi dev ~/projects/kokoro/serve.py'
+alias dashboard='./gradlew run -p dashboard --stacktrace'
 
-echo "folder commands: crawl, serve"
+echo "folder commands: crawl, serve, kokoro, dashboard"

@@ -1,32 +1,20 @@
 package newsref.dashboard.ui.screens
 
 import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.height
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
-import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalUriHandler
-import androidx.compose.ui.platform.UriHandler
-import androidx.compose.ui.unit.dp
 import io.github.koalaplot.core.util.ExperimentalKoalaPlotApi
 import newsref.dashboard.baseSpacing
-import newsref.dashboard.ui.controls.ScoreChart
-import newsref.dashboard.ui.table.BooleanCell
-import newsref.dashboard.ui.table.CellControl
-import newsref.dashboard.ui.table.ColumnGroup
-import newsref.dashboard.ui.table.DataTable
+import newsref.dashboard.ui.controls.TimeChart
 import newsref.dashboard.ui.table.DurationAgoCell
 import newsref.dashboard.ui.table.PropertyRow
 import newsref.dashboard.ui.table.PropertyTable
-import newsref.dashboard.ui.table.TableColumn
 import newsref.dashboard.ui.table.TextCell
-import newsref.dashboard.ui.table.addControl
 import newsref.dashboard.ui.table.openExternalLink
 import newsref.dashboard.ui.table.textRow
-import newsref.model.data.Link
 
 @OptIn(ExperimentalKoalaPlotApi::class)
 @Composable
@@ -36,9 +24,7 @@ fun SourceDataView(
     val state by viewModel.state.collectAsState()
     val source = state.source
     if (source == null) return
-    val scores = state.scores
     val contents = state.contents
-    val uriHandler = LocalUriHandler.current
 
     Column(
         verticalArrangement = Arrangement.spacedBy(baseSpacing)
@@ -48,7 +34,7 @@ fun SourceDataView(
             item = source,
             properties = listOf(
                 textRow("Id", source.id.toString()),
-                textRow("Url", source.url.href, openExternalLink(uriHandler) { it.url.href }),
+                textRow("Url", source.url.href, 1, openExternalLink { it.url.href }),
                 textRow("Title", source.title),
                 textRow("Type", source.type?.toString()),
                 PropertyRow("Score") { TextCell(it.score) },
@@ -60,7 +46,7 @@ fun SourceDataView(
                 PropertyRow("Published") { DurationAgoCell(it.publishedAt) },
                 PropertyRow("Accessed") { DurationAgoCell(it.accessedAt) },
                 PropertyRow("ContentCount") { TextCell(it.contentCount) },
-                PropertyRow("Scores") { TextCell(scores?.size ?: 0) },
+                PropertyRow("Scores") { TextCell(state.chartData?.times?.size ?: 0) },
                 PropertyRow("Contents") { TextCell(contents.size) },
                 PropertyRow("Outbound links") { TextCell(state.outbound.size) },
                 PropertyRow("Inbound links") { TextCell(state.inbound.size) },
@@ -68,9 +54,7 @@ fun SourceDataView(
             )
         )
 
-        if (scores != null && !scores.isEmpty()) {
-            ScoreChart(scores)
-        }
+        state.chartData?.let { TimeChart(it) }
 
         val article = state.article
         if (article != null) {

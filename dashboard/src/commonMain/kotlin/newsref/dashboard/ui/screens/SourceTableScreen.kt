@@ -1,44 +1,25 @@
 package newsref.dashboard.ui.screens
 
-import androidx.compose.foundation.layout.Row
-import androidx.compose.material3.Button
-import androidx.compose.material3.Icon
-import androidx.compose.material3.IconButton
-import androidx.compose.material3.Text
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.collectAsState
-import androidx.compose.runtime.getValue
-import androidx.compose.ui.platform.LocalClipboardManager
-import androidx.compose.ui.platform.LocalUriHandler
-import androidx.lifecycle.viewmodel.compose.viewModel
+import androidx.compose.foundation.layout.*
+import androidx.compose.material3.*
+import androidx.compose.runtime.*
+import androidx.compose.ui.platform.*
+import androidx.lifecycle.viewmodel.compose.*
 import compose.icons.TablerIcons
 import compose.icons.tablericons.Copy
 import compose.icons.tablericons.PlayerPause
 import compose.icons.tablericons.PlayerPlay
 import newsref.dashboard.*
-import newsref.dashboard.ui.table.AlignCell
-import newsref.dashboard.ui.table.ColumnGroup
-import newsref.dashboard.ui.table.DataTable
-import newsref.dashboard.ui.table.DurationAgoCell
-import newsref.dashboard.ui.table.EmojiCell
-import newsref.dashboard.ui.table.NumberCell
-import newsref.dashboard.ui.table.PropertyRow
-import newsref.dashboard.ui.table.PropertyTable
-import newsref.dashboard.ui.table.TableColumn
-import newsref.dashboard.ui.table.TextCell
-import newsref.dashboard.ui.table.addControl
-import newsref.dashboard.ui.table.glowOverMin
-import newsref.dashboard.ui.table.onClick
-import newsref.dashboard.utils.TipType
-import newsref.dashboard.utils.ToolTip
-import newsref.dashboard.utils.setRawText
-import newsref.model.dto.SourceInfo
+import newsref.dashboard.ui.table.*
+import newsref.dashboard.utils.*
+import newsref.model.core.*
+import newsref.model.dto.*
 
 @Composable
 fun SourceTableScreen(
+    route: SourceTableRoute,
     viewModel: SourceTableModel = viewModel { SourceTableModel() }
 ) {
-    val nav = LocalNavigator.current
     val state by viewModel.state.collectAsState()
     PropertyTable(
         name = "Source Table",
@@ -65,7 +46,8 @@ fun SourceTableScreen(
     }
     SourceTable(
         sources = state.items,
-        nav = nav,
+        searchText = state.searchText,
+        onSearch = viewModel::onSearch,
         isNew = { it.sourceId > state.previousTopId},
         onFirstVisibleIndex = viewModel::trackIndex,
     )
@@ -74,31 +56,40 @@ fun SourceTableScreen(
 @Composable
 fun SourceTable(
     sources: List<SourceInfo>,
-    nav: NavigatorModel,
+    searchText: String = "",
+    scrollId: Long? = null,
+    onSearch: ((String) -> Unit)? = null,
+    onSorting: ((Sorting) -> Unit)? = null,
     isNew: ((SourceInfo) -> Boolean )? = null,
     onFirstVisibleIndex: ((Int) -> Unit)? = null,
 ) {
     val uriHandler = LocalUriHandler.current
     val clipboardManager = LocalClipboardManager.current
+    val nav = LocalNavigator.current
     DataTable(
         name = "Sources",
-        rows = sources,
+        items = sources,
         isNew = isNew,
+        onSorting = onSorting,
+        searchText = searchText,
+        onSearch = onSearch,
+        scrollId = scrollId,
+        isSelected = { index, item -> index == item.sourceId},
         getKey = { it.sourceId },
         glowFunction = { glowOverMin(it.seenAt) },
         onFirstVisibleIndex = onFirstVisibleIndex,
-        columns = listOf(
-            ColumnGroup(
-                TableColumn("Scr", 40, alpha = .8f) { TextCell(it.score) },
+        columnGroups = listOf(
+            columns(
+                TableColumn("Scr", 40, alpha = .8f, sort = DataSort.Score) { TextCell(it.score) },
                 TableColumn<SourceInfo>("headline", weight = 1f) { TextCell(it.headline ?: it.pageTitle) }
                     .onClick(ToolTip("Go to source", TipType.Action)) { nav.go(SourceItemRoute(it.sourceId)) },
             ),
-            ColumnGroup(
+            columns(
                 TableColumn<SourceInfo>("url", alpha = .8f) { TextCell(it.url) }
                     .onClick(ToolTip("Open in browser", TipType.Action)) { uriHandler.openUri(it.url) }
                     .addControl(TablerIcons.Copy, ToolTip("Copy Url", TipType.Action)) { clipboardManager.setRawText(it.url) },
             ),
-            ColumnGroup(
+            columns(
                 TableColumn<SourceInfo>("Host", weight = 1f) { TextCell(it.hostName ?: it.hostCore) }
                     .onClick(ToolTip("Go to host")) { /* todo: open host */ },
                 TableColumn("Words", 60, AlignCell.Right) { NumberCell(it.wordCount) },
@@ -108,10 +99,10 @@ fun SourceTable(
                 TableColumn("Th", 30, headerTip = ToolTip("Thumbnail")) { EmojiCell("💅", it.thumbnail) },
                 TableColumn("pub", 60, AlignCell.Right) { DurationAgoCell(it.publishedAt) },
             ),
-            ColumnGroup(
+            columns(
                 TableColumn("Section", weight = 1f, alpha = .8f) { TextCell(it.section ?: "") },
                 TableColumn("", 60) { },
-                TableColumn("seen", 60, AlignCell.Right, .8f) { DurationAgoCell(it.seenAt) }
+                TableColumn("seen", 60, AlignCell.Right, .8f, sort = DataSort.Time) { DurationAgoCell(it.seenAt) }
             )
         )
     )

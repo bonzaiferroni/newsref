@@ -56,6 +56,7 @@ class TweetReader {
 				contentCount = wordCount,
 				accessedAt = now,
 				seenAt = lead.freshAt ?: now,
+				okResponse = true,
 			),
 			pageHost = host,
 			language = "en",

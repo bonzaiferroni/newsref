@@ -41,6 +41,7 @@ class PageReader(
 		// var newsArticle = this
 		var h1Title: String? = null
 		var contentWordCount = 0
+		var readWordCount = 0
 		val typeSets = mutableMapOf(
 			ArticleType.NEWS to 0,
 			ArticleType.HELP to 0,
@@ -66,7 +67,7 @@ class PageReader(
 				continue
 			}
 
-			if (stack.isEmpty() && contentWordCount == 0) {
+			if (stack.isEmpty() && readWordCount == 0) {
 				stack.addAll(dropped)
 				dropped.clear()
 			}
@@ -80,18 +81,19 @@ class PageReader(
 			if (tag !in contentTags) continue
 
 			val content = elementReader.read(element) ?: continue
-			val cacheContent = content.text.length < 1000
+			val cacheContent = content.text.length < 2000
 			if (cacheContent) {
 				try {
 					if (!contentService.isFresh(content.text)) continue
 					contents.add(content.text)
+					contentWordCount += content.wordCount
 				} catch (e: Exception) {
 					console.logError("Exception caching content:\n$pageUrl\n${e.message}")
 					continue
 				}
 			}
 
-			contentWordCount += content.wordCount
+			readWordCount += readWordCount
 			for ((type, score) in typeSets) {
 				typeSets[type] = score + (content.typeSets[type] ?: 0)
 			}
@@ -130,8 +132,8 @@ class PageReader(
 		val modifiedAt = newsArticle?.readModifiedAt() ?: doc.readModifiedAt()
 		val authors = newsArticle?.readAuthor() ?: doc.readAuthor()?.let { listOf(PageAuthor(name = it)) }
 		val articleType = typeSets.maxByOrNull { it.value }?.key ?: ArticleType.UNKNOWN
-		val docType = doc.readType()
-		val sourceType = getSourceType(newsArticle, articleType, docType ?: SourceType.UNKNOWN, contentWordCount)
+		val metaType = doc.readType()
+		val sourceType = getSourceType(newsArticle, articleType, metaType ?: SourceType.UNKNOWN, contentWordCount)
 		val language = newsArticle?.inLanguage ?: doc.readLanguage()
 		val thumbnail = newsArticle?.thumbnailUrl ?: newsArticle?.image?.takeIf { it.size > 1 }
 			?.firstNotNullOfOrNull{ if (it.width != null && it.width < 640) it else null }?.url
@@ -150,7 +152,8 @@ class PageReader(
 				contentCount = if (isNewsContent(sourceType, language)) contentWordCount else 0,
 				seenAt = lead.freshAt ?: now,
 				accessedAt = now,
-				publishedAt = publishedAt
+				publishedAt = publishedAt,
+				okResponse = true,
 			),
 			pageHost = pageHost,
 			articleType = articleType,
@@ -185,7 +188,7 @@ class PageReader(
 		wordCount: Int
 	): SourceType {
 		if (newsArticle != null) return SourceType.ARTICLE
-		if (wordCount < 50 || sourceType != SourceType.ARTICLE) return sourceType
+		if (wordCount < 100 || sourceType != SourceType.ARTICLE) return sourceType
 		if (articleType == ArticleType.POLICY) return SourceType.WEBSITE
 		return sourceType
 	}

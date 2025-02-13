@@ -14,7 +14,7 @@ class ElementReader {
 	fun read(element: DocElement): ContentInfo? {
 		// is all link
 		val firstLinkText = element.eachLink.keys.firstOrNull()?.trim()
-		val text = element.text.trim()
+		val text = element.text.trim().replace("\u0000", "") // remove empty bytes, postgres hates
 		if (text == firstLinkText) return null
 
 		return readChars(text)

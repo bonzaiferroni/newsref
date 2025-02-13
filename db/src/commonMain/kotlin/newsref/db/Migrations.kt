@@ -23,9 +23,10 @@ private fun migrate(protocol: String, applyMigration: Boolean) {
 	} ?: return
 
 	val name = file.name
+	val env = readEnvFromDirectory("../.env")
 
 	val isBaseline = folder.listFiles()?.count { it.isFile && it.name.endsWith(".sql") } == 0
-	val db = connectDb()
+	val db = connectDb(env)
 	TransactionManager.registerManager(db, PgVectorManager(TransactionManager.manager))
 
 	if (file.readText().isNotEmpty()) {
@@ -45,7 +46,7 @@ private fun migrate(protocol: String, applyMigration: Boolean) {
 	if (!applyMigration) return
 
 	val flyway = Flyway.configure()
-		.dataSource(URL, USER, PASSWORD)
+		.dataSource(URL, USER, env.read(PASSWORD_KEY))
 		.locations("filesystem:$MIGRATIONS_DIRECTORY")
 		.baselineOnMigrate(isBaseline) // Used when migrating an existing database for the first time
 		.load()

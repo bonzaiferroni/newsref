@@ -21,6 +21,7 @@ dependencies {
 	implementation("com.microsoft.playwright:playwright:1.41.0")
 	implementation("com.aallam.openai:openai-client:3.8.2")
 	implementation("io.github.cdimascio:dotenv-kotlin:6.4.2")
+	implementation("com.fleeksoft.ksoup:ksoup:0.2.1")
 
 	implementation(project(":model"))
 	implementation(project(":db"))

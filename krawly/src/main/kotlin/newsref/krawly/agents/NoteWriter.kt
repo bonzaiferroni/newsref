@@ -62,12 +62,12 @@ class NoteWriter(
 	}
 
 	private suspend fun makeNote(bot: AiConfig, source: Source, prompt: String) {
-		val userId = noteService.getUserId(bot.name) ?: return
-		val chat = client.createChat(bot, defaultScript)
-		val response = chat.ask(prompt) ?: return
-		val note = noteService.createNote(source.id, userId, "bot note", response)
-		createSpeech("${source.id}-$userId", response, bot.voice)
-		console.log("${bot.name}${source.url}\n${note.body}")
+//		val userId = noteService.getUserId(bot.name) ?: return
+//		val chat = client.createChat(bot, defaultScript)
+//		val response = chat.ask(prompt) ?: return
+//		val note = noteService.createNote(source.id, userId, "bot note", response)
+//		createSpeech("${source.id}-$userId", response, bot.voice)
+//		console.log("${bot.name}${source.url}\n${note.body}")
 	}
 
 	private fun createSpeech(name: String, content: String, voice: String? = null) {

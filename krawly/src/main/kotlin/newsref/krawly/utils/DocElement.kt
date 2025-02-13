@@ -1,10 +1,28 @@
 package newsref.krawly.utils
 
+import com.fleeksoft.ksoup.nodes.Element
 import it.skrape.selects.DocElement
 
-fun DocElement.tryGetHrefOrParent(steps: Int = 3): Pair<String, String>? =
-    this.eachLink.entries.firstOrNull()?.let { Pair(it.key, it.value) }
-        ?: if (steps > 0) this.parent.tryGetHrefOrParent(steps - 1) else null
+fun DocElement.tryGetHrefOrParent(steps: Int = 3): String? {
+    if (steps == 0) return null
+    if (this.tagName != "a") return this.tryGetHrefOrParent(steps - 1)
+    else return this.attributes["href"]
+}
+
+fun Element.tryGetHrefOrParent(steps: Int = 3): String? {
+    if (this.tagName() == "a") return this.attribute("href")?.value
+    if (steps == 0) return null
+    return this.parent()?.tryGetHrefOrParent(steps - 1)
+}
+
+fun Element.tryGetHrefOrChild(): String? {
+    if (this.tagName() == "a") return this.attribute("href")?.value
+    for (child in this.children()) {
+        val href = child.tryGetHrefOrChild() ?: continue
+        return href
+    }
+    return null
+}
 
 private val headingTags = setOf("h1", "h2", "h3", "h4", "h5", "h6")
 

@@ -1,5 +1,16 @@
 package newsref.krawly
 
+import io.ktor.client.HttpClient
+import io.ktor.client.engine.cio.CIO
+import io.ktor.client.plugins.HttpTimeout
+import io.ktor.client.plugins.contentnegotiation.ContentNegotiation
+import io.ktor.client.plugins.defaultRequest
+import io.ktor.client.request.headers
+import io.ktor.http.HttpHeaders
+import io.ktor.http.headers
+import io.ktor.serialization.kotlinx.json.json
+import kotlinx.serialization.json.Json
+
 val firefoxAgent = "Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:130.0) Gecko/20100101 Firefox/130.0"
 val firefoxLinuxAgent = "Mozilla/5.0 (X11; Ubuntu; Linux x86_64; rv:130.0) Gecko/20100101 Firefox/130.0"
 val chromeAgent = "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/129.0.0.0 Safari/537.36"
@@ -18,3 +29,26 @@ val safariAgent = "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/6
 
 const val MAX_URL_ATTEMPTS = 5
 const val MAX_URL_CHARS = 400
+
+val globalKtor = HttpClient(CIO) {
+    install(ContentNegotiation) {
+        json(Json {
+            prettyPrint = true
+            isLenient = true
+            ignoreUnknownKeys = true
+        })
+    }
+    defaultRequest {
+        headers {
+            set(HttpHeaders.ContentType, "application/json")
+        }
+    }
+    engine {
+        requestTimeout = 120_000 // Timeout in milliseconds (30 seconds here)
+    }
+    install(HttpTimeout) {
+        requestTimeoutMillis = 120_000 // Set request timeout
+        connectTimeoutMillis = 120_000 // Set connection timeout
+        socketTimeoutMillis = 120_000  // Set socket timeout
+    }
+}

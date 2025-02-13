@@ -3,28 +3,33 @@ package newsref.krawly.clients
 import newsref.krawly.models.AiConfig
 
 class AiChat(
-	private val config: AiConfig,
-	private val script: String,
-	private val client: AiClient,
+    invocation: String,
+    context: String? = null,
+    private val client: AiClient,
 ) {
-	val messages: MutableList<AiMessage> = mutableListOf(
-		AiMessage(
-			role = AiRole.SYSTEM,
-			content = config.invocation
-		),
-		AiMessage(
-			role = AiRole.SYSTEM,
-			content = script
-		)
-	)
+    private val messages: MutableList<AiMessage> = mutableListOf(
+        AiMessage(
+            role = AiRole.SYSTEM,
+            content = invocation
+        ),
+    ).apply {
+        if (context != null) {
+            this.add(
+                AiMessage(
+                    role = AiRole.SYSTEM,
+                    content = context
+                )
+            )
+        }
+    }
 
-	suspend fun ask(question: String): String? {
-		messages.add(AiMessage(AiRole.USER, question))
-		val result = client.chat(messages, config.url, config.model, config.token)
-		val message = result.choices.firstOrNull()?.message ?: return null
-		messages.add(message)
-		while(messages.size > 20) messages.removeFirst()
-		return message.content
-	}
+    suspend fun ask(question: String): String? {
+        messages.add(AiMessage(AiRole.USER, question))
+        val result = client.chat(messages) ?: return null
+        val message = result.choices.firstOrNull()?.message ?: return null
+        messages.add(message)
+        while (messages.size > 20) messages.removeFirst()
+        return message.content
+    }
 }
 

@@ -34,6 +34,7 @@ class HostAgent(
 
     private val creatingHosts = Collections.synchronizedSet(mutableSetOf<String>())
     private suspend fun createHost(url: Url): Pair<Host, CheckedUrl> {
+//        console.log("Creating Host: ${url.core}")
         if (url.core in creatingHosts) {
             while (url.core in creatingHosts) {
                 delay(1.seconds)

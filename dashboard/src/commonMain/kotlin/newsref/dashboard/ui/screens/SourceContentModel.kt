@@ -12,29 +12,14 @@ import java.io.File
 class SourceContentModel(
     private val source: Source,
     private val contents: List<Content>,
-    private val speechClient: SpeechClient = SpeechClient(),
-) : StateModel<SourceContentState>(SourceContentState()) {
+) : StateModel<SourceContentState>(SourceContentState(contents.map { it.text })) {
 
-    fun speak() {
-        setState { it.copy(speak = true)}
-        viewModelScope.launch {
-            val files = contents.mapIndexed { index, content ->
-                val path = "../cache/wav/${source.id}_$index.wav"
-                val file = File(path)
-                if (!file.exists()) {
-                    val bytes = speechClient.textToSpeech(content.text)
-                    file.parentFile?.mkdirs()
-                    file.writeBytes(bytes)
-                }
-                println(path)
-                path
-            }
-            setState { it.copy(files= files)}
-        }
+    fun onPlayText(text: String?) {
+        setState { it.copy(playingText = text)}
     }
 }
 
 data class SourceContentState(
-    val speak: Boolean = false,
-    val files: List<String>? = null
+    val contents: List<String>,
+    val playingText: String? = null,
 )

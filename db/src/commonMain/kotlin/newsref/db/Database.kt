@@ -1,5 +1,6 @@
 package newsref.db
 
+import io.github.cdimascio.dotenv.Dotenv
 import kotlinx.coroutines.runBlocking
 import newsref.db.core.PgVectorManager
 import newsref.db.services.UserService
@@ -8,9 +9,9 @@ import org.jetbrains.exposed.sql.*
 import org.jetbrains.exposed.sql.transactions.TransactionManager
 import org.jetbrains.exposed.sql.transactions.transaction
 
-fun initDb() {
+fun initDb(env: Environment) {
 	globalConsole.logInfo("initDb", "initializing db")
-	val db = connectDb()
+	val db = connectDb(env)
 	TransactionManager.registerManager(db, PgVectorManager(TransactionManager.manager))
 	transaction(db) {
 		exec("CREATE EXTENSION IF NOT EXISTS vector;")
@@ -42,7 +43,7 @@ val dbTables = listOf(
 	ScoopTable,
 	FeedTable,
 	NexusTable,
-	FeedSourceTable,
+	SourceCacheTable,
 	NoteTable,
 	SourceNoteTable,
 	SourceVectorTable,
@@ -51,15 +52,19 @@ val dbTables = listOf(
 	StoryTable,
 	ChapterTable,
 	ChapterSourceTable,
+	FeedSourceTable,
+	LogVariableTable,
+	IntegerLogTable,
+	JsonLogTable,
 )
 
 const val URL = "jdbc:postgresql://localhost:5432/newsrefdb"
 const val USER = "newsref"
-val PASSWORD: String = environment["NEWSREF_PSQL_PW"]
+const val PASSWORD_KEY = "NEWSREF_PSQL_PW"
 
-fun connectDb() = Database.connect(
-	URL,
+fun connectDb(env: Environment) = Database.connect(
+    url = URL,
 	driver = "org.postgresql.Driver",
 	user = USER,
-	password = PASSWORD
+	password = env.read(PASSWORD_KEY)
 )

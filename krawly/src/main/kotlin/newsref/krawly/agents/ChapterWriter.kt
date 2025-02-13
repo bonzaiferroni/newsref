@@ -1,6 +1,5 @@
 package newsref.krawly.agents
 
-import newsref.db.environment
 import newsref.model.data.Narrator
 import java.io.File
 

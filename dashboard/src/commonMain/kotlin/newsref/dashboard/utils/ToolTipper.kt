@@ -3,7 +3,9 @@ package newsref.dashboard.utils
 import androidx.compose.animation.core.Animatable
 import androidx.compose.animation.core.EaseOut
 import androidx.compose.animation.core.tween
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.interaction.InteractionSource
+import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.interaction.collectIsHoveredAsState
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -23,7 +25,9 @@ import androidx.compose.runtime.compositionLocalOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.composed
 import androidx.compose.ui.draw.alpha
+import androidx.compose.ui.input.pointer.pointerInput
 import androidx.lifecycle.viewmodel.compose.viewModel
 import compose.icons.TablerIcons
 import compose.icons.tablericons.Click
@@ -47,30 +51,32 @@ fun ToolTipper(
         }
     }
 
-    Box {
+    Box() {
         CompositionLocalProvider(LocalToolTipper provides viewModel) {
             content()
         }
-        val backgroundColor = MaterialTheme.colorScheme.surfaceDim
-        val contentColor = MaterialTheme.colorScheme.onSurface
-        Surface(
-            color = backgroundColor,
-            contentColor = contentColor,
-            modifier = Modifier
-                .align(Alignment.BottomCenter)
-                .alpha(alpha.value)
-                .fillMaxWidth()
-        ) {
-            Row(
-                horizontalArrangement = Arrangement.spacedBy(halfSpacing),
-                modifier = Modifier.padding(halfPadding),
+        if (alpha.value > 0) {
+            val backgroundColor = MaterialTheme.colorScheme.surfaceDim
+            val contentColor = MaterialTheme.colorScheme.onSurface
+            Surface(
+                color = backgroundColor,
+                contentColor = contentColor,
+                modifier = Modifier
+                    .align(Alignment.BottomCenter)
+                    .alpha(alpha.value)
+                    .fillMaxWidth()
             ) {
-                val icon = when (state.tooltip.type) {
-                    TipType.Information -> TablerIcons.InfoCircle
-                    TipType.Action -> TablerIcons.Click
+                Row(
+                    horizontalArrangement = Arrangement.spacedBy(halfSpacing),
+                    modifier = Modifier.padding(halfPadding)
+                ) {
+                    val icon = when (state.tooltip.type) {
+                        TipType.Information -> TablerIcons.InfoCircle
+                        TipType.Action -> TablerIcons.Click
+                    }
+                    Icon(icon, "Tip Icon")
+                    Text(state.tooltip.text)
                 }
-                Icon(icon, "Tip Icon")
-                Text(state.tooltip.text)
             }
         }
     }
@@ -115,4 +121,13 @@ fun SetToolTip(tip: ToolTip, interactionSource: InteractionSource) {
 
 val LocalToolTipper = compositionLocalOf<ToolTipperModel> {
     error("No MyObject provided")
+}
+
+fun Modifier.disableClickAndRipple(): Modifier = composed {
+    clickable(
+        enabled = false,
+        indication = null,
+        interactionSource = remember { MutableInteractionSource() },
+        onClick = { },
+    )
 }

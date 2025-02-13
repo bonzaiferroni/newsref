@@ -7,7 +7,7 @@ import kotlinx.coroutines.launch
 import kotlinx.datetime.Clock
 import kotlinx.datetime.Instant
 import newsref.db.globalConsole
-import newsref.db.log.*
+import newsref.db.console.*
 import newsref.db.models.CrawlInfo
 import newsref.db.models.FetchInfo
 import newsref.db.services.CreateLeadResult
@@ -109,7 +109,7 @@ class LeadFollower(
 
 	private suspend fun checkLeads() {
 		refreshLeads()
-		while (leads.isNotEmpty()) {
+		while (true) {
 			val now = Clock.System.now()
 			if (now - refreshed > 2.minutes) {
 				break
@@ -155,7 +155,7 @@ class LeadFollower(
 			val waiting = Clock.System.now() - startedAt
 			if (waiting > 1.minutes) {
 				for (spider in awayFromNest) {
-					console.log(spider.url)
+					console.log("lost spider:\n${spider.url}")
 				}
 				delay(10.seconds)
 			}
@@ -232,7 +232,7 @@ class LeadFollower(
 		val background = alternateBg.also { alternateBg = !alternateBg }.let {
 			if (it) forestNightBg else deepspaceBlueBg
 		}
-		console.row(urlMsg, background = background, width = rowWidth)
+		console.send(urlMsg, background = background, width = rowWidth)
 
 		val page = crawl.page
 		if (page == null) {
@@ -259,15 +259,15 @@ class LeadFollower(
 					resultMap.getResult(FetchResult.TIMEOUT), 5, "timeout",
 					highlight = resultType == FetchResult.TIMEOUT
 				)
-				.row(background = background, width = rowWidth)
+				.send(background = background, width = rowWidth)
 			return
 		}
 
 		val title = page.article?.headline ?: page.source.title ?: "[No title]"
 		console.cell(title, rowWidth, justify = Justify.LEFT)
-			.row(background = background, width = rowWidth)
+			.send(background = background, width = rowWidth)
 		console.cell("http://localhost:3000/#/source/$sourceId", justify = Justify.LEFT)
-			.row(background = background, width = rowWidth)
+			.send(background = background, width = rowWidth)
 		val externalLinkCount = page.links.count { it.isExternal }
 		console
 			.cell(page.source.type?.getEmoji() ?: "💢")
@@ -294,7 +294,7 @@ class LeadFollower(
 				"${resultMap.getResult(FetchResult.TIMEOUT)}", 5, "timeout",
 				highlight = resultType == FetchResult.TIMEOUT
 			)
-			.row(background = background, width = rowWidth)
+			.send(background = background, width = rowWidth)
 	}
 }
 

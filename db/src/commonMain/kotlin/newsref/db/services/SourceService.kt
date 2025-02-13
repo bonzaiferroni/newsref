@@ -4,16 +4,15 @@ import kotlinx.datetime.Clock
 import kotlinx.datetime.Instant
 import newsref.db.DbService
 import newsref.db.tables.*
-import newsref.db.tables.ArticleTable
-import newsref.db.tables.ContentTable
-import newsref.db.tables.HostTable
 import newsref.db.tables.LinkTable
 import newsref.db.tables.SourceRow
 import newsref.db.tables.SourceScoreRow
 import newsref.db.tables.SourceScoreTable
 import newsref.db.utils.applyIfNotNull
+import newsref.db.utils.sameUrl
 import newsref.db.utils.toInstantUtc
 import newsref.db.utils.toLocalDateTimeUtc
+import newsref.model.core.Url
 import newsref.model.dto.*
 import org.jetbrains.exposed.sql.Op
 import org.jetbrains.exposed.sql.SortOrder
@@ -39,9 +38,9 @@ class SourceService : DbService() {
             .firstOrNull()?.toSource()
     }
 
-    suspend fun getSourceInfos(afterId: Long? = null, limit: Int = 100) = dbQuery {
+    suspend fun getSourceInfos(searchText: String? = null, limit: Int = 100) = dbQuery {
         sourceInfoTables
-            .applyIfNotNull(afterId) { this.where { SourceTable.id greater it } }
+            .applyIfNotNull(searchText) { this.where { SourceTable.title.like("$it%") or SourceTable.url.like("$it%") } }
             .orderBy(SourceTable.id, SortOrder.DESC)
             .limit(limit)
             .map { it.toSourceInfo() }
@@ -62,11 +61,17 @@ class SourceService : DbService() {
 
     suspend fun getTopSources(duration: Duration, limit: Int) = dbQuery {
         val time = (Clock.System.now() - duration).toLocalDateTimeUtc()
-        FeedSourceTable.select(FeedSourceTable.json)
-            .where { FeedSourceTable.createdAt greaterEq time }
-            .orderBy(FeedSourceTable.score, SortOrder.DESC)
+        SourceCacheTable.select(SourceCacheTable.json)
+            .where { SourceCacheTable.createdAt greaterEq time }
+            .orderBy(SourceCacheTable.score, SortOrder.DESC)
             .limit(limit)
-            .map { it[FeedSourceTable.json] }
+            .map { it[SourceCacheTable.json] }
+    }
+
+    suspend fun readSourceByUrl(url: Url) = dbQuery {
+        SourceTable.selectAll()
+            .where { SourceTable.url.sameUrl(url) }
+            .firstOrNull()?.toSource()
     }
 }
 

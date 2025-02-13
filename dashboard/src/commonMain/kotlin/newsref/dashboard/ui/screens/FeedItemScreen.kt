@@ -1,27 +1,16 @@
 package newsref.dashboard.ui.screens
 
-import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Row
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.collectAsState
-import androidx.compose.runtime.getValue
+import androidx.compose.foundation.layout.*
+import androidx.compose.runtime.*
 import androidx.compose.ui.platform.LocalUriHandler
 import androidx.lifecycle.viewmodel.compose.viewModel
-import androidx.navigation.NavController
-import compose.icons.TablerIcons
-import compose.icons.tablericons.ExternalLink
-import androidx.compose.ui.Alignment
-import kotlinx.datetime.Clock
+import androidx.compose.ui.*
 import androidx.compose.material3.*
-import androidx.compose.ui.platform.LocalClipboardManager
-import compose.icons.tablericons.Copy
-import kotlinx.serialization.Serializable
 import newsref.dashboard.*
 import newsref.dashboard.ui.controls.*
 import newsref.dashboard.ui.table.*
-import newsref.dashboard.utils.setRawText
 import newsref.model.data.*
-import kotlin.time.Duration.Companion.minutes
+import java.io.File
 
 @Composable
 fun FeedItemScreen(
@@ -34,38 +23,64 @@ fun FeedItemScreen(
     val nav = LocalNavigator.current
     if (item == null) {
         Text("Fetching Feed with id: ${route.feedId}")
-    } else {
-        FeedRowProperties(
-            name = item.url.core,
-            item = item,
-            href = state.updatedHref,
-            changeHref = viewModel::changeHref,
-            changeSelector = viewModel::changeSelector,
-            changeExternal = viewModel::changeExternal,
-            changeTrackPosition = viewModel::changeTrackPosition
-        )
-        Row(horizontalArrangement = Arrangement.spacedBy(halfSpacing), verticalAlignment = Alignment.CenterVertically) {
-            Button(onClick = viewModel::updateItem, enabled = state.canUpdateItem) {
-                Text("Update")
-            }
-            ConfirmButton("Delete", onConfirm = { viewModel.deleteFeed { nav.go(FeedTableRoute) }})
-            Countdown(Clock.System.now() + 1.minutes)
-        }
-        DataTable(
-            name = "LeadInfos",
-            rows = state.leadInfos,
-            glowFunction = { glowOverHour(it.freshAt) },
-            columns = listOf(
-                TableColumn("Headline") { TextCell(it.feedHeadline) { uriHandler.openUri(it.url.href) } },
-                TableColumn("Fresh", 100, AlignCell.Right) { DurationAgoCell(it.freshAt) },
-                TableColumn("Attempt", 100, AlignCell.Right) { DurationAgoCell(it.lastAttemptAt) },
-                TableColumn("Ext", 50) { BooleanCell(it.isExternal) },
-                TableColumn("Links", 50, AlignCell.Right) { TextCell(it.linkCount.toString())},
-                TableColumn("Src", 50) { NullableIdCell(it.targetId) { nav.go(SourceItemRoute(it)) } },
-                TableColumn("Pos", 50, AlignCell.Right) { TextCell(it.feedPosition) }
-            )
-        )
+        return
     }
+
+    FeedRowProperties(
+        name = item.url.core,
+        item = item,
+        href = state.updatedHref,
+        changeHref = viewModel::changeHref,
+        changeUpdatedItem = viewModel::changeUpdatedItem
+    )
+    Row(
+        horizontalArrangement = Arrangement.SpaceBetween,
+        verticalAlignment = Alignment.CenterVertically,
+        modifier = Modifier.fillMaxWidth()
+    ) {
+        Row(
+            horizontalArrangement = Arrangement.spacedBy(halfSpacing)
+        ) {
+            val saveText = when (state.canUpdateItem) {
+                true -> "Save"
+                false -> "Saved"
+            }
+            Button(onClick = viewModel::updateItem, enabled = state.canUpdateItem) { Text(saveText) }
+            Button(onClick = viewModel::checkFeed) { Text("Check Feed")}
+        }
+        Countdown(state.nextRefresh)
+    }
+    TabPages(
+        currentPageName = state.page,
+        onChangePage = viewModel::changePage,
+        pages = pages(
+            TabPage(name = "Sources", scrollbar = false) {
+                SourceTable(
+                    sources = state.sourceInfos
+                )
+            },
+            TabPage(name = "Leads", scrollbar = false) {
+                DataTable(
+                    name = "LeadInfos",
+                    items = state.leadInfos,
+                    glowFunction = { glowOverHour(it.freshAt) },
+                    columnGroups = listOf(
+                        columns(
+                            TableColumn("Headline") { TextCell(it.feedHeadline) { uriHandler.openUri(it.url.href) } },
+                        ),
+                        columns(
+                            TableColumn("Fresh", 100, AlignCell.Right) { DurationAgoCell(it.freshAt) },
+                            TableColumn("Attempt", 100, AlignCell.Right) { DurationAgoCell(it.lastAttemptAt) },
+                            TableColumn("Ext", 50) { BooleanCell(it.isExternal) },
+                            TableColumn("Links", 50, AlignCell.Right) { TextCell(it.linkCount.toString()) },
+                            TableColumn("Src", 50) { NullableIdCell(it.targetId) { nav.go(SourceItemRoute(it)) } },
+                            TableColumn("Pos", 50, AlignCell.Right) { TextCell(it.feedPosition) }
+                        )
+                    )
+                )
+            }
+        )
+    )
 }
 
 @Composable
@@ -74,20 +89,37 @@ fun FeedRowProperties(
     item: Feed,
     href: String,
     changeHref: (String) -> Unit,
-    changeSelector: (String) -> Unit,
-    changeExternal: (Boolean) -> Unit,
-    changeTrackPosition: (Boolean) -> Unit,
+    changeUpdatedItem: (Feed) -> Unit,
 ) {
-    val uriHandler = LocalUriHandler.current
     PropertyTable(
         name = name,
         item = item,
         properties = listOf(
-            PropertyRow<Feed>("href") { TextFieldCell(href, changeHref) }
-                .addControl(TablerIcons.ExternalLink) { uriHandler.openUri(item.url.toString()) },
-            PropertyRow<Feed>("selector", { item.selector }) { TextFieldCell(item.selector, changeSelector) },
-            PropertyRow("external") { BooleanCell(item.external, changeExternal) },
-            PropertyRow("track position") { BooleanCell(item.trackPosition, changeTrackPosition)}
+            PropertyRow<Feed>(
+                name = "href", controls = listOf(openExternalLink { it.url.href })
+            ) { TextFieldCell(href, changeHref) },
+            PropertyRow<Feed>(
+                name = "selector"
+            ) { TextFieldCell(item.selector.toString()) { changeUpdatedItem(item.copy(selector = it)) } },
+            PropertyRow<Feed>(
+                name = "external"
+            ) { BooleanCell(item.external) { changeUpdatedItem(item.copy(external = it)) } },
+            PropertyRow<Feed>(
+                name = "track position"
+            ) { BooleanCell(item.trackPosition) { changeUpdatedItem(item.copy(trackPosition = it)) } },
+            PropertyRow<Feed>(
+                name = "debug",
+                controls = listOf(openExternalLink { "file://${File("../cache/AnchorFinder/debug.html").absolutePath}" })
+            ) { BooleanCell(item.debug) { changeUpdatedItem(item.copy(debug = it)) } },
+            PropertyRow<Feed>(
+                name = "disabled"
+            ) { BooleanCell(item.disabled) { changeUpdatedItem(item.copy(disabled = it)) } },
+            PropertyRow<Feed>(
+                name = "Check at"
+            ) { DurationUntilCell(item.checkAt)},
+            PropertyRow<Feed>(
+                name = "note"
+            ) { TextFieldCell(item.note) { changeUpdatedItem(item.copy(note = it)) } },
         )
     )
 }

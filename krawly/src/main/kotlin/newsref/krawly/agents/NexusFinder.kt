@@ -22,10 +22,11 @@ class NexusFinder(
 				links.add(link)
 				continue
 			}
-			val linkHost = hostService.findByUrl(link.url) ?: continue
-			if (pageHost.core.contains(linkHost.core)) {
-				// console.log("ey!")
+			if (knownNexuses.contains(link.url.domain)) {
+				links.add(link.copy(isExternal = false))
+				continue
 			}
+			val linkHost = hostService.findByUrl(link.url) ?: continue
 			val nexus = nexusService.updateNexus(pageHost, linkHost)
 			if (nexus != null) {
 				console.logTrace("Nexus: ${nexus.name}")
@@ -37,3 +38,8 @@ class NexusFinder(
 		return crawl.copy(page = crawl.page!!.copy(links = links))
 	}
 }
+
+val knownNexuses = setOf(
+	"login.politicopro.com",
+	"subscriber.politcopro.com"
+)

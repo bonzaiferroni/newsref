@@ -4,8 +4,8 @@ package newsref.dashboard.ui.screens
 import androidx.lifecycle.viewModelScope
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
-import newsref.db.services.SourceService
-import newsref.model.dto.SourceInfo
+import newsref.db.services.*
+import newsref.model.dto.*
 
 class SourceTableModel(
     private val sourceService: SourceService = SourceService()
@@ -29,7 +29,7 @@ class SourceTableModel(
             setState { it.copy(count = count) }
             return
         }
-        val items = sourceService.getSourceInfos(stateNow.topId, 100).sortedByDescending { it.sourceId }
+        val items = sourceService.getSourceInfos(stateNow.searchText, 100).sortedByDescending { it.sourceId }
         val topId = items.firstOrNull()?.sourceId ?: 0
 
         setState { it.copy(
@@ -48,6 +48,13 @@ class SourceTableModel(
     fun trackIndex(index: Int) {
         firstVisibleIndex = index
     }
+
+    fun onSearch(searchText: String) {
+        setState { it.copy(searchText = searchText) }
+        viewModelScope.launch {
+            refreshItems()
+        }
+    }
 }
 
 data class SourceTableState(
@@ -57,4 +64,5 @@ data class SourceTableState(
     val topId: Long = 0,
     val previousTopId: Long = 0,
     val paused: Boolean = false,
+    val searchText: String = "",
 )
