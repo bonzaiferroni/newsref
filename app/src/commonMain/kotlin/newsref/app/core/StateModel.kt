@@ -1,4 +1,4 @@
-package newsref.dashboard.ui.screens
+package newsref.app.core
 
 import androidx.lifecycle.ViewModel
 import kotlinx.coroutines.flow.MutableStateFlow

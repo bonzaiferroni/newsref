@@ -3,14 +3,15 @@ package newsref.dashboard.ui.screens
 import androidx.compose.foundation.layout.*
 import androidx.compose.runtime.*
 import androidx.lifecycle.viewmodel.compose.viewModel
-import newsref.dashboard.*
 import newsref.dashboard.ui.table.*
 import androidx.compose.material3.*
 import androidx.compose.ui.*
 import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.unit.dp
 import kotlinx.datetime.*
-import newsref.dashboard.nav.LocalNavigator
+import newsref.dashboard.FeedItemRoute
+import newsref.dashboard.FeedTableRoute
+import newsref.dashboard.LocalNavigator
 import newsref.dashboard.ui.controls.*
 import newsref.model.core.*
 import kotlin.time.Duration.Companion.hours

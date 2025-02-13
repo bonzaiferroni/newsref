@@ -1,4 +1,4 @@
-package newsref.dashboard.nav
+package newsref.dashboard
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.fillMaxSize
@@ -36,23 +36,14 @@ import compose.icons.tablericons.GitBranch
 import compose.icons.tablericons.Home
 import compose.icons.tablericons.News
 import compose.icons.tablericons.Rss
-import newsref.dashboard.AppContext
-import newsref.dashboard.ChapterTableRoute
-import newsref.dashboard.ChartBoardRoute
-import newsref.dashboard.FeedTableRoute
-import newsref.dashboard.HostTableRoute
-import newsref.dashboard.ScreenRoute
-import newsref.dashboard.SourceTableRoute
-import newsref.dashboard.StartRoute
-import newsref.dashboard.StoryTableRoute
 
 @Composable
-fun Navigator(
-    startRoute: ScreenRoute,
-    context: AppContext,
-    changeRoute: (ScreenRoute) -> Unit,
+fun DashNavigator(
+    startRoute: DashRoute,
+    context: DashContext,
+    changeRoute: (DashRoute) -> Unit,
     navController: NavHostController = rememberNavController(),
-    viewModel: NavigatorModel = viewModel { NavigatorModel(startRoute) }
+    viewModel: DashNavigatorModel = viewModel { DashNavigatorModel(startRoute) }
 ) {
     val state by viewModel.state.collectAsState()
 
@@ -94,7 +85,7 @@ fun Navigator(
                     .background(MaterialTheme.colorScheme.surface)
                 // .verticalScroll(rememberScrollState())
             ) {
-                navGraph()
+                dashGraph()
             }
         }
     }
@@ -106,7 +97,7 @@ fun Navigator(
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun TopBar(
-    navigator: NavigatorModel,
+    navigator: DashNavigatorModel,
     navController: NavController,
     links: List<TopBarLink>,
     modifier: Modifier = Modifier
@@ -154,10 +145,10 @@ fun TopBar(
 
 data class TopBarLink(
     val icon: ImageVector,
-    val route: ScreenRoute? = null,
+    val route: DashRoute? = null,
     val onClick: (() -> Unit)? = null,
 )
 
-val LocalNavigator = compositionLocalOf<NavigatorModel> {
+val LocalNavigator = compositionLocalOf<DashNavigatorModel> {
     error("No MyObject provided")
 }

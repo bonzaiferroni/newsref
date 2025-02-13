@@ -4,12 +4,12 @@ import androidx.lifecycle.viewModelScope
 import kotlinx.collections.immutable.*
 import kotlinx.coroutines.*
 import kotlinx.datetime.*
-import newsref.dashboard.*
+import newsref.app.core.StateModel
+import newsref.dashboard.FeedTableRoute
 import newsref.dashboard.utils.*
 import newsref.db.services.*
 import newsref.model.core.*
 import newsref.model.data.*
-import kotlin.collections.plus
 import kotlin.time.Duration.Companion.minutes
 
 class FeedTableModel(

@@ -7,8 +7,8 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
-import newsref.dashboard.*
-import newsref.dashboard.nav.LocalNavigator
+import newsref.dashboard.HostItemRoute
+import newsref.dashboard.LocalNavigator
 import newsref.dashboard.ui.controls.*
 import newsref.dashboard.ui.table.*
 import newsref.dashboard.utils.shortFormat

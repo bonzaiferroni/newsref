@@ -2,6 +2,7 @@ package newsref.dashboard.ui.screens
 
 import androidx.lifecycle.viewModelScope
 import kotlinx.coroutines.launch
+import newsref.app.core.StateModel
 import newsref.dashboard.clients.SpeechClient
 import newsref.db.services.ContentService
 import newsref.model.data.Content

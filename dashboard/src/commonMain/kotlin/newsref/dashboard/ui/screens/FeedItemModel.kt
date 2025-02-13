@@ -7,6 +7,7 @@ import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import kotlinx.datetime.Clock
 import kotlinx.datetime.Instant
+import newsref.app.core.StateModel
 import newsref.dashboard.FeedItemRoute
 import newsref.dashboard.utils.emptyImmutableList
 import newsref.db.services.FeedService
@@ -15,7 +16,6 @@ import newsref.model.core.toUrlOrNull
 import newsref.model.data.Feed
 import newsref.model.data.LeadInfo
 import newsref.model.dto.SourceInfo
-import kotlin.time.Duration
 import kotlin.time.Duration.Companion.minutes
 import kotlin.time.Duration.Companion.seconds
 

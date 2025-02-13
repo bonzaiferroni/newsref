@@ -15,21 +15,10 @@ import org.jetbrains.compose.ui.tooling.preview.Preview
 
 import newsref.app.generated.resources.Res
 import newsref.app.generated.resources.compose_multiplatform
+import newsref.app.nav.AppNavigator
 
 @Composable
 @Preview
 fun App() {
-    var showContent by remember { mutableStateOf(false) }
-    Column(Modifier.fillMaxWidth(), horizontalAlignment = Alignment.CenterHorizontally) {
-        Box(modifier = Modifier.clickable { showContent = !showContent }) {
-            BasicText("Click me!")
-        }
-        AnimatedVisibility(showContent) {
-            val greeting = remember { Greeting().greet() }
-            Column(Modifier.fillMaxWidth(), horizontalAlignment = Alignment.CenterHorizontally) {
-                Image(painterResource(Res.drawable.compose_multiplatform), null)
-                BasicText("Compose: $greeting")
-            }
-        }
-    }
+    AppNavigator(StartRoute)
 }

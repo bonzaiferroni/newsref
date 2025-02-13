@@ -1,18 +1,10 @@
 package newsref.dashboard.ui.screens
 
-import androidx.compose.foundation.layout.*
 import androidx.compose.runtime.*
 import androidx.compose.material3.*
-import androidx.compose.ui.platform.LocalUriHandler
 import androidx.lifecycle.viewmodel.compose.viewModel
-import newsref.dashboard.*
-import newsref.dashboard.ui.controls.*
+import newsref.dashboard.StoryItemRoute
 import newsref.dashboard.ui.table.*
-import newsref.db.utils.format
-import newsref.model.core.DataSort
-import newsref.model.core.Sorting
-import newsref.model.data.*
-import newsref.model.utils.*
 
 @Composable
 fun StoryItemScreen(

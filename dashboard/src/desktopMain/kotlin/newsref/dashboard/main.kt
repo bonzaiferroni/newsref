@@ -21,7 +21,7 @@ fun main() = application {
         saveAppData(appData)
     }
 
-    val cacheRoute = { route: ScreenRoute ->
+    val cacheRoute = { route: DashRoute ->
         if (route != appData.route) {
             appData = appData.copy(route = route)
             saveAppData(appData)
@@ -34,6 +34,6 @@ fun main() = application {
         title = "Newsref Dashboard",
         undecorated = true,
     ) {
-        App(appData.route, cacheRoute, ::exitApplication)
+        Dash(appData.route, cacheRoute, ::exitApplication)
     }
 }

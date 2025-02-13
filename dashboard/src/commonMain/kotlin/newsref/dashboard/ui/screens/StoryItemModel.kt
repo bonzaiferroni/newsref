@@ -4,12 +4,9 @@ import androidx.lifecycle.viewModelScope
 import kotlinx.collections.immutable.ImmutableList
 import kotlinx.collections.immutable.toImmutableList
 import kotlinx.coroutines.launch
-import newsref.dashboard.ChapterItemRoute
+import newsref.app.core.StateModel
 import newsref.dashboard.StoryItemRoute
 import newsref.db.services.*
-import newsref.model.core.DataSort
-import newsref.model.core.Sorting
-import newsref.model.core.sortedByDirection
 import newsref.model.data.*
 
 class StoryItemModel(

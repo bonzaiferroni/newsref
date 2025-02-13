@@ -2,11 +2,11 @@ package newsref.dashboard.ui.screens
 
 import androidx.lifecycle.*
 import kotlinx.coroutines.*
-import newsref.dashboard.*
+import newsref.app.core.StateModel
+import newsref.dashboard.HostTableRoute
 import newsref.db.services.*
 import newsref.model.core.Sorting
 import newsref.model.data.*
-import newsref.model.dto.*
 
 class HostTableModel(
     val route: HostTableRoute,

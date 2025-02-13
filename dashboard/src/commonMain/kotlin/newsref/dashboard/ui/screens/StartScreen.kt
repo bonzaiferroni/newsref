@@ -7,7 +7,7 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.lifecycle.viewmodel.compose.viewModel
-import newsref.dashboard.nav.LocalNavigator
+import newsref.dashboard.LocalNavigator
 import newsref.dashboard.StartRoute
 import newsref.dashboard.baseSpacing
 import newsref.dashboard.ui.controls.SinceMenu

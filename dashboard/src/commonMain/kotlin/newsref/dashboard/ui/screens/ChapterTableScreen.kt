@@ -7,7 +7,9 @@ import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import kotlinx.collections.immutable.ImmutableList
 import newsref.dashboard.*
-import newsref.dashboard.nav.LocalNavigator
+import newsref.dashboard.ChapterItemRoute
+import newsref.dashboard.ChapterTableRoute
+import newsref.dashboard.LocalNavigator
 import newsref.dashboard.ui.controls.CloudChart
 import newsref.dashboard.ui.controls.SinceMenu
 import newsref.dashboard.ui.table.*

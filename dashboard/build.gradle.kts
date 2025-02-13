@@ -60,6 +60,7 @@ kotlin {
 
             implementation(project(":model"))
             implementation(project(":db"))
+            implementation(project(":app"))
 
             implementation(libs.kotlinx.datetime)
             implementation(libs.composeIcons.tablerIcons)

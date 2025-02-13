@@ -9,8 +9,9 @@ import compose.icons.TablerIcons
 import compose.icons.tablericons.Copy
 import compose.icons.tablericons.PlayerPause
 import compose.icons.tablericons.PlayerPlay
-import newsref.dashboard.*
-import newsref.dashboard.nav.LocalNavigator
+import newsref.dashboard.LocalNavigator
+import newsref.dashboard.SourceItemRoute
+import newsref.dashboard.SourceTableRoute
 import newsref.dashboard.ui.table.*
 import newsref.dashboard.utils.*
 import newsref.model.core.*

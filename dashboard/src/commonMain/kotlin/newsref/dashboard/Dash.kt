@@ -5,8 +5,6 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
 import kotlinx.coroutines.runBlocking
 import newsref.dashboard.generated.resources.Res
-import newsref.dashboard.nav.Navigator
-
 import newsref.dashboard.ui.theme.AppTheme
 import newsref.dashboard.utils.ToolTipper
 import newsref.db.initDb
@@ -15,9 +13,9 @@ import org.jetbrains.compose.resources.ExperimentalResourceApi
 
 @Composable
 @Preview
-fun App(
-    initialRoute: ScreenRoute,
-    changeRoute: (ScreenRoute) -> Unit,
+fun Dash (
+    initialRoute: DashRoute,
+    changeRoute: (DashRoute) -> Unit,
     exitApp: () -> Unit,
 ) {
     val env = remember {
@@ -30,15 +28,15 @@ fun App(
         }
     }
 
-    val context = AppContext(exitApp)
+    val context = DashContext(exitApp)
     AppTheme(true) {
         ToolTipper {
-            Navigator(initialRoute, context, changeRoute)
+            DashNavigator(initialRoute, context, changeRoute)
         }
     }
 }
 
-class AppContext(
+class DashContext (
     val exitApp: () -> Unit
 )
 

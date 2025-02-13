@@ -1,14 +1,11 @@
 package newsref.dashboard.ui.screens
 
 import androidx.lifecycle.viewModelScope
-import kotlinx.collections.immutable.toImmutableList
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
+import newsref.app.core.StateModel
 import newsref.dashboard.StoryTableRoute
 import newsref.db.services.*
-import newsref.model.core.DataSort
-import newsref.model.core.Sorting
-import newsref.model.core.sortedByDirection
 import newsref.model.data.*
 import kotlin.time.Duration.Companion.minutes
 

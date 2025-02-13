@@ -2,8 +2,9 @@ package newsref.dashboard.ui.screens
 
 import androidx.compose.runtime.*
 import androidx.lifecycle.viewmodel.compose.viewModel
-import newsref.dashboard.*
-import newsref.dashboard.nav.LocalNavigator
+import newsref.dashboard.HostItemRoute
+import newsref.dashboard.HostTableRoute
+import newsref.dashboard.LocalNavigator
 import newsref.dashboard.ui.table.*
 import newsref.dashboard.utils.shortFormat
 

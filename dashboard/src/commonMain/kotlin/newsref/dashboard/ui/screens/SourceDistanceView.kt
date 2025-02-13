@@ -1,7 +1,7 @@
 package newsref.dashboard.ui.screens
 
 import androidx.compose.runtime.Composable
-import newsref.dashboard.nav.LocalNavigator
+import newsref.dashboard.LocalNavigator
 import newsref.dashboard.SourceItemRoute
 import newsref.dashboard.ui.table.DataTable
 import newsref.dashboard.ui.table.TableColumn

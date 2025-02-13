@@ -5,6 +5,7 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.runtime.*
 import androidx.lifecycle.viewmodel.compose.*
 import newsref.dashboard.*
+import newsref.dashboard.ChartBoardRoute
 import newsref.dashboard.ui.controls.ChartType
 import newsref.dashboard.ui.controls.TabPage
 import newsref.dashboard.ui.controls.TabPages

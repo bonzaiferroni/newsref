@@ -1,6 +1,5 @@
 package newsref.dashboard
 
-import androidx.compose.ui.unit.DpSize
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.json.Json
 import kotlinx.serialization.serializer
@@ -22,5 +21,5 @@ private const val fileName = "appdata.json"
 data class AppData(
     val width: Int = 600,
     val height: Int = 800,
-    val route: ScreenRoute = HelloRoute("Luke"),
+    val route: DashRoute = HelloRoute("Luke"),
 )

@@ -3,7 +3,7 @@ package newsref.dashboard.utils
 import androidx.lifecycle.viewModelScope
 import kotlinx.coroutines.launch
 import newsref.dashboard.clients.SpeechClient
-import newsref.dashboard.ui.screens.StateModel
+import newsref.app.core.StateModel
 import java.io.File
 
 class SpeechPlayerModel(
