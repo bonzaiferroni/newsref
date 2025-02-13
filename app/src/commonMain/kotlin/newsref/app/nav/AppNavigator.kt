@@ -6,6 +6,7 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.text.BasicText
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.LaunchedEffect
@@ -24,6 +25,8 @@ import androidx.navigation.toRoute
 import newsref.app.StartRoute
 import newsref.app.core.AppRoute
 import newsref.app.core.Nav
+import newsref.app.fui.LocalTheme
+import newsref.app.fui.Surface
 import newsref.app.ui.StartScreen
 
 @Composable
@@ -52,8 +55,8 @@ fun AppNavigator(
             modifier = Modifier
                 // .padding(innerPadding)
                 .fillMaxSize()
-                // .background(MaterialTheme.colorScheme.surface)
-                // .verticalScroll(rememberScrollState())
+            // .background(MaterialTheme.colorScheme.surface)
+            // .verticalScroll(rememberScrollState())
         ) {
             routeScreen<StartRoute> { StartScreen(it) }
         }
@@ -80,17 +83,15 @@ inline fun <reified T: AppRoute> NavGraphBuilder.routeScreen(
 fun DefaultSurface(
     content: @Composable() () -> Unit
 ) {
-    Column(verticalArrangement = Arrangement.spacedBy(4.dp)) {
-        content()
+    val theme = LocalTheme.current
+    Surface(
+        modifier = Modifier
+            .padding(theme.basePadding)
+    ) {
+        Column(verticalArrangement = Arrangement.spacedBy(theme.halfSpacing)) {
+            content()
+        }
     }
-//    Surface(
-//        modifier = Modifier
-//            .padding(padding)
-//    ) {
-//        Column(verticalArrangement = Arrangement.spacedBy(halfSpacing)) {
-//            content()
-//        }
-//    }
 }
 
 val LocalNav = compositionLocalOf<Nav> {

@@ -10,6 +10,7 @@ import androidx.compose.foundation.text.BasicText
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import newsref.app.fui.ProvideTheme
 import org.jetbrains.compose.resources.painterResource
 import org.jetbrains.compose.ui.tooling.preview.Preview
 
@@ -20,5 +21,7 @@ import newsref.app.nav.AppNavigator
 @Composable
 @Preview
 fun App() {
-    AppNavigator(StartRoute)
+    ProvideTheme{
+        AppNavigator(StartRoute)
+    }
 }
