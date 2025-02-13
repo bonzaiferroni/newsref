@@ -2,15 +2,14 @@ package newsref.dashboard
 
 import org.jetbrains.compose.ui.tooling.preview.Preview
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.remember
 import kotlinx.coroutines.runBlocking
 import newsref.dashboard.generated.resources.Res
+import newsref.dashboard.nav.Navigator
 
 import newsref.dashboard.ui.theme.AppTheme
 import newsref.dashboard.utils.ToolTipper
 import newsref.db.initDb
-import newsref.db.readEnvFromFile
 import newsref.db.readEnvFromText
 import org.jetbrains.compose.resources.ExperimentalResourceApi
 

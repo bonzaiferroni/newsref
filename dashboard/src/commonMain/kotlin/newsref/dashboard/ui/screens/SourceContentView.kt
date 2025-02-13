@@ -22,7 +22,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.lifecycle.viewmodel.compose.viewModel
 import coil3.compose.AsyncImage
-import newsref.dashboard.LocalNavigator
+import newsref.dashboard.nav.LocalNavigator
 import newsref.dashboard.SourceItemRoute
 import newsref.dashboard.baseSpacing
 import newsref.dashboard.halfSpacing

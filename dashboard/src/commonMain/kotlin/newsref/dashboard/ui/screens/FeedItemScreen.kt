@@ -7,6 +7,7 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.compose.ui.*
 import androidx.compose.material3.*
 import newsref.dashboard.*
+import newsref.dashboard.nav.LocalNavigator
 import newsref.dashboard.ui.controls.*
 import newsref.dashboard.ui.table.*
 import newsref.model.data.*

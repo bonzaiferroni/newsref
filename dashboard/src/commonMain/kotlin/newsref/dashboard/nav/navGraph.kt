@@ -1,4 +1,4 @@
-package newsref.dashboard
+package newsref.dashboard.nav
 
 import androidx.compose.foundation.layout.*
 import androidx.compose.material3.Surface
@@ -7,6 +7,22 @@ import androidx.compose.ui.Modifier
 import androidx.navigation.NavGraphBuilder
 import androidx.navigation.compose.composable
 import androidx.navigation.toRoute
+import newsref.dashboard.ChapterItemRoute
+import newsref.dashboard.ChapterTableRoute
+import newsref.dashboard.ChartBoardRoute
+import newsref.dashboard.FeedItemRoute
+import newsref.dashboard.FeedTableRoute
+import newsref.dashboard.HelloRoute
+import newsref.dashboard.HostItemRoute
+import newsref.dashboard.HostTableRoute
+import newsref.dashboard.ScreenRoute
+import newsref.dashboard.SourceItemRoute
+import newsref.dashboard.SourceTableRoute
+import newsref.dashboard.StartRoute
+import newsref.dashboard.StoryItemRoute
+import newsref.dashboard.StoryTableRoute
+import newsref.dashboard.basePadding
+import newsref.dashboard.halfSpacing
 import newsref.dashboard.ui.screens.*
 
 fun NavGraphBuilder.navGraph() {

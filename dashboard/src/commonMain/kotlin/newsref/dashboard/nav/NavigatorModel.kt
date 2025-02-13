@@ -1,5 +1,6 @@
-package newsref.dashboard
+package newsref.dashboard.nav
 
+import newsref.dashboard.ScreenRoute
 import newsref.dashboard.ui.screens.StateModel
 
 class NavigatorModel(

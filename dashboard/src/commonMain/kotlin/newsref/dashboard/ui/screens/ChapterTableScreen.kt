@@ -7,6 +7,7 @@ import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import kotlinx.collections.immutable.ImmutableList
 import newsref.dashboard.*
+import newsref.dashboard.nav.LocalNavigator
 import newsref.dashboard.ui.controls.CloudChart
 import newsref.dashboard.ui.controls.SinceMenu
 import newsref.dashboard.ui.table.*
@@ -14,7 +15,6 @@ import newsref.db.utils.format
 import newsref.model.core.DataSort
 import newsref.model.core.Sorting
 import newsref.model.data.Chapter
-import kotlin.time.Duration.Companion.days
 
 @Composable
 fun ChapterTableScreen(

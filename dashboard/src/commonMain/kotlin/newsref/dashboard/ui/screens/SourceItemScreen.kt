@@ -10,6 +10,7 @@ import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import coil3.compose.AsyncImage
 import newsref.dashboard.*
+import newsref.dashboard.nav.LocalNavigator
 import newsref.dashboard.ui.controls.*
 import newsref.model.data.*
 

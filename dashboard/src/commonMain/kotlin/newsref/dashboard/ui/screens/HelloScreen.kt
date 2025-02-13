@@ -16,15 +16,8 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.lifecycle.viewmodel.compose.viewModel
-import androidx.navigation.NavHostController
-import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.StateFlow
-import kotlinx.coroutines.flow.asStateFlow
-import kotlinx.serialization.Serializable
-import newsref.dashboard.Greeting
 import newsref.dashboard.HelloRoute
-import newsref.dashboard.LocalNavigator
-import newsref.dashboard.ScreenRoute
+import newsref.dashboard.nav.LocalNavigator
 import newsref.dashboard.StartRoute
 import newsref.dashboard.generated.resources.Res
 import newsref.dashboard.generated.resources.compose_multiplatform

@@ -1,4 +1,4 @@
-package newsref.dashboard
+package newsref.dashboard.nav
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.fillMaxSize
@@ -17,7 +17,6 @@ import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.SideEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.compositionLocalOf
 import androidx.compose.runtime.getValue
@@ -37,8 +36,15 @@ import compose.icons.tablericons.GitBranch
 import compose.icons.tablericons.Home
 import compose.icons.tablericons.News
 import compose.icons.tablericons.Rss
-import compose.icons.tablericons.Separator
-import newsref.dashboard.utils.modifyIfNotNull
+import newsref.dashboard.AppContext
+import newsref.dashboard.ChapterTableRoute
+import newsref.dashboard.ChartBoardRoute
+import newsref.dashboard.FeedTableRoute
+import newsref.dashboard.HostTableRoute
+import newsref.dashboard.ScreenRoute
+import newsref.dashboard.SourceTableRoute
+import newsref.dashboard.StartRoute
+import newsref.dashboard.StoryTableRoute
 
 @Composable
 fun Navigator(

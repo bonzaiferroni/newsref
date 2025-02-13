@@ -6,6 +6,7 @@ import androidx.compose.material3.*
 import androidx.compose.ui.platform.LocalUriHandler
 import androidx.lifecycle.viewmodel.compose.viewModel
 import newsref.dashboard.*
+import newsref.dashboard.nav.LocalNavigator
 import newsref.dashboard.ui.controls.*
 import newsref.dashboard.ui.table.*
 import newsref.db.utils.format

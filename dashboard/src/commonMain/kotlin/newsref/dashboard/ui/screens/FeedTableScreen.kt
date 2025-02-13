@@ -10,6 +10,7 @@ import androidx.compose.ui.*
 import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.unit.dp
 import kotlinx.datetime.*
+import newsref.dashboard.nav.LocalNavigator
 import newsref.dashboard.ui.controls.*
 import newsref.model.core.*
 import kotlin.time.Duration.Companion.hours

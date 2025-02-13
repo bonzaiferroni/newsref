@@ -3,9 +3,8 @@ package newsref.dashboard.ui.screens
 import androidx.compose.runtime.*
 import androidx.lifecycle.viewmodel.compose.viewModel
 import newsref.dashboard.*
+import newsref.dashboard.nav.LocalNavigator
 import newsref.dashboard.ui.table.*
-import newsref.db.utils.format
-import newsref.model.core.DataSort
 
 @Composable
 fun StoryTableScreen(
