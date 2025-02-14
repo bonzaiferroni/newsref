@@ -28,7 +28,7 @@ fun Portal(
             .background(Blip.colors.background)
     ) {
         Row(
-            horizontalArrangement = Blip.ruler.rowGrouped,
+            horizontalArrangement = Blip.ruler.rowTight,
             verticalAlignment = Alignment.CenterVertically,
             modifier = Modifier
                 .fillMaxWidth()
@@ -36,7 +36,7 @@ fun Portal(
         ) {
             // Icon(TablerIcons.Menu2)
             IconButton(config.logo) { nav.go(config.home) }
-            BasicText(config.name)
+            Text(config.name)
             Spacer(modifier = Modifier.weight(1f))
             for (item in config.portalItems) {
                 when (item) {

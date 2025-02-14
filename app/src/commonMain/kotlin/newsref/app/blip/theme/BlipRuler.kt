@@ -12,10 +12,12 @@ interface BlipRuler {
 
     val baseSpacing: Dp get() = spacing.dp
     val halfSpacing: Dp get() = (spacing / 2).dp
+    val innerSpacing: Dp get() = (spacing / 4).dp
     val basePadding: PaddingValues get() = PaddingValues(baseSpacing)
     val halfPadding: PaddingValues get() = PaddingValues(halfSpacing)
-    val innerPadding: PaddingValues get() = PaddingValues((spacing / 4).dp)
+    val innerPadding: PaddingValues get() = PaddingValues(innerSpacing)
 
+    val rowTight: Arrangement.Horizontal get() = Arrangement.spacedBy(innerSpacing)
     val rowGrouped: Arrangement.Horizontal get() = Arrangement.spacedBy(halfSpacing)
     val rowSpaced: Arrangement.Horizontal get() = Arrangement.spacedBy(baseSpacing)
     val columnGrouped: Arrangement.Vertical get() = Arrangement.spacedBy(halfSpacing)
