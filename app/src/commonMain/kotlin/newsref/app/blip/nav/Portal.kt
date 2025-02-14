@@ -44,7 +44,7 @@ fun Portal(
     Column(
         modifier = Modifier
             .fillMaxSize()
-            .background(Blip.colors.background)
+            .background(Blip.colors.surface)
             .background(
                 brush = Brush.linearGradient(
                     colors = gradientColorList,

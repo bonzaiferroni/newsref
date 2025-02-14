@@ -70,7 +70,7 @@ fun DefaultSurface(
     content: @Composable() () -> Unit
 ) {
     SlideIn {
-        ProvideColors(Blip.theme.lightColors) {
+        ProvideColors(Blip.theme.bookColors) {
             Surface(
                 modifier = Modifier
                     .clip(Blip.ruler.roundTop)

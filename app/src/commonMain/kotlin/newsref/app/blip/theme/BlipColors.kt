@@ -4,16 +4,15 @@ import androidx.compose.ui.graphics.Color
 
 interface BlipColors {
     val primary: Color
-    val contentDark: Color
-    val surfaceDark: Color
-    val contentLight: Color
-    val surfaceLight: Color
-    val background: Color
+    val contentSky: Color
+    val surfaceSky: Color
+    val contentBook: Color
+    val surfaceBook: Color
 }
 
 enum class ColorMode {
-    Light,
-    Dark,
+    Sky,
+    Book,
 }
 
 data class ModeColors(
@@ -21,5 +20,4 @@ data class ModeColors(
     val primary: Color,
     val content: Color,
     val surface: Color,
-    val background: Color,
 )

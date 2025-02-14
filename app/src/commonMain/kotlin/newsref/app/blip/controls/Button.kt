@@ -8,6 +8,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import newsref.app.blip.theme.Blip
+import newsref.app.blip.theme.ProvideColors
 
 @Composable
 fun Button(
@@ -22,6 +23,8 @@ fun Button(
             .background(background)
             .padding(Blip.ruler.halfPadding)
     ) {
-        content()
+        ProvideColors(Blip.theme.skyColors) {
+            content()
+        }
     }
 }

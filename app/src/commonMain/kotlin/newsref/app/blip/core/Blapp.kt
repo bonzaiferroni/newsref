@@ -15,7 +15,7 @@ fun Blapp(
     exitApp: (() -> Unit)?,
 ) {
     ProvideTheme{
-        ProvideColors(Blip.theme.darkColors) {
+        ProvideColors(Blip.theme.skyColors) {
             Navigator(
                 startRoute = initialRoute,
                 changeRoute = changeRoute,

@@ -10,26 +10,23 @@ object DefaultTheme : BlipTheme {
 
     override val colors: BlipColors = object : BlipColors{
         override val primary: Color = Color(0xFF57965c)
-        override val contentDark: Color = Color(0xFFf5f6f6)
-        override val surfaceDark: Color = Color(0xFF1e1f22)
-        override val contentLight: Color = Color(0xFF050606)
-        override val surfaceLight: Color = Color(0xFFdcdcdc)
-        override val background: Color = Color(0xFF1b7161)
+        override val contentSky: Color = Color(0xFFf5f6f6)
+        override val surfaceSky: Color = Color(0xFF1b7161)
+        override val contentBook: Color = Color(0xFF050606)
+        override val surfaceBook: Color = Color(0xFFdcdcdc)
     }
 
-    override val lightColors = ModeColors(
-        mode = ColorMode.Light,
+    override val skyColors = ModeColors(
+        mode = ColorMode.Sky,
         primary = colors.primary,
-        content = colors.contentLight,
-        surface = colors.surfaceLight,
-        background = colors.background
+        content = colors.contentSky,
+        surface = colors.surfaceSky,
     )
 
-    override val darkColors = ModeColors(
-        mode = ColorMode.Dark,
+    override val bookColors = ModeColors(
+        mode = ColorMode.Book,
         primary = colors.primary,
-        content = colors.contentDark,
-        surface = colors.surfaceDark,
-        background = colors.background
+        content = colors.contentBook,
+        surface = colors.surfaceBook,
     )
 }
