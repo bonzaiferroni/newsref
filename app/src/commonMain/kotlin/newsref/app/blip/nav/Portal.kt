@@ -6,6 +6,7 @@ import androidx.compose.foundation.text.BasicText
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.unit.dp
 import compose.icons.TablerIcons
@@ -57,11 +58,7 @@ fun Portal(
             }
         }
 
-        Box(
-            modifier = Modifier.background(Blip.colors.surface)
-        ) {
-            content()
-        }
+        content()
     }
 }
 

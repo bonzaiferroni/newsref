@@ -1,8 +1,13 @@
 package newsref.app.blip.nav
 
+import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.slideInHorizontally
+import androidx.compose.animation.slideInVertically
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavGraphBuilder
 import androidx.navigation.NavHostController
@@ -10,6 +15,7 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.toRoute
+import newsref.app.blip.behavior.SlideIn
 import newsref.app.blip.theme.*
 import newsref.app.blip.controls.Surface
 import newsref.app.blip.core.BlipConfig
@@ -66,12 +72,16 @@ inline fun <reified T: NavRoute> NavGraphBuilder.routeScreen(
 fun DefaultSurface(
     content: @Composable() () -> Unit
 ) {
-    Surface(
-        modifier = Modifier
-            .padding(Blip.ruler.basePadding)
-    ) {
-        Column(verticalArrangement = Arrangement.spacedBy(Blip.ruler.halfSpacing)) {
-            content()
+    SlideIn {
+        Surface(
+            modifier = Modifier
+                .clip(Blip.ruler.roundTop)
+                .background(Blip.colors.surface)
+                .padding(Blip.ruler.basePadding)
+        ) {
+            Column(verticalArrangement = Arrangement.spacedBy(Blip.ruler.halfSpacing)) {
+                content()
+            }
         }
     }
 }
