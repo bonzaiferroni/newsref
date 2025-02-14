@@ -19,14 +19,17 @@ fun Navigator(
     startRoute: NavRoute,
     changeRoute: (NavRoute) -> Unit,
     config: BlipConfig,
+    exitApp: (() -> Unit)?,
     navController: NavHostController = rememberNavController(),
     nav: NavigatorModel = viewModel { NavigatorModel(startRoute, navController, changeRoute) }
 ) {
+    val state by nav.state.collectAsState()
+
     CompositionLocalProvider(LocalNav provides nav) {
         Portal(
-            logo = config.logo,
-            logoAction = { nav.go(config.home) },
-            actions = config.portalActions
+            currentRoute = state.route,
+            config = config,
+            exitAction = exitApp
         ) {
             NavHost(
                 navController = navController,
@@ -65,9 +68,9 @@ fun DefaultSurface(
 ) {
     Surface(
         modifier = Modifier
-            .padding(Blip.layout.basePadding)
+            .padding(Blip.ruler.basePadding)
     ) {
-        Column(verticalArrangement = Arrangement.spacedBy(Blip.layout.halfSpacing)) {
+        Column(verticalArrangement = Arrangement.spacedBy(Blip.ruler.halfSpacing)) {
             content()
         }
     }

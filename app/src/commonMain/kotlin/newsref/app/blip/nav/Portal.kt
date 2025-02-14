@@ -2,44 +2,58 @@ package newsref.app.blip.nav
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.text.BasicText
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.unit.dp
 import compose.icons.TablerIcons
-import compose.icons.tablericons.*
-import kotlinx.collections.immutable.ImmutableList
+import compose.icons.tablericons.X
 import newsref.app.blip.controls.*
+import newsref.app.blip.core.BlipConfig
 import newsref.app.blip.theme.*
 
 @Composable
 fun Portal(
-    logo: ImageVector,
-    logoAction: () -> Unit = { },
-    actions: ImmutableList<PortalAction>,
+    currentRoute: NavRoute,
+    config: BlipConfig,
+    exitAction: (() -> Unit)?,
     content: @Composable () -> Unit
 ) {
     val nav = LocalNav.current
     Column(
-        verticalArrangement = Blip.layout.columnSpaced,
-        modifier = Modifier.background(Blip.colors.background)
+        modifier = Modifier
+            .fillMaxSize()
+            .background(Blip.colors.background)
     ) {
         Row(
-            horizontalArrangement = Arrangement.SpaceBetween,
+            horizontalArrangement = Blip.ruler.rowGrouped,
             verticalAlignment = Alignment.CenterVertically,
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(Blip.ruler.innerPadding)
         ) {
-            Row(
-                horizontalArrangement = Blip.layout.rowGrouped
-            ) {
-                Icon(TablerIcons.Menu2)
-                IconButton(logo, action = logoAction)
-            }
-            Row(
-                horizontalArrangement = Blip.layout.rowGrouped
-            ) {
-                for (action in actions) {
-                    IconButton(action.icon) { action.onClick(nav) }
+            // Icon(TablerIcons.Menu2)
+            IconButton(config.logo) { nav.go(config.home) }
+            BasicText(config.name)
+            Spacer(modifier = Modifier.weight(1f))
+            for (item in config.portalItems) {
+                when (item) {
+                    is PortalAction -> IconButton(item.icon) { item.action(nav) }
+                    is PortalRoute -> {
+                        val tint = if (currentRoute == item.route) {
+                            Blip.colors.primary
+                        } else {
+                            Blip.colors.content
+                        }
+                        IconButton(item.icon, tint) { nav.go(item.route) }
+                    }
                 }
+            }
+            if (exitAction != null) {
+                Spacer(modifier = Modifier.width(0.dp))
+                IconButton(TablerIcons.X) { exitAction() }
             }
         }
 
@@ -51,8 +65,16 @@ fun Portal(
     }
 }
 
+sealed class PortalItem {}
+
 data class PortalAction(
     val icon: ImageVector,
     val label: String,
-    val onClick: (Nav) -> Unit
-)
+    val action: (Nav) -> Unit
+) : PortalItem()
+
+data class PortalRoute(
+    val icon: ImageVector,
+    val label: String,
+    val route: NavRoute,
+) : PortalItem()

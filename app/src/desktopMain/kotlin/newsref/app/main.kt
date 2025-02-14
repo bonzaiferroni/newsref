@@ -17,6 +17,7 @@ fun main() = application {
         state = windowState,
         onCloseRequest = ::exitApplication,
         title = "App",
+        undecorated = true,
     ) {
         App(cache.route, { cacheFlow.value = cache.copy(route = it as AppRoute )}, ::exitApplication)
     }

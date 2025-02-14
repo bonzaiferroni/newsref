@@ -20,7 +20,7 @@ fun Button(
         modifier = modifier
             .clickable(onClick = onClick)
             .background(background)
-            .padding(Blip.layout.halfPadding)
+            .padding(Blip.ruler.halfPadding)
     ) {
         content()
     }

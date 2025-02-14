@@ -16,8 +16,8 @@ import newsref.app.blip.theme.Blip
 @Composable
 fun Icon(
     imageVector: ImageVector,
-    modifier: Modifier = Modifier,
-    tint: Color = Blip.colors.content
+    tint: Color = Blip.colors.content,
+    modifier: Modifier = Modifier
 ) {
     val colorFilter =
         remember(tint) { if (tint == Color.Unspecified) null else ColorFilter.tint(tint) }

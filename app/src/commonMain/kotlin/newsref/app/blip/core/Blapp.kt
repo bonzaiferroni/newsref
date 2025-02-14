@@ -1,11 +1,9 @@
 package newsref.app.blip.core
 
-import androidx.compose.runtime.Composable
-import newsref.app.appConfig
+import androidx.compose.runtime.*
 import newsref.app.blip.nav.NavRoute
 import newsref.app.blip.nav.Navigator
 import newsref.app.blip.theme.ProvideTheme
-import org.jetbrains.compose.ui.tooling.preview.Preview
 
 @Composable
 fun Blapp(
@@ -18,7 +16,8 @@ fun Blapp(
         Navigator(
             startRoute = initialRoute,
             changeRoute = changeRoute,
-            config = config
+            config = config,
+            exitApp = exitApp
         )
     }
 }

@@ -24,7 +24,6 @@ inline fun <reified T> CacheFile(path: String, crossinline provider: () -> T): M
 
     val value by cache.collectAsState()
     LaunchedEffect(value) {
-        println(value)
         File(path).writeText(Json.encodeToString(serializer(), value))
     }
     return cache
