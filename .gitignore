@@ -28,6 +28,7 @@ newsref.properties
 /dump
 /cache
 **/appdata.json
+**/appcache.json
 
 **/.kotlin-js-store/
 

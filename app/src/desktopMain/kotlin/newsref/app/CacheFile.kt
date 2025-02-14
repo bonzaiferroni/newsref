@@ -11,7 +11,7 @@ import kotlinx.serialization.serializer
 import java.io.File
 
 @Composable
-inline fun <reified T> FileCache(path: String, crossinline provider: () -> T): MutableStateFlow<T> {
+inline fun <reified T> CacheFile(path: String, crossinline provider: () -> T): MutableStateFlow<T> {
     val cache = remember {
         val file = File(path)
         val value = if (file.exists()) {
