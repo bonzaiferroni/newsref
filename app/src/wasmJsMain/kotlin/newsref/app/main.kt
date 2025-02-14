@@ -6,7 +6,8 @@ import kotlinx.browser.document
 
 @OptIn(ExperimentalComposeUiApi::class)
 fun main() {
+    document.body!!.style.padding = "0"
     ComposeViewport(document.body!!) {
-        App()
+        App(StartRoute, { }, null)
     }
 }

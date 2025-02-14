@@ -12,7 +12,7 @@ import newsref.app.blip.nav.Navigator
 fun App(
     initialRoute: NavRoute,
     changeRoute: (NavRoute) -> Unit,
-    exitApp: () -> Unit,
+    exitApp: (() -> Unit)?,
 ) {
     Blapp(
         initialRoute = initialRoute,

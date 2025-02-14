@@ -10,7 +10,7 @@ fun Blapp(
     initialRoute: NavRoute,
     changeRoute: (NavRoute) -> Unit,
     config: BlipConfig,
-    exitApp: () -> Unit,
+    exitApp: (() -> Unit)?,
 ) {
     ProvideTheme{
         Navigator(
