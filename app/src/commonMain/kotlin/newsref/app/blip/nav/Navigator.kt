@@ -1,8 +1,5 @@
 package newsref.app.blip.nav
 
-import androidx.compose.animation.AnimatedVisibility
-import androidx.compose.animation.slideInHorizontally
-import androidx.compose.animation.slideInVertically
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.runtime.*
@@ -73,14 +70,16 @@ fun DefaultSurface(
     content: @Composable() () -> Unit
 ) {
     SlideIn {
-        Surface(
-            modifier = Modifier
-                .clip(Blip.ruler.roundTop)
-                .background(Blip.colors.surface)
-                .padding(Blip.ruler.basePadding)
-        ) {
-            Column(verticalArrangement = Arrangement.spacedBy(Blip.ruler.halfSpacing)) {
-                content()
+        ProvideColors(Blip.theme.lightColors) {
+            Surface(
+                modifier = Modifier
+                    .clip(Blip.ruler.roundTop)
+                    .background(Blip.colors.surface)
+                    .padding(Blip.ruler.basePadding)
+            ) {
+                Column(verticalArrangement = Blip.ruler.columnSpaced) {
+                    content()
+                }
             }
         }
     }
