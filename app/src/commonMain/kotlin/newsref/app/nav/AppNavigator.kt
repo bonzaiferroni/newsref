@@ -25,6 +25,7 @@ import androidx.navigation.toRoute
 import newsref.app.StartRoute
 import newsref.app.core.AppRoute
 import newsref.app.core.Nav
+import newsref.app.fui.Fui
 import newsref.app.fui.LocalTheme
 import newsref.app.fui.Surface
 import newsref.app.ui.StartScreen
@@ -83,12 +84,11 @@ inline fun <reified T: AppRoute> NavGraphBuilder.routeScreen(
 fun DefaultSurface(
     content: @Composable() () -> Unit
 ) {
-    val theme = LocalTheme.current
     Surface(
         modifier = Modifier
-            .padding(theme.basePadding)
+            .padding(Fui.layout.basePadding)
     ) {
-        Column(verticalArrangement = Arrangement.spacedBy(theme.halfSpacing)) {
+        Column(verticalArrangement = Arrangement.spacedBy(Fui.layout.halfSpacing)) {
             content()
         }
     }

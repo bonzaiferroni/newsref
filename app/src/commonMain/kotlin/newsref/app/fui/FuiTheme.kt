@@ -3,12 +3,23 @@ package newsref.app.fui
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
+import androidx.compose.runtime.ReadOnlyComposable
 import androidx.compose.runtime.staticCompositionLocalOf
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import newsref.app.core.Nav
 
 interface FuiTheme {
+    val layout: FuiLayout
+    val colors: FuiColors
+}
+
+interface FuiColors {
+    val primary: Color
+}
+
+interface FuiLayout {
     val spacing: Int
 
     val baseSpacing: Dp get() = spacing.dp
@@ -17,12 +28,13 @@ interface FuiTheme {
     val halfPadding: PaddingValues get() = PaddingValues(halfSpacing)
 }
 
-object DefaultTheme : FuiTheme {
-    override val spacing: Int = 16
-}
-
 val LocalTheme = staticCompositionLocalOf<FuiTheme> {
     error("No Nav provided")
+}
+
+object Fui {
+    val colors: FuiColors @Composable @ReadOnlyComposable get() = LocalTheme.current.colors
+    val layout: FuiLayout @Composable @ReadOnlyComposable get() = LocalTheme.current.layout
 }
 
 @Composable
