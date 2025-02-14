@@ -1,7 +1,7 @@
-package newsref.app.nav
+package newsref.app.blip.nav
 
 import androidx.navigation.NavController
-import newsref.app.core.StateModel
+import newsref.app.blip.core.StateModel
 
 class NavigatorModel(
     initialRoute: NavRoute,

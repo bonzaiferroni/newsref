@@ -7,10 +7,10 @@ import androidx.compose.foundation.text.BasicText
 import androidx.compose.runtime.*
 import androidx.compose.ui.*
 import newsref.app.*
-import newsref.app.fui.*
+import newsref.app.blip.controls.Button
 import newsref.app.generated.resources.Res
 import newsref.app.generated.resources.compose_multiplatform
-import newsref.app.nav.LocalNav
+import newsref.app.blip.nav.LocalNav
 import org.jetbrains.compose.resources.painterResource
 
 @Composable

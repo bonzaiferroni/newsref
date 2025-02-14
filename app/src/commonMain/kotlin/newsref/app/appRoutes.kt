@@ -1,7 +1,7 @@
 package newsref.app
 
 import kotlinx.serialization.Serializable
-import newsref.app.nav.NavRoute
+import newsref.app.blip.nav.NavRoute
 
 @Serializable
 sealed class AppRoute(override val title: String) : NavRoute

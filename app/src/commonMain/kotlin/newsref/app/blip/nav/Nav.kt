@@ -1,4 +1,4 @@
-package newsref.app.nav
+package newsref.app.blip.nav
 
 interface Nav {
     fun go(route: NavRoute)

@@ -1,4 +1,4 @@
-package newsref.app.core
+package newsref.app.blip.core
 
 import androidx.lifecycle.ViewModel
 import kotlinx.coroutines.flow.MutableStateFlow

@@ -4,7 +4,7 @@ import androidx.lifecycle.viewModelScope
 import kotlinx.collections.immutable.ImmutableList
 import kotlinx.collections.immutable.toImmutableList
 import kotlinx.coroutines.launch
-import newsref.app.core.StateModel
+import newsref.app.blip.core.StateModel
 import newsref.dashboard.ChapterItemRoute
 import newsref.dashboard.utils.emptyImmutableList
 import newsref.db.services.*

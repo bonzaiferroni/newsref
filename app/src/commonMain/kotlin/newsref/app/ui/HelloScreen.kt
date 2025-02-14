@@ -3,8 +3,8 @@ package newsref.app.ui
 import androidx.compose.foundation.text.BasicText
 import androidx.compose.runtime.*
 import newsref.app.*
-import newsref.app.fui.Button
-import newsref.app.nav.LocalNav
+import newsref.app.blip.controls.Button
+import newsref.app.blip.nav.LocalNav
 
 @Composable
 fun HelloScreen(route: HelloRoute) {

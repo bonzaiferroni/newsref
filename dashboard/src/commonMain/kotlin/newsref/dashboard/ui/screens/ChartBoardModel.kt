@@ -3,7 +3,7 @@ package newsref.dashboard.ui.screens
 import androidx.lifecycle.viewModelScope
 import kotlinx.coroutines.*
 import kotlinx.datetime.Clock
-import newsref.app.core.StateModel
+import newsref.app.blip.core.StateModel
 import newsref.dashboard.ChartBoardRoute
 import newsref.dashboard.ui.controls.*
 import newsref.db.models.ChapterFinderLog

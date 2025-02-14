@@ -1,4 +1,4 @@
-package newsref.app.nav
+package newsref.app.blip.nav
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -17,8 +17,8 @@ import androidx.navigation.compose.rememberNavController
 import androidx.navigation.toRoute
 import newsref.app.HelloRoute
 import newsref.app.StartRoute
-import newsref.app.fui.Fui
-import newsref.app.fui.Surface
+import newsref.app.blip.theme.Fui
+import newsref.app.blip.controls.Surface
 import newsref.app.ui.HelloScreen
 import newsref.app.ui.StartScreen
 

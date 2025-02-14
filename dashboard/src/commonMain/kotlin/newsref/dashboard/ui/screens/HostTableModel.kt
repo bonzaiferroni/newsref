@@ -2,7 +2,7 @@ package newsref.dashboard.ui.screens
 
 import androidx.lifecycle.*
 import kotlinx.coroutines.*
-import newsref.app.core.StateModel
+import newsref.app.blip.core.StateModel
 import newsref.dashboard.HostTableRoute
 import newsref.db.services.*
 import newsref.model.core.Sorting

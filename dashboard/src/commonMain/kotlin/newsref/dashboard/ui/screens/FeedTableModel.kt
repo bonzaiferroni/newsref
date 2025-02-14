@@ -4,7 +4,7 @@ import androidx.lifecycle.viewModelScope
 import kotlinx.collections.immutable.*
 import kotlinx.coroutines.*
 import kotlinx.datetime.*
-import newsref.app.core.StateModel
+import newsref.app.blip.core.StateModel
 import newsref.dashboard.FeedTableRoute
 import newsref.dashboard.utils.*
 import newsref.db.services.*

@@ -27,14 +27,13 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.composed
 import androidx.compose.ui.draw.alpha
-import androidx.compose.ui.input.pointer.pointerInput
 import androidx.lifecycle.viewmodel.compose.viewModel
 import compose.icons.TablerIcons
 import compose.icons.tablericons.Click
 import compose.icons.tablericons.InfoCircle
 import newsref.dashboard.halfPadding
 import newsref.dashboard.halfSpacing
-import newsref.app.core.StateModel
+import newsref.app.blip.core.StateModel
 
 @Composable
 fun ToolTipper(

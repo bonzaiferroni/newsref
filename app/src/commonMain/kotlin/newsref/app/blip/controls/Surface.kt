@@ -1,4 +1,4 @@
-package newsref.app.fui
+package newsref.app.blip.controls
 
 import androidx.compose.foundation.layout.Box
 import androidx.compose.runtime.Composable

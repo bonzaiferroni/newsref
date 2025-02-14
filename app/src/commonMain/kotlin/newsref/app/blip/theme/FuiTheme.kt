@@ -1,4 +1,4 @@
-package newsref.app.fui
+package newsref.app.blip.theme
 
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.runtime.Composable

@@ -4,7 +4,7 @@ import androidx.lifecycle.*
 import kotlinx.collections.immutable.*
 import kotlinx.coroutines.*
 import kotlinx.datetime.Clock
-import newsref.app.core.StateModel
+import newsref.app.blip.core.StateModel
 import newsref.dashboard.HostItemRoute
 import newsref.dashboard.ui.controls.CloudPoint
 import newsref.dashboard.utils.*
