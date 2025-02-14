@@ -53,6 +53,14 @@ fun Portal(
                     tileMode = TileMode.Repeated
                 )
             )
+            .background(
+                brush = Brush.linearGradient(
+                    colors = gradientColorList,
+                    start = Offset(-offsetX, 0f),
+                    end = Offset(-offsetX - width, 0f),
+                    tileMode = TileMode.Repeated
+                )
+            )
     ) {
         Row(
             horizontalArrangement = Blip.ruler.rowTight,
@@ -105,8 +113,8 @@ data class PortalRoute(
 val gradientColorList = listOf(
     Color.Transparent,
     Color.Transparent,
-    Color.White.copy(alpha = .2f),
-    Color.White.copy(alpha = .2f),
+    Color.White.copy(alpha = .1f),
+    Color.White.copy(alpha = .1f),
     Color.Transparent,
     Color.Transparent,
     Color.White.copy(alpha = .2f),
