@@ -7,12 +7,12 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import newsref.app.blip.theme.Fui
+import newsref.app.blip.theme.Blip
 
 @Composable
 fun Button(
     onClick: () -> Unit,
-    background: Color = Fui.colors.primary,
+    background: Color = Blip.colors.primary,
     modifier: Modifier = Modifier,
     content: @Composable () -> Unit
 ) {
@@ -20,7 +20,7 @@ fun Button(
         modifier = modifier
             .clickable(onClick = onClick)
             .background(background)
-            .padding(Fui.layout.halfPadding)
+            .padding(Blip.layout.halfPadding)
     ) {
         content()
     }

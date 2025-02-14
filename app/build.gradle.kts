@@ -65,6 +65,7 @@ kotlin {
             implementation(libs.ktor.client.content.negotiation)
             implementation(libs.kotlinx.collections.immutable)
             implementation(libs.kotlinx.datetime)
+            implementation(libs.composeIcons.tablerIcons)
         }
         desktopMain.dependencies {
             implementation(compose.desktop.currentOs)

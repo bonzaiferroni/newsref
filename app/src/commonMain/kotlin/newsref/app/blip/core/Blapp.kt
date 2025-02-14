@@ -15,6 +15,10 @@ fun Blapp(
     exitApp: () -> Unit,
 ) {
     ProvideTheme{
-        Navigator(initialRoute, changeRoute, config.navGraph)
+        Navigator(
+            startRoute = initialRoute,
+            changeRoute = changeRoute,
+            config = config
+        )
     }
 }
