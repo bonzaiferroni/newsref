@@ -1,31 +1,22 @@
 package newsref.dashboard
 
-import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.ui.unit.dp
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.window.Window
 import androidx.compose.ui.window.application
-import androidx.compose.ui.window.rememberWindowState
+import kotlinx.serialization.Serializable
+import newsref.app.AppCache
+import newsref.app.AppRoute
+import newsref.app.CacheFile
+import newsref.app.WatchWindow
+import newsref.app.WindowSize
 
 fun main() = application {
-    // look for a file appdata.json and get initial width and height
-    var appData = getAppData() ?: AppData()
+    val cacheFlow = CacheFile("appcache.json") { DashCache() }
+    val cache by cacheFlow.collectAsState()
 
-    val windowState = rememberWindowState(
-        width = appData.width.dp,
-        height = appData.height.dp,
-    )
-
-    LaunchedEffect(windowState.size) {
-        val size = windowState.size
-        appData = appData.copy(width = size.width.value.toInt(), height = size.height.value.toInt())
-        saveAppData(appData)
-    }
-
-    val cacheRoute = { route: DashRoute ->
-        if (route != appData.route) {
-            appData = appData.copy(route = route)
-            saveAppData(appData)
-        }
+    val windowState = WatchWindow(cache.windowSize) {
+        cacheFlow.value = cacheFlow.value.copy(windowSize = it)
     }
 
     Window(
@@ -34,6 +25,12 @@ fun main() = application {
         title = "Newsref Dashboard",
         undecorated = true,
     ) {
-        Dash(appData.route, cacheRoute, ::exitApplication)
+        Dash(cache.route, { cacheFlow.value = cache.copy(route = it )}, ::exitApplication)
     }
 }
+
+@Serializable
+data class DashCache(
+    val windowSize: WindowSize = WindowSize(600, 800),
+    val route: DashRoute = HelloRoute("Luke"),
+)

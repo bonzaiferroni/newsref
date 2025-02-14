@@ -5,14 +5,14 @@ import kotlinx.serialization.json.Json
 import kotlinx.serialization.serializer
 import java.io.File
 
-fun getAppData(): AppData? {
+fun getAppData(): DashCache? {
     val file = File(fileName)
     if (!file.exists()) return null
     return Json.decodeFromString(serializer(), file.readText())
 }
 
-fun saveAppData(appData: AppData) {
-    File(fileName).writeText(Json.encodeToString(serializer(), appData))
+fun saveAppData(dashCache: DashCache) {
+    File(fileName).writeText(Json.encodeToString(serializer(), dashCache))
 }
 
 private const val fileName = "appdata.json"
