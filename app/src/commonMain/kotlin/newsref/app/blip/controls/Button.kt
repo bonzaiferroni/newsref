@@ -6,6 +6,7 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.padding
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import newsref.app.blip.theme.Blip
 import newsref.app.blip.theme.ProvideColors
@@ -19,6 +20,7 @@ fun Button(
 ) {
     Box(
         modifier = modifier
+            .clip(Blip.ruler.innerRound)
             .clickable(onClick = onClick)
             .background(background)
             .padding(Blip.ruler.halfPadding)

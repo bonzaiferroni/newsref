@@ -14,6 +14,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.ColorFilter.Companion.tint
 import androidx.compose.ui.graphics.TileMode
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.unit.dp
@@ -70,19 +71,14 @@ fun Portal(
                 .padding(Blip.ruler.innerPadding)
         ) {
             // Icon(TablerIcons.Menu2)
-            IconButton(config.logo) { nav.go(config.home) }
+            IconToggle(currentRoute == config.home, config.logo) { nav.go(config.home) }
             Text(config.name)
             Spacer(modifier = Modifier.weight(1f))
             for (item in config.portalItems) {
                 when (item) {
                     is PortalAction -> IconButton(item.icon) { item.action(nav) }
                     is PortalRoute -> {
-                        val tint = if (currentRoute == item.route) {
-                            Blip.colors.primary
-                        } else {
-                            Blip.colors.content
-                        }
-                        IconButton(item.icon, tint) { nav.go(item.route) }
+                        IconToggle(currentRoute == item.route, item.icon) { nav.go(item.route) }
                     }
                 }
             }
