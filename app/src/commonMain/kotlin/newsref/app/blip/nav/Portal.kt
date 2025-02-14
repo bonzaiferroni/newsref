@@ -1,5 +1,11 @@
 package newsref.app.blip.nav
 
+import androidx.compose.animation.core.LinearEasing
+import androidx.compose.animation.core.RepeatMode
+import androidx.compose.animation.core.animateFloat
+import androidx.compose.animation.core.infiniteRepeatable
+import androidx.compose.animation.core.rememberInfiniteTransition
+import androidx.compose.animation.core.tween
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.text.BasicText
@@ -7,6 +13,10 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.geometry.Offset
+import androidx.compose.ui.graphics.Brush
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.TileMode
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.unit.dp
 import compose.icons.TablerIcons
@@ -23,10 +33,28 @@ fun Portal(
     content: @Composable () -> Unit
 ) {
     val nav = LocalNav.current
+    val infiniteTransition = rememberInfiniteTransition()
+    val width = 2000f
+    val offsetX by infiniteTransition.animateFloat(
+        initialValue = width,
+        targetValue = 0f, // Adjust for smooth looping
+        animationSpec = infiniteRepeatable(
+            animation = tween(durationMillis = (width * 20).toInt(), easing = LinearEasing),
+            repeatMode = RepeatMode.Restart
+        )
+    )
     Column(
         modifier = Modifier
             .fillMaxSize()
             .background(Blip.colors.background)
+            .background(
+                brush = Brush.linearGradient(
+                    colors = gradientColorList,
+                    start = Offset(offsetX, 0f),
+                    end = Offset(offsetX + width, 0f),
+                    tileMode = TileMode.Repeated
+                )
+            )
     ) {
         Row(
             horizontalArrangement = Blip.ruler.rowTight,
@@ -75,3 +103,14 @@ data class PortalRoute(
     val label: String,
     val route: NavRoute,
 ) : PortalItem()
+
+val gradientColorList = listOf(
+    Color.Transparent,
+    Color.Transparent,
+    Color.White.copy(alpha = .2f),
+    Color.White.copy(alpha = .2f),
+    Color.Transparent,
+    Color.Transparent,
+    Color.White.copy(alpha = .2f),
+    Color.Transparent,
+)
