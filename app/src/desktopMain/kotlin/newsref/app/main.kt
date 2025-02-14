@@ -18,11 +18,12 @@ fun main() = application {
         onCloseRequest = ::exitApplication,
         title = "App",
     ) {
-        App()
+        App(cache.route, { cacheFlow.value = cache.copy(route = it as AppRoute )}, ::exitApplication)
     }
 }
 
 @Serializable
 data class AppCache(
-    val windowSize: WindowSize = WindowSize(600, 800)
+    val windowSize: WindowSize = WindowSize(600, 800),
+    val route: AppRoute = StartRoute
 )

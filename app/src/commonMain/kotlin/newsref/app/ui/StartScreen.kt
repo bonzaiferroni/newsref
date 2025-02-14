@@ -10,13 +10,17 @@ import newsref.app.*
 import newsref.app.fui.*
 import newsref.app.generated.resources.Res
 import newsref.app.generated.resources.compose_multiplatform
+import newsref.app.nav.LocalNav
 import org.jetbrains.compose.resources.painterResource
 
 @Composable
 fun StartScreen(route: StartRoute) {
     var showContent by remember { mutableStateOf(false) }
+    val nav = LocalNav.current
     Column(Modifier.fillMaxWidth(), horizontalAlignment = Alignment.CenterHorizontally) {
-        BasicText("Hello ${route.owner.name}!")
+        Button({ nav.go(HelloRoute) }) {
+            BasicText("Go to Hello")
+        }
         Button({ showContent = !showContent }) {
             BasicText("Click me!")
         }

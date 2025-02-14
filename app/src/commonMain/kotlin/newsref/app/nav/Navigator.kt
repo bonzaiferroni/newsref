@@ -1,20 +1,13 @@
 package newsref.app.nav
 
-import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.text.BasicText
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
-import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.collectAsState
-import androidx.compose.runtime.compositionLocalOf
-import androidx.compose.runtime.getValue
+import androidx.compose.runtime.staticCompositionLocalOf
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavGraphBuilder
 import androidx.navigation.NavHostController
@@ -22,34 +15,21 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.toRoute
+import newsref.app.HelloRoute
 import newsref.app.StartRoute
-import newsref.app.core.AppRoute
-import newsref.app.core.Nav
 import newsref.app.fui.Fui
-import newsref.app.fui.LocalTheme
 import newsref.app.fui.Surface
+import newsref.app.ui.HelloScreen
 import newsref.app.ui.StartScreen
 
 @Composable
-fun AppNavigator(
-    startRoute: AppRoute,
-    // changeRoute: (AppRoute) -> Unit,
+fun Navigator(
+    startRoute: NavRoute,
+    changeRoute: (NavRoute) -> Unit,
     navController: NavHostController = rememberNavController(),
-    viewModel: AppNavigatorModel = viewModel { AppNavigatorModel(startRoute) }
+    nav: NavigatorModel = viewModel { NavigatorModel(startRoute, navController, changeRoute) }
 ) {
-    val state by viewModel.state.collectAsState()
-
-    val destination = state.destination
-    LaunchedEffect(destination) {
-        if (destination != null) {
-            navController.navigate(destination)
-        }
-    }
-    LaunchedEffect(state.route) {
-        // changeRoute(state.route)
-    }
-
-    CompositionLocalProvider(LocalNav provides viewModel) {
+    CompositionLocalProvider(LocalNav provides nav) {
         NavHost(
             navController = navController,
             startDestination = startRoute,
@@ -60,11 +40,12 @@ fun AppNavigator(
             // .verticalScroll(rememberScrollState())
         ) {
             routeScreen<StartRoute> { StartScreen(it) }
+            routeScreen<HelloRoute> { HelloScreen(it) }
         }
     }
 }
 
-inline fun <reified T: AppRoute> NavGraphBuilder.routeScreen(
+inline fun <reified T: NavRoute> NavGraphBuilder.routeScreen(
     defaultSurface: Boolean = true,
     crossinline content: @Composable (T) -> Unit
 ) {
@@ -94,6 +75,6 @@ fun DefaultSurface(
     }
 }
 
-val LocalNav = compositionLocalOf<Nav> {
+val LocalNav = staticCompositionLocalOf<Nav> {
     error("No Nav provided")
 }

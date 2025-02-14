@@ -1,13 +1,13 @@
 package newsref.app
 
 import kotlinx.serialization.Serializable
-import newsref.app.core.AppRoute
+import newsref.app.nav.NavRoute
 
 @Serializable
-object StartRoute : AppRoute {
-    override val title: String = "Start"
-    val owner = Person("Chambers")
-}
+sealed class AppRoute(override val title: String) : NavRoute
 
 @Serializable
-data class Person(val name: String)
+object StartRoute : AppRoute("Start")
+
+@Serializable
+object HelloRoute : AppRoute("Hello")
