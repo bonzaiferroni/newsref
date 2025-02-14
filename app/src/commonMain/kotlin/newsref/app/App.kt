@@ -13,7 +13,6 @@ import androidx.compose.ui.Modifier
 import newsref.app.fui.ProvideTheme
 import org.jetbrains.compose.resources.painterResource
 import org.jetbrains.compose.ui.tooling.preview.Preview
-
 import newsref.app.generated.resources.Res
 import newsref.app.generated.resources.compose_multiplatform
 import newsref.app.nav.AppNavigator
