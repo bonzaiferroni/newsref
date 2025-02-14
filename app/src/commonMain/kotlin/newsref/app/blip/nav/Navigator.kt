@@ -15,6 +15,7 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.toRoute
+import kotlinx.collections.immutable.ImmutableList
 import newsref.app.HelloRoute
 import newsref.app.StartRoute
 import newsref.app.blip.theme.Fui
@@ -26,6 +27,7 @@ import newsref.app.ui.StartScreen
 fun Navigator(
     startRoute: NavRoute,
     changeRoute: (NavRoute) -> Unit,
+    navGraph: NavGraphBuilder.() -> Unit,
     navController: NavHostController = rememberNavController(),
     nav: NavigatorModel = viewModel { NavigatorModel(startRoute, navController, changeRoute) }
 ) {
@@ -39,8 +41,7 @@ fun Navigator(
             // .background(MaterialTheme.colorScheme.surface)
             // .verticalScroll(rememberScrollState())
         ) {
-            routeScreen<StartRoute> { StartScreen(it) }
-            routeScreen<HelloRoute> { HelloScreen(it) }
+            navGraph()
         }
     }
 }
