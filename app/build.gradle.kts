@@ -66,6 +66,8 @@ kotlin {
             implementation(libs.kotlinx.collections.immutable)
             implementation(libs.kotlinx.datetime)
             implementation(libs.composeIcons.tablerIcons)
+
+            implementation(project(":model"))
         }
         desktopMain.dependencies {
             implementation(compose.desktop.currentOs)

@@ -13,12 +13,11 @@ object Api {
     // content
     val source = Endpoint("/source")
     val feed = Endpoint("/feed")
+    val chapter = Endpoint("/chapter")
 
     // user
     val user = Endpoint("/user")
     val privateInfo = Endpoint("/user/private")
-
-    // event
 }
 
 val apiPrefix = "/api/v1"
