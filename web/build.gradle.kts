@@ -14,19 +14,8 @@ val kotlinVersion: String by System.getProperties()
 val kvisionVersion: String by System.getProperties()
 
 kotlin {
-    js(IR) {
+    js {
         browser {
-            commonWebpackConfig {
-                outputFileName = "main.bundle.js"
-                sourceMaps = false
-                mode = org.jetbrains.kotlin.gradle.targets.js.webpack.KotlinWebpackConfig.Mode.DEVELOPMENT
-                devtool = "source-map"
-            }
-            testTask {
-                useKarma {
-                    useChromeHeadless()
-                }
-            }
         }
         binaries.executable()
     }

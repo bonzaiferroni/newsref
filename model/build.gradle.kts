@@ -1,3 +1,7 @@
+@file:OptIn(ExperimentalWasmDsl::class)
+
+import org.jetbrains.kotlin.gradle.ExperimentalWasmDsl
+
 plugins {
     alias(libs.plugins.kotlinMultiplatform)
     alias(libs.plugins.serialization)
@@ -6,6 +10,7 @@ plugins {
 kotlin {
     js().browser()
     jvm()
+    wasmJs()
     sourceSets {
         val commonMain by getting {
             dependencies {

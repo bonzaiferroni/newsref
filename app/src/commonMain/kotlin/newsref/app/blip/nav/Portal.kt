@@ -143,7 +143,6 @@ fun RowScope.PortalTitle(
             visible = navState.hover != null,
             enter = slideInVertically() { it }
         ) {
-
             Text(
                 text = ": $hoverTitleDisplay",
                 style = Blip.typography.title,

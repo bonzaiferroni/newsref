@@ -10,7 +10,7 @@ import io.ktor.http.HttpHeaders
 import io.ktor.serialization.kotlinx.json.json
 import kotlinx.serialization.json.Json
 
-val globalKtorClient = HttpClient(CIO) {
+val globalKtorClient = HttpClient {
     install(ContentNegotiation) {
         json(Json {
             prettyPrint = true
@@ -22,9 +22,6 @@ val globalKtorClient = HttpClient(CIO) {
         headers {
             set(HttpHeaders.ContentType, "application/json")
         }
-    }
-    engine {
-        requestTimeout = 120_000 // Timeout in milliseconds (30 seconds here)
     }
     install(HttpTimeout) {
         requestTimeoutMillis = 120_000 // Set request timeout
