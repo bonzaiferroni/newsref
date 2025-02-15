@@ -1,5 +1,6 @@
 package newsref.app.ui
 
+import androidx.compose.foundation.lazy.*
 import androidx.compose.runtime.*
 import androidx.lifecycle.viewmodel.compose.viewModel
 import newsref.app.*
@@ -12,7 +13,8 @@ fun ChapterFeedScreen(
     viewModel: ChapterFeedModel = viewModel { ChapterFeedModel(route)}
 ) {
     val state by viewModel.state.collectAsState()
-    for (chapter in state.chapters) {
-        Text(chapter.title ?: "")
+
+    DataFeed(state.chapters) {
+        Text(it.title ?: "null")
     }
 }

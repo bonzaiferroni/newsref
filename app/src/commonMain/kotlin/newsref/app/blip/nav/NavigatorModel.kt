@@ -10,7 +10,7 @@ class NavigatorModel(
 
     override fun go(route: NavRoute) {
         navController.navigate(route)
-        setState { state -> state.copy(route = route, destination = route) }
+        setState { state -> state.copy(route = route, destination = route, hover = null) }
     }
 
     override fun setRoute(route: NavRoute) {
