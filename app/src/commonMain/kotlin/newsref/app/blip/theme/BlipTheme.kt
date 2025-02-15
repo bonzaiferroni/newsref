@@ -11,12 +11,14 @@ interface BlipTheme {
     val colors: BlipColors
     val skyColors: ModeColors
     val bookColors: ModeColors
+    val typography: BlipTypography
 }
 
 object Blip {
     val theme: BlipTheme @Composable @ReadOnlyComposable get() = LocalTheme.current
     val ruler: BlipRuler @Composable @ReadOnlyComposable get() = LocalTheme.current.layout
     val colors: ModeColors @Composable @ReadOnlyComposable get() = LocalColors.current
+    val typography: BlipTypography @Composable @ReadOnlyComposable get() = LocalTheme.current.typography
 }
 
 @Composable

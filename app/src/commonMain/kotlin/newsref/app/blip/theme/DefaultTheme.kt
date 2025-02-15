@@ -1,6 +1,8 @@
 package newsref.app.blip.theme
 
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.text.TextStyle
+import androidx.compose.ui.unit.sp
 
 object DefaultTheme : BlipTheme {
     override val layout: BlipRuler = object : BlipRuler{
@@ -32,4 +34,12 @@ object DefaultTheme : BlipTheme {
         content = colors.contentBook,
         surface = colors.surfaceBook,
     )
+
+    override val typography = object : BlipTypography {
+        override val title: TextStyle = TextStyle.Default.copy(
+            fontSize = 20.sp
+        )
+        override val body: TextStyle = TextStyle.Default.copy(
+        )
+    }
 }

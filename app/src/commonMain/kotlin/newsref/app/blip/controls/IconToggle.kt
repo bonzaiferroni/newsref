@@ -28,7 +28,7 @@ fun IconToggle(
     Icon(
         imageVector = imageVector,
         modifier = modifier
-            .shadow(8.dp, shape = Blip.ruler.round, ambientColor = shadowColor, spotColor = shadowColor)
+            .shadow(15.dp, shape = Blip.ruler.round, ambientColor = shadowColor, spotColor = shadowColor)
             .background(Blip.colors.content.copy(alpha = .2f))
             .clickable(onClick = { action(!value) })
             .padding(Blip.ruler.halfPadding),

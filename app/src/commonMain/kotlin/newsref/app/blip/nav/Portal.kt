@@ -73,7 +73,7 @@ fun Portal(
         ) {
             // Icon(TablerIcons.Menu2)
             IconToggle(currentRoute == config.home, config.logo) { nav.go(config.home) }
-            Text(config.name)
+            Text(config.name, style = Blip.typography.title)
             Spacer(modifier = Modifier.weight(1f))
             for (item in config.portalItems) {
                 when (item) {
@@ -102,7 +102,7 @@ fun Portal(
     }
 }
 
-sealed class PortalItem {}
+sealed class PortalItem
 
 data class PortalAction(
     val icon: ImageVector,
