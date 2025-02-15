@@ -66,6 +66,7 @@ kotlin {
             implementation(libs.kotlinx.collections.immutable)
             implementation(libs.kotlinx.datetime)
             implementation(libs.composeIcons.tablerIcons)
+            implementation(libs.logback.classic)
 
             implementation(project(":model"))
         }

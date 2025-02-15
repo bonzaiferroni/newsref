@@ -28,7 +28,7 @@ kotlin {
                 implementation("org.flywaydb:flyway-core:10.20.0")
                 implementation("org.flywaydb:flyway-database-postgresql:10.20.0")
 
-                implementation("ch.qos.logback:logback-classic:$logback_version")
+                implementation(libs.logback.classic)
                 api("io.github.cdimascio:dotenv-kotlin:6.4.2")
 
                 implementation(project(":model"))

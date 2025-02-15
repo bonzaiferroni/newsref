@@ -6,10 +6,13 @@ import io.ktor.client.request.get
 import io.ktor.http.ContentType
 import io.ktor.http.contentType
 
-class ApiClient(val client: HttpClient = globalKtorClient) {
-    suspend inline fun <reified Received> get(url: String) = client.get(url) {
+class ApiClient(
+    val baseUrl: String,
+    val client: HttpClient = globalKtorClient
+) {
+    suspend inline fun <reified Received> get(url: String) = client.get("$baseUrl$url") {
         contentType(ContentType.Application.Json)
     }.body<Received>()
 }
 
-val globalApiClient = ApiClient()
+val globalApiClient = ApiClient("http://localhost:8080/")

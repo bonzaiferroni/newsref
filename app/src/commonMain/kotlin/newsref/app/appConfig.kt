@@ -1,6 +1,7 @@
 package newsref.app
 
 import compose.icons.TablerIcons
+import compose.icons.tablericons.CalendarEvent
 import compose.icons.tablericons.News
 import compose.icons.tablericons.YinYang
 import kotlinx.collections.immutable.persistentListOf
@@ -16,8 +17,10 @@ val appConfig = BlipConfig(
     navGraph = {
         routeScreen<StartRoute> { StartScreen(it) }
         routeScreen<HelloRoute> { HelloScreen(it) }
+        routeScreen<ChapterFeedRoute> { ChapterFeedScreen(it) }
     },
     portalItems = persistentListOf(
-        PortalRoute(TablerIcons.YinYang, "Hello", HelloRoute)
+        PortalRoute(TablerIcons.YinYang, "Hello", HelloRoute),
+        PortalRoute(TablerIcons.CalendarEvent, "Chapter Feed", ChapterFeedRoute)
     )
 )

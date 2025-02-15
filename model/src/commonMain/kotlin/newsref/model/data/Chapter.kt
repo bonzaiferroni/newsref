@@ -1,8 +1,9 @@
 package newsref.model.data
 
 import kotlinx.datetime.Instant
+import kotlinx.serialization.Serializable
 
-
+@Serializable
 data class Chapter(
     val id: Long = 0,
     val storyId: Long? = null,
