@@ -20,6 +20,7 @@ import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.unit.dp
 import compose.icons.TablerIcons
 import compose.icons.tablericons.X
+import kotlinx.coroutines.NonCancellable.start
 import newsref.app.blip.controls.*
 import newsref.app.blip.core.BlipConfig
 import newsref.app.blip.theme.*
@@ -88,7 +89,16 @@ fun Portal(
             }
         }
 
-        content()
+        Box(
+            modifier = Modifier.padding(
+                top = 0.dp,
+                start = Blip.ruler.innerSpacing,
+                end = Blip.ruler.innerSpacing,
+                bottom = Blip.ruler.innerSpacing,
+            )
+        ) {
+            content()
+        }
     }
 }
 

@@ -2,9 +2,6 @@ package newsref.app.blip.theme
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.PaddingValues
-import androidx.compose.foundation.shape.AbsoluteCutCornerShape
-import androidx.compose.foundation.shape.AbsoluteRoundedCornerShape
-import androidx.compose.foundation.shape.CutCornerShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.ui.graphics.Shape
 import androidx.compose.ui.unit.Dp
@@ -27,8 +24,9 @@ interface BlipRuler {
     val columnGrouped: Arrangement.Vertical get() = Arrangement.spacedBy(halfSpacing)
     val columnSpaced: Arrangement.Vertical get() = Arrangement.spacedBy(baseSpacing)
 
-    val round: Shape get() = RoundedCornerShape(corner.dp)
-    val innerRound: Shape get() = RoundedCornerShape((corner / 4).dp)
+    val round: Shape get() = RoundedCornerShape(percent = 100)
+    val baseCorners: Shape get() = RoundedCornerShape(corner.dp)
+    val innerCorners: Shape get() = RoundedCornerShape((corner / 4).dp)
 
     val roundTop: Shape get() = RoundedCornerShape(
         topStart = corner.dp,

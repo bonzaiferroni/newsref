@@ -1,6 +1,5 @@
 package newsref.app.blip.controls
 
-import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.padding
 import androidx.compose.runtime.*
@@ -20,7 +19,7 @@ fun IconButton(
     Icon(
         imageVector = imageVector,
         modifier = modifier
-            .clip(Blip.ruler.round)
+            .clip(Blip.ruler.baseCorners)
             .clickable(onClick = action)
             .padding(Blip.ruler.innerPadding),
         tint = tint
