@@ -7,6 +7,9 @@ import androidx.compose.animation.core.infiniteRepeatable
 import androidx.compose.animation.core.rememberInfiniteTransition
 import androidx.compose.animation.core.tween
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
+import androidx.compose.foundation.hoverable
+import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
@@ -33,6 +36,8 @@ fun Portal(
     content: @Composable () -> Unit
 ) {
     val nav = LocalNav.current
+    val navState by nav.state.collectAsState()
+
     val infiniteTransition = rememberInfiniteTransition()
     val width = 2000f
     val offsetX by infiniteTransition.animateFloat(
@@ -71,15 +76,39 @@ fun Portal(
                 .fillMaxWidth()
                 .padding(Blip.ruler.innerPadding)
         ) {
+            val titleSpirit = remember { MutableInteractionSource() }
             // Icon(TablerIcons.Menu2)
-            IconToggle(currentRoute == config.home, config.logo) { nav.go(config.home) }
-            Text(config.name, style = Blip.typography.title)
+            IconToggle(
+                value = currentRoute == config.home,
+                imageVector = config.logo,
+                onHover = { nav.setHover(config.home, it) },
+                interactionSource = titleSpirit
+            ) { nav.go(config.home) }
+
+            Text(
+                text = config.name,
+                style = Blip.typography.title,
+                modifier = Modifier.hoverable(titleSpirit)
+                    .clickable(interactionSource = titleSpirit, indication = null, onClick = { nav.go(config.home)} )
+            )
+            val shownRoute = navState.hover ?: currentRoute
+            val routeColor = when {
+                shownRoute != currentRoute -> Blip.colors.accent.copy(.8f)
+                else -> Blip.colors.content.copy(.6f)
+            }
+            Text(": ${shownRoute.title}", style = Blip.typography.title, color = routeColor)
+
             Spacer(modifier = Modifier.weight(1f))
+
             for (item in config.portalItems) {
                 when (item) {
                     is PortalAction -> IconButton(item.icon) { item.action(nav) }
                     is PortalRoute -> {
-                        IconToggle(currentRoute == item.route, item.icon) { nav.go(item.route) }
+                        IconToggle(
+                            value = currentRoute == item.route,
+                            imageVector = item.icon,
+                            onHover = { nav.setHover(item.route, it) }
+                        ) { nav.go(item.route) }
                     }
                 }
             }

@@ -13,12 +13,11 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.focus.focusProperties
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
+import newsref.app.utils.modifyIfNotNull
 import newsref.dashboard.*
 import newsref.dashboard.ui.theme.*
-import newsref.dashboard.utils.*
 
 @Composable
 fun <T> DataTabla(

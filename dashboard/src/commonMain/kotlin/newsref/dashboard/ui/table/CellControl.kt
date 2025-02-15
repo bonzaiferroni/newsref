@@ -3,7 +3,6 @@ package newsref.dashboard.ui.table
 import androidx.compose.foundation.hoverable
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.RowScope
 import androidx.compose.foundation.layout.size
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -25,7 +24,7 @@ import newsref.dashboard.ui.theme.primaryDark
 import newsref.dashboard.utils.SetToolTip
 import newsref.dashboard.utils.TipType
 import newsref.dashboard.utils.ToolTip
-import newsref.dashboard.utils.modifyIfNotNull
+import newsref.app.utils.modifyIfNotNull
 import newsref.dashboard.utils.setRawText
 
 @Composable

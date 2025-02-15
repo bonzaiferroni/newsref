@@ -24,9 +24,13 @@ fun Navigator(
     config: BlipConfig,
     exitApp: (() -> Unit)?,
     navController: NavHostController = rememberNavController(),
-    nav: NavigatorModel = viewModel { NavigatorModel(startRoute, navController, changeRoute) }
+    nav: NavigatorModel = viewModel { NavigatorModel(startRoute, navController) }
 ) {
     val state by nav.state.collectAsState()
+
+    LaunchedEffect(state.destination) {
+        state.destination?.let { changeRoute(it) }
+    }
 
     CompositionLocalProvider(LocalNav provides nav) {
         Portal(

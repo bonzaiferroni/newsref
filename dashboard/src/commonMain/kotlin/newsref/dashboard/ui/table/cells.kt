@@ -14,8 +14,8 @@ import androidx.compose.ui.unit.dp
 import kotlinx.datetime.Clock
 import kotlinx.datetime.Instant
 import newsref.dashboard.emptyEmoji
-import newsref.dashboard.utils.changeFocusWithTab
-import newsref.dashboard.utils.modifyIfNotNull
+import newsref.app.utils.changeFocusWithTab
+import newsref.app.utils.modifyIfNotNull
 import newsref.dashboard.utils.formatDecimals
 import newsref.model.utils.agoFormat
 
