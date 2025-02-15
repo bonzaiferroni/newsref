@@ -14,16 +14,15 @@ import androidx.compose.foundation.layout.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.drawBehind
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.ColorFilter.Companion.tint
 import androidx.compose.ui.graphics.TileMode
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.unit.dp
 import compose.icons.TablerIcons
 import compose.icons.tablericons.X
-import kotlinx.coroutines.NonCancellable.start
 import newsref.app.blip.controls.*
 import newsref.app.blip.core.BlipConfig
 import newsref.app.blip.theme.*
@@ -36,7 +35,6 @@ fun Portal(
     content: @Composable () -> Unit
 ) {
     val nav = LocalNav.current
-    val navState by nav.state.collectAsState()
 
     val infiniteTransition = rememberInfiniteTransition()
     val width = 2000f
@@ -52,22 +50,24 @@ fun Portal(
         modifier = Modifier
             .fillMaxSize()
             .background(Blip.colors.surface)
-            .background(
-                brush = Brush.linearGradient(
-                    colors = gradientColorList,
-                    start = Offset(offsetX, 0f),
-                    end = Offset(offsetX + width, 0f),
-                    tileMode = TileMode.Repeated
+            .drawBehind {
+                drawRect(
+                    brush = Brush.linearGradient(
+                        colors = gradientColorList,
+                        start = Offset(offsetX, 0f),
+                        end = Offset(offsetX + width, 0f),
+                        tileMode = TileMode.Repeated
+                    )
                 )
-            )
-            .background(
-                brush = Brush.linearGradient(
-                    colors = gradientColorList,
-                    start = Offset(-offsetX, 0f),
-                    end = Offset(-offsetX - width, 0f),
-                    tileMode = TileMode.Repeated
+                drawRect(
+                    brush = Brush.linearGradient(
+                        colors = gradientColorList,
+                        start = Offset(-offsetX, 0f),
+                        end = Offset(-offsetX - width, 0f),
+                        tileMode = TileMode.Repeated
+                    )
                 )
-            )
+            }
     ) {
         Row(
             horizontalArrangement = Blip.ruler.rowTight,
@@ -76,27 +76,7 @@ fun Portal(
                 .fillMaxWidth()
                 .padding(Blip.ruler.innerPadding)
         ) {
-            val titleSpirit = remember { MutableInteractionSource() }
-            // Icon(TablerIcons.Menu2)
-            IconToggle(
-                value = currentRoute == config.home,
-                imageVector = config.logo,
-                onHover = { nav.setHover(config.home, it) },
-                interactionSource = titleSpirit
-            ) { nav.go(config.home) }
-
-            Text(
-                text = config.name,
-                style = Blip.typography.title,
-                modifier = Modifier.hoverable(titleSpirit)
-                    .clickable(interactionSource = null, indication = null, onClick = { nav.go(config.home)} )
-            )
-            val shownRoute = navState.hover ?: currentRoute
-            val routeColor = when {
-                shownRoute != currentRoute -> Blip.colors.accent.copy(.8f)
-                else -> Blip.colors.content.copy(.6f)
-            }
-            Text(": ${shownRoute.title}", style = Blip.typography.title, color = routeColor)
+            PortalTitle(currentRoute, config)
 
             Spacer(modifier = Modifier.weight(1f))
 
@@ -129,6 +109,34 @@ fun Portal(
             content()
         }
     }
+}
+
+@Composable
+fun PortalTitle(
+    currentRoute: NavRoute,
+    config: BlipConfig
+) {
+    val titleSpirit = remember { MutableInteractionSource() }
+    val nav = LocalNav.current
+    IconToggle(
+        value = currentRoute == config.home,
+        imageVector = config.logo,
+        onHover = { nav.setHover(config.home, it) },
+        interactionSource = titleSpirit
+    ) { nav.go(config.home) }
+    Text(
+        text = config.name,
+        style = Blip.typography.title,
+        modifier = Modifier.hoverable(titleSpirit)
+            .clickable(interactionSource = null, indication = null, onClick = { nav.go(config.home)} )
+    )
+    val navState by nav.state.collectAsState()
+    val shownRoute = navState.hover ?: currentRoute
+    val routeColor = when {
+        shownRoute != currentRoute -> Blip.colors.accent.copy(.8f)
+        else -> Blip.colors.content.copy(.6f)
+    }
+    Text(": ${shownRoute.title}", style = Blip.typography.title, color = routeColor)
 }
 
 sealed class PortalItem
