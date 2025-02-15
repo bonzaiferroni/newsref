@@ -89,7 +89,7 @@ fun Portal(
                 text = config.name,
                 style = Blip.typography.title,
                 modifier = Modifier.hoverable(titleSpirit)
-                    .clickable(interactionSource = titleSpirit, indication = null, onClick = { nav.go(config.home)} )
+                    .clickable(interactionSource = null, indication = null, onClick = { nav.go(config.home)} )
             )
             val shownRoute = navState.hover ?: currentRoute
             val routeColor = when {
