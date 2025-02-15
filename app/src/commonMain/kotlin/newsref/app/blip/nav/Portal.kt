@@ -4,27 +4,22 @@ import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.core.LinearEasing
 import androidx.compose.animation.core.RepeatMode
 import androidx.compose.animation.core.animateFloat
-import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.animation.core.infiniteRepeatable
 import androidx.compose.animation.core.rememberInfiniteTransition
 import androidx.compose.animation.core.tween
 import androidx.compose.animation.slideInVertically
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.hoverable
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.clip
-import androidx.compose.ui.draw.clipToBounds
 import androidx.compose.ui.draw.drawBehind
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.TileMode
-import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.unit.dp
 import compose.icons.TablerIcons
@@ -91,7 +86,7 @@ fun Portal(
                         IconToggle(
                             value = currentRoute == item.route,
                             imageVector = item.icon,
-                            onHover = { nav.setHover(item.route, it) }
+                            modifier = Modifier.isHovered { nav.setHover(item.route, it) }
                         ) { nav.go(item.route) }
                     }
                 }
@@ -120,19 +115,17 @@ fun RowScope.PortalTitle(
     currentRoute: NavRoute,
     config: BlipConfig
 ) {
-    val titleSpirit = remember { MutableInteractionSource() }
     val nav = LocalNav.current
     val navState by nav.state.collectAsState()
     IconToggle(
         value = currentRoute == config.home,
         imageVector = config.logo,
-        onHover = { nav.setHover(config.home, it) },
-        interactionSource = titleSpirit
+        modifier = Modifier.isHovered { nav.setHover(config.home, it) }
     ) { nav.go(config.home) }
     Text(
         text = config.name,
         style = Blip.typography.title,
-        modifier = Modifier.hoverable(titleSpirit)
+        modifier = Modifier.isHovered { nav.setHover(config.home, it) }
             .clickable(interactionSource = null, indication = null, onClick = { nav.go(config.home)} )
     )
 
