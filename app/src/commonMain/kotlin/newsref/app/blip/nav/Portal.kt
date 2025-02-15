@@ -1,5 +1,6 @@
 package newsref.app.blip.nav
 
+import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.core.LinearEasing
 import androidx.compose.animation.core.RepeatMode
 import androidx.compose.animation.core.animateFloat
@@ -7,6 +8,7 @@ import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.animation.core.infiniteRepeatable
 import androidx.compose.animation.core.rememberInfiniteTransition
 import androidx.compose.animation.core.tween
+import androidx.compose.animation.slideInVertically
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.hoverable
@@ -108,7 +110,7 @@ fun Portal(
                 bottom = Blip.ruler.innerSpacing,
             )
         ) {
-            // content()
+             content()
         }
     }
 }
@@ -134,21 +136,35 @@ fun RowScope.PortalTitle(
             .clickable(interactionSource = null, indication = null, onClick = { nav.go(config.home)} )
     )
 
-    val offsetY by animateFloatAsState(targetValue = if (navState.hover != null) -32f else 0f)
-    Box(
-        contentAlignment = Alignment.TopStart,
+    var hoverTitleDisplay by remember { mutableStateOf("") }
+
+    LaunchedEffect(navState.hover) {
+        navState.hover?.let { hoverTitleDisplay = it.title }
+    }
+
+    Column (
         modifier = Modifier.weight(1f)
-            .wrapContentWidth(align= Alignment.Start, unbounded=true)
             .height(26.dp)
     ) {
-        Column(
-            verticalArrangement = Blip.ruler.columnTight,
-            modifier = Modifier.offset(y = offsetY.dp)
+        AnimatedVisibility(
+            visible = navState.hover != null,
+            enter = slideInVertically() { it }
         ) {
-            Text(": ${currentRoute.title}", style = Blip.typography.title, color = Blip.colors.content.copy(.6f))
-            val hoverRouteTitle = navState.hover?.title ?: ""
-            Text(": $hoverRouteTitle", style = Blip.typography.title, color = Blip.colors.accent.copy(.6f))
+
+            Text(
+                text = ": $hoverTitleDisplay",
+                style = Blip.typography.title,
+                color = Blip.colors.accent.copy(.6f),
+                modifier = Modifier.fillMaxWidth()
+            )
         }
+
+        Text(
+            text = ": ${currentRoute.title}",
+            style = Blip.typography.title,
+            color = Blip.colors.content.copy(.6f),
+            modifier = Modifier.fillMaxWidth()
+        )
     }
 }
 
