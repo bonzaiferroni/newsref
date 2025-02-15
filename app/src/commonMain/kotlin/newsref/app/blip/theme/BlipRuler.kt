@@ -21,6 +21,7 @@ interface BlipRuler {
     val rowTight: Arrangement.Horizontal get() = Arrangement.spacedBy(innerSpacing)
     val rowGrouped: Arrangement.Horizontal get() = Arrangement.spacedBy(halfSpacing)
     val rowSpaced: Arrangement.Horizontal get() = Arrangement.spacedBy(baseSpacing)
+    val columnTight: Arrangement.Vertical get() = Arrangement.spacedBy(innerSpacing)
     val columnGrouped: Arrangement.Vertical get() = Arrangement.spacedBy(halfSpacing)
     val columnSpaced: Arrangement.Vertical get() = Arrangement.spacedBy(baseSpacing)
 

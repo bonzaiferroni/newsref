@@ -35,11 +35,5 @@ object DefaultTheme : BlipTheme {
         surface = colors.surfaceBook,
     )
 
-    override val typography = object : BlipTypography {
-        override val title: TextStyle = TextStyle.Default.copy(
-            fontSize = 20.sp
-        )
-        override val body: TextStyle = TextStyle.Default.copy(
-        )
-    }
+    override val typography = DefaultTypography
 }

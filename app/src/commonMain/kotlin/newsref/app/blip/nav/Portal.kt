@@ -3,6 +3,7 @@ package newsref.app.blip.nav
 import androidx.compose.animation.core.LinearEasing
 import androidx.compose.animation.core.RepeatMode
 import androidx.compose.animation.core.animateFloat
+import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.animation.core.infiniteRepeatable
 import androidx.compose.animation.core.rememberInfiniteTransition
 import androidx.compose.animation.core.tween
@@ -14,11 +15,14 @@ import androidx.compose.foundation.layout.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
+import androidx.compose.ui.draw.clipToBounds
 import androidx.compose.ui.draw.drawBehind
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.TileMode
+import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.unit.dp
 import compose.icons.TablerIcons
@@ -78,8 +82,6 @@ fun Portal(
         ) {
             PortalTitle(currentRoute, config)
 
-            Spacer(modifier = Modifier.weight(1f))
-
             for (item in config.portalItems) {
                 when (item) {
                     is PortalAction -> IconButton(item.icon) { item.action(nav) }
@@ -106,18 +108,19 @@ fun Portal(
                 bottom = Blip.ruler.innerSpacing,
             )
         ) {
-            content()
+            // content()
         }
     }
 }
 
 @Composable
-fun PortalTitle(
+fun RowScope.PortalTitle(
     currentRoute: NavRoute,
     config: BlipConfig
 ) {
     val titleSpirit = remember { MutableInteractionSource() }
     val nav = LocalNav.current
+    val navState by nav.state.collectAsState()
     IconToggle(
         value = currentRoute == config.home,
         imageVector = config.logo,
@@ -130,13 +133,23 @@ fun PortalTitle(
         modifier = Modifier.hoverable(titleSpirit)
             .clickable(interactionSource = null, indication = null, onClick = { nav.go(config.home)} )
     )
-    val navState by nav.state.collectAsState()
-    val shownRoute = navState.hover ?: currentRoute
-    val routeColor = when {
-        shownRoute != currentRoute -> Blip.colors.accent.copy(.8f)
-        else -> Blip.colors.content.copy(.6f)
+
+    val offsetY by animateFloatAsState(targetValue = if (navState.hover != null) -32f else 0f)
+    Box(
+        contentAlignment = Alignment.TopStart,
+        modifier = Modifier.weight(1f)
+            .wrapContentWidth(align= Alignment.Start, unbounded=true)
+            .height(26.dp)
+    ) {
+        Column(
+            verticalArrangement = Blip.ruler.columnTight,
+            modifier = Modifier.offset(y = offsetY.dp)
+        ) {
+            Text(": ${currentRoute.title}", style = Blip.typography.title, color = Blip.colors.content.copy(.6f))
+            val hoverRouteTitle = navState.hover?.title ?: ""
+            Text(": $hoverRouteTitle", style = Blip.typography.title, color = Blip.colors.accent.copy(.6f))
+        }
     }
-    Text(": ${shownRoute.title}", style = Blip.typography.title, color = routeColor)
 }
 
 sealed class PortalItem
