@@ -2,7 +2,7 @@ package newsref.db.services
 
 import newsref.db.DbService
 import newsref.db.globalConsole
-import newsref.db.models.User
+import newsref.db.model.User
 import newsref.db.tables.UserRow
 import newsref.db.tables.UserTable
 import newsref.db.tables.fromData

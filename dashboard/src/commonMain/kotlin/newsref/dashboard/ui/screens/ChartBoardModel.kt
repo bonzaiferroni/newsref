@@ -6,7 +6,7 @@ import kotlinx.datetime.Clock
 import newsref.app.blip.core.StateModel
 import newsref.dashboard.ChartBoardRoute
 import newsref.dashboard.ui.controls.*
-import newsref.db.models.ChapterFinderLog
+import newsref.db.model.ChapterFinderLog
 import newsref.db.services.*
 import kotlin.time.Duration.Companion.days
 import kotlin.time.Duration.Companion.minutes

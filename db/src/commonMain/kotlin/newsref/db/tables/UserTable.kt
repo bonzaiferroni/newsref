@@ -5,16 +5,12 @@ import kotlinx.datetime.TimeZone
 import org.jetbrains.exposed.dao.EntityClass
 import org.jetbrains.exposed.dao.id.EntityID
 import newsref.model.dto.UserInfo
-import newsref.db.models.User
+import newsref.db.model.User
 import newsref.db.utils.toLocalDateTimeUtc
 import newsref.model.core.UserRole
-import newsref.model.core.UserRole.Companion.toUserRole
 import org.jetbrains.exposed.dao.LongEntity
-import org.jetbrains.exposed.dao.UUIDEntity
 import org.jetbrains.exposed.dao.id.LongIdTable
-import org.jetbrains.exposed.dao.id.UUIDTable
 import org.jetbrains.exposed.sql.kotlin.datetime.datetime
-import java.util.*
 
 object UserTable : LongIdTable("user") {
     val name = text("name").nullable()

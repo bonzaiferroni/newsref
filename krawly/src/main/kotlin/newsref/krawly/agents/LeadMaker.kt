@@ -6,7 +6,7 @@ import newsref.db.services.LeadService
 import newsref.db.console.toPink
 import newsref.db.console.toYellow
 import newsref.model.core.CheckedUrl
-import newsref.db.models.CrawlInfo
+import newsref.db.model.CrawlInfo
 import newsref.db.services.CreateLeadResult
 import newsref.krawly.utils.TallyMap
 import newsref.krawly.utils.increment

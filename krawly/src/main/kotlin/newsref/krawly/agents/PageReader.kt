@@ -7,9 +7,9 @@ import newsref.db.services.ContentService
 import newsref.krawly.utils.*
 import newsref.model.core.*
 import newsref.model.data.*
-import newsref.db.models.PageInfo
-import newsref.db.models.PageLink
-import newsref.db.models.WebResult
+import newsref.db.model.PageInfo
+import newsref.db.model.PageLink
+import newsref.db.model.WebResult
 import newsref.db.services.isNewsContent
 import newsref.krawly.models.NewsArticle
 import newsref.model.dto.PageAuthor

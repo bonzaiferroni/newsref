@@ -4,11 +4,10 @@ import io.ktor.http.*
 import io.ktor.server.application.*
 import io.ktor.server.request.*
 import io.ktor.server.response.*
-import newsref.db.models.User
+import newsref.db.model.User
 import newsref.model.dto.AuthInfo
 import newsref.model.dto.LoginRequest
-import newsref.db.Log
-import newsref.db.models.SessionToken
+import newsref.db.model.SessionToken
 import newsref.model.core.RoleSet
 import newsref.model.utils.deobfuscate
 import newsref.server.db.services.SessionTokenService

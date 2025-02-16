@@ -2,16 +2,14 @@ package newsref.krawly.agents
 
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
-import kotlinx.datetime.Clock
 import kotlinx.datetime.Instant
 import newsref.db.globalConsole
 import newsref.db.console.Background
 import newsref.db.console.Justify
 import newsref.db.console.LogHandle
 import newsref.db.console.midnightGreenBg
-import newsref.db.core.DataLogger
-import newsref.db.models.ChapterFinderLog
-import newsref.db.models.ChapterFinderState
+import newsref.db.model.ChapterFinderLog
+import newsref.db.model.ChapterFinderState
 import newsref.db.services.DataLogService
 import newsref.model.utils.agoFormat
 import kotlin.time.Duration.Companion.minutes

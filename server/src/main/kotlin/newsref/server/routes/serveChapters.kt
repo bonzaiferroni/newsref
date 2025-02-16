@@ -8,7 +8,7 @@ import kotlin.time.Duration.Companion.days
 
 fun Routing.serveChapters(service: ChapterService = ChapterService()) {
     get(Api.chapter.path) {
-        val chapters = service.readChapters(7.days)
+        val chapters = service.readTopChapters(7.days)
         call.respond(chapters)
     }
 }

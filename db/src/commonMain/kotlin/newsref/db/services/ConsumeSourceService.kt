@@ -6,7 +6,7 @@ import newsref.db.globalConsole
 import newsref.db.tables.*
 import newsref.model.core.SourceType
 import newsref.model.data.*
-import newsref.db.models.CrawlInfo
+import newsref.db.model.CrawlInfo
 import newsref.db.utils.createOrUpdate
 import newsref.db.utils.sameUrl
 import newsref.db.utils.plus

@@ -1,6 +1,6 @@
 package newsref.db.tables
 
-import newsref.db.models.SessionToken
+import newsref.db.model.SessionToken
 import org.jetbrains.exposed.dao.LongEntity
 import org.jetbrains.exposed.dao.LongEntityClass
 import org.jetbrains.exposed.dao.id.EntityID

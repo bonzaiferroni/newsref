@@ -4,8 +4,8 @@ import kotlinx.coroutines.*
 import kotlinx.datetime.*
 import newsref.db.*
 import newsref.db.core.*
-import newsref.db.models.ChapterFinderLog
-import newsref.db.models.ChapterFinderState
+import newsref.db.model.ChapterFinderLog
+import newsref.db.model.ChapterFinderState
 import newsref.db.services.*
 import newsref.model.core.*
 import newsref.model.data.*

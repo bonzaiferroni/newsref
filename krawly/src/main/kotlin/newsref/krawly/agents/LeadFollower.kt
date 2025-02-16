@@ -8,8 +8,8 @@ import kotlinx.datetime.Clock
 import kotlinx.datetime.Instant
 import newsref.db.globalConsole
 import newsref.db.console.*
-import newsref.db.models.CrawlInfo
-import newsref.db.models.FetchInfo
+import newsref.db.model.CrawlInfo
+import newsref.db.model.FetchInfo
 import newsref.db.services.CreateLeadResult
 import newsref.db.services.LeadService
 import newsref.db.services.ConsumeSourceService

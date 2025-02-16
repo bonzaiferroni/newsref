@@ -1,10 +1,9 @@
-package newsref.db.models
+package newsref.db.model
 
 import kotlinx.datetime.Clock
 import kotlinx.datetime.Instant
 import newsref.model.core.ArticleType
 import newsref.model.core.CheckedUrl
-import newsref.model.core.SourceType
 import newsref.model.data.*
 import newsref.model.dto.PageAuthor
 import kotlin.time.Duration.Companion.days

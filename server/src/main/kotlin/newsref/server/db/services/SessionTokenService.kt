@@ -1,7 +1,7 @@
 package newsref.server.db.services
 
 import newsref.db.DataService
-import newsref.db.models.SessionToken
+import newsref.db.model.SessionToken
 import newsref.db.tables.SessionTokenEntity
 import newsref.db.tables.SessionTokenTable
 import newsref.db.tables.fromData

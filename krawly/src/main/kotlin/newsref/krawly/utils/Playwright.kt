@@ -3,9 +3,8 @@ package newsref.krawly.utils
 import com.microsoft.playwright.*
 import com.microsoft.playwright.options.RequestOptions
 import newsref.db.globalConsole
-import newsref.db.models.WebResult
+import newsref.db.model.WebResult
 import newsref.db.utils.toFileLog
-import newsref.krawly.HaltCrawlException
 import newsref.krawly.chromeLinuxAgent
 import newsref.model.core.Url
 

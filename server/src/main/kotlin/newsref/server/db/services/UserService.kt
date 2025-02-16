@@ -16,12 +16,11 @@ import newsref.server.db.generateSalt
 import newsref.server.db.hashPassword
 import newsref.server.db.toBase64
 import newsref.db.tables.*
-import newsref.db.models.User
-import newsref.db.models.toPrivateInfo
+import newsref.db.model.User
+import newsref.db.model.toPrivateInfo
 import newsref.db.utils.nowToLocalDateTimeUtc
 import newsref.model.core.UserRole
 import newsref.server.serverLog
-import java.util.*
 
 class UserService : DataService<User, Long, UserRow>(
     UserRow,

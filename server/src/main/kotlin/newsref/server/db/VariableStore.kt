@@ -2,7 +2,7 @@ package newsref.server.db
 
 import kotlinx.datetime.Clock
 import newsref.db.Environment
-import newsref.db.models.User
+import newsref.db.model.User
 import newsref.model.core.UserRole
 
 class VariableStore(

@@ -3,8 +3,8 @@ package newsref.krawly.agents
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import newsref.db.*
-import newsref.db.models.StoryFinderLog
-import newsref.db.models.StoryFinderState
+import newsref.db.model.StoryFinderLog
+import newsref.db.model.StoryFinderState
 import newsref.db.services.*
 import kotlin.time.Duration.Companion.minutes
 import kotlin.time.Duration.Companion.seconds

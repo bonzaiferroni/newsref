@@ -3,10 +3,10 @@ package newsref.krawly.agents
 import kotlinx.datetime.Clock
 import newsref.db.globalConsole
 import newsref.db.utils.cacheResource
-import newsref.db.models.CrawlInfo
-import newsref.db.models.FetchInfo
-import newsref.db.models.PageInfo
-import newsref.db.models.WebResult
+import newsref.db.model.CrawlInfo
+import newsref.db.model.FetchInfo
+import newsref.db.model.PageInfo
+import newsref.db.model.WebResult
 import newsref.krawly.SpiderWeb
 import newsref.krawly.utils.toMarkdown
 import newsref.model.core.*

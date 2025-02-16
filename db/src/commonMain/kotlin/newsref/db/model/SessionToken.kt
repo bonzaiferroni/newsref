@@ -1,6 +1,4 @@
-package newsref.db.models
-
-import java.util.*
+package newsref.db.model
 
 data class SessionToken(
     val id: Long = 0,

@@ -1,6 +1,6 @@
 package newsref.krawly.utils
 
-import newsref.db.models.CrawlInfo
+import newsref.db.model.CrawlInfo
 
 fun CrawlInfo.toMarkdown(): String? {
     val page = this.page ?: return null

@@ -15,7 +15,7 @@ import kotlinx.coroutines.withTimeout
 import newsref.db.globalConsole
 import newsref.db.console.toBlue
 import newsref.db.console.toPurple
-import newsref.db.models.WebResult
+import newsref.db.model.WebResult
 import newsref.db.utils.toFileLog
 import newsref.krawly.chromeLinuxAgent
 import newsref.model.core.Url

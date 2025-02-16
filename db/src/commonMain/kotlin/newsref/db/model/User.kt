@@ -1,12 +1,9 @@
-package newsref.db.models
+package newsref.db.model
 
 import kotlinx.datetime.Instant
 import kotlinx.serialization.Serializable
-import newsref.db.serializers.UUIDSerializer
-import newsref.model.core.RoleSet
 import newsref.model.core.UserRole
 import newsref.model.dto.PrivateInfo
-import java.util.*
 
 @Serializable
 data class User(

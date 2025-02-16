@@ -3,8 +3,8 @@ package newsref.krawly.agents
 import kotlinx.datetime.Clock
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
-import newsref.db.models.PageInfo
-import newsref.db.models.WebResult
+import newsref.db.model.PageInfo
+import newsref.db.model.WebResult
 import newsref.db.utils.jsonDecoder
 import newsref.db.utils.stripParams
 import newsref.db.utils.toNewDomain

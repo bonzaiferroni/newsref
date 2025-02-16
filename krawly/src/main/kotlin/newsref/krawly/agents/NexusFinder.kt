@@ -1,11 +1,10 @@
 package newsref.krawly.agents
 
 import newsref.db.globalConsole
-import newsref.db.models.CrawlInfo
-import newsref.db.models.PageLink
+import newsref.db.model.CrawlInfo
+import newsref.db.model.PageLink
 import newsref.db.services.HostService
 import newsref.db.services.NexusService
-import kotlin.time.measureTime
 
 class NexusFinder(
 	private val nexusService: NexusService = NexusService(),

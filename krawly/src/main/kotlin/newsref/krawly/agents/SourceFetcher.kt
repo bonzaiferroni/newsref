@@ -3,7 +3,7 @@ package newsref.krawly.agents
 import kotlinx.coroutines.delay
 import kotlinx.datetime.Clock
 import newsref.db.globalConsole
-import newsref.db.models.FetchInfo
+import newsref.db.model.FetchInfo
 import newsref.krawly.SpiderWeb
 import newsref.krawly.utils.contentToDoc
 import newsref.krawly.utils.isFile
