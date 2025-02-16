@@ -13,7 +13,7 @@ fun <T> DataFeed(items: ImmutableList<T>, content: @Composable (T) -> Unit) {
     val listState = rememberLazyListState()
 
     LazyColumn(
-        verticalArrangement = Blip.ruler.columnGrouped,
+        verticalArrangement = Blip.ruler.columnTight,
         state = listState,
     ) {
         items(items) {

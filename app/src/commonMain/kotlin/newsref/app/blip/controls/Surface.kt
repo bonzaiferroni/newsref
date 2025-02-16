@@ -11,7 +11,11 @@ fun Surface(
     modifier: Modifier = Modifier,
     content: @Composable () -> Unit,
 ) {
-    Box(modifier = modifier.background(Blip.localColors.surface)) {
+    Box(
+        modifier = Modifier
+            .background(Blip.localColors.surface)
+            .then(modifier)
+    ) {
         content()
     }
 }

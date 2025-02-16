@@ -1,7 +1,9 @@
 package newsref.app.ui
 
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.lazy.*
 import androidx.compose.runtime.*
+import androidx.compose.ui.Modifier
 import androidx.lifecycle.viewmodel.compose.viewModel
 import newsref.app.*
 import newsref.app.blip.controls.*
@@ -16,6 +18,10 @@ fun ChapterFeedScreen(
     val state by viewModel.state.collectAsState()
 
     DataFeed(state.chapterPacks) {
-        H1(it.chapter.title ?: "null")
+        Card(
+            modifier = Modifier.fillMaxWidth()
+        ) {
+            H1(it.chapter.title ?: "null")
+        }
     }
 }

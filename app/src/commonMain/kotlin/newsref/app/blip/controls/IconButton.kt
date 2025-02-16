@@ -19,7 +19,7 @@ fun IconButton(
     Icon(
         imageVector = imageVector,
         modifier = modifier
-            .clip(Blip.ruler.baseCorners)
+            .clip(Blip.ruler.rounded)
             .clickable(onClick = action)
             .padding(Blip.ruler.innerPadding),
         tint = tint

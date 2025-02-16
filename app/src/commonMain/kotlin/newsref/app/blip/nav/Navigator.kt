@@ -74,14 +74,8 @@ fun DefaultSurface(
     content: @Composable() () -> Unit
 ) {
     SlideIn {
-        Surface(
-            modifier = Modifier
-                .clip(Blip.ruler.roundTop)
-                .padding(Blip.ruler.basePadding)
-        ) {
-            Column(verticalArrangement = Blip.ruler.columnSpaced) {
-                content()
-            }
+        Column(verticalArrangement = Blip.ruler.columnSpaced) {
+            content()
         }
     }
 }

@@ -33,11 +33,15 @@ fun ProvideTheme(
 }
 
 @Composable
-fun ProvideColors(
-    colors: BlipLocalColors,
-    content: @Composable () -> Unit,
-) {
-    CompositionLocalProvider(LocalColors provides colors) {
+fun ProvideBookColors(content: @Composable () -> Unit) {
+    CompositionLocalProvider(LocalColors provides Blip.theme.bookColors) {
+        content()
+    }
+}
+
+@Composable
+fun ProvideSkyColors(content: @Composable () -> Unit) {
+    CompositionLocalProvider(LocalColors provides Blip.theme.skyColors) {
         content()
     }
 }

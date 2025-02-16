@@ -22,7 +22,7 @@ fun Button(
             .background(background)
             .padding(Blip.ruler.halfPadding)
     ) {
-        ProvideColors(Blip.theme.skyColors) {
+        ProvideSkyColors {
             content()
         }
     }

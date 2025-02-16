@@ -28,7 +28,7 @@ object DefaultColors : BlipColors{
     override val accent = Color(0xFFffe746)
     override val contentSky = Color(0xFFf5f6f6)
     override val surfaceSky = Color.Transparent
-    override val contentBook = Color(0xFF050606)
-    override val surfaceBook = Color(0xFFdcdcdc)
+    override val contentBook = Color(0xFF1d190e)
+    override val surfaceBook = Color(0xFFddd9c9)
     override val background = Color(0xFF1b7161)
 }

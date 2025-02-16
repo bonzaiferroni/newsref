@@ -26,7 +26,7 @@ interface BlipRuler {
     val columnSpaced: Arrangement.Vertical get() = Arrangement.spacedBy(baseSpacing)
 
     val round: Shape get() = RoundedCornerShape(percent = 100)
-    val baseCorners: Shape get() = RoundedCornerShape(corner.dp)
+    val rounded: Shape get() = RoundedCornerShape(corner.dp)
     val innerCorners: Shape get() = RoundedCornerShape((corner / 4).dp)
 
     val roundTop: Shape get() = RoundedCornerShape(
