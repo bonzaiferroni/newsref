@@ -3,10 +3,14 @@ package newsref.db.services
 import kotlinx.datetime.Clock
 import newsref.db.DbService
 import newsref.db.globalConsole
+import newsref.db.model.Author
 import newsref.db.tables.*
 import newsref.model.core.SourceType
-import newsref.model.data.*
 import newsref.db.model.CrawlInfo
+import newsref.db.model.FetchResult
+import newsref.db.model.LeadResult
+import newsref.db.model.Link
+import newsref.db.model.Source
 import newsref.db.utils.createOrUpdate
 import newsref.db.utils.sameUrl
 import newsref.db.utils.plus
@@ -36,7 +40,7 @@ class ConsumeSourceService : DbService() {
 		// update or create source
 		val sourceRow = SourceRow.createOrUpdate(SourceTable.url.sameUrl(source.url)) { isModify ->
 			// console.log("${crawl.fetch.lead.id} $isModify ${source.url.href.take(40)}")
-			fromData(source, hostRow, isModify)
+			fromModel(source, hostRow, isModify)
 		}
 
 		// update lead
@@ -44,7 +48,7 @@ class ConsumeSourceService : DbService() {
 
 		// create leadResult
 		LeadResultRow.new {
-			fromData(
+			fromModel(
 				LeadResult(
 					result = crawl.fetchResult,
 					attemptedAt = Clock.System.now(),
@@ -54,7 +58,7 @@ class ConsumeSourceService : DbService() {
 		}
 		fetch.failedStrategy?.let {
 			LeadResultRow.new {
-				fromData(
+				fromModel(
 					LeadResult(
 						result = FetchResult.ERROR,
 						attemptedAt = Clock.System.now(),
@@ -83,7 +87,7 @@ class ConsumeSourceService : DbService() {
 
 		// create or update document
 		val articleRow = page.article?.let { article ->
-			ArticleRow.createOrUpdate(ArticleTable.sourceId eq sourceRow.id) { fromData(article, sourceRow) }
+			ArticleRow.createOrUpdate(ArticleTable.sourceId eq sourceRow.id) { fromModel(article, sourceRow) }
 		}
 
 		// create author
@@ -91,7 +95,7 @@ class ConsumeSourceService : DbService() {
 			val author = Author(name = pageAuthor.name, bylines = setOf(pageAuthor.name), url = pageAuthor.url)
 			AuthorRow.find { stringParam(pageAuthor.name) eq anyFrom(AuthorTable.bylines) }
 				.firstOrNull { authorRow -> authorRow.hosts.any { it.id == hostRow.id } }
-				?: AuthorRow.new { fromData(author, hostRow, sourceRow) }
+				?: AuthorRow.new { fromModel(author, hostRow, sourceRow) }
 		}
 		authorRows?.forEach { authorRow ->
 			if (!authorRow.hosts.any { it.id != hostRow.id })
@@ -103,7 +107,7 @@ class ConsumeSourceService : DbService() {
 		// create Content
 		val contentRows = page.contents.map { content ->
 			ContentRow.find { ContentTable.text eq content }.firstOrNull()
-				?: ContentRow.new { fromData(content) } // return@map
+				?: ContentRow.new { fromModel(content) } // return@map
 		}
 
 		val linkRows = page.links.map { info ->
@@ -120,7 +124,7 @@ class ConsumeSourceService : DbService() {
 				(LinkTable.url.sameUrl(info.url)) and
 						(LinkTable.urlText eq info.anchorText) and (LinkTable.sourceId eq sourceRow.id)
 			}.firstOrNull()
-				?: LinkRow.new { fromData(link, sourceRow, contentRow) }
+				?: LinkRow.new { fromModel(link, sourceRow, contentRow) }
 			linkRow // return@map
 		}
 

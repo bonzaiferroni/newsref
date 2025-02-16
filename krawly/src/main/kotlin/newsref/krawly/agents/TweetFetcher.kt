@@ -5,11 +5,11 @@ import newsref.db.model.FetchInfo
 import newsref.db.utils.stripParams
 import newsref.db.utils.toNewDomain
 import newsref.krawly.SpiderWeb
-import newsref.model.core.CheckedUrl
-import newsref.model.data.FetchStrategy
-import newsref.model.data.Host
-import newsref.model.data.LeadInfo
-import newsref.model.data.LeadResult
+import newsref.db.core.CheckedUrl
+import newsref.db.model.FetchStrategy
+import newsref.db.model.Host
+import newsref.db.model.LeadInfo
+import newsref.db.model.LeadResult
 
 private val console = globalConsole.getHandle("TweetFetcher")
 

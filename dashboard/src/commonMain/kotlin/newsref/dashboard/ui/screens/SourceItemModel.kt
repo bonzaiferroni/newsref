@@ -17,9 +17,9 @@ import newsref.db.services.LinkService
 import newsref.db.services.SourceScoreService
 import newsref.db.services.SourceService
 import newsref.db.services.SourceVectorService
-import newsref.model.data.Article
-import newsref.model.data.Content
-import newsref.model.data.Source
+import newsref.db.model.Article
+import newsref.db.model.Content
+import newsref.db.model.Source
 import newsref.model.dto.LinkInfo
 import kotlin.time.Duration.Companion.minutes
 

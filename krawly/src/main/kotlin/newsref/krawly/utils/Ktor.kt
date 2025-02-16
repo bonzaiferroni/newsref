@@ -18,7 +18,7 @@ import newsref.db.console.toPurple
 import newsref.db.model.WebResult
 import newsref.db.utils.toFileLog
 import newsref.krawly.chromeLinuxAgent
-import newsref.model.core.Url
+import newsref.db.core.Url
 import org.htmlunit.org.apache.http.client.CircularRedirectException
 import java.net.NoRouteToHostException
 import java.net.SocketException

@@ -1,6 +1,6 @@
-package newsref.model.data
+package newsref.db.model
 
-import newsref.model.core.Url
+import newsref.db.core.Url
 
 data class Scoop(
     val id: Long = 0,

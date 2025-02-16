@@ -2,7 +2,7 @@ package newsref.krawly.agents
 
 import kotlinx.coroutines.runBlocking
 import newsref.db.globalConsole
-import newsref.model.data.FetchStrategy
+import newsref.db.model.FetchStrategy
 import kotlin.test.Test
 import kotlin.time.Duration
 import kotlin.time.measureTime

@@ -1,6 +1,6 @@
-package newsref.model.core
+package newsref.db.core
 
-import newsref.model.data.Host
+import newsref.db.model.Host
 
 class CheckedUrl internal constructor(
 	rawUrl: String,

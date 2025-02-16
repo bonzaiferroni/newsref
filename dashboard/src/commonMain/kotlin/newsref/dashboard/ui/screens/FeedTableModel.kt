@@ -7,9 +7,11 @@ import kotlinx.datetime.*
 import newsref.app.blip.core.StateModel
 import newsref.dashboard.FeedTableRoute
 import newsref.dashboard.utils.*
+import newsref.db.core.toUrl
+import newsref.db.core.toUrlOrNull
+import newsref.db.model.Feed
 import newsref.db.services.*
 import newsref.model.core.*
-import newsref.model.data.*
 import kotlin.time.Duration.Companion.minutes
 
 class FeedTableModel(

@@ -1,17 +1,13 @@
 package newsref.db.tables
 
 import kotlinx.datetime.Instant
-import kotlinx.datetime.UtcOffset
-import kotlinx.datetime.toInstant
-import kotlinx.serialization.json.Json
+import newsref.db.model.Source
 import newsref.db.utils.*
 import newsref.model.core.*
-import newsref.model.data.*
-import newsref.model.dto.*
+import newsref.model.dto.SourceDto
 import org.jetbrains.exposed.dao.*
 import org.jetbrains.exposed.dao.id.*
 import org.jetbrains.exposed.sql.*
-import org.jetbrains.exposed.sql.json.json
 import org.jetbrains.exposed.sql.kotlin.datetime.datetime
 
 internal object SourceTable : LongIdTable("source") {
@@ -59,7 +55,7 @@ internal class SourceRow(id: EntityID<Long>) : LongEntity(id) {
     val authors by AuthorRow via SourceAuthorTable
 }
 
-internal fun SourceRow.toData() = Source(
+internal fun SourceRow.toModel() = Source(
     id = this.id.value,
     hostId = this.host.id.value,
     noteId = this.note?.id?.value,
@@ -97,7 +93,7 @@ internal fun ResultRow.toSource() = Source(
     publishedAt = this[SourceTable.publishedAt]?.toInstantUtc(),
 )
 
-internal fun SourceRow.fromData(source: Source, hostRow: HostRow, isUpdate: Boolean) {
+internal fun SourceRow.fromModel(source: Source, hostRow: HostRow, isUpdate: Boolean) {
     host = hostRow
     url = source.url.toString()
     title = source.title
@@ -121,113 +117,3 @@ internal fun SourceTable.existedAfter(instant: Instant) = instant.toLocalDateTim
     Op.build { (SourceTable.publishedAt.isNull() and SourceTable.seenAt.greater(it)) or
             SourceTable.publishedAt.greater(it) }
 }
-
-
-// source score
-internal object SourceScoreTable : LongIdTable("source_score") {
-    val sourceId = reference("source_id", SourceTable, ReferenceOption.CASCADE)
-    val originId = reference("origin_id", SourceTable, ReferenceOption.CASCADE).nullable()
-    val feedId = reference("feed_id", FeedTable, ReferenceOption.CASCADE).nullable()
-    val score = integer("score")
-    val scoredAt = datetime("scored_at")
-}
-
-internal class SourceScoreRow(id: EntityID<Long>) : LongEntity(id) {
-    companion object : EntityClass<Long, SourceScoreRow>(SourceScoreTable)
-
-    var origin by SourceRow optionalReferencedOn SourceScoreTable.originId
-    var feed by FeedRow optionalReferencedOn SourceScoreTable.feedId
-
-    var source by SourceRow referencedOn SourceScoreTable.sourceId
-    var score by SourceScoreTable.score
-    var scoredAt by SourceScoreTable.scoredAt
-}
-
-internal fun SourceScoreRow.toData() = SourceScore(
-    sourceId = this.source.id.value,
-    originId = this.origin?.id?.value,
-    feedId = this.feed?.id?.value,
-    score = this.score,
-    scoredAt = this.scoredAt.toInstant(UtcOffset.ZERO)
-)
-
-internal fun ResultRow.toSourceScore() = SourceScore(
-    sourceId = this[SourceScoreTable.sourceId].value,
-    originId = this[SourceScoreTable.originId]?.value,
-    feedId = this[SourceScoreTable.feedId]?.value,
-    score = this[SourceScoreTable.score],
-    scoredAt = this[SourceScoreTable.scoredAt].toInstantUtc(),
-)
-
-// source cache
-internal object SourceCacheTable : IntIdTable("source_cache") {
-    val sourceId = reference("source_id", SourceTable, ReferenceOption.CASCADE)
-    val score = integer("score")
-    val createdAt = datetime("created_at")
-    val json = json<SourceCollection>("source", Json.Default)
-}
-
-internal class SourceCacheRow(id: EntityID<Int>) : IntEntity(id) {
-    companion object : IntEntityClass<SourceCacheRow>(SourceCacheTable)
-    var source by SourceRow referencedOn SourceCacheTable.sourceId
-    var score by SourceCacheTable.score
-    var createdAt by SourceCacheTable.createdAt
-    var json by SourceCacheTable.json
-}
-
-internal fun SourceCacheRow.toData() = SourceCache(
-    id = this.id.value,
-    sourceId = this.source.id.value,
-    score = this.score,
-    createdAt = this.createdAt.toInstantUtc(),
-    json = this.json,
-)
-
-internal fun SourceCacheRow.fromData(sourceCache: SourceCache, sourceRow: SourceRow) {
-    source = sourceRow
-    score = sourceCache.score
-    createdAt = sourceCache.createdAt.toLocalDateTimeUtc()
-    json = sourceCache.json
-}
-
-// sourceInfo
-internal val sourceInfoColumns = listOf(
-    SourceTable.id,
-    SourceTable.url,
-    SourceTable.title,
-    SourceTable.score,
-    SourceTable.imageUrl,
-    SourceTable.thumbnail,
-    SourceTable.seenAt,
-    SourceTable.publishedAt,
-    HostTable.core,
-    HostTable.name,
-    HostTable.logo,
-    ArticleTable.headline,
-    ArticleTable.description,
-    ArticleTable.wordCount,
-    ArticleTable.section,
-    NoteTable.body
-)
-
-val sourceInfoTables get () = SourceTable.leftJoin(ArticleTable).leftJoin(HostTable).leftJoin(NoteTable)
-    .select(sourceInfoColumns)
-
-internal fun ResultRow.toSourceInfo() = SourceInfo(
-    sourceId = this[SourceTable.id].value,
-    url = this[SourceTable.url],
-    pageTitle = this[SourceTable.title],
-    score = this[SourceTable.score] ?: 0,
-    image = this.getOrNull(SourceTable.imageUrl),
-    thumbnail = this.getOrNull(SourceTable.thumbnail),
-    seenAt = this[SourceTable.seenAt].toInstantUtc(),
-    publishedAt = this.getOrNull(SourceTable.publishedAt)?.toInstantUtc(),
-    hostCore = this[HostTable.core],
-    hostName = this.getOrNull(HostTable.name),
-    hostLogo = this.getOrNull(HostTable.logo),
-    headline = this.getOrNull(ArticleTable.headline),
-    description = this.getOrNull(ArticleTable.description),
-    wordCount = this.getOrNull(ArticleTable.wordCount),
-    section = this.getOrNull(ArticleTable.section),
-    note = this.getOrNull(NoteTable.body),
-)

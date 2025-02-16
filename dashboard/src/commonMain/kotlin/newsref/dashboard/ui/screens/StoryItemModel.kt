@@ -6,8 +6,9 @@ import kotlinx.collections.immutable.toImmutableList
 import kotlinx.coroutines.launch
 import newsref.app.blip.core.StateModel
 import newsref.dashboard.StoryItemRoute
+import newsref.db.model.Chapter
+import newsref.db.model.Story
 import newsref.db.services.*
-import newsref.model.data.*
 
 class StoryItemModel(
     route: StoryItemRoute,

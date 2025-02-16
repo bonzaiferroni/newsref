@@ -1,8 +1,8 @@
 package newsref.krawly
 
 import newsref.krawly.utils.*
-import newsref.model.core.Url
-import newsref.model.data.FetchStrategy
+import newsref.db.core.Url
+import newsref.db.model.FetchStrategy
 
 class SpiderWeb {
     suspend fun fetch(url: Url, strategy: FetchStrategy) = when (strategy) {

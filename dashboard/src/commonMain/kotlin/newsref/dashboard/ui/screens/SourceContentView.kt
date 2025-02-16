@@ -28,8 +28,8 @@ import newsref.dashboard.baseSpacing
 import newsref.dashboard.halfSpacing
 import newsref.dashboard.ui.controls.ScrollBox
 import newsref.dashboard.utils.SpeechPlayer
-import newsref.model.data.Content
-import newsref.model.data.Source
+import newsref.db.model.Content
+import newsref.db.model.Source
 import newsref.model.dto.SourceInfo
 
 @OptIn(ExperimentalFoundationApi::class)

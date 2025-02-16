@@ -4,8 +4,8 @@ import io.ktor.client.plugins.HttpRequestTimeoutException
 import kotlinx.coroutines.delay
 import newsref.db.core.*
 import newsref.db.*
+import newsref.db.model.Source
 import newsref.krawly.clients.*
-import newsref.model.data.*
 import java.io.File
 import kotlin.time.Duration.Companion.seconds
 

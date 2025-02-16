@@ -1,9 +1,8 @@
 package newsref.db.tables
 
-import newsref.model.data.Content
+import newsref.db.model.Content
 import org.jetbrains.exposed.dao.EntityClass
 import org.jetbrains.exposed.dao.LongEntity
-import org.jetbrains.exposed.dao.id.CompositeIdTable
 import org.jetbrains.exposed.dao.id.EntityID
 import org.jetbrains.exposed.dao.id.LongIdTable
 import org.jetbrains.exposed.sql.ReferenceOption
@@ -26,12 +25,12 @@ internal object SourceContentTable : LongIdTable("source_content") {
     val contentId = reference("content_id", ContentTable, ReferenceOption.CASCADE)
 }
 
-internal fun ContentRow.toData() = Content(
+internal fun ContentRow.toModel() = Content(
     id = this.id.value,
     text = this.text,
 )
 
-internal fun ContentRow.fromData(content: String) {
+internal fun ContentRow.fromModel(content: String) {
     text = content
 }
 

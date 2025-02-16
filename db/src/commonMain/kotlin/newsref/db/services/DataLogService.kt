@@ -1,12 +1,14 @@
 package newsref.db.services
 
 import kotlinx.datetime.*
-import kotlinx.serialization.KSerializer
 import kotlinx.serialization.json.Json
 import kotlinx.serialization.serializer
 import newsref.db.*
+import newsref.db.model.DataLog
+import newsref.db.model.IntegerLog
+import newsref.db.model.JsonLog
+import newsref.db.model.LogPoint
 import newsref.db.tables.*
-import newsref.model.data.*
 import newsref.model.utils.toInstantFromEpoch
 import org.jetbrains.exposed.sql.*
 

@@ -6,7 +6,7 @@ import newsref.db.services.*
 import newsref.model.Api
 import kotlin.time.Duration.Companion.days
 
-fun Routing.serveChapters(service: ChapterService = ChapterService()) {
+fun Routing.serveChapters(service: ChapterDtoService = ChapterDtoService()) {
     get(Api.chapter.path) {
         val chapters = service.readTopChapters(7.days)
         call.respond(chapters)

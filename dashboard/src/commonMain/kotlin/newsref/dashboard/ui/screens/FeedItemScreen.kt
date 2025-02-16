@@ -12,7 +12,7 @@ import newsref.dashboard.LocalNavigator
 import newsref.dashboard.SourceItemRoute
 import newsref.dashboard.ui.controls.*
 import newsref.dashboard.ui.table.*
-import newsref.model.data.*
+import newsref.db.model.Feed
 import java.io.File
 
 @Composable

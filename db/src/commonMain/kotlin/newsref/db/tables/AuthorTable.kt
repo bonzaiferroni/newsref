@@ -1,7 +1,6 @@
 package newsref.db.tables
 
-import newsref.db.tables.LinkTable.index
-import newsref.model.data.Author
+import newsref.db.model.Author
 import org.jetbrains.exposed.dao.EntityClass
 import org.jetbrains.exposed.dao.IntEntity
 import org.jetbrains.exposed.dao.id.CompositeIdTable
@@ -39,14 +38,14 @@ internal object SourceAuthorTable : CompositeIdTable("source_author") {
     override val primaryKey = PrimaryKey(sourceId, authorId)
 }
 
-internal fun AuthorRow.toData() = Author(
+internal fun AuthorRow.toModel() = Author(
     id = this.id.value,
     name = this.name,
     url = this.url,
     bylines = this.bylines.toSet(),
 )
 
-internal fun AuthorRow.fromData(author: Author, hostRow: HostRow, sourceRow: SourceRow) {
+internal fun AuthorRow.fromModel(author: Author, hostRow: HostRow, sourceRow: SourceRow) {
     name = author.name
     url = author.url
     hosts = SizedCollection(hostRow)

@@ -5,8 +5,8 @@ import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import newsref.app.blip.core.StateModel
 import newsref.dashboard.StoryTableRoute
+import newsref.db.model.Story
 import newsref.db.services.*
-import newsref.model.data.*
 import kotlin.time.Duration.Companion.minutes
 
 class StoryTableModel(

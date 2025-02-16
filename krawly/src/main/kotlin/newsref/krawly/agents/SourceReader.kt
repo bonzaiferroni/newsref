@@ -1,16 +1,20 @@
 package newsref.krawly.agents
 
 import kotlinx.datetime.Clock
+import newsref.db.core.Url
+import newsref.db.core.toUrl
+import newsref.db.core.toUrlOrNull
 import newsref.db.globalConsole
 import newsref.db.utils.cacheResource
 import newsref.db.model.CrawlInfo
 import newsref.db.model.FetchInfo
+import newsref.db.model.FetchResult
+import newsref.db.model.LeadResult
 import newsref.db.model.PageInfo
 import newsref.db.model.WebResult
 import newsref.krawly.SpiderWeb
 import newsref.krawly.utils.toMarkdown
 import newsref.model.core.*
-import newsref.model.data.*
 
 class SourceReader(
 	web: SpiderWeb,
@@ -49,7 +53,7 @@ class SourceReader(
 			fetch = fetch.copy(
 				pastResults = fetch.pastResults.toMutableList().also {
 					it.add(
-						LeadResult(result = resultType, attemptedAt = Clock.System.now(), strategy = fetch.strategy)
+                        LeadResult(result = resultType, attemptedAt = Clock.System.now(), strategy = fetch.strategy)
 					)
 				}
 			),

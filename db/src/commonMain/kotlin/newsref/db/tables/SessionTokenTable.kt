@@ -25,7 +25,7 @@ class SessionTokenEntity(id: EntityID<Long>) : LongEntity(id) {
     var issuer by SessionTokenTable.issuer
 }
 
-fun SessionTokenEntity.toData() = SessionToken(
+fun SessionTokenEntity.toModel() = SessionToken(
     this.id.value,
     this.user.id.value,
     this.token,
@@ -34,7 +34,7 @@ fun SessionTokenEntity.toData() = SessionToken(
     this.issuer,
 )
 
-fun SessionTokenEntity.fromData(data: SessionToken) {
+fun SessionTokenEntity.fromModel(data: SessionToken) {
     user = UserRow[data.userId]
     token = data.token
     createdAt = data.createdAt

@@ -3,7 +3,10 @@ package newsref.krawly.agents
 import kotlinx.datetime.Clock
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
+import newsref.db.model.Host
+import newsref.db.model.LeadInfo
 import newsref.db.model.PageInfo
+import newsref.db.model.Source
 import newsref.db.model.WebResult
 import newsref.db.utils.jsonDecoder
 import newsref.db.utils.stripParams
@@ -11,9 +14,8 @@ import newsref.db.utils.toNewDomain
 import newsref.krawly.utils.contentToDoc
 import newsref.krawly.utils.findFirstOrNull
 import newsref.model.core.SourceType
-import newsref.model.core.Url
-import newsref.model.core.toUrl
-import newsref.model.data.*
+import newsref.db.core.Url
+import newsref.db.core.toUrl
 import newsref.model.dto.PageAuthor
 import java.net.URLEncoder
 import java.nio.charset.StandardCharsets
@@ -49,15 +51,15 @@ class TweetReader {
 
 		return PageInfo(
 			source = Source(
-				url = tweetUrl,
-				title = title,
-				type = SourceType.SOCIAL_POST,
-				embed = html,
-				contentCount = wordCount,
-				accessedAt = now,
-				seenAt = lead.freshAt ?: now,
-				okResponse = true,
-			),
+                url = tweetUrl,
+                title = title,
+                type = SourceType.SOCIAL_POST,
+                embed = html,
+                contentCount = wordCount,
+                accessedAt = now,
+                seenAt = lead.freshAt ?: now,
+                okResponse = true,
+            ),
 			pageHost = host,
 			language = "en",
 			foundNewsArticle = false,

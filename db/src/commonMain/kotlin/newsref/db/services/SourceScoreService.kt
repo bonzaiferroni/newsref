@@ -2,9 +2,9 @@ package newsref.db.services
 
 import kotlinx.datetime.*
 import newsref.db.*
+import newsref.db.model.SourceScore
 import newsref.db.tables.*
 import newsref.db.utils.*
-import newsref.model.data.*
 import org.jetbrains.exposed.dao.id.IdTable
 import org.jetbrains.exposed.sql.*
 import org.jetbrains.exposed.sql.SqlExpressionBuilder.eq

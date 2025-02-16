@@ -1,7 +1,7 @@
-package newsref.model.data
+package newsref.db.model
 
 import kotlinx.datetime.Instant
-import newsref.model.core.CheckedUrl
+import newsref.db.core.CheckedUrl
 
 data class Lead(
 	val id: Long = 0,

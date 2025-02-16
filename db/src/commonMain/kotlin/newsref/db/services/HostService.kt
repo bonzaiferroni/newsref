@@ -2,21 +2,22 @@ package newsref.db.services
 
 import kotlinx.datetime.Clock
 import newsref.db.*
+import newsref.db.core.Url
+import newsref.db.model.Host
 import newsref.db.tables.*
 import newsref.db.utils.*
 import newsref.model.core.*
-import newsref.model.data.*
 import org.jetbrains.exposed.sql.*
 import org.jetbrains.exposed.sql.SqlExpressionBuilder.eq
 import kotlin.time.Duration
 
 class HostService : DbService() {
     suspend fun findByUrl(url: Url): Host? = dbQuery {
-        HostRow.find { HostTable.core.sameAs(url.core) }.firstOrNull()?.toData()
+        HostRow.find { HostTable.core.sameAs(url.core) }.firstOrNull()?.toModel()
     }
 
     suspend fun findById(hostId: Int) = dbQuery {
-        HostRow.find(HostTable.id eq hostId).firstOrNull()?.toData()
+        HostRow.find(HostTable.id eq hostId).firstOrNull()?.toModel()
             ?: throw IllegalArgumentException("Host $hostId not found")
     }
 
@@ -37,7 +38,7 @@ class HostService : DbService() {
             domains = domains.toSet(),
             bannedPaths = bannedPaths.toSet(),
         )
-        HostRow.new { fromData(host) }.toData()
+        HostRow.new { fromModel(host) }.toModel()
     }
 
     suspend fun updateParameters(host: Host, junkParams: Set<String>?, navParams: Set<String>?) = dbQuery {
@@ -45,7 +46,7 @@ class HostService : DbService() {
             ?: throw IllegalArgumentException("Host ${host.core} not found")
         junkParams?.let { hostRow.junkParams = it.smoosh(hostRow.junkParams) }
         navParams?.let { hostRow.navParams = it.smoosh(hostRow.navParams) }
-        hostRow.toData()
+        hostRow.toModel()
     }
 
     suspend fun readHosts(searchText: String? = null, limit: Int = 100) = dbQuery {

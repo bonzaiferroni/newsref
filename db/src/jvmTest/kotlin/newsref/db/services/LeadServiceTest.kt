@@ -1,14 +1,7 @@
 package newsref.db.services
 
 import newsref.db.DbTest
-import newsref.db.tables.LeadResultTable
-import newsref.db.tables.LeadTable
-import newsref.db.tables.LeadJobTable
-import newsref.model.data.FetchResult
-import org.jetbrains.exposed.sql.QueryBuilder
-import org.jetbrains.exposed.sql.SortOrder
-import org.jetbrains.exposed.sql.SqlExpressionBuilder.isNull
-import org.jetbrains.exposed.sql.count
+import newsref.db.model.FetchResult
 import kotlin.test.BeforeTest
 import kotlin.test.Test
 import kotlin.test.assertEquals

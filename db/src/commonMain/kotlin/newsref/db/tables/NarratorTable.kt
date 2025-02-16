@@ -1,17 +1,8 @@
 package newsref.db.tables
 
-import kotlinx.datetime.UtcOffset
-import kotlinx.datetime.toInstant
-import kotlinx.serialization.json.Json
-import newsref.db.utils.*
-import newsref.model.core.*
-import newsref.model.data.*
-import newsref.model.dto.*
-import org.jetbrains.exposed.dao.*
+import newsref.db.model.Narrator
 import org.jetbrains.exposed.dao.id.*
 import org.jetbrains.exposed.sql.*
-import org.jetbrains.exposed.sql.json.json
-import org.jetbrains.exposed.sql.kotlin.datetime.datetime
 
 object NarratorTable : IntIdTable("narrator") {
     val vectorModelId = reference("vector_model_id", VectorModelTable, ReferenceOption.CASCADE).index()

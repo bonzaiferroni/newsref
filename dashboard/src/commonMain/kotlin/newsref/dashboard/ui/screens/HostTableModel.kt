@@ -4,9 +4,9 @@ import androidx.lifecycle.*
 import kotlinx.coroutines.*
 import newsref.app.blip.core.StateModel
 import newsref.dashboard.HostTableRoute
+import newsref.db.model.Host
 import newsref.db.services.*
 import newsref.model.core.Sorting
-import newsref.model.data.*
 
 class HostTableModel(
     val route: HostTableRoute,

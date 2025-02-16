@@ -5,7 +5,7 @@ import newsref.db.globalConsole
 import newsref.db.model.User
 import newsref.db.tables.UserRow
 import newsref.db.tables.UserTable
-import newsref.db.tables.fromData
+import newsref.db.tables.fromModel
 import newsref.db.utils.RESOURCE_PATH
 import newsref.db.utils.createOrUpdate
 import newsref.db.utils.jsonDecoder
@@ -20,7 +20,7 @@ class UserService: DbService() {
 		for (user in users) {
 			UserRow.createOrUpdate(UserTable.username eq user.username) {
 				globalConsole.logTrace("createUsers", "creating ${user.username}")
-				fromData(user)
+				fromModel(user)
 			}
 		}
 		users.isNotEmpty()

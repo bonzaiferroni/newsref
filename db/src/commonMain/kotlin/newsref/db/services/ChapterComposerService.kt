@@ -4,9 +4,12 @@ import kotlinx.datetime.Clock
 import kotlinx.datetime.Instant
 import newsref.db.*
 import newsref.db.core.cosineDistance
+import newsref.db.model.Chapter
+import newsref.db.model.ChapterSource
+import newsref.db.model.ChapterSourceType
+import newsref.db.model.Source
 import newsref.db.tables.*
 import newsref.db.utils.toLocalDateTimeUtc
-import newsref.model.data.*
 import org.jetbrains.exposed.sql.*
 import org.jetbrains.exposed.sql.SqlExpressionBuilder.eq
 import kotlin.time.Duration.Companion.days
@@ -92,7 +95,7 @@ class ChapterComposerService : DbService() {
 
     suspend fun createChapter(chapter: Chapter, sources: List<ChapterSource>, vector: FloatArray,) = dbQuery {
         val chapterId = ChapterTable.insertAndGetId {
-            it.fromData(chapter)
+            it.fromModel(chapter)
             it[ChapterTable.vector] = vector
         }.value
         deleteAndInsertSources(chapterId, sources)

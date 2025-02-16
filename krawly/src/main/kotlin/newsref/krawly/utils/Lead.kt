@@ -1,7 +1,7 @@
 package newsref.krawly.utils
 
 import newsref.krawly.MAX_URL_CHARS
-import newsref.model.core.Url
+import newsref.db.core.Url
 
 val NOT_ARTICLE_SUFFIX = setOf(
 	"pdf",

@@ -1,19 +1,14 @@
 package newsref.db.tables
 
-import kotlinx.datetime.LocalDateTime
 import newsref.db.utils.toInstantUtc
-import newsref.model.core.toUrl
-import newsref.model.data.Feed
-import newsref.model.data.FeedSource
-import newsref.model.data.LeadJob
+import newsref.db.core.toUrl
+import newsref.db.model.Feed
+import newsref.db.model.FeedSource
 import org.jetbrains.exposed.dao.EntityClass
 import org.jetbrains.exposed.dao.IntEntity
-import org.jetbrains.exposed.dao.LongEntity
 import org.jetbrains.exposed.dao.id.EntityID
 import org.jetbrains.exposed.dao.id.IntIdTable
 import org.jetbrains.exposed.dao.id.LongIdTable
-import org.jetbrains.exposed.sql.Expression
-import org.jetbrains.exposed.sql.QueryBuilder
 import org.jetbrains.exposed.sql.ReferenceOption
 import org.jetbrains.exposed.sql.ResultRow
 import org.jetbrains.exposed.sql.kotlin.datetime.CurrentDateTime
@@ -47,7 +42,7 @@ class FeedRow(id: EntityID<Int>): IntEntity(id) {
     var checkAt by FeedTable.checkAt
 }
 
-fun FeedRow.toData() = Feed(
+fun FeedRow.toModel() = Feed(
     id = this.id.value,
     url = this.url.toUrl(),
     selector = this.selector,
@@ -75,7 +70,7 @@ fun ResultRow.toFeed() = Feed(
     checkAt = this[FeedTable.checkAt].toInstantUtc()
 )
 
-fun FeedRow.fromData(feed: Feed) {
+fun FeedRow.fromModel(feed: Feed) {
     url = feed.url.toString()
     selector = feed.selector
     external = feed.external

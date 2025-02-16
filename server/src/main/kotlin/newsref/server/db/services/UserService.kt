@@ -25,18 +25,18 @@ import newsref.server.serverLog
 class UserService : DataService<User, Long, UserRow>(
     UserRow,
     {user -> user.id},
-    UserRow::fromData,
-    UserRow::toData
+    UserRow::fromModel,
+    UserRow::toModel
 ) {
 
     fun findByUsername(username: String): User? =
-        UserRow.find { UserTable.username.lowerCase() eq username.lowercase() }.firstOrNull()?.toData()
+        UserRow.find { UserTable.username.lowerCase() eq username.lowercase() }.firstOrNull()?.toModel()
 
     suspend fun findByUsernameOrEmail(usernameOrEmail: String): User? = dbQuery {
         UserRow.find {
             (UserTable.username.lowerCase() eq usernameOrEmail.lowercase()) or
             (UserTable.email.lowerCase() eq usernameOrEmail.lowercase())
-        }.firstOrNull()?.toData()
+        }.firstOrNull()?.toModel()
     }
 
     suspend fun getUserInfo(username: String): UserInfo {

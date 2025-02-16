@@ -7,11 +7,13 @@ import kotlinx.coroutines.launch
 import newsref.app.blip.core.StateModel
 import newsref.dashboard.ChapterItemRoute
 import newsref.dashboard.utils.emptyImmutableList
+import newsref.db.model.Chapter
+import newsref.db.model.ChapterSourceInfo
+import newsref.db.model.ChapterSourceType
 import newsref.db.services.*
 import newsref.model.core.DataSort
 import newsref.model.core.Sorting
 import newsref.model.core.sortedByDirection
-import newsref.model.data.*
 
 class ChapterItemModel(
     route: ChapterItemRoute,

@@ -1,7 +1,7 @@
 package newsref.db.utils
 
 import newsref.db.globalConsole
-import newsref.model.core.Url
+import newsref.db.core.Url
 import org.jetbrains.exposed.dao.Entity
 import org.jetbrains.exposed.dao.EntityClass
 import org.jetbrains.exposed.sql.*

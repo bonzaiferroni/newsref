@@ -5,8 +5,8 @@ import newsref.db.core.cosineDistance
 import newsref.db.globalConsole
 import newsref.db.tables.*
 import newsref.db.utils.toLocalDateTimeUtc
-import newsref.model.data.Chapter
-import newsref.model.data.Story
+import newsref.db.model.Chapter
+import newsref.db.model.Story
 import org.jetbrains.exposed.sql.*
 import org.jetbrains.exposed.sql.SqlExpressionBuilder.eq
 

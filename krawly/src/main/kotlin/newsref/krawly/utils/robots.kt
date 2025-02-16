@@ -1,8 +1,7 @@
 package newsref.krawly.utils
 
-import newsref.model.core.Url
-import newsref.model.core.toUrlOrNull
-import newsref.model.core.toUrlWithContextOrNull
+import newsref.db.core.Url
+import newsref.db.core.toUrlWithContextOrNull
 
 fun parseRobotsTxt(content: String): Set<String> {
     val disallowedPaths = mutableSetOf<String>()

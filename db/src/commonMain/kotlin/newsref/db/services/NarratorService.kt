@@ -2,7 +2,7 @@ package newsref.db.services
 
 import newsref.db.*
 import newsref.db.tables.*
-import newsref.model.data.Narrator
+import newsref.db.model.Narrator
 import org.jetbrains.exposed.sql.*
 
 class NarratorService : DbService() {

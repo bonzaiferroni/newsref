@@ -13,6 +13,7 @@ import newsref.dashboard.*
 import newsref.dashboard.LocalNavigator
 import newsref.dashboard.SourceItemRoute
 import newsref.dashboard.ui.controls.*
+import newsref.db.model.Source
 import newsref.model.data.*
 
 @Composable

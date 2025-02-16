@@ -3,7 +3,7 @@ package newsref.db.tables
 import kotlinx.datetime.Clock
 import newsref.db.utils.toInstantUtc
 import newsref.db.utils.toLocalDateTimeUtc
-import newsref.model.data.Note
+import newsref.db.model.Note
 import newsref.model.dto.NoteInfo
 import org.jetbrains.exposed.dao.EntityClass
 import org.jetbrains.exposed.dao.LongEntity
@@ -31,7 +31,7 @@ internal class NoteRow(id: EntityID<Long>) : LongEntity(id) {
 	var modifiedAt by NoteTable.modifiedAt
 }
 
-internal fun NoteRow.toData() = Note(
+internal fun NoteRow.toModel() = Note(
 	this.id.value,
 	this.user.id.value,
 	this.subject,
@@ -40,7 +40,7 @@ internal fun NoteRow.toData() = Note(
 	this.modifiedAt.toInstantUtc(),
 )
 
-internal fun NoteRow.fromData(data: Note, userRow: UserRow) {
+internal fun NoteRow.fromModel(data: Note, userRow: UserRow) {
 	user = userRow
 	subject = data.subject
 	body = data.body

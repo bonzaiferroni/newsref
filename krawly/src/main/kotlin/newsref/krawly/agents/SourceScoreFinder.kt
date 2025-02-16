@@ -4,8 +4,8 @@ import kotlinx.coroutines.*
 import newsref.db.*
 import newsref.db.console.dim
 import newsref.db.console.toGreen
+import newsref.db.model.SourceScore
 import newsref.db.services.*
-import newsref.model.data.*
 import kotlin.time.Duration.Companion.days
 import kotlin.time.Duration.Companion.minutes
 
@@ -42,7 +42,15 @@ class SourceScoreFinder(
 			var score = if (lowestFeedPosition != null) {
 				val feedScore = (MAX_FEED_SIGNAL - lowestFeedPosition.feedPosition!!)
 					.coerceIn(0..MAX_FEED_SIGNAL)
-				scores.add(SourceScore(targetId, feedScore, lowestFeedPosition.linkedAt, null, lowestFeedPosition.feedId))
+				scores.add(
+                    SourceScore(
+                        targetId,
+                        feedScore,
+                        lowestFeedPosition.linkedAt,
+                        null,
+                        lowestFeedPosition.feedId
+                    )
+                )
 				feedScore
 			} else { 0 }
 

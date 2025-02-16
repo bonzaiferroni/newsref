@@ -1,7 +1,7 @@
 package newsref.db.tables
 
 import kotlinx.datetime.*
-import newsref.model.data.Article
+import newsref.db.model.Article
 import org.jetbrains.exposed.dao.EntityClass
 import org.jetbrains.exposed.dao.LongEntity
 import org.jetbrains.exposed.dao.id.EntityID
@@ -45,7 +45,7 @@ internal class ArticleRow(id: EntityID<Long>) : LongEntity(id) {
     var modifiedAt by ArticleTable.modifiedAt
 }
 
-internal fun ArticleRow.toData() = Article(
+internal fun ArticleRow.toModel() = Article(
     id = this.id.value,
     sourceId = this.source.id.value,
     headline = this.headline,
@@ -77,7 +77,7 @@ internal fun ResultRow.toArticle() = Article(
     modifiedAt = this[ArticleTable.modifiedAt]?.toInstant(UtcOffset.ZERO)
 )
 
-internal fun ArticleRow.fromData(article: Article, sourceRow: SourceRow) {
+internal fun ArticleRow.fromModel(article: Article, sourceRow: SourceRow) {
     source = sourceRow
     headline = article.headline
     alternativeHeadline = article.alternativeHeadline

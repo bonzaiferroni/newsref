@@ -2,9 +2,9 @@ package newsref.krawly.agents
 
 import kotlinx.coroutines.runBlocking
 import newsref.krawly.SpiderWeb
-import newsref.model.core.toCheckedUrl
-import newsref.model.core.toUrl
-import newsref.model.data.FetchStrategy.BASIC
+import newsref.db.core.toCheckedUrl
+import newsref.db.core.toUrl
+import newsref.db.model.FetchStrategy.BASIC
 import kotlin.test.Test
 
 class SourceFetcherTest {

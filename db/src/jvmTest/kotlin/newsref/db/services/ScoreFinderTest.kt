@@ -1,10 +1,7 @@
 package newsref.db.services
 
-import kotlinx.datetime.Clock
 import newsref.db.DbTest
-import newsref.model.data.SourceScore
 import kotlin.test.Test
-import kotlin.time.Duration.Companion.days
 
 class ScoreFinderTest : DbTest(true) {
 

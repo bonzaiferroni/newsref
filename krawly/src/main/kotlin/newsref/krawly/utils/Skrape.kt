@@ -4,7 +4,7 @@ import it.skrape.core.htmlDocument
 import it.skrape.fetcher.*
 import it.skrape.selects.Doc
 import newsref.krawly.chromeLinuxAgent
-import newsref.model.core.Url
+import newsref.db.core.Url
 
 fun skrapeDocJs(url: Url): Doc =
     skrape(BrowserFetcher) { // <--- pass BrowserFetcher to include rendered JS

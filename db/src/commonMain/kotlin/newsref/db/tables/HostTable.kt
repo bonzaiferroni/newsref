@@ -1,8 +1,7 @@
 package newsref.db.tables
 
-import newsref.db.tables.LinkTable.index
 import newsref.db.utils.sameAs
-import newsref.model.data.Host
+import newsref.db.model.Host
 import org.jetbrains.exposed.dao.EntityClass
 import org.jetbrains.exposed.dao.IntEntity
 import org.jetbrains.exposed.dao.id.EntityID
@@ -46,7 +45,7 @@ internal class HostRow(id: EntityID<Int>) : IntEntity(id) {
 	val leads by LeadRow referrersOn LeadTable.hostId
 }
 
-internal fun HostRow.toData() = Host(
+internal fun HostRow.toModel() = Host(
 	id = this.id.value,
 	nexusId = this.nexus?.id?.value,
 	core = this.core,
@@ -76,7 +75,7 @@ internal fun ResultRow.toHost() = Host(
 	navParams = this[HostTable.navParams].toSet(),
 )
 
-internal fun HostRow.fromData(host: Host, nexusRow: NexusRow? = null) {
+internal fun HostRow.fromModel(host: Host, nexusRow: NexusRow? = null) {
 	nexusRow?.let { nexus = nexusRow }
 	core = host.core
 	name = host.name

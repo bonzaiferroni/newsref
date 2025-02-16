@@ -1,4 +1,4 @@
-package newsref.model.data
+package newsref.db.model
 
 import kotlinx.datetime.Instant
 

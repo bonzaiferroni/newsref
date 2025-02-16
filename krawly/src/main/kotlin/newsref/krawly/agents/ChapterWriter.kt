@@ -1,6 +1,6 @@
 package newsref.krawly.agents
 
-import newsref.model.data.Narrator
+import newsref.db.model.Narrator
 import java.io.File
 
 class ChapterWriter {

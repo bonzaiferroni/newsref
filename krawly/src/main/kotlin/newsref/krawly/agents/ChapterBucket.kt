@@ -5,8 +5,8 @@ import newsref.db.*
 import newsref.db.services.*
 import newsref.db.utils.*
 import newsref.db.utils.distance
-import newsref.model.data.ChapterSource
-import newsref.model.data.ChapterSourceType
+import newsref.db.model.ChapterSource
+import newsref.db.model.ChapterSourceType
 import kotlin.collections.maxBy
 import kotlin.collections.set
 import kotlin.math.abs

@@ -7,7 +7,7 @@ import it.skrape.selects.Doc
 import it.skrape.selects.DocElement
 import newsref.db.globalConsole
 import newsref.krawly.utils.findFirstOrNull
-import newsref.model.data.Feed
+import newsref.db.model.Feed
 import java.io.File
 
 private val console = globalConsole.getHandle("AnchorFinder")

@@ -18,8 +18,8 @@ import newsref.krawly.SpiderWeb
 import newsref.krawly.utils.TallyMap
 import newsref.krawly.utils.getCount
 import newsref.krawly.utils.isNetworkAvailable
-import newsref.model.data.LeadInfo
-import newsref.model.data.FetchResult
+import newsref.db.model.LeadInfo
+import newsref.db.model.FetchResult
 import java.util.*
 import kotlin.time.Duration.Companion.minutes
 import kotlin.time.Duration.Companion.seconds

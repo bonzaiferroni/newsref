@@ -1,8 +1,8 @@
 package newsref.dashboard.ui.screens
 
 import newsref.app.blip.core.StateModel
-import newsref.model.data.Content
-import newsref.model.data.Source
+import newsref.db.model.Content
+import newsref.db.model.Source
 
 class SourceContentModel(
     private val source: Source,

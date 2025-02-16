@@ -4,11 +4,12 @@ import kotlinx.coroutines.*
 import kotlinx.datetime.*
 import newsref.db.*
 import newsref.db.core.*
+import newsref.db.model.Chapter
 import newsref.db.model.ChapterFinderLog
 import newsref.db.model.ChapterFinderState
+import newsref.db.model.Source
 import newsref.db.services.*
 import newsref.model.core.*
-import newsref.model.data.*
 import kotlin.time.*
 import kotlin.time.Duration.Companion.hours
 import kotlin.time.Duration.Companion.minutes

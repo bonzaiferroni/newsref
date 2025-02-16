@@ -1,6 +1,6 @@
-package newsref.model.data
+package newsref.db.model
 
-import newsref.model.core.CheckedUrl
+import newsref.db.core.CheckedUrl
 
 data class Link(
     val id: Long = 0,

@@ -1,4 +1,4 @@
-package newsref.model.core
+package newsref.db.core
 
 open class Url internal constructor(
 	val rawHref: String,

@@ -1,4 +1,4 @@
-package newsref.model.data
+package newsref.db.model
 
 data class Author(
     val id: Int = 0,

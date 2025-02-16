@@ -2,8 +2,6 @@ package newsref.db.model
 
 import kotlinx.datetime.Instant
 import kotlinx.serialization.Serializable
-import newsref.model.data.JsonLog
-import newsref.model.data.LogSet
 
 
 @Serializable

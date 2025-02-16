@@ -8,9 +8,8 @@ import newsref.db.tables.ContentTable
 import newsref.db.tables.SourceContentTable
 import newsref.db.tables.SourceRow
 import newsref.db.tables.SourceTable
-import newsref.db.tables.toData
-import newsref.model.data.Note
-import newsref.model.data.Source
+import newsref.db.tables.toModel
+import newsref.db.model.Note
 import org.jetbrains.exposed.sql.SortOrder
 import org.jetbrains.exposed.sql.SqlExpressionBuilder.eq
 import org.jetbrains.exposed.sql.and
@@ -29,7 +28,7 @@ class NoteService : DbService() {
 		SourceRow.find { SourceTable.noteId.isNull() and SourceTable.title.isNotNull() }
 			.orderBy(Pair(SourceTable.score, SortOrder.DESC_NULLS_LAST))
 			.firstOrNull()
-			?.toData()
+			?.toModel()
 	}
 
 	suspend fun getContent(sourceId: Long) = dbQuery {
@@ -52,12 +51,12 @@ class NoteService : DbService() {
 		val userRow = UserRow[userId]
 		val sourceRow = SourceRow[sourceId]
 		val note = Note(subject = subject, body = body, createdAt = now)
-		val noteRow = NoteRow.new { fromData(note, userRow) }
+		val noteRow = NoteRow.new { fromModel(note, userRow) }
 		sourceRow.note = noteRow
 		SourceNoteTable.insert {
 			it[SourceNoteTable.noteId] = noteRow.id.value
 			it[SourceNoteTable.sourceId] = sourceId
 		}
-		noteRow.toData()
+		noteRow.toModel()
 	}
 }

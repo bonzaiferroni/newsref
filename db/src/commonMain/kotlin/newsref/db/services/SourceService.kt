@@ -12,7 +12,7 @@ import newsref.db.utils.applyIfNotNull
 import newsref.db.utils.sameUrl
 import newsref.db.utils.toInstantUtc
 import newsref.db.utils.toLocalDateTimeUtc
-import newsref.model.core.Url
+import newsref.db.core.Url
 import newsref.model.dto.*
 import org.jetbrains.exposed.sql.Op
 import org.jetbrains.exposed.sql.SortOrder

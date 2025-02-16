@@ -3,7 +3,6 @@ package newsref.krawly.utils
 import it.skrape.selects.Doc
 import it.skrape.selects.DocElement
 import it.skrape.selects.ElementNotFoundException
-import it.skrape.selects.html5.html
 import kotlinx.serialization.SerializationException
 import kotlinx.serialization.json.JsonArray
 import kotlinx.serialization.json.JsonObject
@@ -11,7 +10,7 @@ import kotlinx.serialization.json.decodeFromJsonElement
 import newsref.db.globalConsole
 import newsref.db.utils.*
 import newsref.krawly.models.NewsArticle
-import newsref.model.core.Url
+import newsref.db.core.Url
 import newsref.model.core.toSourceType
 
 fun Doc.readMetaContent(vararg propertyValues: String) = propertyValues.firstNotNullOfOrNull {

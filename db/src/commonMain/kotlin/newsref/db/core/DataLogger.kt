@@ -4,9 +4,8 @@ import kotlinx.coroutines.*
 import kotlinx.datetime.Clock
 import kotlinx.datetime.Instant
 import newsref.db.services.*
-import newsref.model.data.DataLog
-import newsref.model.data.IntegerLog
-import kotlin.reflect.KProperty
+import newsref.db.model.DataLog
+import newsref.db.model.IntegerLog
 import kotlin.time.*
 import kotlin.time.Duration.Companion.minutes
 

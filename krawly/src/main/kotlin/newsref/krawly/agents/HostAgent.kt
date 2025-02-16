@@ -1,13 +1,14 @@
 package newsref.krawly.agents
 
 import kotlinx.coroutines.delay
-import kotlinx.coroutines.sync.Mutex
-import kotlinx.coroutines.sync.withLock
+import newsref.db.core.CheckedUrl
+import newsref.db.core.Url
+import newsref.db.core.toCheckedUrl
+import newsref.db.core.toUrlOrNull
 import newsref.db.globalConsole
 import newsref.db.services.HostService
 import newsref.krawly.SpiderWeb
-import newsref.model.core.*
-import newsref.model.data.Host
+import newsref.db.model.Host
 import java.util.*
 import kotlin.time.Duration.Companion.seconds
 

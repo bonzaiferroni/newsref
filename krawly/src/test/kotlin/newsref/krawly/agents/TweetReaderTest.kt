@@ -1,9 +1,8 @@
 package newsref.krawly.agents
 
 import kotlinx.coroutines.runBlocking
-import newsref.krawly.SpiderWeb
-import newsref.model.core.toUrl
-import newsref.model.data.Host
+import newsref.db.core.toUrl
+import newsref.db.model.Host
 import kotlin.test.Test
 
 class TweetReaderTest {

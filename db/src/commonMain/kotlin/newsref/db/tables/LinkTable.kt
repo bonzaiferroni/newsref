@@ -7,8 +7,8 @@ import newsref.db.tables.LinkTable.urlText
 import newsref.db.utils.sameUrl
 import newsref.db.utils.toCheckedFromTrusted
 import newsref.db.utils.toInstantUtc
-import newsref.model.core.CheckedUrl
-import newsref.model.data.Link
+import newsref.db.core.CheckedUrl
+import newsref.db.model.Link
 import newsref.model.dto.LinkInfo
 import org.jetbrains.exposed.dao.LongEntity
 import org.jetbrains.exposed.dao.LongEntityClass
@@ -41,7 +41,7 @@ internal class LinkRow(id: EntityID<Long>): LongEntity(id) {
     var isExternal by LinkTable.isExternal
 }
 
-internal fun LinkRow.toData() = Link(
+internal fun LinkRow.toModel() = Link(
     id = this.id.value,
     sourceId = this.source.id.value,
     leadId = this.lead?.id?.value,
@@ -54,16 +54,16 @@ internal fun LinkRow.toData() = Link(
 
 internal fun ResultRow.toLink() = Link(
     id = this[LinkTable.id].value,
-    sourceId = this[LinkTable.sourceId].value,
+    sourceId = this[sourceId].value,
     leadId = this[LinkTable.leadId]?.value,
     contentId = this[LinkTable.contentId]?.value,
-    url = this[LinkTable.url].toCheckedFromTrusted(),
-    text = this[LinkTable.urlText],
+    url = this[url].toCheckedFromTrusted(),
+    text = this[urlText],
     textIndex = this[LinkTable.textIndex],
     isExternal = this[LinkTable.isExternal]
 )
 
-internal fun LinkRow.fromData(data: Link, sourceRow: SourceRow, contentRow: ContentRow?) {
+internal fun LinkRow.fromModel(data: Link, sourceRow: SourceRow, contentRow: ContentRow?) {
     source = sourceRow
     content = contentRow
     url = data.url.toString()

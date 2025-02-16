@@ -1,6 +1,6 @@
 package newsref.krawly.utils
 
-import newsref.model.core.toUrl
+import newsref.db.core.toUrl
 import kotlin.test.Test
 
 class RobotsTest {

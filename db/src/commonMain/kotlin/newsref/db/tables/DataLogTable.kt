@@ -1,10 +1,10 @@
 package newsref.db.tables
 
-import newsref.model.data.*
+import newsref.db.model.IntegerEntry
+import newsref.db.model.JsonEntry
 import newsref.model.utils.*
 import org.jetbrains.exposed.dao.id.*
 import org.jetbrains.exposed.sql.*
-import org.springframework.security.crypto.keygen.KeyGenerators.string
 
 object LogVariableTable : IntIdTable("variable") {
     val name = text("name")

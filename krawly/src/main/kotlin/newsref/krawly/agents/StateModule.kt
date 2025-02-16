@@ -3,12 +3,6 @@ package newsref.krawly.agents
 import kotlinx.coroutines.*
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
-import kotlinx.coroutines.launch
-import newsref.db.services.DataLogService
-import newsref.model.data.DataLog
-import newsref.model.data.JsonLog
-import kotlin.time.Duration
-import kotlin.time.Duration.Companion.minutes
 
 interface KeyState {
     val valueMap: Map<String, Int>

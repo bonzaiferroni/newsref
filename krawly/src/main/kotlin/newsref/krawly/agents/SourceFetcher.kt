@@ -2,15 +2,21 @@ package newsref.krawly.agents
 
 import kotlinx.coroutines.delay
 import kotlinx.datetime.Clock
+import newsref.db.core.CheckedUrl
+import newsref.db.core.toCheckedUrl
+import newsref.db.core.toUrlOrNull
 import newsref.db.globalConsole
 import newsref.db.model.FetchInfo
+import newsref.db.model.FetchResult
+import newsref.db.model.FetchStrategy
+import newsref.db.model.Host
 import newsref.krawly.SpiderWeb
 import newsref.krawly.utils.contentToDoc
 import newsref.krawly.utils.isFile
-import newsref.model.core.*
-import newsref.model.data.*
-import newsref.model.data.FetchStrategy.BASIC
-import newsref.model.data.FetchStrategy.BROWSER
+import newsref.db.model.FetchStrategy.BASIC
+import newsref.db.model.FetchStrategy.BROWSER
+import newsref.db.model.LeadInfo
+import newsref.db.model.LeadResult
 import kotlin.time.Duration.Companion.hours
 import kotlin.time.Duration.Companion.seconds
 

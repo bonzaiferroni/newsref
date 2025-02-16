@@ -2,11 +2,15 @@ package newsref.db.tables
 
 import kotlinx.datetime.*
 import newsref.db.globalConsole
+import newsref.db.model.FetchResult
+import newsref.db.model.FetchStrategy
 import newsref.db.utils.*
 import newsref.db.utils.toCheckedFromTrusted
-import newsref.model.core.CheckedUrl
-import newsref.model.data.*
-import newsref.model.data.Lead
+import newsref.db.core.CheckedUrl
+import newsref.db.model.Lead
+import newsref.db.model.LeadInfo
+import newsref.db.model.LeadJob
+import newsref.db.model.LeadResult
 import org.jetbrains.exposed.dao.EntityClass
 import org.jetbrains.exposed.dao.LongEntity
 import org.jetbrains.exposed.dao.id.EntityID
@@ -34,14 +38,14 @@ internal class LeadRow(id: EntityID<Long>) : LongEntity(id) {
 	val links by LinkRow optionalReferrersOn LinkTable.leadId
 }
 
-internal fun LeadRow.toData() = Lead(
+internal fun LeadRow.toModel() = Lead(
 	id = this.id.value,
 	hostId = this.host.id.value,
 	sourceId = this.source?.id?.value,
 	url = this.url.toCheckedFromTrusted(),
 )
 
-internal fun LeadRow.fromData(lead: Lead, hostRow: HostRow, sourceRow: SourceRow? = null) {
+internal fun LeadRow.fromModel(lead: Lead, hostRow: HostRow, sourceRow: SourceRow? = null) {
 	host = hostRow
 	source = sourceRow
 	url = lead.url.toString()
@@ -89,7 +93,7 @@ internal class LeadResultRow(id: EntityID<Long>) : LongEntity(id) {
 	var strategy by LeadResultTable.strategy
 }
 
-internal fun LeadResultRow.toData() = LeadResult(
+internal fun LeadResultRow.toModel() = LeadResult(
 	id = this.id.value,
 	leadId = this.lead.id.value,
 	result = this.result,
@@ -107,7 +111,7 @@ internal fun Query.wrapLeadResults() = this.map { row ->
 	)
 }
 
-internal fun LeadResultRow.fromData(leadResult: LeadResult, leadRow: LeadRow) {
+internal fun LeadResultRow.fromModel(leadResult: LeadResult, leadRow: LeadRow) {
 	lead = leadRow
 	result = leadResult.result
 	attemptedAt = leadResult.attemptedAt.toLocalDateTimeUtc()
@@ -135,7 +139,7 @@ internal class LeadJobRow(id: EntityID<Long>) : LongEntity(id) {
 	var feedPosition by LeadJobTable.feedPosition
 }
 
-internal fun LeadJobRow.toData() = LeadJob(
+internal fun LeadJobRow.toModel() = LeadJob(
 	id = this.id.value,
 	leadId = this.lead.id.value,
 	feedId = this.feed?.id?.value,
@@ -155,7 +159,7 @@ internal fun ResultRow.toLeadJob() = LeadJob(
 	feedPosition = this[LeadJobTable.feedPosition],
 )
 
-internal fun LeadJobRow.fromData(leadJob: LeadJob, leadRow: LeadRow, feedRow: FeedRow?) {
+internal fun LeadJobRow.fromModel(leadJob: LeadJob, leadRow: LeadRow, feedRow: FeedRow?) {
 	lead = leadRow
 	feed = feedRow ?: leadJob.feedId?.let { FeedRow[it] }
 	headline = leadJob.headline

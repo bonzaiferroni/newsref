@@ -8,12 +8,12 @@ import kotlinx.datetime.Clock
 import newsref.app.blip.core.StateModel
 import newsref.dashboard.ui.controls.CloudPoint
 import newsref.dashboard.utils.emptyImmutableList
+import newsref.db.model.Chapter
 import newsref.db.services.*
 import newsref.model.core.DataSort
 import newsref.model.core.SortDirection
 import newsref.model.core.Sorting
 import newsref.model.core.sortedByDirection
-import newsref.model.data.*
 import kotlin.time.Duration
 import kotlin.time.Duration.Companion.days
 

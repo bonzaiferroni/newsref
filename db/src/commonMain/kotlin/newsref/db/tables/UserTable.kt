@@ -40,7 +40,7 @@ class UserRow(id: EntityID<Long>) : LongEntity(id) {
     var updatedAt by UserTable.updatedAt
 }
 
-fun UserRow.toData() = User(
+fun UserRow.toModel() = User(
     this.id.value,
     this.name,
     this.username,
@@ -54,7 +54,7 @@ fun UserRow.toData() = User(
     this.updatedAt.toInstant(UtcOffset.ZERO),
 )
 
-fun UserRow.fromData(data: User) {
+fun UserRow.fromModel(data: User) {
     name = data.name
     username = data.username
     hashedPassword = data.hashedPassword

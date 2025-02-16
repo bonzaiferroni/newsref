@@ -1,6 +1,6 @@
 package newsref.db.tables
 
-import newsref.model.data.Nexus
+import newsref.db.model.Nexus
 import org.jetbrains.exposed.dao.EntityClass
 import org.jetbrains.exposed.dao.IntEntity
 import org.jetbrains.exposed.dao.id.EntityID
@@ -18,11 +18,11 @@ internal class NexusRow(id: EntityID<Int>) : IntEntity(id) {
 	val hosts by HostRow optionalReferrersOn HostTable.nexusId
 }
 
-internal fun NexusRow.toData() = Nexus(
+internal fun NexusRow.toModel() = Nexus(
 	id = this.id.value,
 	name = this.name,
 )
 
-internal fun NexusRow.fromData(nexus: Nexus) {
+internal fun NexusRow.fromModel(nexus: Nexus) {
 	name = nexus.name
 }

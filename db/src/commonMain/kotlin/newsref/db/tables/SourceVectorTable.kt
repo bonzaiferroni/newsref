@@ -36,7 +36,7 @@ internal fun ResultRow.toSourceDistance() = SourceDistance(
 	distance = this[SourceDistanceTable.distance]
 )
 
-internal fun InsertStatement<*>.fromData(data: SourceDistance) {
+internal fun InsertStatement<*>.fromModel(data: SourceDistance) {
 	this[SourceDistanceTable.originId] = data.originId
 	this[SourceDistanceTable.targetId] = data.targetId
 	this[SourceDistanceTable.modelId] = data.modelId

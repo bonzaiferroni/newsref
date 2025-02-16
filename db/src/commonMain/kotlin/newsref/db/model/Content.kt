@@ -1,4 +1,4 @@
-package newsref.model.data
+package newsref.db.model
 
 data class Content(
     val id: Long = 0,

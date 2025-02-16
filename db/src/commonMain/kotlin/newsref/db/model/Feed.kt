@@ -1,7 +1,7 @@
-package newsref.model.data
+package newsref.db.model
 
 import kotlinx.datetime.Instant
-import newsref.model.core.Url
+import newsref.db.core.Url
 
 data class Feed(
     val id: Int,

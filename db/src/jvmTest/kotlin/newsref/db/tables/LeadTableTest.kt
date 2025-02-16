@@ -3,7 +3,7 @@ package newsref.db.tables
 import kotlinx.datetime.Clock
 import newsref.db.DbTest
 import newsref.db.utils.toLocalDateTimeUtc
-import newsref.model.data.FetchResult
+import newsref.db.model.FetchResult
 import org.jetbrains.exposed.sql.insert
 import org.jetbrains.exposed.sql.transactions.transaction
 import kotlin.test.BeforeTest

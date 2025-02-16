@@ -2,13 +2,19 @@ package newsref.krawly.agents
 
 import it.skrape.selects.DocElement
 import kotlinx.datetime.Clock
+import newsref.db.core.CheckedUrl
+import newsref.db.core.toUrlOrNull
+import newsref.db.core.toUrlWithContextOrNull
 import newsref.db.globalConsole
+import newsref.db.model.Article
+import newsref.db.model.Host
+import newsref.db.model.LeadInfo
 import newsref.db.services.ContentService
 import newsref.krawly.utils.*
 import newsref.model.core.*
-import newsref.model.data.*
 import newsref.db.model.PageInfo
 import newsref.db.model.PageLink
+import newsref.db.model.Source
 import newsref.db.model.WebResult
 import newsref.db.services.isNewsContent
 import newsref.krawly.models.NewsArticle
@@ -144,35 +150,35 @@ class PageReader(
 
 		val page = PageInfo(
 			source = Source(
-				url = pageUrl,
-				title = doc.titleText,
-				type = sourceType,
-				thumbnail = thumbnail,
-				imageUrl = imageUrl?.href,
-				contentCount = if (isNewsContent(sourceType, language)) contentWordCount else 0,
-				seenAt = lead.freshAt ?: now,
-				accessedAt = now,
-				publishedAt = publishedAt,
-				okResponse = true,
-			),
+                url = pageUrl,
+                title = doc.titleText,
+                type = sourceType,
+                thumbnail = thumbnail,
+                imageUrl = imageUrl?.href,
+                contentCount = if (isNewsContent(sourceType, language)) contentWordCount else 0,
+                seenAt = lead.freshAt ?: now,
+                accessedAt = now,
+                publishedAt = publishedAt,
+                okResponse = true,
+            ),
 			pageHost = pageHost,
 			articleType = articleType,
 			hostName = hostName,
 			language = language,
 			foundNewsArticle = newsArticle != null,
 			article = Article(
-				headline = headline,
-				alternativeHeadline = newsArticle?.alternativeHeadline,
-				description = description,
-				cannonUrl = cannonUrl?.toString(),
-				section = newsArticle?.articleSection?.firstOrNull(),
-				keywords = newsArticle?.keywords,
-				wordCount = newsArticle?.wordCount ?: contentWordCount,
-				isFree = newsArticle?.isAccessibleForFree,
-				language = newsArticle?.inLanguage,
-				commentCount = newsArticle?.commentCount,
-				modifiedAt = modifiedAt,
-			),
+                headline = headline,
+                alternativeHeadline = newsArticle?.alternativeHeadline,
+                description = description,
+                cannonUrl = cannonUrl?.toString(),
+                section = newsArticle?.articleSection?.firstOrNull(),
+                keywords = newsArticle?.keywords,
+                wordCount = newsArticle?.wordCount ?: contentWordCount,
+                isFree = newsArticle?.isAccessibleForFree,
+                language = newsArticle?.inLanguage,
+                commentCount = newsArticle?.commentCount,
+                modifiedAt = modifiedAt,
+            ),
 			contents = contents,
 			links = links,
 			authors = authors,

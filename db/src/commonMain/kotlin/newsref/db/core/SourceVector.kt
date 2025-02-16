@@ -1,7 +1,5 @@
 package newsref.db.core
 
-import newsref.model.core.Url
-
 //data class SourceVector(
 //	val id: Long = 0,
 //	val sourceId: Long = 0,

@@ -16,7 +16,7 @@ import newsref.dashboard.ui.table.*
 import newsref.db.utils.format
 import newsref.model.core.DataSort
 import newsref.model.core.Sorting
-import newsref.model.data.Chapter
+import newsref.db.model.Chapter
 
 @Composable
 fun ChapterTableScreen(

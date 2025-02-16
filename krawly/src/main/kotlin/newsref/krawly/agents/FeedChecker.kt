@@ -15,9 +15,9 @@ import newsref.krawly.utils.isLikelyAd
 import newsref.krawly.utils.tryGetHrefOrChild
 import newsref.krawly.utils.tryGetHrefOrParent
 import newsref.model.core.SourceType
-import newsref.model.core.toUrlWithContextOrNull
-import newsref.model.data.FeedSource
-import newsref.model.data.LeadJob
+import newsref.db.core.toUrlWithContextOrNull
+import newsref.db.model.FeedSource
+import newsref.db.model.LeadJob
 import kotlin.math.pow
 import kotlin.time.Duration.Companion.days
 import kotlin.time.Duration.Companion.hours

@@ -9,7 +9,7 @@ import newsref.db.tables.SourceTable
 import newsref.db.tables.VectorModelTable
 import newsref.db.tables.SourceDistanceTable
 import newsref.db.tables.distanceInfoColumns
-import newsref.db.tables.fromData
+import newsref.db.tables.fromModel
 import newsref.db.tables.toDistanceInfo
 import newsref.db.tables.toSource
 import newsref.db.tables.toSourceDistance
@@ -76,7 +76,7 @@ class SourceVectorService : DbService() {
 				distance = it[cosineDistance],
 			)}
 
-		SourceDistanceTable.batchInsert(distances) { this.fromData(it) }
+		SourceDistanceTable.batchInsert(distances) { this.fromModel(it) }
 
 		console.log("Inserted ${distances.size} distances from origin: $sourceId")
 	}

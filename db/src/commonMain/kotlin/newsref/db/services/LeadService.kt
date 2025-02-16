@@ -1,17 +1,12 @@
 package newsref.db.services
 
-import kotlinx.datetime.UtcOffset
-import kotlinx.datetime.toInstant
 import newsref.db.DbService
 import newsref.db.globalConsole
 import newsref.db.tables.*
 import newsref.db.utils.sameUrl
-import newsref.db.utils.toCheckedFromTrusted
-import newsref.db.utils.toSqlString
-import newsref.model.core.CheckedUrl
-import newsref.model.core.Url
-import newsref.model.data.LeadJob
-import newsref.model.data.LeadInfo
+import newsref.db.core.CheckedUrl
+import newsref.db.core.Url
+import newsref.db.model.LeadJob
 import org.jetbrains.exposed.sql.*
 import org.jetbrains.exposed.sql.SqlExpressionBuilder.isNull
 
@@ -42,7 +37,7 @@ class LeadService : DbService() {
 
         leadJob?.let { job ->
             val feedRow = job.feedId?.let { FeedRow[it] }
-            LeadJobRow.new { fromData(leadJob, leadRow, feedRow) }
+            LeadJobRow.new { fromModel(leadJob, leadRow, feedRow) }
         }
         CreateLeadResult.CREATED // return
     }

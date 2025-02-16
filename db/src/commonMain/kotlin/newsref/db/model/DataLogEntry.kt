@@ -1,7 +1,6 @@
-package newsref.model.data
+package newsref.db.model
 
 import kotlinx.datetime.Instant
-import kotlinx.serialization.KSerializer
 
 data class LogVariable(
     val id: Int,
