@@ -6,6 +6,7 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import newsref.app.*
 import newsref.app.blip.controls.*
 import newsref.app.blip.nav.*
+import newsref.app.blip.theme.Blip
 
 @Composable
 fun ChapterFeedScreen(
@@ -15,6 +16,6 @@ fun ChapterFeedScreen(
     val state by viewModel.state.collectAsState()
 
     DataFeed(state.chapterPacks) {
-        Text(it.chapter.title ?: "null")
+        H1(it.chapter.title ?: "null")
     }
 }

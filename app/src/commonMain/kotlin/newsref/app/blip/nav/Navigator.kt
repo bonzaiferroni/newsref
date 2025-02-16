@@ -74,16 +74,13 @@ fun DefaultSurface(
     content: @Composable() () -> Unit
 ) {
     SlideIn {
-        ProvideColors(Blip.theme.bookColors) {
-            Surface(
-                modifier = Modifier
-                    .clip(Blip.ruler.roundTop)
-                    .background(Blip.colors.surface)
-                    .padding(Blip.ruler.basePadding)
-            ) {
-                Column(verticalArrangement = Blip.ruler.columnSpaced) {
-                    content()
-                }
+        Surface(
+            modifier = Modifier
+                .clip(Blip.ruler.roundTop)
+                .padding(Blip.ruler.basePadding)
+        ) {
+            Column(verticalArrangement = Blip.ruler.columnSpaced) {
+                content()
             }
         }
     }

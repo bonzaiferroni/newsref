@@ -10,14 +10,22 @@ import newsref.app.blip.theme.*
 @Composable
 fun Text(
     text: String,
-    color: Color = Blip.colors.content,
+    color: Color = Blip.localColors.content,
     style: TextStyle = TextStyle.Default,
     modifier: Modifier = Modifier
-) {
-    BasicText(
-        text = text,
-        color = { color },
-        style = style,
-        modifier = modifier
-    )
-}
+) = BasicText(
+    text = text,
+    color = { color },
+    style = style,
+    modifier = modifier
+)
+
+@Composable
+fun H1(
+    text: String,
+    color: Color = Blip.localColors.content
+) = BasicText(
+    text = text,
+    color = { color },
+    style = Blip.typ.h1,
+)

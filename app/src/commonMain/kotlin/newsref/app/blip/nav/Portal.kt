@@ -10,7 +10,6 @@ import androidx.compose.animation.core.tween
 import androidx.compose.animation.slideInVertically
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
@@ -50,7 +49,7 @@ fun Portal(
     Column(
         modifier = Modifier
             .fillMaxSize()
-            .background(Blip.colors.surface)
+            .background(Blip.colors.background)
             .drawBehind {
                 drawRect(
                     brush = Brush.linearGradient(
@@ -124,7 +123,7 @@ fun RowScope.PortalTitle(
     ) { nav.go(config.home) }
     Text(
         text = config.name,
-        style = Blip.typography.title,
+        style = Blip.typ.title,
         modifier = Modifier.isHovered { nav.setHover(config.home, it) }
             .clickable(interactionSource = null, indication = null, onClick = { nav.go(config.home)} )
     )
@@ -145,7 +144,7 @@ fun RowScope.PortalTitle(
         ) {
             Text(
                 text = ": $hoverTitleDisplay",
-                style = Blip.typography.title,
+                style = Blip.typ.title,
                 color = Blip.colors.accent.copy(.6f),
                 modifier = Modifier.fillMaxWidth()
             )
@@ -153,8 +152,8 @@ fun RowScope.PortalTitle(
 
         Text(
             text = ": ${currentRoute.title}",
-            style = Blip.typography.title,
-            color = Blip.colors.content.copy(.6f),
+            style = Blip.typ.title,
+            color = Blip.localColors.content.copy(.6f),
             modifier = Modifier.fillMaxWidth()
         )
     }

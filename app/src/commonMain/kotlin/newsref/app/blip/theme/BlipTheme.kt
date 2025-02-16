@@ -9,16 +9,17 @@ import androidx.compose.runtime.staticCompositionLocalOf
 interface BlipTheme {
     val layout: BlipRuler
     val colors: BlipColors
-    val skyColors: ModeColors
-    val bookColors: ModeColors
+    val skyColors: BlipLocalColors
+    val bookColors: BlipLocalColors
     val typography: BlipTypography
 }
 
 object Blip {
     val theme: BlipTheme @Composable @ReadOnlyComposable get() = LocalTheme.current
+    val colors: BlipColors @Composable @ReadOnlyComposable get() = LocalTheme.current.colors
     val ruler: BlipRuler @Composable @ReadOnlyComposable get() = LocalTheme.current.layout
-    val colors: ModeColors @Composable @ReadOnlyComposable get() = LocalColors.current
-    val typography: BlipTypography @Composable @ReadOnlyComposable get() = LocalTheme.current.typography
+    val localColors: BlipLocalColors @Composable @ReadOnlyComposable get() = LocalColors.current
+    val typ: BlipTypography @Composable @ReadOnlyComposable get() = LocalTheme.current.typography
 }
 
 @Composable
@@ -33,7 +34,7 @@ fun ProvideTheme(
 
 @Composable
 fun ProvideColors(
-    colors: ModeColors,
+    colors: BlipLocalColors,
     content: @Composable () -> Unit,
 ) {
     CompositionLocalProvider(LocalColors provides colors) {
@@ -45,6 +46,6 @@ val LocalTheme = staticCompositionLocalOf<BlipTheme> {
     error("No theme provided")
 }
 
-val LocalColors = compositionLocalOf<ModeColors> {
+val LocalColors = compositionLocalOf<BlipLocalColors> {
     error("No mode colors provided")
 }

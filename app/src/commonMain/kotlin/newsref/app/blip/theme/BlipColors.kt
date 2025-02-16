@@ -9,6 +9,7 @@ interface BlipColors {
     val surfaceSky: Color
     val contentBook: Color
     val surfaceBook: Color
+    val background: Color
 }
 
 enum class ColorMode {
@@ -16,10 +17,18 @@ enum class ColorMode {
     Book,
 }
 
-data class ModeColors(
+data class BlipLocalColors(
     val mode: ColorMode,
-    val primary: Color,
-    val accent: Color,
     val content: Color,
     val surface: Color,
 )
+
+object DefaultColors : BlipColors{
+    override val primary = Color(0xFF57965c)
+    override val accent = Color(0xFFffe746)
+    override val contentSky = Color(0xFFf5f6f6)
+    override val surfaceSky = Color.Transparent
+    override val contentBook = Color(0xFF050606)
+    override val surfaceBook = Color(0xFFdcdcdc)
+    override val background = Color(0xFF1b7161)
+}
