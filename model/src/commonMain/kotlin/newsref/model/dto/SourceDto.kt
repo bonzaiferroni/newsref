@@ -1,8 +1,10 @@
 package newsref.model.dto
 
 import kotlinx.datetime.Instant
+import kotlinx.serialization.Serializable
 import newsref.model.core.SourceType
 
+@Serializable
 data class SourceDto(
     val id: Long = 0,
     val hostId: Int = 0,

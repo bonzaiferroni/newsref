@@ -6,7 +6,7 @@ import kotlinx.coroutines.launch
 import newsref.app.*
 import newsref.app.blip.core.*
 import newsref.app.io.*
-import newsref.model.data.Chapter
+import newsref.app.model.*
 
 class ChapterFeedModel(
     val route: ChapterFeedRoute,
@@ -14,13 +14,15 @@ class ChapterFeedModel(
 ) : StateModel<ChapterFeedState>(ChapterFeedState()) {
     init {
         viewModelScope.launch {
-            val chapters = chapterStore.readChapters().toImmutableList()
-            setState { it.copy(chapters = chapters)}
+            val chapters = chapterStore.readChapters()
+                .map { it.toModel() }
+                .toImmutableList()
+            setState { it.copy(chapterPacks = chapters)}
         }
     }
 }
 
 data class ChapterFeedState(
-    val chapters: ImmutableList<Chapter> = persistentListOf()
+    val chapterPacks: ImmutableList<ChapterPack> = persistentListOf()
 )
 

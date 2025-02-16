@@ -14,7 +14,7 @@ fun ChapterFeedScreen(
 ) {
     val state by viewModel.state.collectAsState()
 
-    DataFeed(state.chapters) {
-        Text(it.title ?: "null")
+    DataFeed(state.chapterPacks) {
+        Text(it.chapter.title ?: "null")
     }
 }

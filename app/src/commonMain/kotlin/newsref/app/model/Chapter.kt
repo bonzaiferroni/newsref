@@ -1,6 +1,7 @@
 package newsref.app.model
 
 import kotlinx.datetime.Instant
+import newsref.model.dto.ChapterDto
 
 data class Chapter(
     val id: Long = 0,
@@ -14,4 +15,18 @@ data class Chapter(
     val storyDistance: Float?,
     val createdAt: Instant,
     val happenedAt: Instant,
+)
+
+fun ChapterDto.toChapter() = Chapter(
+    id = this.id,
+    storyId = this.storyId,
+    parentId = this.parentId,
+    title = this.title,
+    summary = this.summary,
+    score = this.score,
+    size = this.size,
+    cohesion = this.cohesion,
+    storyDistance = this.storyDistance,
+    createdAt = this.createdAt,
+    happenedAt = this.happenedAt,
 )
