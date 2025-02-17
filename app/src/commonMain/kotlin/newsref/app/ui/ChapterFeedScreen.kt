@@ -3,8 +3,10 @@ package newsref.app.ui
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import newsref.app.*
 import newsref.app.blip.controls.*
@@ -20,14 +22,14 @@ fun ChapterFeedScreen(
         SwatchCard(
             swatchIndex = pack.chapter.id.toInt(),
             modifier = Modifier.fillMaxWidth()
+                .height(130.dp)
         ) {
             Row {
-                H1(pack.chapter.title ?: "null")
+                H1(pack.chapter.title ?: "null", maxLines = 2)
             }
             Column {
-                for (source in pack.sources) {
-                    Text(source.title ?: "null")
-                }
+                val source = pack.sources.first()
+                Text(source.title ?: "null", maxLines = 1)
             }
         }
     }

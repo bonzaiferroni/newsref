@@ -9,6 +9,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.sp
 import newsref.app.generated.resources.PlayfairDisplay_Regular
 import newsref.app.generated.resources.Res
+import newsref.app.generated.resources.forum_regular
 import newsref.app.generated.resources.oranienbaum_regular
 import org.jetbrains.compose.resources.ExperimentalResourceApi
 
@@ -24,7 +25,7 @@ fun DefaultTypography() = object : BlipTypography {
         fontSize = 20.sp,
     )
     override val h1 = base.copy(
-        fontSize = 24.sp,
+        fontSize = 36.sp,
         fontSynthesis = FontSynthesis.None,
         fontWeight = FontWeight.Normal,
         fontFamily = PlayfairFontFamily()
@@ -37,5 +38,5 @@ private val base = TextStyle.Default
 
 @Composable
 fun PlayfairFontFamily() = FontFamily(
-    Font(Res.font.oranienbaum_regular, weight = FontWeight.Normal),
+    Font(Res.font.forum_regular, weight = FontWeight.Normal),
 )
