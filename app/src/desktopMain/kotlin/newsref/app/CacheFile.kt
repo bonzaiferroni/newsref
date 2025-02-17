@@ -15,7 +15,11 @@ inline fun <reified T> CacheFile(path: String, crossinline provider: () -> T): M
     val cache = remember {
         val file = File(path)
         val value = if (file.exists()) {
-            Json.decodeFromString(serializer(), file.readText())
+            try {
+                Json.decodeFromString(serializer(), file.readText())
+            } catch (e: Exception) {
+                provider()
+            }
         } else {
             provider()
         }

@@ -13,4 +13,4 @@ object StartRoute : AppRoute("Start")
 object HelloRoute : AppRoute("Hello")
 
 @Serializable
-object ChapterFeedRoute : AppRoute("Chapters")
+object EvemtFeedRoute : AppRoute("Chapters")
