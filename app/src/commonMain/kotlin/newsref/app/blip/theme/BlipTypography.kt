@@ -25,8 +25,7 @@ fun DefaultTypography() = object : BlipTypography {
         fontSize = 20.sp,
     )
     override val h1 = base.copy(
-        fontSize = 36.sp,
-        fontSynthesis = FontSynthesis.None,
+        fontSize = 28.sp,
         fontWeight = FontWeight.Normal,
         fontFamily = PlayfairFontFamily()
     )

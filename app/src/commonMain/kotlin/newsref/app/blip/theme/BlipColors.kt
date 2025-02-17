@@ -12,6 +12,9 @@ interface BlipColors {
     val background: Color
     val shine: Color
     val swatches: List<Color>
+
+    fun getSwatchFromIndex(index: Int) = swatches[index % swatches.size]
+    fun getSwatchFromIndex(index: Long) = getSwatchFromIndex(index.toInt())
 }
 
 enum class ColorMode {

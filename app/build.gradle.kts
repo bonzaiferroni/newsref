@@ -67,6 +67,8 @@ kotlin {
             implementation(libs.kotlinx.datetime)
             implementation(libs.composeIcons.tablerIcons)
             implementation(libs.logback.classic)
+            implementation(libs.coil.compose)
+            implementation(libs.coil.network.ktor3)
 
             implementation("com.adamglin:compose-shadow:2.0.3")
 
