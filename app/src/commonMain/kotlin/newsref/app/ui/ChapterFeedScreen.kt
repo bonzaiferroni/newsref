@@ -3,14 +3,11 @@ package newsref.app.ui
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.lazy.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
 import androidx.lifecycle.viewmodel.compose.viewModel
 import newsref.app.*
 import newsref.app.blip.controls.*
-import newsref.app.blip.nav.*
-import newsref.app.blip.theme.Blip
 
 @Composable
 fun ChapterFeedScreen(
@@ -20,7 +17,8 @@ fun ChapterFeedScreen(
     val state by viewModel.state.collectAsState()
 
     DataFeed(state.chapterPacks) { pack ->
-        Card(
+        SwatchCard(
+            swatchIndex = pack.chapter.id.toInt(),
             modifier = Modifier.fillMaxWidth()
         ) {
             Row {

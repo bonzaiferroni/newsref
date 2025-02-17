@@ -68,6 +68,8 @@ kotlin {
             implementation(libs.composeIcons.tablerIcons)
             implementation(libs.logback.classic)
 
+            implementation("com.adamglin:compose-shadow:2.0.3")
+
             implementation(project(":model"))
         }
         desktopMain.dependencies {
