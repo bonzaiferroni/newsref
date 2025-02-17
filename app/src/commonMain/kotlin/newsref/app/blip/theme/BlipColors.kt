@@ -10,6 +10,7 @@ interface BlipColors {
     val contentBook: Color
     val surfaceBook: Color
     val background: Color
+    val shine: Color
     val swatches: List<Color>
 }
 
@@ -30,8 +31,9 @@ object DefaultColors : BlipColors{
     override val contentSky = Color(0xFFf5f6f6)
     override val surfaceSky = Color.Transparent
     override val contentBook = Color(0xFF1d190e)
-    override val surfaceBook = Color(0xFFddd9c9)
+    override val surfaceBook = Color(0xFFdbdcdc)
     override val background = Color(0xFF1b7161)
+    override val shine = Color(0xFFc7cea8)
     override val swatches = listOf(
         Color(0xFF18B199),
         Color(0xFF004587),

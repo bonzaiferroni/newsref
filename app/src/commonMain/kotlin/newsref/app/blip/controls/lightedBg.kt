@@ -1,6 +1,8 @@
 package newsref.app.blip.controls
 
 import androidx.compose.foundation.layout.size
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.drawBehind
@@ -11,12 +13,16 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.Shape
 import androidx.compose.ui.unit.dp
 import com.adamglin.composeshadow.dropShadow
+import kotlinx.datetime.Clock
+import kotlinx.datetime.TimeZone
+import kotlinx.datetime.toLocalDateTime
+import newsref.app.blip.theme.Blip
 
 fun Modifier.lightedBg(
     color: Color,
     light: Color,
-    angle: Float,
-    shape: Shape
+    shape: Shape,
+    angle: Float
 ) = dropShadow(
     shape = shape,
     color = Color.Black.copy(.5f),
@@ -27,14 +33,9 @@ fun Modifier.lightedBg(
 )
     .clip(shape)
     .drawBehind {
-        val gradient = Brush.linearGradient(
-            colors = listOf(light.copy(.2f), Color.Transparent),
-            start = Offset(angle * size.width, 0f),
-            end = Offset((1 - angle) * size.width, size.height)
-        )
         val borderColor = blendColors(light, color, .5f)
         val border = Brush.linearGradient(
-            colors = listOf(borderColor, color),
+            colors = listOf(borderColor, color, color, color),
             start = Offset(angle * size.width, 0f),
             end = Offset((1 - angle) * size.width, size.height)
         )
@@ -42,8 +43,27 @@ fun Modifier.lightedBg(
         val innerOffset = Offset(1f, 1f)
         drawRect(border)
         drawRect(color = color, topLeft = innerOffset, size = innerSize)
+        val gradient = Brush.linearGradient(
+            colors = listOf(light.copy(.1f), Color.Transparent),
+            start = Offset(angle * size.width, 0f),
+            end = Offset((1 - angle) * size.width, size.height)
+        )
         drawRect(brush = gradient, topLeft = innerOffset, size = innerSize)
     }
+
+@Composable
+fun Modifier.lightedBg(
+    color: Color,
+    shape: Shape,
+): Modifier {
+    val angle = remember { angleFromClock() }
+    return lightedBg(
+        color,
+        Blip.colors.shine,
+        shape,
+        angle
+    )
+}
 
 fun blendColors(color1: Color, color2: Color, alpha: Float): Color {
     val r = (alpha * color1.red + (1 - alpha) * color2.red).coerceIn(0f, 1f)
@@ -53,3 +73,6 @@ fun blendColors(color1: Color, color2: Color, alpha: Float): Color {
 
     return Color(r, g, b, a)
 }
+
+fun angleFromClock() = Clock.System.now().toLocalDateTime(TimeZone.currentSystemDefault())
+    .hour / 24f
