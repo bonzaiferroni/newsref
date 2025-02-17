@@ -1,6 +1,9 @@
 package newsref.app.blip.theme
 
-object DefaultTheme : BlipTheme {
+import androidx.compose.runtime.Composable
+
+@Composable
+fun DefaultTheme() = object : BlipTheme {
     override val layout: BlipRuler = object : BlipRuler{
         override val spacing: Int = 16
         override val corner: Int = 16
@@ -20,5 +23,5 @@ object DefaultTheme : BlipTheme {
         surface = colors.surfaceBook,
     )
 
-    override val typography = DefaultTypography
+    override val typography = DefaultTypography()
 }

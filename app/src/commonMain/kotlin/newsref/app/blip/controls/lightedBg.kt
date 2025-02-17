@@ -48,7 +48,7 @@ fun Modifier.lightedBg(
             start = Offset(angle * size.width, 0f),
             end = Offset((1 - angle) * size.width, size.height)
         )
-        drawRect(brush = gradient, topLeft = innerOffset, size = innerSize)
+        // drawRect(brush = gradient, topLeft = innerOffset, size = innerSize)
     }
 
 @Composable
@@ -74,5 +74,5 @@ fun blendColors(color1: Color, color2: Color, alpha: Float): Color {
     return Color(r, g, b, a)
 }
 
-fun angleFromClock() = Clock.System.now().toLocalDateTime(TimeZone.currentSystemDefault())
+fun angleFromClock() = 1 - Clock.System.now().toLocalDateTime(TimeZone.currentSystemDefault())
     .hour / 24f

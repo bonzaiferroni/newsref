@@ -24,7 +24,7 @@ object Blip {
 
 @Composable
 fun ProvideTheme(
-    theme: BlipTheme = DefaultTheme,
+    theme: BlipTheme = DefaultTheme(),
     content: @Composable () -> Unit,
 ) {
     CompositionLocalProvider(LocalTheme provides theme) {
