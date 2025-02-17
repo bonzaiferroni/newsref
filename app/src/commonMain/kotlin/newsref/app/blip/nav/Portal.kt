@@ -145,7 +145,7 @@ fun RowScope.PortalTitle(
             Text(
                 text = ": $hoverTitleDisplay",
                 style = Blip.typ.title,
-                color = Blip.colors.accent.copy(.6f),
+                color = Blip.colors.shine.copy(.8f),
                 modifier = Modifier.fillMaxWidth()
             )
         }

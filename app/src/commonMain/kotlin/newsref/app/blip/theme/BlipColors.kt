@@ -33,7 +33,7 @@ object DefaultColors : BlipColors{
     override val contentBook = Color(0xFF1d190e)
     override val surfaceBook = Color(0xFFdbdcdc)
     override val background = Color(0xFF1b7161)
-    override val shine = Color(0xFFc7cea8)
+    override val shine = Color(0xFFffe746)
     override val swatches = listOf(
         Color(0xFF18B199),
         Color(0xFF004587),

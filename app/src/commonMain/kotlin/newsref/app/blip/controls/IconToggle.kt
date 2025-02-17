@@ -21,7 +21,7 @@ fun IconToggle(
 ) {
 
     val shadowColor = when {
-        value -> Blip.colors.accent
+        value -> Blip.colors.shine
         else -> DefaultShadowColor
     }
 
@@ -33,7 +33,7 @@ fun IconToggle(
             .clickable { action(!value) }
             .padding(Blip.ruler.halfPadding),
         tint = when {
-            value -> Blip.colors.accent
+            value -> Blip.colors.shine
             else -> tint
         }
     )

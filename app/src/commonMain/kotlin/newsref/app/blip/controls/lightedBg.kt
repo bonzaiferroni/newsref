@@ -1,6 +1,5 @@
 package newsref.app.blip.controls
 
-import androidx.compose.foundation.layout.size
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
@@ -17,6 +16,7 @@ import kotlinx.datetime.Clock
 import kotlinx.datetime.TimeZone
 import kotlinx.datetime.toLocalDateTime
 import newsref.app.blip.theme.Blip
+import newsref.app.blip.theme.DefaultColors.shine
 
 fun Modifier.lightedBg(
     color: Color,
@@ -44,7 +44,7 @@ fun Modifier.lightedBg(
         drawRect(border)
         drawRect(color = color, topLeft = innerOffset, size = innerSize)
         val gradient = Brush.linearGradient(
-            colors = listOf(light.copy(.1f), Color.Transparent),
+            colors = listOf(light.copy(.1f), light.copy(.05f)),
             start = Offset(angle * size.width, 0f),
             end = Offset((1 - angle) * size.width, size.height)
         )
