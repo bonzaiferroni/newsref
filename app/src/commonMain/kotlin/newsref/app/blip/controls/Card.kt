@@ -1,13 +1,11 @@
 package newsref.app.blip.controls
 
-import androidx.compose.foundation.background
-import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.padding
-import androidx.compose.runtime.Composable
+import androidx.compose.foundation.*
+import androidx.compose.foundation.layout.*
+import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import newsref.app.blip.theme.Blip
-import newsref.app.blip.theme.ProvideBookColors
+import newsref.app.blip.theme.*
 
 @Composable
 fun Card(
@@ -15,7 +13,7 @@ fun Card(
     content: @Composable () -> Unit
 ) {
     ProvideBookColors {
-        Box (
+        Column (
             modifier = modifier.clip(Blip.ruler.rounded)
                 .background(Blip.localColors.surface)
                 .padding(Blip.ruler.basePadding)

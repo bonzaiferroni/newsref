@@ -1,5 +1,7 @@
 package newsref.app.ui
 
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.lazy.*
 import androidx.compose.runtime.*
@@ -17,11 +19,18 @@ fun ChapterFeedScreen(
 ) {
     val state by viewModel.state.collectAsState()
 
-    DataFeed(state.chapterPacks) {
+    DataFeed(state.chapterPacks) { pack ->
         Card(
             modifier = Modifier.fillMaxWidth()
         ) {
-            H1(it.chapter.title ?: "null")
+            Row {
+                H1(pack.chapter.title ?: "null")
+            }
+            Column {
+                for (source in pack.sources) {
+                    Text(source.title ?: "null")
+                }
+            }
         }
     }
 }
