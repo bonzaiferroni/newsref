@@ -16,6 +16,7 @@ import org.jetbrains.compose.resources.ExperimentalResourceApi
 interface BlipTypography {
     val title: TextStyle
     val h1: TextStyle
+    val h2: TextStyle
     val body: TextStyle
 }
 
@@ -26,6 +27,11 @@ fun DefaultTypography() = object : BlipTypography {
     )
     override val h1 = base.copy(
         fontSize = 28.sp,
+        fontWeight = FontWeight.Normal,
+        fontFamily = PlayfairFontFamily()
+    )
+    override val h2 = base.copy(
+        fontSize = 24.sp,
         fontWeight = FontWeight.Normal,
         fontFamily = PlayfairFontFamily()
     )

@@ -32,6 +32,17 @@ fun Text(
 )
 
 @Composable
+fun Label(
+    text: String,
+    color: Color = Blip.localColors.content,
+    modifier: Modifier = Modifier
+) = BasicText(
+    text = text,
+    color = { color.copy(.5f) },
+    modifier = modifier,
+)
+
+@Composable
 fun H1(
     text: String,
     color: Color = Blip.localColors.content,
@@ -40,6 +51,18 @@ fun H1(
     text = text,
     color = { color },
     style = Blip.typ.h1,
+    maxLines = maxLines,
+)
+
+@Composable
+fun H2(
+    text: String,
+    color: Color = Blip.localColors.content,
+    maxLines: Int = Int.MAX_VALUE,
+) = BasicText(
+    text = text,
+    color = { color },
+    style = Blip.typ.h2,
     maxLines = maxLines,
 )
 

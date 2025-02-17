@@ -4,11 +4,14 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.aspectRatio
+import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.runtime.*
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.shadow
@@ -33,7 +36,27 @@ fun ChapterFeedScreen(
             modifier = Modifier.fillMaxWidth()
                 .height(130.dp)
         ) {
-            Row {
+            Row(
+                horizontalArrangement = Blip.ruler.rowSpaced
+            ) {
+                Column(
+                    verticalArrangement = Blip.ruler.columnGrouped
+                ) {
+                    Column(
+                        horizontalAlignment = Alignment.CenterHorizontally,
+                        modifier = Modifier
+                    ) {
+                        H2(pack.chapter.score.toString())
+                        Label("visibility")
+                    }
+                    Column(
+                        horizontalAlignment = Alignment.CenterHorizontally,
+                        modifier = Modifier
+                    ) {
+                        H2(pack.chapter.size.toString())
+                        Label("articles")
+                    }
+                }
                 Column(
                     modifier = Modifier.weight(1f)
                 ) {
@@ -45,7 +68,8 @@ fun ChapterFeedScreen(
                 imgUrl?.let {
                     val color = Blip.colors.getSwatchFromIndex(pack.chapter.id)
                     Box(
-                        modifier = Modifier.size(100.dp)
+                        modifier = Modifier.fillMaxHeight()
+                            .aspectRatio(1f)
                             .shadow(10.dp, Blip.ruler.round)
                             .background(color)
                             .padding(Blip.ruler.innerPadding)
