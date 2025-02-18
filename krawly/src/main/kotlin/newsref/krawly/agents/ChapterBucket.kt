@@ -7,6 +7,7 @@ import newsref.db.utils.*
 import newsref.db.utils.distance
 import newsref.db.model.ChapterSource
 import newsref.db.model.ChapterSourceType
+import sun.nio.ch.NativeThread.signal
 import kotlin.collections.maxBy
 import kotlin.collections.set
 import kotlin.math.abs
@@ -24,19 +25,24 @@ class ChapterBucket(
     private val _linkTally = mutableMapOf<Long, Int>()
     private var _cohesion: Float? = null
     private var _distances: Map<Long, Float>? = null
+    private var _relevantIds = mutableSetOf<Long>()
+    private var _irrelevantIds = mutableSetOf<Long>()
 
     val signals: List<ChapterSignal> get() = _signals
     val vectors: Map<Long, FloatArray> get() = _vectors
     val distances: Map<Long, Float> get() = _distances ?: findDistances().also { _distances = it }
     val size get() = _signals.size
-    val averageVector: FloatArray get () = _averageVector ?: findAverageVector().also { _averageVector = it }
-    val happenedAt: Instant get () = _happenedAt ?: findHappenedAt().also { _happenedAt = it }
-    val cohesion : Float get () = _cohesion ?: findCohesion().also { _cohesion = it }
+    val averageVector: FloatArray get() = _averageVector ?: findAverageVector().also { _averageVector = it }
+    val happenedAt: Instant get() = _happenedAt ?: findHappenedAt().also { _happenedAt = it }
+    val cohesion: Float get() = _cohesion ?: findCohesion().also { _cohesion = it }
     val chapterId get() = _chapterId
     val linkIds: Set<Long> get() = _linkTally.keys
+    val relevantIds: Set<Long> get() = _relevantIds
+    val irrelevantIds: Set<Long> get() = _irrelevantIds
 
     fun remove(sourceId: Long) {
-        val signal = _signals.firstOrNull { it.source.id == sourceId}
+        if (relevantIds.contains(sourceId)) error("removed relevant signal")
+        val signal = _signals.firstOrNull { it.source.id == sourceId }
         if (signal == null) return
         invalidateCache()
         _vectors.remove(sourceId)
@@ -48,6 +54,7 @@ class ChapterBucket(
     }
 
     fun add(signal: ChapterSignal, vector: FloatArray) {
+        if (irrelevantIds.contains(signal.source.id)) error("added irrelevant signal")
         if (_vectors.contains(signal.source.id)) error("signal is already present in bucket")
         invalidateCache()
         _signals.add(signal)
@@ -81,10 +88,11 @@ class ChapterBucket(
         val removedIds = mutableListOf<Long>()
         val initialOutboundIds = linkIds.toSet()
         do {
-            val (distance, signal) = signals.map {
-                val distance = getDistanceVector(it, vectors.getValue(it.source.id)).magnitude
-                distance to it
-            }.maxBy { it.first }
+            val (distance, signal) = signals.filter { !relevantIds.contains(it.source.id) }
+                .map {
+                    val distance = getDistanceVector(it, vectors.getValue(it.source.id)).magnitude
+                    distance to it
+                }.maxBy { it.first }
             if (distance < CHAPTER_MAX_DISTANCE) break
             remove(signal.source.id)
             removedIds.add(signal.source.id)
@@ -114,11 +122,25 @@ class ChapterBucket(
             textDistance = contentDistance(it),
             linkDistance = outboundDistance(it.linkIds),
             timeDistance = timeDistance(it.source.existedAt),
+            isRelevant = if (relevantIds.contains(it.source.id)) true else null
         )
     }
 
     fun setId(chapterId: Long) {
         _chapterId = chapterId
+    }
+
+    fun updateRelevance(relevantIds: Set<Long>, irrelevantIds: Set<Long>) {
+        _relevantIds.clear()
+        _relevantIds.addAll(relevantIds)
+        _irrelevantIds.clear()
+        _irrelevantIds.addAll(irrelevantIds)
+        val removeIds = irrelevantIds.filter { _vectors.contains(it) }
+        if (removeIds.isEmpty()) return
+        for (id in removeIds) {
+            remove(id)
+        }
+        console.log("removed ${removeIds.size} irrelevant signals")
     }
 
     private fun invalidateCache() {
@@ -138,7 +160,7 @@ class ChapterBucket(
         it.source.id to getDistanceVector(it, vectors.getValue(it.source.id)).magnitude
     }
 
-    private fun findCohesion() = distances.values.sumOf { it.toDouble() }.let { it / size}.toFloat()
+    private fun findCohesion() = distances.values.sumOf { it.toDouble() }.let { it / size }.toFloat()
 
     private fun outboundDistance(linkIds: Set<Long>): Float {
         if (linkIds.isEmpty()) return 0f

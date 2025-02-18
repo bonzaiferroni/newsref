@@ -17,6 +17,7 @@ object ChapterSourceTable : LongIdTable("chapter_source") {
     val textDistance = float("text_distance").nullable()
     val timeDistance = float("time_distance").nullable()
     val linkDistance = float("link_distance").nullable()
+    val isRelevant = bool("is_relevant").nullable()
 }
 
 fun ResultRow.toChapterSource() = ChapterSource(
@@ -30,6 +31,7 @@ fun ResultRow.toChapterSource() = ChapterSource(
     textDistance = this[ChapterSourceTable.textDistance],
     timeDistance = this[ChapterSourceTable.timeDistance],
     linkDistance = this[ChapterSourceTable.linkDistance],
+    isRelevant = this[ChapterSourceTable.isRelevant],
 )
 
 // chapter source info

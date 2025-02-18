@@ -9,6 +9,7 @@ import newsref.db.model.ChapterFinderLog
 import newsref.db.model.ChapterFinderState
 import newsref.db.model.Source
 import newsref.db.services.*
+import newsref.db.tables.ChapterSourceTable.chapterId
 import newsref.model.core.*
 import kotlin.time.*
 import kotlin.time.Duration.Companion.hours
@@ -23,7 +24,7 @@ class ChapterComposer(
     private val chapterComposerService: ChapterComposerService = ChapterComposerService(),
     private val contentService: ContentService = ContentService(),
     private val dataLogService: DataLogService = DataLogService(),
-): StateModule<ChapterFinderState>(ChapterFinderState()) {
+) : StateModule<ChapterFinderState>(ChapterFinderState()) {
     private val excludedIds = mutableListOf<Pair<Long, Instant>>()
     private val buckets = mutableListOf<ChapterBucket>()
 
@@ -59,6 +60,7 @@ class ChapterComposer(
                 val vector = readOrFetchVector(signal.source, model) ?: error("unable to find expected vector")
                 bucket.add(signal, vector)
             }
+            updateRelevance(bucket)
             buckets.add(bucket)
         }
     }
@@ -72,25 +74,27 @@ class ChapterComposer(
             excludedIds.addAll(bucket.linkIds)
         }
 
-        setState { it.copy(
-            exclusions = excludedIds.size,
-            buckets = buckets.size,
-            chapters = buckets.filter { it.chapterId != null }.size
-        )}
+        setState {
+            it.copy(
+                exclusions = excludedIds.size,
+                buckets = buckets.size,
+                chapters = buckets.filter { it.chapterId != null }.size
+            )
+        }
 
         val origin = chapterComposerService.findNextSignal(excludedIds)
         if (origin == null) {
-            setState { it.copy(emptySignals = it.emptySignals + 1)}
+            setState { it.copy(emptySignals = it.emptySignals + 1) }
             delay(1.minutes)
             return
         }
-        setState { it.copy(signalDate = origin.source.seenAt)}
+        setState { it.copy(signalDate = origin.source.seenAt) }
         // console.log("origin: ${origin.source.id} -> ${origin.source.type}")
         if (origin.source.type == SourceType.ARTICLE) {
-            setState { it.copy(secondarySignals = it.secondarySignals + 1)}
+            setState { it.copy(secondarySignals = it.secondarySignals + 1) }
             findSecondaryBucket(origin, model)
         } else {
-            setState { it.copy(primarySignals = it.primarySignals + 1)}
+            setState { it.copy(primarySignals = it.primarySignals + 1) }
             findPrimaryBucket(origin, model)
         }
     }
@@ -148,10 +152,11 @@ class ChapterComposer(
             return
         }
 
-        val result = buckets.map {
-            val distance = it.getDistanceVector(signal, vector).magnitude
-            Pair(distance, it)
-        }.minByOrNull { it.first }
+        val result = buckets.filter { !it.irrelevantIds.contains(signal.source.id) }
+            .map {
+                val distance = it.getDistanceVector(signal, vector).magnitude
+                Pair(distance, it)
+            }.minByOrNull { it.first }
         if (result == null || result.first > CHAPTER_MAX_DISTANCE) {
             // console.log("adding new bucket")
             val bucket = ChapterBucket()
@@ -198,23 +203,26 @@ class ChapterComposer(
 
     private suspend fun readOrFetchVector(source: Source, model: VectorModel): FloatArray? {
         val cachedVector = sourceVectorService.readVector(source.id, model.id)
-        if (cachedVector != null) { return cachedVector }
+        if (cachedVector != null) {
+            return cachedVector
+        }
         val wordCount = source.contentCount
         val content = contentService.readSourceContentText(source.id).take(EMBEDDING_MAX_CHARACTERS)
         if (content.length < EMBEDDING_MIN_CHARACTERS || wordCount == null || wordCount < EMBEDDING_MIN_WORDS) {
-            setState { it.copy(contentsMissing = it.contentsMissing + 1)}
-                return null
+            setState { it.copy(contentsMissing = it.contentsMissing + 1) }
+            return null
         }
         // console.log("fetching vector")
-        setState { it.copy(vectorsFetched = it.vectorsFetched + 1)}
+        setState { it.copy(vectorsFetched = it.vectorsFetched + 1) }
         val vector = vectorClient.fetchVector(source, model.name, content) ?: error("unable to fetch vector")
         sourceVectorService.insertVector(source.id, model.name, vector)
         return vector
     }
 
     private suspend fun checkBucket(bucket: ChapterBucket) {
+        updateRelevance(bucket)
+
         val removedIds = bucket.shake()
-        if (bucket.size == 0) console.log("ey shouldn't happen")
         val chapterId = bucket.chapterId
 
         if (bucket.size < CHAPTER_MIN_ARTICLES) {
@@ -222,7 +230,7 @@ class ChapterComposer(
                 console.log("deleted chapter")
                 chapterComposerService.deleteChapter(chapterId)
                 buckets.remove(bucket)
-                setState { it.copy(chaptersDeleted = it.chaptersDeleted + 1)}
+                setState { it.copy(chaptersDeleted = it.chaptersDeleted + 1) }
             }
         } else {
             val sources = bucket.getPrimarySources() + bucket.getSecondarySources()
@@ -242,7 +250,7 @@ class ChapterComposer(
                     sources = sources,
                     vector = bucket.averageVector
                 )
-                setState { it.copy(chaptersUpdated = it.chaptersUpdated + 1)}
+                setState { it.copy(chaptersUpdated = it.chaptersUpdated + 1) }
             } else {
                 console.log("created chapter!")
                 val chapterId = chapterComposerService.createChapter(
@@ -258,9 +266,18 @@ class ChapterComposer(
                     vector = bucket.averageVector
                 )
                 bucket.setId(chapterId)
-                setState { it.copy(chaptersCreated = it.chaptersCreated + 1)}
+                setState { it.copy(chaptersCreated = it.chaptersCreated + 1) }
             }
         }
+    }
+
+    private suspend fun updateRelevance(bucket: ChapterBucket) {
+        val chapterId = bucket.chapterId
+        if (chapterId == null) return
+        val signals = chapterComposerService.readCurrentRelevance(chapterId)
+        val relevantIds = signals.filter { it.second }.map { it.first }.toSet()
+        val irrelevantIds = signals.filter { !it.second }.map { it.first }.toSet()
+        bucket.updateRelevance(relevantIds, irrelevantIds)
     }
 }
 

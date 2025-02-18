@@ -10,7 +10,9 @@ plugins {
 kotlin {
     js().browser()
     jvm()
-    wasmJs()
+    wasmJs {
+        browser()
+    }
     sourceSets {
         val commonMain by getting {
             dependencies {

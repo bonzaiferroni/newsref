@@ -26,7 +26,7 @@ class ChapterWatcher(
             console.logTrace("watching chapters")
             while (true) {
                 setTitle()
-                delay(10.seconds)
+                delay(60.seconds)
             }
         }
     }

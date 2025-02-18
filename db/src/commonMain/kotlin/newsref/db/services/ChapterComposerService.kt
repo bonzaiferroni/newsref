@@ -10,8 +10,11 @@ import newsref.db.model.ChapterSourceType
 import newsref.db.model.Source
 import newsref.db.tables.*
 import newsref.db.utils.toLocalDateTimeUtc
+import newsref.model.Api.source
 import org.jetbrains.exposed.sql.*
 import org.jetbrains.exposed.sql.SqlExpressionBuilder.eq
+import org.jetbrains.exposed.sql.SqlExpressionBuilder.notInList
+import org.jetbrains.exposed.sql.SqlExpressionBuilder.isNull
 import kotlin.time.Duration.Companion.days
 
 class ChapterComposerService : DbService() {
@@ -98,7 +101,7 @@ class ChapterComposerService : DbService() {
             it.fromModel(chapter)
             it[ChapterTable.vector] = vector
         }.value
-        deleteAndInsertSources(chapterId, sources)
+        updateSources(chapterId, sources)
         chapterId
     }
 
@@ -130,20 +133,30 @@ class ChapterComposerService : DbService() {
             if ((0..9).random() == 0)
                 it[ChapterTable.title] = null
         }
-        deleteAndInsertSources(chapterId, sources)
+        updateSources(chapterId, sources)
         unlinkChildren(chapterId)
     }
 
-    fun Transaction.deleteAndInsertSources(chapterId: Long, sources: List<ChapterSource>) {
-        ChapterSourceTable.deleteWhere { ChapterSourceTable.chapterId eq chapterId }
-        ChapterSourceTable.batchInsert(sources) {
-            this[ChapterSourceTable.chapterId] = chapterId
-            this[ChapterSourceTable.sourceId] = it.sourceId
-            this[ChapterSourceTable.type] = it.type
-            this[ChapterSourceTable.distance] = it.distance
-            this[ChapterSourceTable.linkDistance] = it.linkDistance
-            this[ChapterSourceTable.timeDistance] = it.timeDistance
-            this[ChapterSourceTable.textDistance] = it.textDistance
+    fun Transaction.updateSources(chapterId: Long, sources: List<ChapterSource>) {
+        val sourceIds = sources.map { it.sourceId }
+        ChapterSourceTable.deleteWhere {
+            ChapterSourceTable.chapterId.eq(chapterId) and
+                    ChapterSourceTable.sourceId.notInList(sourceIds) and
+                    ChapterSourceTable.isRelevant.isNull()
+        }
+        for (source in sources) {
+            ChapterSourceTable.upsert(where = {
+                ChapterSourceTable.chapterId.eq(source.chapterId) and ChapterSourceTable.sourceId.eq(source.sourceId)
+            }) {
+                it[ChapterSourceTable.chapterId] = source.chapterId
+                it[ChapterSourceTable.sourceId] = source.sourceId
+                it[ChapterSourceTable.type] = source.type
+                it[ChapterSourceTable.distance] = source.distance
+                it[ChapterSourceTable.linkDistance] = source.linkDistance
+                it[ChapterSourceTable.timeDistance] = source.timeDistance
+                it[ChapterSourceTable.textDistance] = source.textDistance
+                it[ChapterSourceTable.isRelevant] = source.isRelevant
+            }
         }
     }
 
@@ -210,6 +223,12 @@ class ChapterComposerService : DbService() {
         ChapterSourceTable.deleteWhere {
             ChapterSourceTable.chapterId.eq(chapterId) and ChapterSourceTable.sourceId.eq(sourceId)
         }
+    }
+
+    suspend fun readCurrentRelevance(chapterId: Long) = dbQuery {
+        ChapterSourceTable.select(ChapterSourceTable.id, ChapterSourceTable.isRelevant)
+            .where { ChapterSourceTable.chapterId.eq(chapterId) and ChapterSourceTable.isRelevant.isNotNull() }
+            .map { it[ChapterSourceTable.id].value to it[ChapterSourceTable.isRelevant]!! }
     }
 }
 
