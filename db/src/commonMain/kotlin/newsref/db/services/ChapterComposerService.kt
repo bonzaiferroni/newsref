@@ -146,9 +146,9 @@ class ChapterComposerService : DbService() {
         }
         for (source in sources) {
             ChapterSourceTable.upsert(where = {
-                ChapterSourceTable.chapterId.eq(source.chapterId) and ChapterSourceTable.sourceId.eq(source.sourceId)
+                ChapterSourceTable.chapterId.eq(chapterId) and ChapterSourceTable.sourceId.eq(source.sourceId)
             }) {
-                it[ChapterSourceTable.chapterId] = source.chapterId
+                it[ChapterSourceTable.chapterId] = chapterId
                 it[ChapterSourceTable.sourceId] = source.sourceId
                 it[ChapterSourceTable.type] = source.type
                 it[ChapterSourceTable.distance] = source.distance

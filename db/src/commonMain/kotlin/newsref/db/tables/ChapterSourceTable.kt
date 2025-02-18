@@ -18,6 +18,10 @@ object ChapterSourceTable : LongIdTable("chapter_source") {
     val timeDistance = float("time_distance").nullable()
     val linkDistance = float("link_distance").nullable()
     val isRelevant = bool("is_relevant").nullable()
+
+    init {
+        uniqueIndex("unique_chapter_source", chapterId, sourceId)
+    }
 }
 
 fun ResultRow.toChapterSource() = ChapterSource(
