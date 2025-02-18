@@ -16,9 +16,9 @@ class ChapterWatcher(
 ) {
 
     private val aiClient = AiClient(
-        url = "https://api-inference.huggingface.co/models/meta-llama/Llama-3.3-70B-Instruct/v1/chat/completions",
-        model = "meta-llama/Llama-3.3-70B-Instruct",
-        token = env.read("HF_TOKEN")
+        url = "https://generativelanguage.googleapis.com/v1beta/openai/chat/completions",
+        model = "gemini-2.0-flash",
+        token = env.read("GEMINI_KEY")
     )
 
     fun start() {
@@ -26,7 +26,7 @@ class ChapterWatcher(
             console.logTrace("watching chapters")
             while (true) {
                 setTitle()
-                delay(5.seconds)
+                delay(10.seconds)
             }
         }
     }

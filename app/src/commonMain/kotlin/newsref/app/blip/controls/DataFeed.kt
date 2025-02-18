@@ -9,7 +9,10 @@ import kotlinx.collections.immutable.ImmutableList
 import newsref.app.blip.theme.*
 
 @Composable
-fun <T> DataFeed(items: ImmutableList<T>, content: @Composable (T) -> Unit) {
+fun <T> DataFeed(
+    items: ImmutableList<T>,
+    content: @Composable (T) -> Unit
+) {
     val listState = rememberLazyListState()
 
     LazyColumn(

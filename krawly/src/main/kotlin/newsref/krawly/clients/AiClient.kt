@@ -47,7 +47,6 @@ class AiClient(
                 }
                 setBody(request)
             }
-
             if (response.status == HttpStatusCode.OK) {
                 return response.body<Received>()
             } else {
@@ -58,7 +57,7 @@ class AiClient(
             globalConsole.logError("AiClient", "Request timed out")
             return null
         } catch (e: NoTransformationFoundException) {
-            globalConsole.logError("AiClient", "no transformation? 😕")
+            globalConsole.logError("AiClient", "no transformation? 😕\n${e.message}")
             return null
         }
     }
@@ -109,7 +108,7 @@ enum class AiRole {
 
 @Serializable
 data class AiResponse(
-    val id: String,
+    val id: String? = null,
     val created: Int,
     val model: String,
     val choices: List<Choice>,
