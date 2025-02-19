@@ -32,6 +32,7 @@ dependencies {
 	testImplementation(kotlin("test"))
 	testImplementation("org.jetbrains.kotlin:kotlin-test-junit5:$kotlin_version")
     testImplementation(project(":db"))
+	testImplementation("org.testcontainers:postgresql:1.20.2")
 }
 
 application {
