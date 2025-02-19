@@ -7,6 +7,7 @@ import newsref.db.model.Relevance
 import newsref.db.services.*
 import newsref.krawly.clients.GeminiClient
 import newsref.krawly.clients.promptTemplate
+import newsref.model.Api.chapter
 import kotlin.time.Duration.Companion.seconds
 
 private val console = globalConsole.getHandle("ChapterWatcher")
@@ -41,18 +42,26 @@ class ChapterWatcher(
         val currentSources = chapterComposerService.readChapterSourceInfos(chapterId)
             .sortedBy { it.chapterSource.textDistance }
             .take(25)
+//        val headlines = currentSources.filter { it.chapterSource.relevance == null }
+//            .mapNotNull { signal -> signal.source.title?.let { "${signal.chapterSource.id}: $it" } }
+//            .joinToString("\n")
         val headlines = currentSources.filter { it.chapterSource.relevance == null }
-            .mapNotNull { signal -> signal.source.title?.let { "${signal.chapterSource.id}: $it" } }
+            .mapNotNull { signal -> signal.source.title }
             .joinToString("\n")
         if (headlines.isEmpty()) error("No null relevance found")
 
-        val prompt = chapter.title?.let {
-            promptTemplate(
-                "../docs/chapter_watcher-update_title.txt",
-                "title" to it,
-                "headlines" to headlines
-            )
-        } ?: promptTemplate(
+//        val prompt = chapter.title?.let {
+//            promptTemplate(
+//                "../docs/chapter_watcher-update_title.txt",
+//                "title" to it,
+//                "headlines" to headlines
+//            )
+//        } ?: promptTemplate(
+//            "../docs/chapter_watcher-new_title.txt",
+//            "headlines" to headlines
+//        )
+
+        val prompt = promptTemplate(
             "../docs/chapter_watcher-new_title.txt",
             "headlines" to headlines
         )
@@ -64,25 +73,25 @@ class ChapterWatcher(
         )
 
         chapterComposerService.updateChapterDescription(newChapter)
-        val chapterSources = currentSources.map {
-            val chapterSource = it.chapterSource
-            val relevance = when {
-                response.relevantIds.contains(chapterSource.id) -> Relevance.Relevant
-                response.irrelevantIds.contains(chapterSource.id) -> Relevance.Irrelevant
-                else -> Relevance.Unsure
-            }
-            chapterSource.copy(relevance = relevance)
-        }
-        chapterComposerService.updateChapterSourceRelevance(chapterSources)
+//        val chapterSources = currentSources.map {
+//            val chapterSource = it.chapterSource
+//            val relevance = when {
+//                response.relevantIds.contains(chapterSource.id) -> Relevance.Relevant
+//                response.irrelevantIds.contains(chapterSource.id) -> Relevance.Irrelevant
+//                else -> Relevance.Unsure
+//            }
+//            chapterSource.copy(relevance = relevance)
+//        }
+//        chapterComposerService.updateChapterSourceRelevance(chapterSources)
 
         console.log("Title: ${newChapter.title?.take(50)}")
-        console.log("Updated relevance: ${chapterSources.size}")
+        // console.log("Updated relevance: ${chapterSources.size}")
     }
 }
 
 @Serializable
 data class TitleResponse(
     val title: String,
-    val relevantIds: Set<Long>,
-    val irrelevantIds: Set<Long>,
+//    val relevantIds: Set<Long>,
+//    val irrelevantIds: Set<Long>,
 )

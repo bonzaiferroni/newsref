@@ -4,7 +4,6 @@ import newsref.db.DbTest
 import org.jetbrains.exposed.sql.insert
 import org.jetbrains.exposed.sql.transactions.transaction
 import kotlin.test.BeforeTest
-import kotlin.test.Test
 
 class HostTableTest : DbTest() {
 	@BeforeTest

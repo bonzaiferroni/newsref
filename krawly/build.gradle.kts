@@ -31,6 +31,7 @@ dependencies {
 	// Add dependencies for unit testing
 	testImplementation(kotlin("test"))
 	testImplementation("org.jetbrains.kotlin:kotlin-test-junit5:$kotlin_version")
+    testImplementation(project(":db"))
 }
 
 application {

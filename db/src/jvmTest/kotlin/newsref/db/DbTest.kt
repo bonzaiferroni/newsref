@@ -4,13 +4,13 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.runBlocking
 import org.jetbrains.exposed.sql.Transaction
 import org.jetbrains.exposed.sql.transactions.experimental.newSuspendedTransaction
-import kotlin.test.AfterTest
-import kotlin.test.BeforeTest
+import org.junit.After
+import org.junit.Before
 
 open class DbTest(
 	var useRealDb: Boolean = false,
 ) {
-	@BeforeTest
+	@Before
 	fun setup() {
 		val env = readEnvFromDirectory("../.env")
 		if (useRealDb) {
@@ -21,11 +21,11 @@ open class DbTest(
 		}
 	}
 
-	@AfterTest
+	@After
 	fun teardown() {
 		if (!useRealDb) TestDatabase.cleanupDatabase(*dbTables.toTypedArray())
 	}
 
 	protected fun <T> dbQuery(block: suspend Transaction.() -> T): T =
-		runBlocking { newSuspendedTransaction(Dispatchers.IO) { block() } }
+        runBlocking { newSuspendedTransaction(Dispatchers.IO) { block() } }
 }

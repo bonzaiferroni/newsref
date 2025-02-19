@@ -3,16 +3,19 @@ package newsref.krawly.agents
 import kotlinx.coroutines.runBlocking
 import newsref.db.globalConsole
 import newsref.db.model.FetchStrategy
+import newsref.db.services.ChapterComposerService
 import kotlin.test.Test
 import kotlin.time.Duration
 import kotlin.time.measureTime
 
 private var console = globalConsole.getHandle("test")
 
-class FetchStrategyTest {
+class FetchStrategyTest(
+	private val chapterComposerService: ChapterComposerService = ChapterComposerService(),
+) {
 	@Test
 	fun `explore code`() = coroutineScope {
-
+		val topNullRelevance = chapterComposerService.readTopNullRelevance()
 	}
 }
 
