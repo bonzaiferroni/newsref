@@ -4,7 +4,13 @@ import newsref.db.model.ChapterSource
 import newsref.db.model.ChapterSourceInfo
 import newsref.db.model.Relevance
 import newsref.db.model.ChapterSourceType
+import newsref.db.tables.ChapterSourceTable.relevance
+import newsref.db.tables.ChapterSourceTable.sourceId
+import newsref.db.utils.isNullOrNeq
+import org.jetbrains.exposed.dao.id.EntityID
 import org.jetbrains.exposed.dao.id.LongIdTable
+import org.jetbrains.exposed.sql.NotInSubQueryOp
+import org.jetbrains.exposed.sql.Op
 import org.jetbrains.exposed.sql.ReferenceOption
 import org.jetbrains.exposed.sql.ResultRow
 
@@ -41,7 +47,12 @@ fun ResultRow.toChapterSource() = ChapterSource(
 
 // chapter source info
 
-fun ResultRow.toChapterSourceInfo() = ChapterSourceInfo(
+internal fun ResultRow.toChapterSourceInfo() = ChapterSourceInfo(
     chapterSource = this.toChapterSource(),
     source = this.toSource(),
 )
+
+//internal fun SourceTable.notInChapter(): NotInSubQueryOp<EntityID<Long>> {
+//    val subquery = ChapterSourceTable.select(sourceId).where { relevance.isNullOrNeq(Relevance.Irrelevant) }
+//    return this.id.notInSubQuery(subQuery)
+//}

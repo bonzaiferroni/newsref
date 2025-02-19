@@ -17,6 +17,8 @@ import newsref.db.tables.ChapterSourceTable.relevance
 import newsref.db.tables.ChapterSourceTable.sourceId
 import newsref.db.tables.ChapterSourceTable.textDistance
 import newsref.db.tables.ChapterSourceTable.timeDistance
+import newsref.db.utils.isNullOrEq
+import newsref.db.utils.isNullOrNeq
 import newsref.db.utils.toLocalDateTimeUtc
 import newsref.db.utils.toSqlString
 import newsref.model.Api.source
@@ -59,8 +61,7 @@ class ChapterComposerService : DbService() {
     }
 
     suspend fun findNextSignal(excludedIds: List<Long>) = dbQuery {
-        val subquery = ChapterSourceTable.select(sourceId)
-            .where { relevance.isNull() or relevance.neq(Relevance.Irrelevant) }
+        val subquery = ChapterSourceTable.select(sourceId).where { relevance.isNullOrNeq(Relevance.Irrelevant) }
         SourceTable.leftJoin(ChapterSourceTable).select(SourceTable.columns)
             .where {
                 SourceTable.score.greaterEq(2) and
@@ -144,7 +145,7 @@ class ChapterComposerService : DbService() {
         ChapterSourceTable.deleteWhere {
             ChapterSourceTable.chapterId.eq(chapterId) and
                     sourceId.notInList(sourceIds) and
-                    (relevance.isNull() or relevance.eq(Relevance.Unsure))
+                    relevance.isNullOrEq(Relevance.Unsure)
         }
         for (source in sources) {
             ChapterSourceTable.upsert(
@@ -192,7 +193,7 @@ class ChapterComposerService : DbService() {
             .where {
                 ChapterSourceTable.chapterId.eq(chapterId) and
                         ChapterSourceTable.type.eq(ChapterSourceType.Secondary) and
-                        (ChapterSourceTable.relevance.isNull() or ChapterSourceTable.relevance.neq(Relevance.Irrelevant))
+                        ChapterSourceTable.relevance.isNullOrNeq(Relevance.Irrelevant)
             }
             .map { it.toChapterSignal() }
     }

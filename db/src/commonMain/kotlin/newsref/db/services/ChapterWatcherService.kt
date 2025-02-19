@@ -3,6 +3,7 @@ package newsref.db.services
 import newsref.db.DbService
 import newsref.db.model.Chapter
 import newsref.db.model.ChapterSource
+import newsref.db.model.ChapterSourceType
 import newsref.db.tables.ChapterSourceTable
 import newsref.db.tables.ChapterSourceTable.chapterId
 import newsref.db.tables.ChapterSourceTable.sourceId
@@ -36,7 +37,7 @@ class ChapterWatcherService : DbService() {
         val table = ChapterSourceTable
         val idCount = table.chapterId.count()
         table.select(table.chapterId, idCount)
-            .where { table.relevance.isNull() }
+            .where { table.relevance.isNull() and table.type.eq(ChapterSourceType.Secondary) }
             .groupBy(table.chapterId)
             .orderBy(idCount, SortOrder.DESC)
             .firstOrNull()?.let { Pair(it[table.chapterId].value, it[idCount])}
