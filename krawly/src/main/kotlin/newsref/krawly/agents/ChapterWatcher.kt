@@ -58,7 +58,7 @@ class ChapterWatcher(
         val (chapterId, nullRelevanceCount) = topNullRelevance
         val chapter = service.readChapter(chapterId)
             ?: error("chapter with id doesn't exist: $chapterId")
-        val currentSources = service.readChapterSourceInfos(chapterId)
+        val currentSources = service.readNullRelevanceChapterSourceInfos(chapterId)
             .sortedBy { it.chapterSource.textDistance }
             .take(100)
         val headlines = currentSources.filter { it.chapterSource.relevance == null }
@@ -93,11 +93,16 @@ class ChapterWatcher(
         }
         service.updateChapterSourceRelevance(chapterSources)
         println(
-            "Relevant: ${response.relevant.size} Irrelevant: ${response.irrelevant.size} Unsure: ${response.unsure.size}\n" +
-            "Title: $title\n" +
-            "Relevant:\n" + response.relevant.joinToString("\n") { "${if (headlines.containsSimilar(it)) "✅" else "☠"} $it" } +
-            "\n\nIrrelevant:\n" + response.irrelevant.joinToString("\n") { "${if (headlines.containsSimilar(it)) "✅" else "☠"} $it" } +
-            "\n\nUnsure:\n" + response.unsure.joinToString("\n") { "${if (headlines.containsSimilar(it)) "✅" else "☠"} $it" }
+            "Headlines: ${headlines.size} " +
+                    "Relevant: ${response.relevant.size} Irrelevant: ${response.irrelevant.size} " +
+                    "Unsure: ${response.unsure.size}\n" +
+                    "Title: $title\n" +
+                    "Relevant:\n" + response.relevant.joinToString("\n")
+            { "${if (headlines.containsSimilar(it)) "✅" else "☠"} $it" } +
+                    "\n\nIrrelevant:\n" + response.irrelevant.joinToString("\n")
+            { "${if (headlines.containsSimilar(it)) "✅" else "☠"} $it" } +
+                    "\n\nUnsure:\n" + response.unsure.joinToString("\n")
+            { "${if (headlines.containsSimilar(it)) "✅" else "☠"} $it" }
         )
     }
 }

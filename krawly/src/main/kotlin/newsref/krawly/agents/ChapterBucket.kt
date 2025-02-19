@@ -2,6 +2,7 @@ package newsref.krawly.agents
 
 import kotlinx.datetime.Instant
 import newsref.db.*
+import newsref.db.model.Chapter
 import newsref.db.services.*
 import newsref.db.utils.*
 import newsref.db.utils.distance
@@ -16,8 +17,9 @@ import kotlin.math.sqrt
 private val console = globalConsole.getHandle("ChapterBucket")
 
 class ChapterBucket(
-    private var _chapterId: Long? = null
+    private var _chapter: Chapter? = null
 ) {
+    private var _chapterId: Long? = null
     private val _signals = mutableListOf<ChapterSignal>()
     private val _vectors = mutableMapOf<Long, FloatArray>()
     private var _averageVector: FloatArray? = null
@@ -35,7 +37,8 @@ class ChapterBucket(
     val averageVector: FloatArray get() = _averageVector ?: findAverageVector().also { _averageVector = it }
     val happenedAt: Instant get() = _happenedAt ?: findHappenedAt().also { _happenedAt = it }
     val cohesion: Float get() = _cohesion ?: findCohesion().also { _cohesion = it }
-    val chapterId get() = _chapterId
+    val chapterId get() = _chapterId ?: _chapter?.id
+    val title get() = _chapter?.title
     val linkIds: Set<Long> get() = _linkTally.keys
     val relevantIds: Set<Long> get() = _relevantIds
     val irrelevantIds: Set<Long> get() = _irrelevantIds

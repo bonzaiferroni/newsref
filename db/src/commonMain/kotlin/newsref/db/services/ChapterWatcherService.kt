@@ -50,6 +50,14 @@ class ChapterWatcherService : DbService() {
             .map { it.toChapterSourceInfo() }
     }
 
+    suspend fun readNullRelevanceChapterSourceInfos(chapterId: Long) = dbQuery {
+        ChapterSourceTable.leftJoin(SourceTable)
+            .select(ChapterSourceTable.columns + SourceTable.columns)
+            .where { ChapterSourceTable.chapterId.eq(chapterId) and ChapterSourceTable.relevance.isNull() }
+            .orderBy(SourceTable.score, SortOrder.DESC_NULLS_LAST)
+            .map { it.toChapterSourceInfo() }
+    }
+
     suspend fun updateChapterDescription(
         chapter: Chapter,
     ) = dbQuery {
