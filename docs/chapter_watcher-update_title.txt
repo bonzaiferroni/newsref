@@ -1,9 +1,0 @@
-There is the title of a news event:
-<|title|>
-
-Here are a list of headlines from articles we've discovered that may be related to the event. Each headline is associated with an id:
-<|headlines|>
-
-For the title property of your json response, update the title. If it is already sufficient, you may leave it the way it is. It should be no more than 100 characters long and include only the most relevant details. Shorter is better.
-For the relevant_ids property of your json response, give a list of ids of headlines that seem relevant to the event.
-For the irrelevant_ids property of your json response, give a list of ids of headlines that seem irrelevant to the event.

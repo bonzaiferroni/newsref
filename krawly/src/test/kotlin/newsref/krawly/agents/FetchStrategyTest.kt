@@ -15,7 +15,6 @@ class FetchStrategyTest(
 ) {
 	@Test
 	fun `explore code`() = coroutineScope {
-		val topNullRelevance = chapterComposerService.readTopNullRelevance()
 	}
 }
 

@@ -58,11 +58,13 @@ class ChapterComposerService : DbService() {
     }
 
     suspend fun findNextSignal(excludedIds: List<Long>) = dbQuery {
+        val subquery = ChapterSourceTable.select(ChapterSourceTable.sourceId)
+            .where { ChapterSourceTable.relevance.eq(Relevance.Relevant) }
         SourceTable.leftJoin(ChapterSourceTable).select(SourceTable.columns)
             .where {
-                ChapterSourceTable.sourceId.isNull() and
-                        SourceTable.score.greaterEq(2) and
-                        SourceTable.id.notInList(excludedIds)
+                SourceTable.score.greaterEq(2) and
+                        SourceTable.id.notInList(excludedIds) and
+                        SourceTable.id.notInSubQuery(subquery)
             }
             .orderBy(SourceTable.seenAt, SortOrder.DESC)
             .firstOrNull()?.toSource()?.let { source ->
@@ -113,15 +115,6 @@ class ChapterComposerService : DbService() {
         chapterId
     }
 
-    suspend fun updateChapterDescription(
-        chapter: Chapter,
-    ) = dbQuery {
-        ChapterTable.update({ ChapterTable.id.eq(chapter.id) }) {
-            it[ChapterTable.title] = chapter.title
-            it[ChapterTable.summary] = chapter.summary
-        }
-    }
-
     suspend fun updateChapterAndSources(
         chapterId: Long,
         score: Int,
@@ -153,9 +146,9 @@ class ChapterComposerService : DbService() {
                     (relevance.isNull() or relevance.eq(Relevance.Unsure))
         }
         for (source in sources) {
-            ChapterSourceTable.upsert(where = {
-                ChapterSourceTable.chapterId.eq(chapterId) and ChapterSourceTable.sourceId.eq(source.sourceId)
-            }) {
+            ChapterSourceTable.upsert(
+                ChapterSourceTable.chapterId, ChapterSourceTable.sourceId
+            ) {
                 it[ChapterSourceTable.chapterId] = chapterId
                 it[sourceId] = source.sourceId
                 it[type] = source.type
@@ -179,50 +172,11 @@ class ChapterComposerService : DbService() {
         }
     }
 
-    suspend fun updateChapterSourceRelevance(chapterSources: List<ChapterSource>) = dbQuery {
-        for (chapterSource in chapterSources) {
-            ChapterSourceTable.update({
-                sourceId.eq(chapterSource.sourceId) and chapterId.eq(chapterSource.chapterId)
-            }) {
-                it[relevance] = chapterSource.relevance
-            }
-        }
-    }
-
     suspend fun readChapters(limit: Int = 100) = dbQuery {
         ChapterTable.select(chapterColumns)
             .orderBy(ChapterTable.score, SortOrder.DESC)
             .limit(limit)
             .map { it.toChapter() }
-    }
-
-    suspend fun readChapter(chapterId: Long) = dbQuery {
-        ChapterTable.select(chapterColumns)
-            .where { ChapterTable.id.eq(chapterId) }
-            .firstOrNull()?.toChapter()
-    }
-
-    suspend fun readChapterSourceInfos(chapterId: Long) = dbQuery {
-        ChapterSourceTable.leftJoin(SourceTable)
-            .select(ChapterSourceTable.columns + SourceTable.columns)
-            .where { ChapterSourceTable.chapterId.eq(chapterId) }
-            .orderBy(SourceTable.score, SortOrder.DESC_NULLS_LAST)
-            .map { it.toChapterSourceInfo() }
-    }
-
-    suspend fun readTitleIsNull() = dbQuery {
-        ChapterTable.select(chapterColumns)
-            .where { ChapterTable.title.isNull() }
-            .map { it.toChapter() }
-    }
-
-    suspend fun readTopNullRelevance() = dbQuery {
-        val idCount = ChapterSourceTable.chapterId.count()
-        ChapterSourceTable.select(ChapterSourceTable.chapterId, idCount)
-            .where { ChapterSourceTable.relevance.isNull() }
-            .groupBy(ChapterSourceTable.chapterId)
-            .orderBy(idCount, SortOrder.DESC)
-            .firstOrNull()?.let { Pair(it[ChapterSourceTable.chapterId].value, it[idCount])}
     }
 
     suspend fun readCurrentChapters(epochs: Int) = dbQuery {

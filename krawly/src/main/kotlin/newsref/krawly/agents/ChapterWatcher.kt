@@ -7,15 +7,13 @@ import newsref.db.model.Relevance
 import newsref.db.services.*
 import newsref.krawly.clients.GeminiClient
 import newsref.krawly.clients.promptTemplate
-import newsref.model.Api.chapter
 import kotlin.time.Duration.Companion.seconds
 
 private val console = globalConsole.getHandle("ChapterWatcher")
 
 class ChapterWatcher(
     env: Environment,
-    private val sourceVectorService: SourceVectorService = SourceVectorService(),
-    private val chapterComposerService: ChapterComposerService = ChapterComposerService(),
+    private val service: ChapterWatcherService = ChapterWatcherService(),
 ) {
 
     private val client = GeminiClient(env.read("GEMINI_KEY"))
@@ -24,74 +22,113 @@ class ChapterWatcher(
         CoroutineScope(Dispatchers.IO).launch {
             console.logTrace("watching chapters")
             while (true) {
-                findNullRelevance()
+                findRelevance()
+                delay(60.seconds)
+                findTitle()
                 delay(60.seconds)
             }
         }
     }
 
-    private suspend fun findNullRelevance() {
-        val topNullRelevance = chapterComposerService.readTopNullRelevance()
-        if (topNullRelevance == null || topNullRelevance.second == 0L) {
-            console.log("No null relevance")
-            return
-        }
-        val (chapterId, nullRelevanceCount) = topNullRelevance
-        val chapter = chapterComposerService.readChapter(chapterId)
-            ?: error("chapter with id doesn't exist: $chapterId")
-        val currentSources = chapterComposerService.readChapterSourceInfos(chapterId)
+    private suspend fun findTitle() {
+        val chapter = service.readTopNullTitle()
+        if (chapter == null) return
+
+        val currentSources = service.readChapterSourceInfos(chapter.id)
             .sortedBy { it.chapterSource.textDistance }
             .take(25)
-//        val headlines = currentSources.filter { it.chapterSource.relevance == null }
-//            .mapNotNull { signal -> signal.source.title?.let { "${signal.chapterSource.id}: $it" } }
-//            .joinToString("\n")
-        val headlines = currentSources.filter { it.chapterSource.relevance == null }
-            .mapNotNull { signal -> signal.source.title }
-            .joinToString("\n")
-        if (headlines.isEmpty()) error("No null relevance found")
 
-//        val prompt = chapter.title?.let {
-//            promptTemplate(
-//                "../docs/chapter_watcher-update_title.txt",
-//                "title" to it,
-//                "headlines" to headlines
-//            )
-//        } ?: promptTemplate(
-//            "../docs/chapter_watcher-new_title.txt",
-//            "headlines" to headlines
-//        )
+        val headlines = currentSources.mapNotNull { signal -> signal.source.title }.joinToString("\n")
+        if (headlines.isEmpty()) return
 
         val prompt = promptTemplate(
-            "../docs/chapter_watcher-new_title.txt",
+            "../docs/chapter_watcher-create_title.txt",
             "headlines" to headlines
         )
 
         val response: TitleResponse = client.requestJson(prompt) ?: return
+        service.updateChapterDescription(chapter.copy(title = response.title))
+        console.log("Title: ${response.title.take(50)}")
+    }
 
-        val newChapter = chapter.copy(
-            title = response.title,
+    internal suspend fun findRelevance() {
+        val topNullRelevance = service.readTopNullRelevance()
+        if (topNullRelevance == null || topNullRelevance.second == 0L) return
+
+        val (chapterId, nullRelevanceCount) = topNullRelevance
+        val chapter = service.readChapter(chapterId)
+            ?: error("chapter with id doesn't exist: $chapterId")
+        val currentSources = service.readChapterSourceInfos(chapterId)
+            .sortedBy { it.chapterSource.textDistance }
+            .take(100)
+        val headlines = currentSources.filter { it.chapterSource.relevance == null }
+            .mapNotNull { signal -> signal.source.title?.replace("\n", "") }
+        if (headlines.isEmpty()) return
+
+        val title = chapter.title ?: currentSources.filter { it.source.title != null }
+            .sortedBy { it.chapterSource.textDistance }
+            .firstOrNull()?.source?.title
+
+        if (title == null) return
+
+        val prompt = promptTemplate(
+            "../docs/chapter_watcher-sort_relevance.txt",
+            "title" to title,
+            "headlines" to headlines.joinToString("\n")
         )
 
-        chapterComposerService.updateChapterDescription(newChapter)
-//        val chapterSources = currentSources.map {
-//            val chapterSource = it.chapterSource
-//            val relevance = when {
-//                response.relevantIds.contains(chapterSource.id) -> Relevance.Relevant
-//                response.irrelevantIds.contains(chapterSource.id) -> Relevance.Irrelevant
-//                else -> Relevance.Unsure
-//            }
-//            chapterSource.copy(relevance = relevance)
-//        }
-//        chapterComposerService.updateChapterSourceRelevance(chapterSources)
+        val response: RelevanceResponse = client.requestJson(prompt) ?: return
 
-        console.log("Title: ${newChapter.title?.take(50)}")
-        // console.log("Updated relevance: ${chapterSources.size}")
+        val chapterSources = currentSources.map {
+            val (chapterSource, source) = it
+            val headline = source.title
+            val relevance = when {
+                headline == null -> Relevance.Unsure
+                response.relevant.containsSimilar(headline) -> Relevance.Relevant
+                response.irrelevant.containsSimilar(headline) -> Relevance.Irrelevant
+                response.unsure.containsSimilar(headline) -> Relevance.Unsure
+                else -> Relevance.Unsure
+            }
+            chapterSource.copy(relevance = relevance)
+        }
+        service.updateChapterSourceRelevance(chapterSources)
+        println(
+            "Relevant: ${response.relevant.size} Irrelevant: ${response.irrelevant.size} Unsure: ${response.unsure.size}\n" +
+            "Title: $title\n" +
+            "Relevant:\n" + response.relevant.joinToString("\n") { "${if (headlines.containsSimilar(it)) "✅" else "☠"} $it" } +
+            "\n\nIrrelevant:\n" + response.irrelevant.joinToString("\n") { "${if (headlines.containsSimilar(it)) "✅" else "☠"} $it" } +
+            "\n\nUnsure:\n" + response.unsure.joinToString("\n") { "${if (headlines.containsSimilar(it)) "✅" else "☠"} $it" }
+        )
     }
 }
 
 @Serializable
 data class TitleResponse(
     val title: String,
-//    val relevantIds: Set<Long>,
-//    val irrelevantIds: Set<Long>,
 )
+
+@Serializable
+data class RelevanceResponse(
+    val relevant: List<String>,
+    val irrelevant: List<String>,
+    val unsure: List<String>
+)
+
+private fun List<String>.containsSimilar(text: String): Boolean {
+    for (str in this) {
+        if (str.similarityTo(text) > .8) return true
+    }
+    return false
+}
+
+fun String.similarityTo(other: String): Double {
+    val words1 = this.split(" ").filter { it.isNotBlank() }.map { it.lowercase() }.toSet()
+    val words2 = other.split(" ").filter { it.isNotBlank() }.map { it.lowercase() }.toSet()
+
+    if (words1.isEmpty() && words2.isEmpty()) return 1.0
+
+    val commonCount = words1.intersect(words2).size
+    val maxWords = maxOf(words1.size, words2.size)
+
+    return commonCount.toDouble() / maxWords
+}

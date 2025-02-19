@@ -22,14 +22,13 @@ import newsref.db.globalConsole
 
 class GeminiClient(
     val token: String,
-    val model: String = "gemini-2.0-flash",
+    val model: String = "gemini-1.5-flash",
     val client: HttpClient = globalKtor,
 ) {
 
     suspend inline fun <reified Received> requestJson(vararg parts: String): Received? {
         try {
             val url = "https://generativelanguage.googleapis.com/v1beta/models/$model:generateContent?key=$token"
-            globalConsole.logInfo("Gemini", generateJsonSchema<Received>().toString())
             val request = GeminiRequest(
                 contents = parts.map { GeminiContent("user", listOf(GeminiRequestText(it))) },
                 generationConfig = GenerationConfig(
@@ -44,7 +43,6 @@ class GeminiClient(
             if (response.status == HttpStatusCode.OK) {
                 return response.body<GeminiResponse>()
                     .candidates.firstOrNull()?.content?.parts?.firstOrNull()?.text?.let {
-                        globalConsole.logInfo("Gemini", it)
                         Json.decodeFromString(it)
                     }
             } else {

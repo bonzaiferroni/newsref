@@ -1,4 +1,0 @@
-Here are a list of headlines that may be related to a news event.
-<|headlines|>
-
-For the title property of your json response, generate a single title for the event, based on the headlines. It should be no more than 100 characters long and include only the most relevant details. Shorter is better.
