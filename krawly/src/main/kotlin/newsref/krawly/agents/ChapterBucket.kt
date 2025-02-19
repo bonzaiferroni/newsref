@@ -122,7 +122,6 @@ class ChapterBucket(
             textDistance = contentDistance(it),
             linkDistance = outboundDistance(it.linkIds),
             timeDistance = timeDistance(it.source.existedAt),
-            isRelevant = if (relevantIds.contains(it.source.id)) true else null
         )
     }
 

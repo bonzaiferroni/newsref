@@ -7,9 +7,9 @@ import newsref.db.core.*
 import newsref.db.model.Chapter
 import newsref.db.model.ChapterFinderLog
 import newsref.db.model.ChapterFinderState
+import newsref.db.model.Relevance
 import newsref.db.model.Source
 import newsref.db.services.*
-import newsref.db.tables.ChapterSourceTable.chapterId
 import newsref.model.core.*
 import kotlin.time.*
 import kotlin.time.Duration.Companion.hours
@@ -275,8 +275,8 @@ class ChapterComposer(
         val chapterId = bucket.chapterId
         if (chapterId == null) return
         val signals = chapterComposerService.readCurrentRelevance(chapterId)
-        val relevantIds = signals.filter { it.second }.map { it.first }.toSet()
-        val irrelevantIds = signals.filter { !it.second }.map { it.first }.toSet()
+        val relevantIds = signals.filter { it.second == Relevance.Relevant }.map { it.first }.toSet()
+        val irrelevantIds = signals.filter { it.second == Relevance.Irrelevant }.map { it.first }.toSet()
         bucket.updateRelevance(relevantIds, irrelevantIds)
     }
 }

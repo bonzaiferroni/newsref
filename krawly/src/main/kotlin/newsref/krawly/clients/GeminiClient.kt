@@ -6,7 +6,6 @@ import io.ktor.client.call.body
 import io.ktor.client.plugins.HttpRequestTimeoutException
 import io.ktor.client.request.post
 import io.ktor.client.request.setBody
-import io.ktor.client.statement.bodyAsText
 import io.ktor.http.ContentType
 import io.ktor.http.HttpStatusCode
 import io.ktor.http.contentType
@@ -30,6 +29,7 @@ class GeminiClient(
     suspend inline fun <reified Received> requestJson(vararg parts: String): Received? {
         try {
             val url = "https://generativelanguage.googleapis.com/v1beta/models/$model:generateContent?key=$token"
+            globalConsole.logInfo("Gemini", generateJsonSchema<Received>().toString())
             val request = GeminiRequest(
                 contents = parts.map { GeminiContent("user", listOf(GeminiRequestText(it))) },
                 generationConfig = GenerationConfig(
@@ -43,7 +43,10 @@ class GeminiClient(
             }
             if (response.status == HttpStatusCode.OK) {
                 return response.body<GeminiResponse>()
-                    .candidates.firstOrNull()?.content?.parts?.firstOrNull()?.text?.let { Json.decodeFromString(it) }
+                    .candidates.firstOrNull()?.content?.parts?.firstOrNull()?.text?.let {
+                        globalConsole.logInfo("Gemini", it)
+                        Json.decodeFromString(it)
+                    }
             } else {
                 globalConsole.logError("GeminiClient", "Request failed:\n${response.body<JsonObject>()}")
                 return null
@@ -113,34 +116,42 @@ data class PromptTokenDetails(
 
 inline fun <reified T> generateJsonSchema(): JsonElement {
     val descriptor = serializer<T>().descriptor
-    val schema = buildJsonObject {
-        put("type", "OBJECT")
-        put("properties", serializeDescriptor(descriptor))
-    }
-    return schema
+    return mapTypeToJson(descriptor)
 }
 
 @OptIn(ExperimentalSerializationApi::class)
-fun serializeDescriptor(descriptor: SerialDescriptor): JsonObject {
-    return buildJsonObject {
+fun objectToJson(descriptor: SerialDescriptor) = buildJsonObject {
+    put("type", "OBJECT")
+    put("properties", buildJsonObject {
         descriptor.elementDescriptors.forEachIndexed { index, childDescriptor ->
-            put(descriptor.getElementName(index), buildJsonObject {
-                put("type", mapKotlinTypeToJson(childDescriptor))
-            })
+            put(descriptor.getElementName(index).toSnakeCase(), mapTypeToJson(childDescriptor))
         }
-    }
+    })
 }
 
 @OptIn(ExperimentalSerializationApi::class)
-fun mapKotlinTypeToJson(descriptor: SerialDescriptor): String = when (descriptor.kind) {
-    StructureKind.CLASS, StructureKind.OBJECT -> "OBJECT"
-    StructureKind.LIST -> "ARRAY"
-    PrimitiveKind.STRING -> "STRING"
-    PrimitiveKind.INT, PrimitiveKind.LONG, PrimitiveKind.SHORT, PrimitiveKind.BYTE -> "INTEGER"
-    PrimitiveKind.FLOAT, PrimitiveKind.DOUBLE -> "NUMBER"
-    PrimitiveKind.BOOLEAN -> "BOOLEAN"
+fun primitiveToJson(type: String) = buildJsonObject {
+    put("type", type)
+}
+
+@OptIn(ExperimentalSerializationApi::class)
+fun arrayToJson(descriptor: SerialDescriptor) = buildJsonObject {
+    put("type", "ARRAY")
+    put("items", mapTypeToJson(descriptor.getElementDescriptor(0)))
+}
+
+@OptIn(ExperimentalSerializationApi::class)
+fun mapTypeToJson(descriptor: SerialDescriptor): JsonObject = when (descriptor.kind) {
+    StructureKind.CLASS, StructureKind.OBJECT -> objectToJson(descriptor)
+    StructureKind.LIST -> arrayToJson(descriptor)
+    PrimitiveKind.STRING -> primitiveToJson("STRING")
+    PrimitiveKind.INT, PrimitiveKind.LONG, PrimitiveKind.SHORT, PrimitiveKind.BYTE -> primitiveToJson("INTEGER")
+    PrimitiveKind.FLOAT, PrimitiveKind.DOUBLE -> primitiveToJson("NUMBER")
+    PrimitiveKind.BOOLEAN -> primitiveToJson("BOOLEAN")
     else -> error("unknown type: ${descriptor.kind}")
 }
+
+fun String.toSnakeCase(): String = this.replace(Regex("([a-z])([A-Z])"), "$1_$2").lowercase()
 
 
 //@Serializable

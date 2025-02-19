@@ -2,6 +2,7 @@ package newsref.db.tables
 
 import newsref.db.model.ChapterSource
 import newsref.db.model.ChapterSourceInfo
+import newsref.db.model.Relevance
 import newsref.db.model.ChapterSourceType
 import org.jetbrains.exposed.dao.id.LongIdTable
 import org.jetbrains.exposed.sql.ReferenceOption
@@ -17,7 +18,7 @@ object ChapterSourceTable : LongIdTable("chapter_source") {
     val textDistance = float("text_distance").nullable()
     val timeDistance = float("time_distance").nullable()
     val linkDistance = float("link_distance").nullable()
-    val isRelevant = bool("is_relevant").nullable()
+    val relevance = enumeration("relevance", Relevance::class).nullable()
 
     init {
         uniqueIndex("unique_chapter_source", chapterId, sourceId)
@@ -35,7 +36,7 @@ fun ResultRow.toChapterSource() = ChapterSource(
     textDistance = this[ChapterSourceTable.textDistance],
     timeDistance = this[ChapterSourceTable.timeDistance],
     linkDistance = this[ChapterSourceTable.linkDistance],
-    isRelevant = this[ChapterSourceTable.isRelevant],
+    relevance = this[ChapterSourceTable.relevance],
 )
 
 // chapter source info

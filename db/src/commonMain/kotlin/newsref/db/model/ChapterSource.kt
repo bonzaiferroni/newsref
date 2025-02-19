@@ -11,5 +11,11 @@ data class ChapterSource(
     val textDistance: Float?,
     val timeDistance: Float?,
     val linkDistance: Float?,
-    val isRelevant: Boolean? = null,
+    val relevance: Relevance? = null,
 )
+
+enum class Relevance {
+    Irrelevant,
+    Relevant,
+    Unsure,
+}

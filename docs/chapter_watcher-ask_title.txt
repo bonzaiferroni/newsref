@@ -1,6 +1,0 @@
-Here are a list of headlines from a current news event:
-<|headlines|>
-
-If you were generating a book chapter about this event, What would be the title of the chapter?
-Create the shortest title that captures the essence of the event, the most relevant specific details.
-Only give the chapter title and nothing else, no quotation marks.
