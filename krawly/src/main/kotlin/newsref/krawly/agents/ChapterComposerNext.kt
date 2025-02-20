@@ -9,10 +9,12 @@ import kotlinx.datetime.Instant
 import newsref.db.Environment
 import newsref.db.core.VectorModel
 import newsref.db.globalConsole
+import newsref.db.model.Chapter
 import newsref.db.model.ChapterFinderLog
 import newsref.db.model.ChapterFinderState
 import newsref.db.model.Source
 import newsref.db.services.CHAPTER_MAX_DISTANCE
+import newsref.db.services.CHAPTER_MERGE_FACTOR
 import newsref.db.services.ChapterComposerNextService
 import newsref.db.services.ChapterSourceSignal
 import newsref.db.services.ContentService
@@ -21,9 +23,11 @@ import newsref.db.services.EMBEDDING_MAX_CHARACTERS
 import newsref.db.services.EMBEDDING_MIN_CHARACTERS
 import newsref.db.services.EMBEDDING_MIN_WORDS
 import newsref.db.services.SourceVectorService
-import newsref.db.tables.ChapterSourceTable.chapterId
 import newsref.model.core.SourceType
+import sun.nio.ch.NativeThread
+import sun.nio.ch.NativeThread.signal
 import kotlin.time.Duration
+import kotlin.time.Duration.Companion.hours
 import kotlin.time.Duration.Companion.minutes
 
 private val console = globalConsole.getHandle("ChapterComposer")
@@ -62,6 +66,8 @@ class ChapterComposerNext(
     private suspend fun readNextSignal(model: VectorModel) {
         val now = Clock.System.now()
         val excludedIds = this.excludedIds.filter { it.second > now }.map { it.first }
+        setState { it.copy(exclusions = excludedIds.size) }
+
         val origin = service.findNextSignal(excludedIds)
         if (origin == null) {
             setState { it.copy(emptySignals = it.emptySignals + 1) }
@@ -69,53 +75,118 @@ class ChapterComposerNext(
             return
         }
 
+        setState { it.copy(signalDate = origin.source.seenAt) }
         if (origin.source.type == SourceType.ARTICLE) {
             setState { it.copy(secondarySignals = it.secondarySignals + 1) }
             findSecondaryBucket(origin, model)
         } else {
             setState { it.copy(primarySignals = it.primarySignals + 1) }
-            // findPrimaryBucket(origin, model)
+            findPrimaryBucket(origin, model)
         }
+    }
+
+    private suspend fun findPrimaryBucket(origin: ChapterSourceSignal, model: VectorModel) {
+        val signals = service.readInboundSignals(origin.source.id)
+        if (signals.isEmpty()) {
+            excludeUntil(origin.source.id, 1.hours)
+            console.log("primary bucket too small")
+            return
+        }
+        val bucket = ChapterBucket()
+        for (signal in signals) {
+            if (signal.source.type != SourceType.ARTICLE) continue
+            if (bucket.contains(signal.source.id)) continue
+            val vector = readOrFetchVector(signal.source, model) ?: continue
+            bucket.add(signal, vector)
+        }
+        bucket.shake()
+        if (bucket.size == 0) {
+            console.log("primary bucket too small after shake")
+            return
+        }
+
+        if (findRelatedBucketAndMerge(bucket, model)) {
+            return
+        }
+        console.log("adding primary bucket")
+        createChapter(bucket)
     }
 
     private suspend fun findSecondaryBucket(signal: ChapterSourceSignal, model: VectorModel) {
         val vector = readOrFetchVector(signal.source, model)
         if (vector == null) {
             excludeUntil(signal.source.id, Duration.INFINITE)
-            // console.log("vector unavailable")
+            console.log("vector unavailable")
             return
         }
 
-        val chapterSignals = service.findTextRelatedChapters(signal.source.id, vector)
-        val buckets = chapterSignals.mapNotNull { (chapter, textDistance) ->
-            val timeDistance = signal.source.existedAt.chapterDistanceTo(chapter.happenedAt)
-            val bucketDistance = BucketDistance(textDistance, timeDistance, 0f, 0f)
-            if (bucketDistance.magnitude > CHAPTER_MAX_DISTANCE) return@mapNotNull null
-            val bucket = ChapterBucket(chapter)
-            val sourceSignals = service.readChapterSourceSignals(chapter.id)
-            for (signal in sourceSignals) {
-                val vector = readOrFetchVector(signal.source, model) ?: error("unable to find expected vector")
-                bucket.add(signal, vector)
-            }
-            bucket
-        }
+        val buckets = findBuckets(listOf(signal), vector, signal.source.existedAt, CHAPTER_MAX_DISTANCE, model)
         if (buckets.isEmpty()) {
             // create chapter
+            val bucket = ChapterBucket()
+            bucket.add(signal, vector)
+            createChapter(bucket)
             return
         }
         val sampleMaxSize = buckets.maxBy { it.size }.size
         val bucket = buckets.minBy { it.getDistanceVector(signal, vector, sampleMaxSize).priorityMagnitude }
         bucket.add(signal, vector)
-        val removedIds = bucket.shake()
-        if (removedIds.isNotEmpty()) {
-            console.log("${removedIds.size} shaken out of bucket")
+        bucket.shake()
+        if (findRelatedBucketAndMerge(bucket, model)) {
+            return
         }
+        updateChapter(bucket)
+    }
 
+    private suspend fun findRelatedBucketAndMerge(bucket: ChapterBucket, model: VectorModel): Boolean {
+        val buckets = findBuckets(
+            originSignals = bucket.signals,
+            vector = bucket.averageVector,
+            happenedAt = bucket.happenedAt,
+            maxDistance = CHAPTER_MAX_DISTANCE * CHAPTER_MERGE_FACTOR,
+            model = model
+        )
+        if (buckets.isEmpty()) {
+            return false
+        }
+        val sampleMaxSize = buckets.maxBy { it.size }.size
+        val existingBucket = buckets.minBy { it.getDistanceVector(bucket, sampleMaxSize).priorityMagnitude }
+        val (smaller, bigger) = when {
+            existingBucket.size < bucket.size || bucket.chapterId == null -> existingBucket to bucket
+            else -> bucket to existingBucket
+        }
+        smaller.mergeInto(bigger)
+        bigger.shake()
+        console.log("merged bucket, new size: ${bigger.size}")
+        updateChapter(bigger)
+        deleteChapter(smaller)
+        return true
+    }
+
+    private suspend fun createChapter(bucket: ChapterBucket) {
+        console.log("created chapter!")
+        val sources = bucket.getSecondarySources() + bucket.getPrimarySources()
+        service.createChapter(
+            chapter = Chapter(
+                score = bucket.getChapterScore(),
+                size = 1,
+                cohesion = 1f,
+                createdAt = Clock.System.now(),
+                happenedAt = bucket.happenedAt,
+                storyDistance = null
+            ),
+            sources = sources,
+            vector = bucket.averageVector
+        )
+        setState { it.copy(chaptersCreated = it.chaptersCreated + 1) }
+    }
+
+    private suspend fun updateChapter(bucket: ChapterBucket) {
         val sources = bucket.getPrimarySources() + bucket.getSecondarySources()
 
         console.log("updated chapter! size: ${bucket.size}")
         service.updateChapterAndSources(
-            chapterId = bucket.chapterId,
+            chapterId = bucket.chapterId!!,
             score = bucket.getChapterScore(),
             size = bucket.size,
             cohesion = bucket.cohesion,
@@ -124,6 +195,37 @@ class ChapterComposerNext(
             vector = bucket.averageVector
         )
         setState { it.copy(chaptersUpdated = it.chaptersUpdated + 1) }
+    }
+
+    private suspend fun deleteChapter(bucket: ChapterBucket): Boolean {
+        val chapterId = bucket.chapterId ?: return false
+        console.log("deleted chapter")
+        service.deleteChapter(chapterId)
+        setState { it.copy(chaptersDeleted = it.chaptersDeleted + 1) }
+        return true
+    }
+
+    private suspend fun findBuckets(
+        originSignals: List<ChapterSourceSignal>,
+        vector: FloatArray,
+        happenedAt: Instant,
+        maxDistance: Float,
+        model: VectorModel
+    ): List<ChapterBucket> {
+        val sourceIds = originSignals.map { it.source.id }
+        val chapterSignals = service.findTextRelatedChapters(sourceIds, vector)
+        return chapterSignals.mapNotNull { (chapter, textDistance) ->
+            val timeDistance = happenedAt.chapterDistanceTo(chapter.happenedAt)
+            val bucketDistance = BucketDistance(textDistance, timeDistance, 0f, 0f)
+            if (bucketDistance.magnitude > maxDistance) return@mapNotNull null
+            val bucket = ChapterBucket(chapter)
+            val sourceSignals = service.readChapterSourceSignals(chapter.id)
+            for (signal in sourceSignals) {
+                val vector = readOrFetchVector(signal.source, model) ?: error("unable to find expected vector")
+                bucket.add(signal, vector)
+            }
+            bucket
+        }
     }
 
     private suspend fun readOrFetchVector(source: Source, model: VectorModel): FloatArray? {

@@ -110,6 +110,9 @@ class ChapterBucket(
             removedIds.add(signal.source.id)
         } while (size > 1)
         removedIds.addAll(initialOutboundIds - linkIds)
+        if (removedIds.isNotEmpty()) {
+            console.log("${removedIds.size} shaken out of bucket")
+        }
         return removedIds
     }
 

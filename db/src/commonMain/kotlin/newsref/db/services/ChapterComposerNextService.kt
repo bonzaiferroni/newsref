@@ -26,12 +26,12 @@ class ChapterComposerNextService : DbService() {
             .firstOrNull()?.toChapterSignal()
     }
 
-    suspend fun findTextRelatedChapters(sourceId: Long, vector: FloatArray) = dbQuery {
+    suspend fun findTextRelatedChapters(sourceIds: List<Long>, vector: FloatArray) = dbQuery {
         val distance = ChapterTable.vector.cosineDistance(vector).alias("cosine_distance")
         val subquery = ChapterSourceTable.select(ChapterSourceTable.chapterId)
             .where {
                 ChapterSourceTable.relevance.eq(Relevance.Irrelevant) and
-                        ChapterSourceTable.sourceId.eq(sourceId)
+                        ChapterSourceTable.sourceId.inList(sourceIds)
             }
         ChapterTable.select(ChapterAspect.columns + distance)
             .where { ChapterTable.happenedAt.since(CHAPTER_EPOCH * 4) and ChapterTable.id.notInSubQuery(subquery) }
@@ -77,7 +77,7 @@ class ChapterComposerNextService : DbService() {
         ChapterSourceTable.deleteWhere {
             ChapterSourceTable.chapterId.eq(chapterId) and
                     sourceId.notInList(sourceIds) and
-                    relevance.isNullOrEq(Relevance.Unsure)
+                    relevance.isNullOrNeq(Relevance.Irrelevant)
         }
         for (source in sources) {
             ChapterSourceTable.upsert(
@@ -92,5 +92,25 @@ class ChapterComposerNextService : DbService() {
                 it[textDistance] = source.textDistance
             }
         }
+    }
+
+    suspend fun deleteChapter(chapterId: Long) = dbQuery {
+        ChapterTable.deleteWhere { ChapterTable.id.eq(chapterId) }
+    }
+
+    suspend fun createChapter(chapter: Chapter, sources: List<ChapterSource>, vector: FloatArray,) = dbQuery {
+        val chapterId = ChapterTable.insertAndGetId {
+            it.fromModel(chapter)
+            it[ChapterTable.vector] = vector
+        }.value
+        updateAndTrimSources(chapterId, sources)
+        chapterId
+    }
+
+    suspend fun readInboundSignals(sourceId: Long) = dbQuery {
+        LinkTable.leftJoin(LeadTable).join(SourceTable, JoinType.LEFT, LinkTable.sourceId, SourceTable.id)
+            .select(SourceTable.columns)
+            .where { LeadTable.sourceId.eq(sourceId) and SourceTable.contentCount.greaterEq(EMBEDDING_MIN_WORDS) }
+            .map { it.toChapterSignal() }
     }
 }
