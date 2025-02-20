@@ -10,22 +10,14 @@ import newsref.db.model.Relevance
 import newsref.db.model.ChapterSourceType
 import newsref.db.model.Source
 import newsref.db.tables.*
-import newsref.db.tables.ChapterSourceTable.chapterId
-import newsref.db.tables.ChapterSourceTable.distance
-import newsref.db.tables.ChapterSourceTable.linkDistance
 import newsref.db.tables.ChapterSourceTable.relevance
 import newsref.db.tables.ChapterSourceTable.sourceId
-import newsref.db.tables.ChapterSourceTable.textDistance
-import newsref.db.tables.ChapterSourceTable.timeDistance
 import newsref.db.utils.isNullOrEq
 import newsref.db.utils.isNullOrNeq
 import newsref.db.utils.toLocalDateTimeUtc
-import newsref.db.utils.toSqlString
-import newsref.model.Api.source
 import org.jetbrains.exposed.sql.*
 import org.jetbrains.exposed.sql.SqlExpressionBuilder.eq
 import org.jetbrains.exposed.sql.SqlExpressionBuilder.notInList
-import org.jetbrains.exposed.sql.SqlExpressionBuilder.isNull
 import kotlin.time.Duration.Companion.days
 
 class ChapterComposerService : DbService() {
@@ -36,7 +28,7 @@ class ChapterComposerService : DbService() {
             .where { ChapterTable.id.eq(chapter.id) }
             .firstOrNull()?.let { it[ChapterTable.vector] } ?: return@dbQuery null
         val distance = ChapterTable.vector.cosineDistance(vector).alias("cosine_distance")
-        ChapterTable.select(chapterColumns + distance)
+        ChapterTable.select(ChapterAspect.columns + distance)
             .where { ChapterTable.id.neq(chapter.id) and ChapterTable.happenedAt.less(time) }
             .orderBy(distance, SortOrder.ASC)
             .firstOrNull()?.let { StorySignal(it[distance], it.toChapter()) }
@@ -49,13 +41,13 @@ class ChapterComposerService : DbService() {
     }
 
     suspend fun readParentIsNull() = dbQuery {
-        ChapterTable.select(chapterColumns)
+        ChapterTable.select(ChapterAspect.columns)
             .where { ChapterTable.parentId.eq(null) or ChapterTable.storyId.eq(null) }
             .map { it.toChapter() }
     }
 
     suspend fun readChildren(parentId: Long) = dbQuery {
-        ChapterTable.select(chapterColumns)
+        ChapterTable.select(ChapterAspect.columns)
             .where { ChapterTable.parentId.eq(parentId) }
             .map { it.toChapter() }
     }
@@ -69,13 +61,7 @@ class ChapterComposerService : DbService() {
                         SourceTable.id.notInSubQuery(subquery)
             }
             .orderBy(SourceTable.seenAt, SortOrder.DESC)
-            .firstOrNull()?.toSource()?.let { source ->
-                val outboundIds = LinkTable.leftJoin(LeadTable).select(LeadTable.sourceId)
-                    .where { LinkTable.sourceId.eq(source.id) and LinkTable.isExternal.eq(true) }
-                    .map { it[LeadTable.sourceId]?.value }
-                val idSet = outboundIds.groupBy { it }.keys.mapNotNull { it }.toSet()
-                ChapterSignal(source, idSet)
-            }
+            .firstOrNull()?.toChapterSignal()
     }
 
     suspend fun readConcurrentTopSources(time: Instant) = dbQuery {
@@ -175,7 +161,7 @@ class ChapterComposerService : DbService() {
     }
 
     suspend fun readChapters(limit: Int = 100) = dbQuery {
-        ChapterTable.select(chapterColumns)
+        ChapterTable.select(ChapterAspect.columns)
             .orderBy(ChapterTable.score, SortOrder.DESC)
             .limit(limit)
             .map { it.toChapter() }
@@ -183,7 +169,7 @@ class ChapterComposerService : DbService() {
 
     suspend fun readCurrentChapters(epochs: Int) = dbQuery {
         val time = (Clock.System.now() - CHAPTER_EPOCH * epochs).toLocalDateTimeUtc()
-        ChapterTable.select(chapterColumns)
+        ChapterTable.select(ChapterAspect.columns)
             .where { ChapterTable.happenedAt.greater(time) }
             .map { it.toChapter() }
     }
@@ -217,6 +203,10 @@ class ChapterComposerService : DbService() {
 
 internal fun ResultRow.toChapterSignal() = this.let {
     val source = this.toSource()
+    val chapterSource = when {
+        this.hasValue(ChapterSourceTable.id) -> this.toChapterSource()
+        else -> null
+    }
     val outboundIds = LinkTable.leftJoin(LeadTable).select(LeadTable.sourceId)
         .where {
             LinkTable.sourceId.eq(source.id) and
@@ -226,7 +216,7 @@ internal fun ResultRow.toChapterSignal() = this.let {
         .groupBy(LeadTable.sourceId)
         .map { it[LeadTable.sourceId]!!.value }
         .toSet()
-    ChapterSignal(source, outboundIds)
+    ChapterSourceSignal(source, chapterSource, outboundIds)
 }
 
 const val CHAPTER_MIN_ARTICLES = 3
@@ -235,8 +225,9 @@ const val CHAPTER_MAX_DISTANCE = .5f
 const val CHAPTER_MERGE_FACTOR = .75f
 val CHAPTER_EPOCH = 5.days
 
-data class ChapterSignal(
+data class ChapterSourceSignal(
     val source: Source,
+    val chapterSource: ChapterSource?,
     val linkIds: Set<Long>
 )
 

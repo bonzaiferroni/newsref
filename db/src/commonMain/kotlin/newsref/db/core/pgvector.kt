@@ -2,6 +2,7 @@ package newsref.db.core
 
 import org.jetbrains.exposed.sql.Column
 import org.jetbrains.exposed.sql.Database
+import org.jetbrains.exposed.sql.Expression
 import org.jetbrains.exposed.sql.Op
 import org.jetbrains.exposed.sql.Table
 import org.jetbrains.exposed.sql.transactions.TransactionManager
@@ -26,6 +27,10 @@ infix fun Column<FloatArray>.cosineDistance(other: Column<FloatArray>): Op<Float
  * Calculates the cosine distance between this and some [other] vector.
  */
 infix fun Column<FloatArray>.cosineDistance(other: FloatArray): Op<Float> {
+	return VectorValueOp(this, other, "<=>")
+}
+
+infix fun Column<FloatArray>.cosineDistanceExp(other: FloatArray): Expression<Float> {
 	return VectorValueOp(this, other, "<=>")
 }
 

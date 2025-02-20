@@ -10,7 +10,6 @@ import newsref.db.model.ChapterFinderState
 import newsref.db.model.Relevance
 import newsref.db.model.Source
 import newsref.db.services.*
-import newsref.model.Api.chapter
 import newsref.model.core.*
 import kotlin.time.*
 import kotlin.time.Duration.Companion.hours
@@ -104,7 +103,7 @@ class ChapterComposer(
         }
     }
 
-    private suspend fun findPrimaryBucket(origin: ChapterSignal, model: VectorModel) {
+    private suspend fun findPrimaryBucket(origin: ChapterSourceSignal, model: VectorModel) {
         excludeUntil(origin.source.id, 1.hours)
         val signals = service.readInboundSignals(origin.source.id)
         if (signals.isEmpty()) {
@@ -145,7 +144,7 @@ class ChapterComposer(
         }
     }
 
-    private suspend fun findSecondaryBucket(signal: ChapterSignal, model: VectorModel) {
+    private suspend fun findSecondaryBucket(signal: ChapterSourceSignal, model: VectorModel) {
         val vector = readOrFetchVector(signal.source, model)
         if (vector == null) {
             excludeUntil(signal.source.id, Duration.INFINITE)

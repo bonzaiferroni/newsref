@@ -1,7 +1,6 @@
 package newsref.server.routes
 
 import io.ktor.http.*
-import io.ktor.server.application.*
 import io.ktor.server.response.*
 import io.ktor.server.routing.*
 import newsref.db.services.SourceService
@@ -11,7 +10,7 @@ import newsref.server.extensions.getIdOrThrow
 
 fun Routing.sourceRouting(service: SourceService = SourceService()) {
 
-	get(Api.feed.serverIdTemplate) {
+	get(Api.feedEndpoint.serverIdTemplate) {
 		val span = call.getIdOrThrow() {
 			NewsSpan.entries.toTypedArray().getOrNull(it.toIntOrNull() ?: NewsSpan.WEEK.ordinal)
 		}
@@ -19,7 +18,7 @@ fun Routing.sourceRouting(service: SourceService = SourceService()) {
 		call.respond(sources)
 	}
 
-	get(Api.source.serverIdTemplate) {
+	get(Api.sourceEndpoint.serverIdTemplate) {
 		val id = call.getIdOrThrow { it.toLongOrNull() }
 		val source = service.getSourceCollection(id)
 		if (source == null) {

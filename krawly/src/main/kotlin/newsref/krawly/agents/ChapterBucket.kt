@@ -8,7 +8,7 @@ import newsref.db.utils.*
 import newsref.db.utils.distance
 import newsref.db.model.ChapterSource
 import newsref.db.model.ChapterSourceType
-import sun.nio.ch.NativeThread.signal
+import newsref.db.model.Relevance
 import kotlin.collections.maxBy
 import kotlin.collections.set
 import kotlin.math.abs
@@ -20,7 +20,7 @@ class ChapterBucket(
     private var _chapter: Chapter? = null
 ) {
     private var _chapterId: Long? = null
-    private val _signals = mutableListOf<ChapterSignal>()
+    private val _signals = mutableListOf<ChapterSourceSignal>()
     private val _vectors = mutableMapOf<Long, FloatArray>()
     private var _averageVector: FloatArray? = null
     private var _happenedAt: Instant? = null
@@ -30,7 +30,7 @@ class ChapterBucket(
     private var _relevantIds = mutableSetOf<Long>()
     private var _irrelevantIds = mutableSetOf<Long>()
 
-    val signals: List<ChapterSignal> get() = _signals
+    val signals: List<ChapterSourceSignal> get() = _signals
     val vectors: Map<Long, FloatArray> get() = _vectors
     val distances: Map<Long, Float> get() = _distances ?: findDistances().also { _distances = it }
     val size get() = _signals.size
@@ -56,7 +56,7 @@ class ChapterBucket(
         }
     }
 
-    fun add(signal: ChapterSignal, vector: FloatArray) {
+    fun add(signal: ChapterSourceSignal, vector: FloatArray) {
         if (irrelevantIds.contains(signal.source.id)) error("added irrelevant signal")
         if (_vectors.contains(signal.source.id)) error("signal is already present in bucket")
         invalidateCache()
@@ -73,17 +73,26 @@ class ChapterBucket(
 
     fun getChapterScore() = signals.sumOf { it.source.score ?: 0 }
 
-    fun getDistanceVector(signal: ChapterSignal, vector: FloatArray) =
-        getDistanceVector(signal.source.existedAt, signal.linkIds, vector)
+    fun getDistanceVector(signal: ChapterSourceSignal, vector: FloatArray, sampleMaxSize: Int = 0) =
+        getDistanceVector(signal.source.existedAt, signal.linkIds, vector, sampleMaxSize)
 
-    fun getDistanceVector(bucket: ChapterBucket) =
-        getDistanceVector(bucket.happenedAt, bucket.linkIds, bucket.averageVector)
+    fun getDistanceVector(bucket: ChapterBucket, sampleMaxSize: Int = 0) =
+        getDistanceVector(bucket.happenedAt, bucket.linkIds, bucket.averageVector, sampleMaxSize)
 
-    fun getDistanceVector(time: Instant, outbounds: Set<Long>, vector: FloatArray): DistanceVector {
+    fun getDistanceVector(
+        time: Instant,
+        outbounds: Set<Long>,
+        vector: FloatArray,
+        sampleMaxSize: Int = 0,
+    ): BucketDistance {
         val embeddingDistance = distance(vector, averageVector) * DISTANCE_EMBEDDING_WEIGHT
         val timeDistance = timeDistance(time) * DISTANCE_TIME_WEIGHT
         val outboundDistance = outboundDistance(outbounds) * DISTANCE_OUTBOUND_WEIGHT
-        return DistanceVector(embeddingDistance, timeDistance, outboundDistance)
+        val sizeDistance = when {
+            sampleMaxSize > 0 -> sizeDistance(sampleMaxSize) * DISTANCE_SIZE_WEIGHT
+            else -> 0f
+        }
+        return BucketDistance(embeddingDistance, timeDistance, outboundDistance, sizeDistance)
     }
 
     fun shake(): List<Long> {
@@ -91,7 +100,7 @@ class ChapterBucket(
         val removedIds = mutableListOf<Long>()
         val initialOutboundIds = linkIds.toSet()
         do {
-            val (distance, signal) = signals.filter { !relevantIds.contains(it.source.id) }
+            val (distance, signal) = signals.filter { it.chapterSource?.relevance != Relevance.Relevant }
                 .map {
                     val distance = getDistanceVector(it, vectors.getValue(it.source.id)).magnitude
                     distance to it
@@ -161,7 +170,7 @@ class ChapterBucket(
         _cohesion = null
     }
 
-    private fun contentDistance(signal: ChapterSignal) = distance(averageVector, vectors.getValue(signal.source.id))
+    private fun contentDistance(signal: ChapterSourceSignal) = distance(averageVector, vectors.getValue(signal.source.id))
 
     private fun findAverageVector() = averageAndNormalize(vectors.values.toList())
 
@@ -180,18 +189,25 @@ class ChapterBucket(
         }.let { it / linkIds.size }.toFloat()
     }
 
-    private fun timeDistance(instant: Instant) =
-        (abs((instant - happenedAt).inWholeHours / 24.0) / CHAPTER_EPOCH.inWholeDays).toFloat()
+    private fun timeDistance(instant: Instant) = happenedAt.chapterDistanceTo(instant)
+
+    private fun sizeDistance(sampleMaxSize: Int) = (sampleMaxSize - size) / sampleMaxSize.toFloat()
 }
 
-data class DistanceVector(
+data class BucketDistance(
     val text: Float,
     val time: Float,
     val link: Float,
+    val size: Float,
 ) {
-    val magnitude get() = sqrt(text * text + time * time + link * link)
+    val magnitude get() = sqrt(text * text + time * time)
+    val priorityMagnitude get() = sqrt(text * text + time * time + link * link + size * size)
 }
 
 const val DISTANCE_EMBEDDING_WEIGHT = 1.0F
 const val DISTANCE_TIME_WEIGHT = 1.0F
-const val DISTANCE_OUTBOUND_WEIGHT = 0.2F
+const val DISTANCE_OUTBOUND_WEIGHT = 0.1F
+const val DISTANCE_SIZE_WEIGHT = 0.1F
+
+fun Instant.chapterDistanceTo(instant: Instant) =
+    (abs((instant - this).inWholeHours / 24.0) / CHAPTER_EPOCH.inWholeDays).toFloat()

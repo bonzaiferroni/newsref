@@ -1,5 +1,6 @@
 package newsref.db.tables
 
+import newsref.db.core.Aspect
 import newsref.db.core.vector
 import newsref.db.utils.*
 import newsref.db.model.Chapter
@@ -26,6 +27,20 @@ object ChapterTable : LongIdTable("chapter") {
     val vector = vector("vector", 1536)
 }
 
+object ChapterAspect : Aspect(ChapterTable) {
+    val id = add(ChapterTable.id)
+    val storyId = add(ChapterTable.storyId)
+    val parentId = add(ChapterTable.parentId)
+    val title = add(ChapterTable.title)
+    val summary = add(ChapterTable.summary)
+    val score = add(ChapterTable.score)
+    val size = add(ChapterTable.size)
+    val cohesion = add(ChapterTable.cohesion)
+    val storyDistance = add(ChapterTable.storyDistance)
+    val createdAt = add(ChapterTable.createdAt)
+    val happenedAt = add(ChapterTable.happenedAt)
+}
+
 fun ResultRow.toChapter() = Chapter(
     id = this[ChapterTable.id].value,
     storyId = this[ChapterTable.storyId]?.value,
@@ -48,17 +63,3 @@ internal fun InsertStatement<*>.fromModel(chapter: Chapter) {
     this[ChapterTable.createdAt] = chapter.createdAt.toLocalDateTimeUtc()
     this[ChapterTable.happenedAt] = chapter.happenedAt.toLocalDateTimeUtc()
 }
-
-internal val chapterColumns = listOf(
-    ChapterTable.id,
-    ChapterTable.storyId,
-    ChapterTable.parentId,
-    ChapterTable.title,
-    ChapterTable.summary,
-    ChapterTable.score,
-    ChapterTable.size,
-    ChapterTable.cohesion,
-    ChapterTable.storyDistance,
-    ChapterTable.createdAt,
-    ChapterTable.happenedAt,
-)

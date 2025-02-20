@@ -19,7 +19,7 @@ class ChapterDtoService : DbService() {
             .map { it.toChapterDto() }
         chapters.map {
             val sources = ChapterSourceTable.leftJoin(SourceTable)
-                .select(SourceDtoAspect.expressions)
+                .select(SourceDtoAspect.columns)
                 .where {
                     ChapterSourceTable.chapterId.eq(it.id) and
                             ChapterSourceTable.type.eq(ChapterSourceType.Secondary)

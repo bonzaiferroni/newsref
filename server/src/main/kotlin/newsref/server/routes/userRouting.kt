@@ -1,7 +1,6 @@
 package newsref.server.routes
 
 import io.ktor.http.*
-import io.ktor.server.application.*
 import io.ktor.server.request.*
 import io.ktor.server.response.*
 import io.ktor.server.routing.*
@@ -16,7 +15,7 @@ import newsref.server.plugins.authenticateJwt
 
 fun Routing.userRouting(service: UserService = UserService()) {
 
-    post(Api.user.path) {
+    post(Api.userEndpoint.path) {
         val info = call.receive<SignUpRequest>()
         try {
             service.createUser(info)
@@ -29,19 +28,19 @@ fun Routing.userRouting(service: UserService = UserService()) {
     }
 
     authenticateJwt {
-        get(Api.user.path) {
+        get(Api.userEndpoint.path) {
             val username = call.getClaim(CLAIM_USERNAME)
             val userInfo = service.getUserInfo(username)
             call.respond(userInfo)
         }
 
-        get(Api.privateInfo.path) {
+        get(Api.privateEndpoint.path) {
             val username = call.getClaim(CLAIM_USERNAME)
             val privateInfo = service.getPrivateInfo(username)
             call.respond(privateInfo)
         }
 
-        put(Api.user.path) {
+        put(Api.userEndpoint.path) {
             val username = call.getClaim(CLAIM_USERNAME)
             val info = call.receive<EditUserRequest>()
             service.updateUser(username, info)

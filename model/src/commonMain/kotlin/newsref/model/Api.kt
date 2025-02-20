@@ -2,7 +2,7 @@ package newsref.model
 
 object Api {
     // utility
-    val login = Endpoint("/login")
+    val loginEndpoint = Endpoint("/login")
 
     // models
     // val area = Endpoint("/data/area")
@@ -11,13 +11,13 @@ object Api {
     // val request = Endpoint("/data/request")
 
     // content
-    val source = Endpoint("/source")
-    val feed = Endpoint("/feed")
-    val chapter = Endpoint("/chapter")
+    val sourceEndpoint = Endpoint("/source")
+    val feedEndpoint = Endpoint("/feed")
+    val chapterEndpoint = Endpoint("/chapter")
 
     // user
-    val user = Endpoint("/user")
-    val privateInfo = Endpoint("/user/private")
+    val userEndpoint = Endpoint("/user")
+    val privateEndpoint = Endpoint("/user/private")
 }
 
 val apiPrefix = "/api/v1"

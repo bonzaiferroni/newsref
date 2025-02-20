@@ -9,7 +9,6 @@ import newsref.app.blip.controls.BalloonPoint
 import newsref.app.blip.core.*
 import newsref.app.io.*
 import newsref.app.model.*
-import newsref.model.Api.chapter
 
 class EventFeedModel(
     val route: EvemtFeedRoute,

@@ -16,7 +16,7 @@ fun Application.configureApiRoutes() {
 
         dataRouting()
 
-        post(Api.login.path) {
+        post(Api.loginEndpoint.path) {
             call.authorize()
         }
     }
