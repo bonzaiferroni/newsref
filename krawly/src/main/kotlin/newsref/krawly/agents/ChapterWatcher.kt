@@ -77,7 +77,11 @@ class ChapterWatcher(
             "headlines" to headlines.joinToString("\n")
         )
 
-        val response: RelevanceResponse = client.requestJson(prompt) ?: return
+        val response: RelevanceResponse? = client.requestJson(prompt)
+        if (response == null) {
+            console.logError("received null json response, prompt:\n$prompt")
+            return
+        }
 
         val chapterSources = currentSources.map {
             val (chapterSource, source) = it
@@ -92,7 +96,7 @@ class ChapterWatcher(
             chapterSource.copy(relevance = relevance)
         }
         service.updateChapterSourceRelevance(chapterSources)
-        println(
+        console.log(
             "Headlines: ${headlines.size} " +
                     "Relevant: ${response.relevant.size} Irrelevant: ${response.irrelevant.size} " +
                     "Unsure: ${response.unsure.size}\n" +

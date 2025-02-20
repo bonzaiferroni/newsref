@@ -145,6 +145,15 @@ class ChapterBucket(
         console.log("removed ${removeIds.size} irrelevant signals")
     }
 
+    fun mergeInto(bucket: ChapterBucket) {
+        for (signal in signals) {
+            if (bucket.contains(signal.source.id)) continue
+            if (bucket.irrelevantIds.contains(signal.source.id)) continue
+            val vector = vectors.getValue(signal.source.id)
+            bucket.add(signal, vector)
+        }
+    }
+
     private fun invalidateCache() {
         _averageVector = null
         _happenedAt = null

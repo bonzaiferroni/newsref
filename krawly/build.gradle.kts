@@ -8,6 +8,7 @@ plugins {
 }
 
 dependencies {
+	implementation(libs.kotlinx.serialization.json)
 	implementation("it.skrape:skrapeit:1.3.0-alpha.2")
 	implementation("io.ktor:ktor-client-apache5:$ktor_version")
 	implementation("io.ktor:ktor-client-cio:$ktor_version")

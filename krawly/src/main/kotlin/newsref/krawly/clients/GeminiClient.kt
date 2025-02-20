@@ -55,7 +55,11 @@ class GeminiClient(
         } catch (e: NoTransformationFoundException) {
             globalConsole.logError("GeminiClient", "no transformation? 😕\n${e.message}")
             return null
+        } catch (e: Exception) {
+            globalConsole.logError("GeminiClient", "requestJson exception:\n${e.message}")
+            return null
         }
+
     }
 }
 

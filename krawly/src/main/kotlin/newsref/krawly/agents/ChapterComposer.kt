@@ -135,11 +135,7 @@ class ChapterComposer(
         } else {
             val (_, existingBucket) = result
             val initialSize = existingBucket.size
-            for (signal in bucket.signals) {
-                if (existingBucket.contains(signal.source.id)) continue
-                val vector = bucket.vectors.getValue(signal.source.id)
-                existingBucket.add(signal, vector)
-            }
+            bucket.mergeInto(existingBucket)
             if (existingBucket.size > initialSize) {
                 // console.log("merged primary bucket: ${existingBucket.chapterId}")
                 checkBucket(bucket)
@@ -173,8 +169,8 @@ class ChapterComposer(
             if (bucket.contains(signal.source.id)) {
                 console.logError(
                     "signal: ${signal.source.id} already in bucket: ${bucket.chapterId}\n" +
-                    "source: ${signal.source.title}\n" +
-                    "bucket: ${bucket.title}"
+                            "source: ${signal.source.title}\n" +
+                            "bucket: ${bucket.title}"
                 )
                 updateRelevance(bucket)
                 excludeUntil(signal.source.id, 1.hours)
@@ -182,10 +178,10 @@ class ChapterComposer(
             }
             bucket.add(signal, vector)
             val result = buckets.mapNotNull {
-                if (it == bucket) return@mapNotNull null
-                val distance = it.getDistanceVector(bucket).magnitude
-                Pair(distance, it)
-            }.minByOrNull { it.first }
+                    if (it == bucket) return@mapNotNull null
+                    val distance = it.getDistanceVector(bucket).magnitude
+                    Pair(distance, it)
+                }.minByOrNull { it.first }
             if (result == null || result.first > CHAPTER_MAX_DISTANCE) {
                 checkBucket(bucket)
             } else {
@@ -194,11 +190,7 @@ class ChapterComposer(
                     existingBucket.size < bucket.size -> existingBucket to bucket
                     else -> bucket to existingBucket
                 }
-                for (signal in smaller.signals) {
-                    if (bigger.contains(signal.source.id)) continue
-                    val vector = smaller.vectors.getValue(signal.source.id)
-                    bigger.add(signal, vector)
-                }
+                smaller.mergeInto(bigger)
                 console.log("merged buckets with sizes: ${smaller.size} to ${bigger.size}")
                 checkBucket(bigger)
                 val chapterId = smaller.chapterId
