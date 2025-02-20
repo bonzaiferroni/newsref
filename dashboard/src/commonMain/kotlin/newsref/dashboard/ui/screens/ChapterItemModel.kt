@@ -17,7 +17,10 @@ import newsref.model.core.sortedByDirection
 
 class ChapterItemModel(
     route: ChapterItemRoute,
-    private val chapterComposerService: ChapterComposerService = ChapterComposerService()
+    private val chapterService: ChapterService = ChapterService(),
+    private val chapterComposerService: ChapterComposerService = ChapterComposerService(),
+    private val chapterLinkerService: ChapterLinkerService = ChapterLinkerService(),
+    private val chapterWatcherService: ChapterWatcherService = ChapterWatcherService(),
 ) : StateModel<ChapterItemState>(ChapterItemState(route.chapterId)) {
 
     init {
@@ -27,11 +30,11 @@ class ChapterItemModel(
     }
 
     suspend fun refreshModel() {
-        val chapter = chapterComposerService.readChapter(stateNow.chapterId)
-        val chapterSources = chapterComposerService.readChapterSourceInfos(stateNow.chapterId)
+        val chapter = chapterService.readChapter(stateNow.chapterId)
+        val chapterSources = chapterWatcherService.readChapterSourceInfos(stateNow.chapterId)
         val primarySources = chapterSources.filter { it.chapterSource.type == ChapterSourceType.Primary }
         val secondarySources = chapterSources.filter { it.chapterSource.type == ChapterSourceType.Secondary }
-        val children = chapterComposerService.readChildren(stateNow.chapterId)
+        val children = chapterLinkerService.readChildren(stateNow.chapterId)
             .sortedBy { it.happenedAt }
             .toImmutableList()
         val nextChildId = children.firstOrNull()?.id

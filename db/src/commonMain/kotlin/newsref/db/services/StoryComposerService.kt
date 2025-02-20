@@ -22,7 +22,10 @@ class StoryComposerService : DbService() {
 
     suspend fun readNullStoryDistances() = dbQuery {
         ChapterTable.select(ChapterTable.columns)
-            .where { ChapterTable.storyDistance.isNull() or ChapterTable.storyId.isNull() }
+            .where {
+                (ChapterTable.storyDistance.isNull() or ChapterTable.storyId.isNull()) and
+                        ChapterTable.size.greaterEq(CHAPTER_MIN_ARTICLES)
+            }
             .map { Pair(it.toChapter(), it[ChapterTable.vector]) }
     }
 
@@ -46,7 +49,7 @@ class StoryComposerService : DbService() {
         chapterDistances: List<Pair<Chapter, Float>>
     ) = dbQuery {
         val ids = chapterDistances.map { it.first.id }
-        StoryTable.update({StoryTable.id.eq(story.id)}) {
+        StoryTable.update({ StoryTable.id.eq(story.id) }) {
             it[StoryTable.vector] = averageVector
             it[StoryTable.size] = chapterDistances.size
             it[StoryTable.title] = chapterDistances.maxBy { it.first.score }.first.title ?: story.title
@@ -56,12 +59,12 @@ class StoryComposerService : DbService() {
             it[StoryTable.coherence] = (chapterDistances.sumOf { it.second.toDouble() } / chapterDistances.size)
                 .toFloat()
         }
-        ChapterTable.update({ChapterTable.storyId.eq(story.id) and ChapterTable.id.notInList(ids)}) {
+        ChapterTable.update({ ChapterTable.storyId.eq(story.id) and ChapterTable.id.notInList(ids) }) {
             it[ChapterTable.storyId] = null
             it[ChapterTable.storyDistance] = null
         }
         for ((chapter, distance) in chapterDistances) {
-            ChapterTable.update({ChapterTable.id.eq(chapter.id)}) {
+            ChapterTable.update({ ChapterTable.id.eq(chapter.id) }) {
                 it[ChapterTable.storyId] = story.id
                 it[ChapterTable.storyDistance] = distance
             }
@@ -77,7 +80,7 @@ class StoryComposerService : DbService() {
             it[StoryTable.coherence] = 0f
             it[StoryTable.vector] = vector
         }.value
-        ChapterTable.update({ChapterTable.id.eq(chapter.id)}) {
+        ChapterTable.update({ ChapterTable.id.eq(chapter.id) }) {
             it[ChapterTable.storyId] = id
             it[ChapterTable.storyDistance] = 0f
         }
@@ -85,7 +88,7 @@ class StoryComposerService : DbService() {
 
     suspend fun readChapterVector(chapterId: Long) = dbQuery {
         ChapterTable.select(ChapterTable.vector)
-            .where { ChapterTable.id.eq(chapterId)}
+            .where { ChapterTable.id.eq(chapterId) }
             .firstOrNull()?.let { it[ChapterTable.vector] }
     }
 
@@ -96,13 +99,13 @@ class StoryComposerService : DbService() {
     }
 
     suspend fun readStoryChapters(storyId: Long) = dbQuery {
-        ChapterTable.select(chapterColumns)
+        ChapterTable.select(ChapterAspect.columns)
             .where { ChapterTable.storyId.eq(storyId) }
             .map { it.toChapter() }
     }
 
     suspend fun updateSize(storyId: Long, size: Int, score: Int) = dbQuery {
-        StoryTable.update({StoryTable.id.eq(storyId)}) {
+        StoryTable.update({ StoryTable.id.eq(storyId) }) {
             it[StoryTable.size] = size
             it[StoryTable.score] = score
         }

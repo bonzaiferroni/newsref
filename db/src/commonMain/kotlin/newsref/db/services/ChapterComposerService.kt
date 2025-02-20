@@ -1,60 +1,23 @@
+@file:Suppress("DuplicatedCode")
+
 package newsref.db.services
 
-import kotlinx.datetime.Clock
 import kotlinx.datetime.Instant
 import newsref.db.*
-import newsref.db.core.cosineDistance
-import newsref.db.model.Chapter
-import newsref.db.model.ChapterSource
-import newsref.db.model.Relevance
-import newsref.db.model.ChapterSourceType
-import newsref.db.model.Source
+import newsref.db.core.*
+import newsref.db.model.*
 import newsref.db.tables.*
-import newsref.db.tables.ChapterSourceTable.relevance
-import newsref.db.tables.ChapterSourceTable.sourceId
-import newsref.db.utils.isNullOrEq
-import newsref.db.utils.isNullOrNeq
-import newsref.db.utils.toLocalDateTimeUtc
+import newsref.db.utils.*
 import org.jetbrains.exposed.sql.*
 import org.jetbrains.exposed.sql.SqlExpressionBuilder.eq
 import org.jetbrains.exposed.sql.SqlExpressionBuilder.notInList
 import kotlin.time.Duration.Companion.days
 
 class ChapterComposerService : DbService() {
-
-    suspend fun findNearestParent(chapter: Chapter) = dbQuery {
-        val time = chapter.happenedAt.toLocalDateTimeUtc()
-        val vector = ChapterTable.select(ChapterTable.vector)
-            .where { ChapterTable.id.eq(chapter.id) }
-            .firstOrNull()?.let { it[ChapterTable.vector] } ?: return@dbQuery null
-        val distance = ChapterTable.vector.cosineDistance(vector).alias("cosine_distance")
-        ChapterTable.select(ChapterAspect.columns + distance)
-            .where { ChapterTable.id.neq(chapter.id) and ChapterTable.happenedAt.less(time) }
-            .orderBy(distance, SortOrder.ASC)
-            .firstOrNull()?.let { StorySignal(it[distance], it.toChapter()) }
-    }
-
-    suspend fun setParent(chapterId: Long, parentId: Long) = dbQuery {
-        ChapterTable.update({ChapterTable.id.eq(chapterId)}) {
-            it[ChapterTable.parentId] = parentId
-        }
-    }
-
-    suspend fun readParentIsNull() = dbQuery {
-        ChapterTable.select(ChapterAspect.columns)
-            .where { ChapterTable.parentId.eq(null) or ChapterTable.storyId.eq(null) }
-            .map { it.toChapter() }
-    }
-
-    suspend fun readChildren(parentId: Long) = dbQuery {
-        ChapterTable.select(ChapterAspect.columns)
-            .where { ChapterTable.parentId.eq(parentId) }
-            .map { it.toChapter() }
-    }
-
     suspend fun findNextSignal(excludedIds: List<Long>) = dbQuery {
-        val subquery = ChapterSourceTable.select(sourceId).where { relevance.isNullOrNeq(Relevance.Irrelevant) }
-        SourceTable.leftJoin(ChapterSourceTable).select(SourceTable.columns)
+        val subquery = ChapterSourceTable.select(ChapterSourceTable.sourceId)
+            .where { ChapterSourceTable.relevance.isNullOrNeq(Relevance.Irrelevant) }
+        SourceTable.leftJoin(ChapterSourceTable).select(SourceTable.columns + ChapterSourceTable.columns)
             .where {
                 SourceTable.score.greaterEq(2) and
                         SourceTable.id.notInList(excludedIds) and
@@ -64,43 +27,28 @@ class ChapterComposerService : DbService() {
             .firstOrNull()?.toChapterSignal()
     }
 
-    suspend fun readConcurrentTopSources(time: Instant) = dbQuery {
-        SourceTable.select(SourceTable.columns)
+    suspend fun findTextRelatedChapters(sourceIds: List<Long>, vector: FloatArray) = dbQuery {
+        val distance = ChapterTable.vector.cosineDistance(vector).alias("cosine_distance")
+        val subquery = ChapterSourceTable.select(ChapterSourceTable.chapterId)
             .where {
-                SourceTable.withinTimeRange(time, time + CHAPTER_EPOCH) and
-                        SourceTable.contentCount.greaterEq(EMBEDDING_MIN_WORDS) and
-                        (SourceTable.score.greaterEq(1) or SourceTable.feedPosition.less(10))
+                ChapterSourceTable.relevance.eq(Relevance.Irrelevant) and
+                        ChapterSourceTable.sourceId.inList(sourceIds)
             }
-            .map { it.toSource() }
+        ChapterTable.select(ChapterAspect.columns + distance)
+            .where { ChapterTable.happenedAt.since(CHAPTER_EPOCH * 4) and ChapterTable.id.notInSubQuery(subquery) }
+            .map { it.toChapter() to it[distance] }
+            .filter { it.second < CHAPTER_MAX_DISTANCE }
     }
 
-    suspend fun readInboundSignals(sourceId: Long) = dbQuery {
-        LinkTable.leftJoin(LeadTable).join(SourceTable, JoinType.LEFT, LinkTable.sourceId, SourceTable.id)
-            .select(SourceTable.columns)
-            .where { LeadTable.sourceId.eq(sourceId) and SourceTable.contentCount.greaterEq(EMBEDDING_MIN_WORDS) }
+    suspend fun readChapterSourceSignals(chapterId: Long) = dbQuery {
+        ChapterSourceTable.leftJoin(SourceTable)
+            .select(SourceTable.columns + ChapterSourceTable.columns)
+            .where {
+                ChapterSourceTable.chapterId.eq(chapterId) and
+                        ChapterSourceTable.type.eq(ChapterSourceType.Secondary) and
+                        ChapterSourceTable.relevance.isNullOrNeq(Relevance.Irrelevant)
+            }
             .map { it.toChapterSignal() }
-    }
-
-    suspend fun findPrimarySources(sourceIds: List<Long>) = dbQuery {
-        val ids = LinkTable.leftJoin(LeadTable).select(LeadTable.sourceId)
-            .where {
-                LinkTable.isExternal.eq(true) and LinkTable.sourceId.inList(sourceIds) and
-                        LeadTable.sourceId.isNotNull()
-            }
-            .map { it[LeadTable.sourceId]!!.value }
-        val primaryIds = ids.groupingBy { it }.eachCount().filter { it.value >= 3 }.map { it.key }
-        SourceTable.select(SourceTable.columns)
-            .where { SourceTable.id.inList(primaryIds) }
-            .map { it.toSource() }
-    }
-
-    suspend fun createChapter(chapter: Chapter, sources: List<ChapterSource>, vector: FloatArray,) = dbQuery {
-        val chapterId = ChapterTable.insertAndGetId {
-            it.fromModel(chapter)
-            it[ChapterTable.vector] = vector
-        }.value
-        updateAndTrimSources(chapterId, sources)
-        chapterId
     }
 
     suspend fun updateChapterAndSources(
@@ -119,11 +67,11 @@ class ChapterComposerService : DbService() {
             it[ChapterTable.happenedAt] = happenedAt.toLocalDateTimeUtc()
             it[ChapterTable.vector] = vector
             it[ChapterTable.parentId] = null
-            if ((0..9).random() == 0)
-                it[ChapterTable.title] = null
+        }
+        ChapterTable.update({ChapterTable.parentId.eq(chapterId)}) {
+            it[ChapterTable.parentId] = null
         }
         updateAndTrimSources(chapterId, sources)
-        unlinkChildren(chapterId)
     }
 
     fun Transaction.updateAndTrimSources(chapterId: Long, sources: List<ChapterSource>) {
@@ -131,7 +79,7 @@ class ChapterComposerService : DbService() {
         ChapterSourceTable.deleteWhere {
             ChapterSourceTable.chapterId.eq(chapterId) and
                     sourceId.notInList(sourceIds) and
-                    relevance.isNullOrEq(Relevance.Unsure)
+                    relevance.isNullOrNeq(Relevance.Irrelevant)
         }
         for (source in sources) {
             ChapterSourceTable.upsert(
@@ -148,63 +96,31 @@ class ChapterComposerService : DbService() {
         }
     }
 
-    fun Transaction.unlinkChildren(chapterId: Long) {
-        val childIds = ChapterTable.select(ChapterTable.id)
-            .where { ChapterTable.parentId.eq(chapterId) }
-            .map { it[ChapterTable.id].value }
-
-        for (childId in childIds) {
-            ChapterTable.update({ChapterTable.id.eq(childId)}) {
-                it[ChapterTable.parentId] = null
-            }
-        }
-    }
-
-    suspend fun readChapters(limit: Int = 100) = dbQuery {
-        ChapterTable.select(ChapterAspect.columns)
-            .orderBy(ChapterTable.score, SortOrder.DESC)
-            .limit(limit)
-            .map { it.toChapter() }
-    }
-
-    suspend fun readCurrentChapters(epochs: Int) = dbQuery {
-        val time = (Clock.System.now() - CHAPTER_EPOCH * epochs).toLocalDateTimeUtc()
-        ChapterTable.select(ChapterAspect.columns)
-            .where { ChapterTable.happenedAt.greater(time) }
-            .map { it.toChapter() }
-    }
-
-    suspend fun readChapterSignals(chapterId: Long) = dbQuery {
-        ChapterSourceTable.leftJoin(SourceTable).select(SourceTable.columns)
-            .where {
-                ChapterSourceTable.chapterId.eq(chapterId) and
-                        ChapterSourceTable.type.eq(ChapterSourceType.Secondary) and
-                        ChapterSourceTable.relevance.isNullOrNeq(Relevance.Irrelevant)
-            }
-            .map { it.toChapterSignal() }
-    }
-
     suspend fun deleteChapter(chapterId: Long) = dbQuery {
         ChapterTable.deleteWhere { ChapterTable.id.eq(chapterId) }
     }
 
-    suspend fun deleteChapterSource(chapterId: Long, sourceId: Long) = dbQuery {
-        ChapterSourceTable.deleteWhere {
-            ChapterSourceTable.chapterId.eq(chapterId) and ChapterSourceTable.sourceId.eq(sourceId)
-        }
+    suspend fun createChapter(chapter: Chapter, sources: List<ChapterSource>, vector: FloatArray,) = dbQuery {
+        val chapterId = ChapterTable.insertAndGetId {
+            it.fromModel(chapter)
+            it[ChapterTable.vector] = vector
+        }.value
+        updateAndTrimSources(chapterId, sources)
+        chapterId
     }
 
-    suspend fun readCurrentRelevance(chapterId: Long) = dbQuery {
-        ChapterSourceTable.select(sourceId, relevance)
-            .where { ChapterSourceTable.chapterId.eq(chapterId) and relevance.isNotNull() }
-            .map { it[sourceId].value to it[relevance]!! }
+    suspend fun readInboundSignals(sourceId: Long) = dbQuery {
+        LinkTable.leftJoin(LeadTable).join(SourceTable, JoinType.LEFT, LinkTable.sourceId, SourceTable.id)
+            .select(SourceTable.columns)
+            .where { LeadTable.sourceId.eq(sourceId) and SourceTable.contentCount.greaterEq(EMBEDDING_MIN_WORDS) }
+            .map { it.toChapterSignal() }
     }
 }
 
 internal fun ResultRow.toChapterSignal() = this.let {
     val source = this.toSource()
     val chapterSource = when {
-        this.hasValue(ChapterSourceTable.id) -> this.toChapterSource()
+        this.getOrNull(ChapterSourceTable.id) != null -> this.toChapterSource()
         else -> null
     }
     val outboundIds = LinkTable.leftJoin(LeadTable).select(LeadTable.sourceId)

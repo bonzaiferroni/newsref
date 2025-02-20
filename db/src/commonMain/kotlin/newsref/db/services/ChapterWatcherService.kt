@@ -1,34 +1,22 @@
 package newsref.db.services
 
 import newsref.db.DbService
-import newsref.db.model.Chapter
-import newsref.db.model.ChapterSource
-import newsref.db.model.ChapterSourceType
-import newsref.db.tables.ChapterSourceTable
-import newsref.db.tables.ChapterSourceTable.chapterId
-import newsref.db.tables.ChapterSourceTable.sourceId
-import newsref.db.tables.ChapterTable
-import newsref.db.tables.SourceTable
-import newsref.db.tables.chapterColumns
-import newsref.db.tables.toChapter
-import newsref.db.tables.toChapterSourceInfo
-import org.jetbrains.exposed.sql.SortOrder
-import org.jetbrains.exposed.sql.and
-import org.jetbrains.exposed.sql.count
-import org.jetbrains.exposed.sql.update
+import newsref.db.model.*
+import newsref.db.tables.*
+import org.jetbrains.exposed.sql.*
 
 class ChapterWatcherService : DbService() {
 
     suspend fun readChapter(chapterId: Long) = dbQuery {
-        ChapterTable.select(chapterColumns)
+        ChapterTable.select(ChapterAspect.columns)
             .where { ChapterTable.id.eq(chapterId) }
             .firstOrNull()?.toChapter()
     }
 
     suspend fun readTopNullTitle() = dbQuery {
         val table = ChapterTable
-        ChapterTable.select(chapterColumns)
-            .where { table.title.isNull() }
+        ChapterTable.select(ChapterAspect.columns)
+            .where { table.title.isNull() and table.size.greaterEq(CHAPTER_MIN_ARTICLES) }
             .orderBy(table.size, SortOrder.DESC)
             .firstOrNull()?.toChapter()
     }
@@ -71,7 +59,8 @@ class ChapterWatcherService : DbService() {
     suspend fun updateChapterSourceRelevance(chapterSources: List<ChapterSource>) = dbQuery {
         for (chapterSource in chapterSources) {
             ChapterSourceTable.update({
-                sourceId.eq(chapterSource.sourceId) and chapterId.eq(chapterSource.chapterId)
+                ChapterSourceTable.sourceId.eq(chapterSource.sourceId) and
+                        ChapterSourceTable.chapterId.eq(chapterSource.chapterId)
             }) {
                 it[relevance] = chapterSource.relevance
             }

@@ -27,8 +27,6 @@ class ChapterBucket(
     private val _linkTally = mutableMapOf<Long, Int>()
     private var _cohesion: Float? = null
     private var _distances: Map<Long, Float>? = null
-    private var _relevantIds = mutableSetOf<Long>()
-    private var _irrelevantIds = mutableSetOf<Long>()
 
     val signals: List<ChapterSourceSignal> get() = _signals
     val vectors: Map<Long, FloatArray> get() = _vectors
@@ -40,11 +38,8 @@ class ChapterBucket(
     val chapterId get() = _chapterId ?: _chapter?.id
     val title get() = _chapter?.title
     val linkIds: Set<Long> get() = _linkTally.keys
-    val relevantIds: Set<Long> get() = _relevantIds
-    val irrelevantIds: Set<Long> get() = _irrelevantIds
 
     fun remove(sourceId: Long) {
-        if (relevantIds.contains(sourceId)) error("removed relevant signal")
         val signal = _signals.firstOrNull { it.source.id == sourceId }
         if (signal == null) return
         invalidateCache()
@@ -57,7 +52,6 @@ class ChapterBucket(
     }
 
     fun add(signal: ChapterSourceSignal, vector: FloatArray) {
-        if (irrelevantIds.contains(signal.source.id)) error("added irrelevant signal")
         if (_vectors.contains(signal.source.id)) error("signal is already present in bucket")
         invalidateCache()
         _signals.add(signal)
@@ -144,23 +138,9 @@ class ChapterBucket(
         _chapterId = chapterId
     }
 
-    fun updateRelevance(relevantIds: Set<Long>, irrelevantIds: Set<Long>) {
-        _relevantIds.clear()
-        _relevantIds.addAll(relevantIds)
-        _irrelevantIds.clear()
-        _irrelevantIds.addAll(irrelevantIds)
-        val removeIds = irrelevantIds.filter { _vectors.contains(it) }
-        if (removeIds.isEmpty()) return
-        for (id in removeIds) {
-            remove(id)
-        }
-        console.log("removed ${removeIds.size} irrelevant signals")
-    }
-
     fun mergeInto(bucket: ChapterBucket) {
         for (signal in signals) {
             if (bucket.contains(signal.source.id)) continue
-            if (bucket.irrelevantIds.contains(signal.source.id)) continue
             val vector = vectors.getValue(signal.source.id)
             bucket.add(signal, vector)
         }

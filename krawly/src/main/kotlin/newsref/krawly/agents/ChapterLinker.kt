@@ -13,7 +13,7 @@ private val console = globalConsole.getHandle("ChapterLinker")
 
 class ChapterLinker(
     private val dataLogService: DataLogService = DataLogService(),
-    private val storyComposerService: ChapterComposerService = ChapterComposerService()
+    private val storyComposerService: ChapterLinkerService = ChapterLinkerService()
 ) : StateModule<StoryFinderState>(StoryFinderState()) {
 
     fun start() {
