@@ -1,7 +1,7 @@
-There is the title of a news event:
+Following are a list of headlines from articles we've discovered that may be related to the event. For each headline, try to determine if it is strictly relevant to the event or not. Include these headlines as they appear in the "relevant" property of your json response. Headlines that are CLEARLY about a different event should go in the "irrelevant" property of your json response. Only consider a headline irrelevant if it is certainly about another topic or event. Headlines that are vague or you are unsure about go in the "unsure" property of your json response.
+
+There is the title of the event:
 <|title|>
 
-Here are a list of headlines from articles we've discovered that may be related to the event:
+Here are the headlines that may be relevant:
 <|headlines|>
-
-For each headline, try to determine if it is strictly relevant to the event or not. Include these headlines as they appear in the "relevant" property of your json response. Headlines that are clearly about a different event should go in the "irrelevant" property of your json response. Headlines that are vague or you are unsure about go in the "unsure" property of your json response.

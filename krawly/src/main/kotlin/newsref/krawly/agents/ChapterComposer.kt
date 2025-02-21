@@ -75,21 +75,21 @@ class ChapterComposer(
 
         setState { it.copy(signalDate = origin.source.seenAt) }
         if (origin.source.type == SourceType.ARTICLE) {
-            // console.log("found secondary signal")
+            // console.log("found secondary signal ${origin.source.id}")
             setState { it.copy(secondarySignals = it.secondarySignals + 1) }
             findSecondaryBucket(origin, model)
         } else {
-            // console.log("found primary signal")
+            // console.log("found primary signal: ${origin.source.id}")
             setState { it.copy(primarySignals = it.primarySignals + 1) }
             findPrimaryBucket(origin, model)
         }
     }
 
     private suspend fun findPrimaryBucket(origin: ChapterSourceSignal, model: VectorModel) {
+        excludeUntil(origin.source.id, 1.hours)
         val signals = service.readInboundSignals(origin.source.id)
         if (signals.isEmpty()) {
-            excludeUntil(origin.source.id, 1.hours)
-            console.log("primary bucket too small")
+            console.log("primary bucket empty")
             return
         }
         val bucket = ChapterBucket()
@@ -108,7 +108,7 @@ class ChapterComposer(
         if (findRelatedBucketAndMerge(bucket, model)) {
             return
         }
-        console.log("adding primary bucket")
+        // console.log("adding primary bucket")
         createChapter(bucket)
     }
 
@@ -116,11 +116,11 @@ class ChapterComposer(
         val vector = readOrFetchVector(signal.source, model)
         if (vector == null) {
             excludeUntil(signal.source.id, Duration.INFINITE)
-            console.log("vector unavailable")
+             console.log("vector unavailable")
             return
         }
 
-        val buckets = findBuckets(listOf(signal), vector, signal.source.existedAt, CHAPTER_MAX_DISTANCE, model)
+        val buckets = findBuckets(listOf(signal), 0, vector, signal.source.existedAt, CHAPTER_MAX_DISTANCE, model)
         if (buckets.isEmpty()) {
             // create chapter
             val bucket = ChapterBucket()
@@ -141,6 +141,7 @@ class ChapterComposer(
     private suspend fun findRelatedBucketAndMerge(bucket: ChapterBucket, model: VectorModel): Boolean {
         val buckets = findBuckets(
             originSignals = bucket.signals,
+            chapterId = bucket.chapterId ?: 0,
             vector = bucket.averageVector,
             happenedAt = bucket.happenedAt,
             maxDistance = CHAPTER_MAX_DISTANCE * CHAPTER_MERGE_FACTOR,
@@ -151,22 +152,21 @@ class ChapterComposer(
         }
         val sampleMaxSize = buckets.maxBy { it.size }.size
         val existingBucket = buckets.minBy { it.getDistanceVector(bucket, sampleMaxSize).priorityMagnitude }
+        val originalSize = existingBucket.size
         val (smaller, bigger) = when {
             existingBucket.size < bucket.size && bucket.chapterId != null -> existingBucket to bucket
             else -> bucket to existingBucket
         }
         smaller.mergeInto(bigger)
         bigger.shake()
-        console.log("merged bucket, new size: ${bigger.size}")
         updateChapter(bigger)
         deleteChapter(smaller)
         return true
     }
 
     private suspend fun createChapter(bucket: ChapterBucket) {
-        console.log("created chapter!")
         val sources = bucket.getSecondarySources() + bucket.getPrimarySources()
-        service.createChapter(
+        val chapterId = service.createChapter(
             chapter = Chapter(
                 score = bucket.getChapterScore(),
                 size = 1,
@@ -178,13 +178,13 @@ class ChapterComposer(
             sources = sources,
             vector = bucket.averageVector
         )
+        // console.log("created chapter! $chapterId")
         setState { it.copy(chaptersCreated = it.chaptersCreated + 1) }
     }
 
     private suspend fun updateChapter(bucket: ChapterBucket) {
         val sources = bucket.getPrimarySources() + bucket.getSecondarySources()
 
-        console.log("updated chapter! size: ${bucket.size}")
         service.updateChapterAndSources(
             chapterId = bucket.chapterId!!,
             score = bucket.getChapterScore(),
@@ -194,12 +194,14 @@ class ChapterComposer(
             sources = sources,
             vector = bucket.averageVector
         )
+
+        console.log("updated chapter! size: ${bucket.size}, id:${bucket.chapterId}")
         setState { it.copy(chaptersUpdated = it.chaptersUpdated + 1) }
     }
 
     private suspend fun deleteChapter(bucket: ChapterBucket): Boolean {
         val chapterId = bucket.chapterId ?: return false
-        console.log("deleted chapter")
+        console.log("deleted chapter: $chapterId")
         service.deleteChapter(chapterId)
         setState { it.copy(chaptersDeleted = it.chaptersDeleted + 1) }
         return true
@@ -207,13 +209,14 @@ class ChapterComposer(
 
     private suspend fun findBuckets(
         originSignals: List<ChapterSourceSignal>,
+        chapterId: Long,
         vector: FloatArray,
         happenedAt: Instant,
         maxDistance: Float,
         model: VectorModel
     ): List<ChapterBucket> {
         val sourceIds = originSignals.map { it.source.id }
-        val chapterSignals = service.findTextRelatedChapters(sourceIds, vector)
+        val chapterSignals = service.findTextRelatedChapters(sourceIds, chapterId, vector)
         return chapterSignals.mapNotNull { (chapter, textDistance) ->
             val timeDistance = happenedAt.chapterDistanceTo(chapter.happenedAt)
             val bucketDistance = BucketDistance(textDistance, timeDistance, 0f, 0f)
@@ -237,6 +240,7 @@ class ChapterComposer(
         val content = contentService.readSourceContentText(source.id).take(EMBEDDING_MAX_CHARACTERS)
         if (content.length < EMBEDDING_MIN_CHARACTERS || wordCount == null || wordCount < EMBEDDING_MIN_WORDS) {
             setState { it.copy(contentsMissing = it.contentsMissing + 1) }
+            console.log("content missing")
             return null
         }
         // console.log("fetching vector")
@@ -246,3 +250,5 @@ class ChapterComposer(
         return vector
     }
 }
+
+const val defaultModelName = "text-embedding-3-small"

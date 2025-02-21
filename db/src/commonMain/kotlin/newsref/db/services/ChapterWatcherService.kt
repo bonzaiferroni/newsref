@@ -22,13 +22,17 @@ class ChapterWatcherService : DbService() {
     }
 
     suspend fun readTopNullRelevance() = dbQuery {
-        val table = ChapterSourceTable
-        val idCount = table.chapterId.count()
-        table.select(table.chapterId, idCount)
-            .where { table.relevance.isNull() and table.type.eq(ChapterSourceType.Secondary) }
-            .groupBy(table.chapterId)
+        val idCount = ChapterSourceTable.chapterId.count()
+        ChapterSourceTable.leftJoin(ChapterTable)
+            .select(ChapterSourceTable.chapterId, idCount)
+            .where {
+                ChapterSourceTable.relevance.isNull() and
+                        ChapterSourceTable.type.eq(ChapterSourceType.Secondary) and
+                        ChapterTable.title.isNotNull()
+            }
+            .groupBy(ChapterSourceTable.chapterId)
             .orderBy(idCount, SortOrder.DESC)
-            .firstOrNull()?.let { Pair(it[table.chapterId].value, it[idCount])}
+            .firstOrNull()?.let { Pair(it[ChapterSourceTable.chapterId].value, it[idCount]) }
     }
 
     suspend fun readChapterSourceInfos(chapterId: Long) = dbQuery {
@@ -42,7 +46,11 @@ class ChapterWatcherService : DbService() {
     suspend fun readNullRelevanceChapterSourceInfos(chapterId: Long) = dbQuery {
         ChapterSourceTable.leftJoin(SourceTable)
             .select(ChapterSourceTable.columns + SourceTable.columns)
-            .where { ChapterSourceTable.chapterId.eq(chapterId) and ChapterSourceTable.relevance.isNull() }
+            .where {
+                ChapterSourceTable.chapterId.eq(chapterId) and
+                        ChapterSourceTable.relevance.isNull() and
+                        ChapterSourceTable.type.eq(ChapterSourceType.Secondary)
+            }
             .orderBy(SourceTable.score, SortOrder.DESC_NULLS_LAST)
             .map { it.toChapterSourceInfo() }
     }

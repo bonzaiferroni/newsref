@@ -42,7 +42,7 @@ fun crawl(args: Array<String>) {
         chapterWatcher.start()
         chapterReporter.start()
         storyComposer.start()
-        storyWatcher.start()
+        // storyWatcher.start()
         // noteWriter.start()
         // distanceFinder.start()
         "Starting spider 🕷"

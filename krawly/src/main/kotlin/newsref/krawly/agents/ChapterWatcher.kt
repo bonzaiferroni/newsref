@@ -53,7 +53,7 @@ class ChapterWatcher(
 
     internal suspend fun findRelevance() {
         val topNullRelevance = service.readTopNullRelevance()
-        if (topNullRelevance == null || topNullRelevance.second == 0L) return
+        if (topNullRelevance == null || topNullRelevance.second < 10) return
 
         val (chapterId, nullRelevanceCount) = topNullRelevance
         val chapter = service.readChapter(chapterId)
@@ -89,7 +89,8 @@ class ChapterWatcher(
             val relevance = when {
                 headline == null -> Relevance.Unsure
                 response.relevant.containsSimilar(headline) -> Relevance.Relevant
-                response.irrelevant.containsSimilar(headline) -> Relevance.Irrelevant
+                (it.chapterSource.textDistance ?: 1f) > CHAPTER_MAX_DISTANCE / 2 &&
+                        response.irrelevant.containsSimilar(headline) -> Relevance.Irrelevant
                 response.unsure.containsSimilar(headline) -> Relevance.Unsure
                 else -> Relevance.Unsure
             }

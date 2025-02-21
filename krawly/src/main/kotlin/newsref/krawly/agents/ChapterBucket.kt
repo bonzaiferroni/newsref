@@ -140,7 +140,10 @@ class ChapterBucket(
 
     fun mergeInto(bucket: ChapterBucket) {
         for (signal in signals) {
-            if (bucket.contains(signal.source.id)) continue
+            if (bucket.contains(signal.source.id)) {
+                console.log("signal already in bucket: ${signal.source.id}")
+                continue
+            }
             val vector = vectors.getValue(signal.source.id)
             bucket.add(signal, vector)
         }

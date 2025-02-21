@@ -97,6 +97,8 @@ class PageReader(
 					console.logError("Exception caching content:\n$pageUrl\n${e.message}")
 					continue
 				}
+			} else {
+				console.log("didn't cache content with length: ${content.text.length}")
 			}
 
 			readWordCount += readWordCount
