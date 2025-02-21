@@ -1,9 +1,15 @@
 Here are a list of headlines that may be related to a news event.
 <|headlines|>
 
-For the title property of your json response, generate a single title for the event, based on the headlines. If the headlines appear to be about more than one event, generate a title about the most common. It should be no more than 100 characters long and include only the most relevant details. Shorter is better.
+For the title property of your json response, generate a single title for the event, based on the headlines. As the title of the event, it should simply say what happened, based on the information you gather from the headlines. It should be no more than 100 characters long and include only the most relevant details. Shorter is better.
 
-Here are some example titles:
+It should have a subject and a verb. This is a bad example of a title because it has no verb:
+Ukraine War & US Political Reactions
+
+A better title would be this:
+US Politicians React to Ukraine War
+
+Here are more examples of good titles:
 
 Plane crash outside of Topeka, Kansas
 Trump signs executive order on immigration

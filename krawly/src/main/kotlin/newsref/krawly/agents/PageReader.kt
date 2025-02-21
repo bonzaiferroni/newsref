@@ -98,7 +98,7 @@ class PageReader(
 					continue
 				}
 			} else {
-				console.log("didn't cache content with length: ${content.text.length}")
+				console.log("${pageUrl.core}: didn't cache content with length: ${content.text.length}")
 			}
 
 			readWordCount += readWordCount
