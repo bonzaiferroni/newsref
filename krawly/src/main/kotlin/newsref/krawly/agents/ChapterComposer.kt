@@ -14,7 +14,6 @@ import newsref.db.model.ChapterFinderLog
 import newsref.db.model.ChapterFinderState
 import newsref.db.model.Source
 import newsref.db.services.CHAPTER_MAX_DISTANCE
-import newsref.db.services.CHAPTER_MERGE_FACTOR
 import newsref.db.services.ChapterComposerService
 import newsref.db.services.ChapterSourceSignal
 import newsref.db.services.ContentService
@@ -23,7 +22,7 @@ import newsref.db.services.EMBEDDING_MAX_CHARACTERS
 import newsref.db.services.EMBEDDING_MIN_CHARACTERS
 import newsref.db.services.EMBEDDING_MIN_WORDS
 import newsref.db.services.SourceVectorService
-import newsref.model.core.SourceType
+import newsref.model.core.PageType
 import kotlin.time.Duration
 import kotlin.time.Duration.Companion.hours
 import kotlin.time.Duration.Companion.minutes
@@ -75,7 +74,7 @@ class ChapterComposer(
         }
 
         setState { it.copy(signalDate = origin.source.seenAt) }
-        if (origin.source.type == SourceType.ARTICLE) {
+        if (origin.source.type == PageType.NEWS_ARTICLE) {
             // console.log("found secondary signal ${origin.source.id}")
             setState { it.copy(secondarySignals = it.secondarySignals + 1) }
             findSecondaryBucket(origin, model)
@@ -95,7 +94,7 @@ class ChapterComposer(
         }
         val bucket = ChapterBucket()
         for (signal in signals) {
-            if (signal.source.type != SourceType.ARTICLE) continue
+            if (signal.source.type != PageType.NEWS_ARTICLE) continue
             if (bucket.contains(signal.source.id)) continue
             val vector = readOrFetchVector(signal.source, model) ?: continue
             bucket.add(signal, vector)

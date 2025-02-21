@@ -13,7 +13,7 @@ import newsref.db.utils.stripParams
 import newsref.db.utils.toNewDomain
 import newsref.krawly.utils.contentToDoc
 import newsref.krawly.utils.findFirstOrNull
-import newsref.model.core.SourceType
+import newsref.model.core.PageType
 import newsref.db.core.Url
 import newsref.db.core.toUrl
 import newsref.model.dto.PageAuthor
@@ -53,7 +53,7 @@ class TweetReader {
 			source = Source(
                 url = tweetUrl,
                 title = title,
-                type = SourceType.SOCIAL_POST,
+                type = PageType.SOCIAL_POST,
                 embed = html,
                 contentCount = wordCount,
                 accessedAt = now,

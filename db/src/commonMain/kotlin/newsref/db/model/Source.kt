@@ -2,8 +2,7 @@ package newsref.db.model
 
 import kotlinx.datetime.Instant
 import newsref.db.core.CheckedUrl
-import newsref.model.core.SourceType
-import newsref.model.dto.SourceDto
+import newsref.model.core.PageType
 
 data class Source(
     val id: Long = 0,
@@ -11,7 +10,7 @@ data class Source(
     val noteId: Long? = null,
     val url: CheckedUrl,
     val title: String? = null,
-    val type: SourceType? = null,
+    val type: PageType? = null,
     val score: Int? = null,
     val feedPosition: Int? = null,
     val thumbnail: String? = null,

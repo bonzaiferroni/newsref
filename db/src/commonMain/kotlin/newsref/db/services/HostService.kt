@@ -83,7 +83,7 @@ class HostService : DbService() {
         sourceInfoTables
             .where {
                 SourceTable.hostId.eq(hostId) and SourceTable.title.like("%$searchText%") and
-                        (SourceTable.type.eq(SourceType.ARTICLE) or SourceTable.type.eq(SourceType.SOCIAL_POST)) and
+                        (SourceTable.type.eq(PageType.NEWS_ARTICLE) or SourceTable.type.eq(PageType.SOCIAL_POST)) and
                         SourceTable.existedAfter(time)
             }
             .orderBy(orderColumn, (direction ?: SortDirection.Descending).toSortOrder())

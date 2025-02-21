@@ -141,12 +141,12 @@ class PageReader(
 		val authors = newsArticle?.readAuthor() ?: doc.readAuthor()?.let { listOf(PageAuthor(name = it)) }
 		val articleType = typeSets.maxByOrNull { it.value }?.key ?: ArticleType.UNKNOWN
 		val metaType = doc.readType()
-		val sourceType = getSourceType(newsArticle, articleType, metaType ?: SourceType.UNKNOWN, contentWordCount)
+		val pageType = getSourceType(newsArticle, articleType, metaType ?: PageType.UNKNOWN, contentWordCount)
 		val language = newsArticle?.inLanguage ?: doc.readLanguage()
 		val thumbnail = newsArticle?.thumbnailUrl ?: newsArticle?.image?.takeIf { it.size > 1 }
 			?.firstNotNullOfOrNull{ if (it.width != null && it.width < 640) it else null }?.url
 
-		if (sourceType == SourceType.ARTICLE) articleCount++
+		if (pageType == PageType.NEWS_ARTICLE) articleCount++
 		docCount++
 		console.status = "$articleCount/$docCount"
 
@@ -154,10 +154,10 @@ class PageReader(
 			source = Source(
                 url = pageUrl,
                 title = doc.titleText,
-                type = sourceType,
+                type = pageType,
                 thumbnail = thumbnail,
                 imageUrl = imageUrl?.href,
-                contentCount = if (isNewsContent(sourceType, language)) contentWordCount else 0,
+                contentCount = if (isNewsContent(pageType, language)) contentWordCount else 0,
                 seenAt = lead.freshAt ?: now,
                 accessedAt = now,
                 publishedAt = publishedAt,
@@ -192,13 +192,13 @@ class PageReader(
 	private fun getSourceType(
 		newsArticle: NewsArticle?,
 		articleType: ArticleType,
-		sourceType: SourceType,
+		pageType: PageType,
 		wordCount: Int
-	): SourceType {
-		if (newsArticle != null) return SourceType.ARTICLE
-		if (wordCount < 100 || sourceType != SourceType.ARTICLE) return sourceType
-		if (articleType == ArticleType.POLICY) return SourceType.WEBSITE
-		return sourceType
+	): PageType {
+		if (newsArticle != null) return PageType.NEWS_ARTICLE
+		if (wordCount < 100 || pageType != PageType.NEWS_ARTICLE) return pageType
+		if (articleType == ArticleType.POLICY) return PageType.WEBSITE
+		return pageType
 	}
 }
 
@@ -248,13 +248,13 @@ private val notParentTags = setOf(
 )
 private val lassoTags = setOf("body", "main", "article")
 
-fun SourceType.getEmoji() = when (this) {
-	SourceType.ARTICLE -> "📜"
-	SourceType.WEBSITE -> "🥱"
-	SourceType.IMAGE -> "🌆"
-	SourceType.BLOG_POST -> "📝"
-	SourceType.VIDEO -> "📼"
-	SourceType.SOCIAL_POST -> "👯"
+fun PageType.getEmoji() = when (this) {
+	PageType.NEWS_ARTICLE -> "📜"
+	PageType.WEBSITE -> "🥱"
+	PageType.IMAGE -> "🌆"
+	PageType.BLOG_POST -> "📝"
+	PageType.VIDEO -> "📼"
+	PageType.SOCIAL_POST -> "👯"
 	else -> "🧀"
 }
 

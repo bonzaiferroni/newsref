@@ -2,14 +2,14 @@ package newsref.model.dto
 
 import kotlinx.datetime.Instant
 import kotlinx.serialization.Serializable
-import newsref.model.core.SourceType
+import newsref.model.core.PageType
 
 @Serializable
 data class SourceDto(
     val id: Long = 0,
     val url: String,
     val title: String? = null,
-    val type: SourceType? = null,
+    val type: PageType? = null,
     val score: Int? = null,
     val thumbnail: String? = null,
     val imageUrl: String? = null,

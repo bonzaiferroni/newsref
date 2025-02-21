@@ -84,7 +84,7 @@ class SourceReader(
 			return FetchResult.CAPTCHA
 		// todo: support other languages
 		if (page.language?.startsWith("en") != true) return FetchResult.IRRELEVANT
-		if (page.source.type == SourceType.ARTICLE) {
+		if (page.source.type == PageType.NEWS_ARTICLE) {
 			if (page.foundNewsArticle) return FetchResult.RELEVANT
 			val wordCount = page.article?.wordCount ?: 0
 			val maybeUseful = page.source.publishedAt != null && page.links.any { it.isExternal } && wordCount > 100

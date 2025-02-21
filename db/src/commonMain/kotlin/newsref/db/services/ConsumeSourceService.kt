@@ -5,7 +5,7 @@ import newsref.db.DbService
 import newsref.db.globalConsole
 import newsref.db.model.Author
 import newsref.db.tables.*
-import newsref.model.core.SourceType
+import newsref.model.core.PageType
 import newsref.db.model.CrawlInfo
 import newsref.db.model.FetchResult
 import newsref.db.model.LeadResult
@@ -134,7 +134,7 @@ class ConsumeSourceService : DbService() {
 	}
 }
 
-fun isNewsContent(type: SourceType?, language: String?) =
-	(type == SourceType.ARTICLE || type == SourceType.SOCIAL_POST)
+fun isNewsContent(type: PageType?, language: String?) =
+	(type == PageType.NEWS_ARTICLE || type == PageType.SOCIAL_POST)
 			&& language?.startsWith("en") == true
 

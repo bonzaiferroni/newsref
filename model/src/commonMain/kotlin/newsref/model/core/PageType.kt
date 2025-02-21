@@ -1,11 +1,11 @@
 package newsref.model.core
 
-enum class SourceType(
+enum class PageType(
     val displayName: String
 ) {
     UNKNOWN("Unknown"),
-    ARTICLE("News Article"),
-    JOURNAL_ARTICLE("Journal Article"),
+    NEWS_ARTICLE("News Article"),
+    ARTICLE("Article"),
     BLOG_POST("Blog Post"),
     SOCIAL_POST("Social Media Post"),
     VIDEO("Video"),
@@ -20,7 +20,7 @@ enum class SourceType(
         fun fromMeta(value: String) = fromMetaOrNull(value) ?: UNKNOWN
 
         fun fromMetaOrNull(value: String) = when (value) {
-            "article" -> ARTICLE
+            "article" -> NEWS_ARTICLE
             // post ?
             "website" -> WEBSITE
             "profile" -> PROFILE
@@ -33,4 +33,4 @@ enum class ArticleType {
     UNKNOWN, NEWS, HELP, POLICY, JOURNAL
 }
 
-fun String.toSourceType(): SourceType = SourceType.fromMeta(this)
+fun String.toSourceType(): PageType = PageType.fromMeta(this)

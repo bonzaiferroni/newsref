@@ -6,7 +6,7 @@ import newsref.db.core.*
 import newsref.db.model.*
 import newsref.db.tables.*
 import newsref.db.utils.*
-import newsref.model.core.SourceType
+import newsref.model.core.PageType
 import org.jetbrains.exposed.sql.*
 import org.jetbrains.exposed.sql.SqlExpressionBuilder.eq
 import org.jetbrains.exposed.sql.SqlExpressionBuilder.notInList
@@ -21,7 +21,7 @@ class ChapterComposerService : DbService() {
                 SourceTable.score.greaterEq(2) and
                         SourceTable.id.notInList(excludedIds) and
                         SourceTable.id.notInSubQuery(subquery) and
-                        (SourceTable.type.neq(SourceType.ARTICLE) or
+                        (SourceTable.type.neq(PageType.NEWS_ARTICLE) or
                                 SourceTable.contentCount.greaterEq(EMBEDDING_MIN_WORDS))
             }
             .orderBy(SourceTable.seenAt, SortOrder.DESC)

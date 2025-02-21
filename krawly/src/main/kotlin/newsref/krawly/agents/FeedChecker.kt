@@ -14,7 +14,7 @@ import newsref.db.services.SourceService
 import newsref.krawly.utils.isLikelyAd
 import newsref.krawly.utils.tryGetHrefOrChild
 import newsref.krawly.utils.tryGetHrefOrParent
-import newsref.model.core.SourceType
+import newsref.model.core.PageType
 import newsref.db.core.toUrlWithContextOrNull
 import newsref.db.model.FeedSource
 import newsref.db.model.LeadJob
@@ -87,7 +87,7 @@ class FeedChecker(
                 // todo: block from robots.txt
                 val source = sourceService.readSourceByUrl(url)
                 if (source != null) {
-                    if (source.type == SourceType.ARTICLE && now - source.existedAt < FAMILIAR_HREF_INTERVAL) {
+                    if (source.type == PageType.NEWS_ARTICLE && now - source.existedAt < FAMILIAR_HREF_INTERVAL) {
                         feedSources.add(FeedSource(feedId = feed.id, sourceId = source.id, position = linkCount))
                         linkCount++
                     }
