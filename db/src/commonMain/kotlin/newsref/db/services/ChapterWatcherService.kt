@@ -4,6 +4,7 @@ import newsref.db.DbService
 import newsref.db.model.*
 import newsref.db.tables.*
 import org.jetbrains.exposed.sql.*
+import org.jetbrains.exposed.sql.SqlExpressionBuilder.eq
 
 class ChapterWatcherService : DbService() {
 
@@ -58,18 +59,26 @@ class ChapterWatcherService : DbService() {
         chapter: Chapter,
     ) = dbQuery {
         ChapterTable.update({ ChapterTable.id.eq(chapter.id) }) {
-            it[ChapterTable.title] = chapter.title
-            it[ChapterTable.summary] = chapter.summary
+            it[title] = chapter.title
+            it[summary] = chapter.summary
         }
     }
 
     suspend fun updateChapterSourceRelevance(chapterSources: List<ChapterSource>) = dbQuery {
         for (chapterSource in chapterSources) {
-            ChapterSourceTable.update({
-                ChapterSourceTable.sourceId.eq(chapterSource.sourceId) and
-                        ChapterSourceTable.chapterId.eq(chapterSource.chapterId)
-            }) {
-                it[relevance] = chapterSource.relevance
+            if (chapterSource.relevance == Relevance.Irrelevant) {
+                ChapterSourceTable.deleteWhere { id.eq(chapterSource.id) }
+                ChapterExclusionTable.insert {
+                    it[chapterId] = chapterSource.chapterId
+                    it[sourceId] = chapterSource.sourceId
+                }
+            } else {
+                ChapterSourceTable.update({
+                    ChapterSourceTable.sourceId.eq(chapterSource.sourceId) and
+                            ChapterSourceTable.chapterId.eq(chapterSource.chapterId)
+                }) {
+                    it[relevance] = chapterSource.relevance
+                }
             }
         }
     }

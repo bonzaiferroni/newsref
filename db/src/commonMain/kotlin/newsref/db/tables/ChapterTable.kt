@@ -1,13 +1,9 @@
 package newsref.db.tables
 
-import newsref.db.core.Aspect
-import newsref.db.core.vector
+import newsref.db.core.*
 import newsref.db.utils.*
-import newsref.db.model.Chapter
-import newsref.db.model.ChapterSource
-import newsref.db.model.ChapterSourceInfo
-import newsref.db.model.ChapterSourceType
-import newsref.model.dto.ChapterDto
+import newsref.db.model.*
+import newsref.model.dto.*
 import org.jetbrains.exposed.dao.id.*
 import org.jetbrains.exposed.sql.*
 import org.jetbrains.exposed.sql.kotlin.datetime.datetime

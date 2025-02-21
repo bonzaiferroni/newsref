@@ -5,9 +5,6 @@ import newsref.db.*
 import newsref.db.core.*
 import newsref.db.model.*
 import newsref.db.tables.*
-import newsref.db.tables.ChapterSourceTable.linkDistance
-import newsref.db.tables.ChapterSourceTable.textDistance
-import newsref.db.tables.ChapterSourceTable.timeDistance
 import newsref.db.utils.*
 import newsref.model.core.SourceType
 import org.jetbrains.exposed.sql.*
@@ -20,32 +17,27 @@ private val console = globalConsole.getHandle("ChapterComposerService")
 class ChapterComposerService : DbService() {
     suspend fun findNextSignal(excludedIds: List<Long>) = dbQuery {
         val subquery = ChapterSourceTable.select(ChapterSourceTable.sourceId)
-            .where { ChapterSourceTable.relevance.isNullOrNeq(Relevance.Irrelevant) }
-        SourceTable.leftJoin(ChapterSourceTable).select(SourceTable.columns + ChapterSourceTable.columns)
-            .where {
+        SourceTable.select(SourceTable.columns).where {
                 SourceTable.score.greaterEq(2) and
                         SourceTable.id.notInList(excludedIds) and
                         SourceTable.id.notInSubQuery(subquery) and
-                        (SourceTable.type.neq(SourceType.ARTICLE) or SourceTable.contentCount.greaterEq(
-                            EMBEDDING_MIN_WORDS
-                        ))
+                        (SourceTable.type.neq(SourceType.ARTICLE) or
+                                SourceTable.contentCount.greaterEq(EMBEDDING_MIN_WORDS))
             }
             .orderBy(SourceTable.seenAt, SortOrder.DESC)
             .firstOrNull()?.toChapterSignal()
     }
 
-    suspend fun findTextRelatedChapters(sourceIds: List<Long>, excludeChapterId: Long, vector: FloatArray) = dbQuery {
+    suspend fun findTextRelatedChapters(chapterId: Long, sourceIds: List<Long>, vector: FloatArray) = dbQuery {
         val distance = ChapterTable.vector.cosineDistance(vector).alias("cosine_distance")
-        val subquery = ChapterSourceTable.select(ChapterSourceTable.chapterId)
-            .where {
-                ChapterSourceTable.relevance.eq(Relevance.Irrelevant) and
-                        ChapterSourceTable.sourceId.inList(sourceIds)
+        val subquery = ChapterExclusionTable.select(ChapterExclusionTable.chapterId).where {
+                ChapterExclusionTable.chapterId.eq(chapterId) and ChapterExclusionTable.sourceId.inList(sourceIds)
             }
         ChapterTable.select(ChapterAspect.columns + distance)
             .where {
                 ChapterTable.happenedAt.since(CHAPTER_EPOCH * 4) and
                         ChapterTable.id.notInSubQuery(subquery) and
-                        ChapterTable.id.neq(excludeChapterId)
+                        ChapterTable.id.neq(chapterId)
             }
             .map { it.toChapter() to it[distance] }
             .filter { it.second < CHAPTER_MAX_DISTANCE }
@@ -56,8 +48,7 @@ class ChapterComposerService : DbService() {
             .select(SourceTable.columns + ChapterSourceTable.columns)
             .where {
                 ChapterSourceTable.chapterId.eq(chapterId) and
-                        ChapterSourceTable.type.eq(ChapterSourceType.Secondary) and
-                        ChapterSourceTable.relevance.isNullOrNeq(Relevance.Irrelevant)
+                        ChapterSourceTable.type.eq(ChapterSourceType.Secondary)
             }
             .map { it.toChapterSignal() }
     }
@@ -88,24 +79,10 @@ class ChapterComposerService : DbService() {
     fun Transaction.updateAndTrimSources(chapterId: Long, sources: List<ChapterSource>) {
         val sourceIds = sources.map { it.sourceId }
         ChapterSourceTable.deleteWhere {
-            ChapterSourceTable.chapterId.eq(chapterId) and
-                    sourceId.notInList(sourceIds) and
-                    relevance.isNullOrNeq(Relevance.Irrelevant)
+            ChapterSourceTable.chapterId.eq(chapterId) and sourceId.notInList(sourceIds)
         }
         for (source in sources) {
-            val updateCount = ChapterSourceTable.update({
-                ChapterSourceTable.chapterId.eq(chapterId) and
-                        ChapterSourceTable.sourceId.eq(source.sourceId) and
-                        ChapterSourceTable.relevance.isNullOrNeq(Relevance.Irrelevant)
-            }) {
-                it[type] = source.type
-                it[distance] = source.distance
-                it[linkDistance] = source.linkDistance
-                it[timeDistance] = source.timeDistance
-                it[textDistance] = source.textDistance
-            }
-            if (updateCount > 0) continue
-            ChapterSourceTable.insert {
+            ChapterSourceTable.upsert(ChapterSourceTable.chapterId, ChapterSourceTable.sourceId) {
                 it[ChapterSourceTable.chapterId] = chapterId
                 it[sourceId] = source.sourceId
                 it[type] = source.type

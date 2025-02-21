@@ -92,7 +92,6 @@ class ChapterBucket(
     fun shake(): List<Long> {
         if (size == 0) return emptyList()
         val removedIds = mutableListOf<Long>()
-        val initialOutboundIds = linkIds.toSet()
         do {
             val (distance, signal) = signals.filter { it.chapterSource?.relevance != Relevance.Relevant }
                 .map {
@@ -103,7 +102,6 @@ class ChapterBucket(
             remove(signal.source.id)
             removedIds.add(signal.source.id)
         } while (size > 1)
-        removedIds.addAll(initialOutboundIds - linkIds)
         if (removedIds.isNotEmpty()) {
             console.log("${removedIds.size} shaken out of bucket")
         }

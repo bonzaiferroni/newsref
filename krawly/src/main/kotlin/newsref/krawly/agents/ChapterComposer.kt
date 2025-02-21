@@ -217,7 +217,7 @@ class ChapterComposer(
         model: VectorModel
     ): List<ChapterBucket> {
         val sourceIds = originSignals.map { it.source.id }
-        val chapterSignals = service.findTextRelatedChapters(sourceIds, chapterId, vector)
+        val chapterSignals = service.findTextRelatedChapters(chapterId, sourceIds, vector)
         return chapterSignals.mapNotNull { (chapter, textDistance) ->
             val timeDistance = happenedAt.chapterDistanceTo(chapter.happenedAt)
             val bucketDistance = BucketDistance(textDistance, timeDistance, 0f, 0f)

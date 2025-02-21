@@ -52,6 +52,7 @@ val dbTables = listOf(
 	StoryTable,
 	ChapterTable,
 	ChapterSourceTable,
+	ChapterExclusionTable,
 	FeedSourceTable,
 	LogVariableTable,
 	IntegerLogTable,
