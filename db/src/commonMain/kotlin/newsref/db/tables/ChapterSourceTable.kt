@@ -3,14 +3,8 @@ package newsref.db.tables
 import newsref.db.model.ChapterSource
 import newsref.db.model.ChapterSourceInfo
 import newsref.db.model.Relevance
-import newsref.db.model.ChapterSourceType
-import newsref.db.tables.ChapterSourceTable.relevance
-import newsref.db.tables.ChapterSourceTable.sourceId
-import newsref.db.utils.isNullOrNeq
-import org.jetbrains.exposed.dao.id.EntityID
+import newsref.db.model.NewsSourceType
 import org.jetbrains.exposed.dao.id.LongIdTable
-import org.jetbrains.exposed.sql.NotInSubQueryOp
-import org.jetbrains.exposed.sql.Op
 import org.jetbrains.exposed.sql.ReferenceOption
 import org.jetbrains.exposed.sql.ResultRow
 
@@ -19,7 +13,7 @@ object ChapterSourceTable : LongIdTable("chapter_source") {
     val sourceId = reference("source_id", SourceTable, ReferenceOption.CASCADE).index()
     // val relevance = text("relevance")
     // val contrast = text("contrast")
-    val type = enumeration("type", ChapterSourceType::class)
+    val type = enumeration("type", NewsSourceType::class)
     val distance = float("distance").nullable()
     val textDistance = float("text_distance").nullable()
     val timeDistance = float("time_distance").nullable()

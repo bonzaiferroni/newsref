@@ -6,7 +6,7 @@ data class ChapterSource(
     val sourceId: Long,
     // val relevance: String? = null,
     // val contrast: String? = null,
-    val type: ChapterSourceType,
+    val type: NewsSourceType,
     val distance: Float?,
     val textDistance: Float?,
     val timeDistance: Float?,

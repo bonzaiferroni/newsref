@@ -18,7 +18,7 @@ data class Chapter(
     val happenedAt: Instant,
 )
 
-enum class ChapterSourceType {
+enum class NewsSourceType {
     Primary,
     Secondary,
 }

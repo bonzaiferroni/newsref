@@ -3,7 +3,7 @@ package newsref.db.services
 import newsref.db.DbService
 import newsref.db.tables.*
 import newsref.db.utils.since
-import newsref.db.model.ChapterSourceType
+import newsref.db.model.NewsSourceType
 import newsref.model.dto.ChapterPackDto
 import org.jetbrains.exposed.sql.SortOrder
 import org.jetbrains.exposed.sql.and
@@ -22,7 +22,7 @@ class ChapterDtoService : DbService() {
                 .select(SourceDtoAspect.columns)
                 .where {
                     ChapterSourceTable.chapterId.eq(it.id) and
-                            ChapterSourceTable.type.eq(ChapterSourceType.Secondary)
+                            ChapterSourceTable.type.eq(NewsSourceType.Secondary)
                 }
                 .orderBy(SourceTable.score, SortOrder.DESC_NULLS_LAST)
                 .limit(3)

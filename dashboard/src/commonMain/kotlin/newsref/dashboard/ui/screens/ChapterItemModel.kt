@@ -9,7 +9,7 @@ import newsref.dashboard.ChapterItemRoute
 import newsref.dashboard.utils.emptyImmutableList
 import newsref.db.model.Chapter
 import newsref.db.model.ChapterSourceInfo
-import newsref.db.model.ChapterSourceType
+import newsref.db.model.NewsSourceType
 import newsref.db.services.*
 import newsref.model.core.DataSort
 import newsref.model.core.Sorting
@@ -32,8 +32,8 @@ class ChapterItemModel(
     suspend fun refreshModel() {
         val chapter = chapterService.readChapter(stateNow.chapterId)
         val chapterSources = chapterWatcherService.readChapterSourceInfos(stateNow.chapterId)
-        val primarySources = chapterSources.filter { it.chapterSource.type == ChapterSourceType.Primary }
-        val secondarySources = chapterSources.filter { it.chapterSource.type == ChapterSourceType.Secondary }
+        val primarySources = chapterSources.filter { it.chapterSource.type == NewsSourceType.Primary }
+        val secondarySources = chapterSources.filter { it.chapterSource.type == NewsSourceType.Secondary }
         val children = chapterLinkerService.readChildren(stateNow.chapterId)
             .sortedBy { it.happenedAt }
             .toImmutableList()

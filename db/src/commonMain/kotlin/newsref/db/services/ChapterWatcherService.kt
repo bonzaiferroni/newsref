@@ -27,7 +27,7 @@ class ChapterWatcherService : DbService() {
             .select(ChapterSourceTable.chapterId, idCount)
             .where {
                 ChapterSourceTable.relevance.isNull() and
-                        ChapterSourceTable.type.eq(ChapterSourceType.Secondary) and
+                        ChapterSourceTable.type.eq(NewsSourceType.Secondary) and
                         ChapterTable.title.isNotNull()
             }
             .groupBy(ChapterSourceTable.chapterId)
@@ -49,7 +49,7 @@ class ChapterWatcherService : DbService() {
             .where {
                 ChapterSourceTable.chapterId.eq(chapterId) and
                         ChapterSourceTable.relevance.isNull() and
-                        ChapterSourceTable.type.eq(ChapterSourceType.Secondary)
+                        ChapterSourceTable.type.eq(NewsSourceType.Secondary)
             }
             .orderBy(SourceTable.score, SortOrder.DESC_NULLS_LAST)
             .map { it.toChapterSourceInfo() }
