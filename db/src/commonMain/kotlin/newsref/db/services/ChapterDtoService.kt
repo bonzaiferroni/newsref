@@ -18,13 +18,13 @@ class ChapterDtoService : DbService() {
             .limit(limit)
             .map { it.toChapterDto() }
         chapters.map {
-            val sources = ChapterSourceTable.leftJoin(SourceTable)
+            val sources = ChapterSourceTable.leftJoin(PageTable)
                 .select(SourceDtoAspect.columns)
                 .where {
                     ChapterSourceTable.chapterId.eq(it.id) and
                             ChapterSourceTable.type.eq(NewsSourceType.Secondary)
                 }
-                .orderBy(SourceTable.score, SortOrder.DESC_NULLS_LAST)
+                .orderBy(PageTable.score, SortOrder.DESC_NULLS_LAST)
                 .limit(3)
                 .map { it.toSourceDto() }
             ChapterPackDto(it, sources)

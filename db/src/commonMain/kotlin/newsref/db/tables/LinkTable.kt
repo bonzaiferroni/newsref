@@ -19,7 +19,7 @@ import org.jetbrains.exposed.sql.ResultRow
 import org.jetbrains.exposed.sql.and
 
 internal object LinkTable: LongIdTable("link") {
-    val sourceId = reference("source_id", SourceTable, ReferenceOption.CASCADE).index()
+    val sourceId = reference("source_id", PageTable, ReferenceOption.CASCADE).index()
     val leadId = reference("lead_id", LeadTable, ReferenceOption.SET_NULL).nullable().index()
     val contentId = reference("content_id", ContentTable, ReferenceOption.SET_NULL).nullable().index()
     val url = text("url")
@@ -83,7 +83,7 @@ internal fun LinkRow.Companion.setLeadOnSameLinks(url: CheckedUrl, leadRow: Lead
 // link info
 
 internal val linkInfoJoins get() =
-    LinkTable.leftJoin(SourceTable).leftJoin(HostTable)
+    LinkTable.leftJoin(PageTable).leftJoin(HostTable)
         .leftJoin(LeadTable, LinkTable.leadId, LeadTable.id)
         .leftJoin(ArticleTable)
         .leftJoin(ContentTable)
@@ -96,9 +96,9 @@ internal val linkInfoColumns = listOf(
     LinkTable.textIndex,
     LinkTable.isExternal,
     ContentTable.text,
-    SourceTable.url,
-    SourceTable.seenAt,
-    SourceTable.publishedAt,
+    PageTable.url,
+    PageTable.seenAt,
+    PageTable.publishedAt,
     ArticleTable.headline,
     HostTable.name,
     HostTable.core,
@@ -112,10 +112,10 @@ internal fun ResultRow.toLinkInfo() = LinkInfo(
     textIndex = this[LinkTable.textIndex],
     isExternal = this[LinkTable.isExternal],
     context = this.getOrNull(ContentTable.text),
-    originUrl = this[SourceTable.url],
+    originUrl = this[PageTable.url],
     hostName = this.getOrNull(HostTable.name),
     hostCore = this[HostTable.core],
-    seenAt = this[SourceTable.seenAt].toInstantUtc(),
-    publishedAt = this.getOrNull(SourceTable.publishedAt)?.toInstantUtc(),
+    seenAt = this[PageTable.seenAt].toInstantUtc(),
+    publishedAt = this.getOrNull(PageTable.publishedAt)?.toInstantUtc(),
     headline = this.getOrNull(ArticleTable.headline),
 )

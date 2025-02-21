@@ -24,13 +24,13 @@ class SourceScoreService : DbService() {
 		val time = (Clock.System.now() - duration)
 
 		LeadTable.leftJoin(LinkTable).leftJoin(LeadJobTable)
-			.leftJoin(SourceTable, LinkTable.sourceId, SourceTable.id)
-			.select(LeadTable.sourceId, LeadTable.id, LeadTable.url, SourceTable.id, SourceTable.hostId, SourceTable.score,
-				SourceTable.publishedAt, SourceTable.seenAt, SourceTable.feedPosition,
+			.leftJoin(PageTable, LinkTable.sourceId, PageTable.id)
+			.select(LeadTable.sourceId, LeadTable.id, LeadTable.url, PageTable.id, PageTable.hostId, PageTable.score,
+				PageTable.publishedAt, PageTable.seenAt, PageTable.feedPosition,
 				LeadJobTable.freshAt, LeadJobTable.feedPosition, LeadJobTable.feedId
 			)
 			.where {
-				SourceTable.existedAfter(time) and LinkTable.isExternal.eq(true) and LeadTable.sourceId.isNotNull()
+				PageTable.existedAfter(time) and LinkTable.isExternal.eq(true) and LeadTable.sourceId.isNotNull()
 			}
 			// .toSqlString { console.log(it) }
 			.map {
@@ -38,12 +38,12 @@ class SourceScoreService : DbService() {
 					targetId = it[LeadTable.sourceId]!!.value,
 					leadId = it[LeadTable.id].value,
 					url = it[LeadTable.url],
-					originHostId = it.getOrNull(SourceTable.hostId)?.value,
-					originId = it.getOrNull(SourceTable.id)?.value,
-					originScore = it.getOrNull(SourceTable.score),
-					linkedAt = (it.getOrNull(SourceTable.publishedAt)
-						?: it.getOrNull(SourceTable.seenAt) ?: it.getOrNull(LeadJobTable.freshAt))!!.toInstantUtc(),
-					feedPosition = it.getOrNull(SourceTable.feedPosition) ?: it.getOrNull(LeadJobTable.feedPosition),
+					originHostId = it.getOrNull(PageTable.hostId)?.value,
+					originId = it.getOrNull(PageTable.id)?.value,
+					originScore = it.getOrNull(PageTable.score),
+					linkedAt = (it.getOrNull(PageTable.publishedAt)
+						?: it.getOrNull(PageTable.seenAt) ?: it.getOrNull(LeadJobTable.freshAt))!!.toInstantUtc(),
+					feedPosition = it.getOrNull(PageTable.feedPosition) ?: it.getOrNull(LeadJobTable.feedPosition),
 					feedId = it.getOrNull(LeadJobTable.feedId)?.value,
 					linkId = it.getOrNull(LinkTable.id)?.value,
 				)
@@ -68,7 +68,7 @@ class SourceScoreService : DbService() {
 				this[SourceScoreTable.scoredAt] = it.scoredAt.toLocalDateTimeUtc()
 			}
 
-			val sourceCollection = SourceTable.getCollections { SourceTable.id.eq(sourceId) }.firstOrNull()
+			val sourceCollection = PageTable.getCollections { PageTable.id.eq(sourceId) }.firstOrNull()
 				?: throw IllegalArgumentException("Source not found: $sourceId")
 			SourceCacheRow.createOrUpdate(SourceCacheTable.sourceId eq sourceId) {
 				source = sourceRow

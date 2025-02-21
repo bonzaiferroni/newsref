@@ -21,7 +21,7 @@ internal class ContentRow(id: EntityID<Long>) : LongEntity(id) {
 }
 
 internal object SourceContentTable : LongIdTable("source_content") {
-    val sourceId = reference("source_id", SourceTable, ReferenceOption.CASCADE)
+    val sourceId = reference("source_id", PageTable, ReferenceOption.CASCADE)
     val contentId = reference("content_id", ContentTable, ReferenceOption.CASCADE)
 }
 

@@ -33,7 +33,7 @@ internal object HostAuthorTable : CompositeIdTable("host_author") {
 }
 
 internal object SourceAuthorTable : CompositeIdTable("source_author") {
-    val sourceId = reference("source_id", SourceTable, ReferenceOption.CASCADE).index()
+    val sourceId = reference("source_id", PageTable, ReferenceOption.CASCADE).index()
     val authorId = reference("author_id", AuthorTable, ReferenceOption.CASCADE).index()
     override val primaryKey = PrimaryKey(sourceId, authorId)
 }

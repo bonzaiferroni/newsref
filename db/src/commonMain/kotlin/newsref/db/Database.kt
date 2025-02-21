@@ -1,6 +1,5 @@
 package newsref.db
 
-import io.github.cdimascio.dotenv.Dotenv
 import kotlinx.coroutines.runBlocking
 import newsref.db.core.PgVectorManager
 import newsref.db.services.UserService
@@ -27,7 +26,7 @@ fun initDb(env: Environment) {
 val dbTables = listOf(
 	UserTable,
 	SessionTokenTable,
-	SourceTable,
+	PageTable,
 	SourceScoreTable,
 	LinkTable,
 	HostTable,

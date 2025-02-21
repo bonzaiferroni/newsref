@@ -14,8 +14,8 @@ import org.jetbrains.exposed.sql.kotlin.datetime.datetime
 
 // source score
 internal object SourceScoreTable : LongIdTable("source_score") {
-    val sourceId = reference("source_id", SourceTable, ReferenceOption.CASCADE)
-    val originId = reference("origin_id", SourceTable, ReferenceOption.CASCADE).nullable()
+    val sourceId = reference("source_id", PageTable, ReferenceOption.CASCADE)
+    val originId = reference("origin_id", PageTable, ReferenceOption.CASCADE).nullable()
     val feedId = reference("feed_id", FeedTable, ReferenceOption.CASCADE).nullable()
     val score = integer("score")
     val scoredAt = datetime("scored_at")

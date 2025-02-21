@@ -8,7 +8,7 @@ import newsref.db.tables.FeedSourceTable
 import newsref.db.tables.FeedTable
 import newsref.db.tables.HostTable
 import newsref.db.tables.NoteTable
-import newsref.db.tables.SourceTable
+import newsref.db.tables.PageTable
 import newsref.db.tables.sourceInfoColumns
 import newsref.db.tables.toFeed
 import newsref.db.tables.toSourceInfo
@@ -95,18 +95,18 @@ class FeedService : DbService() {
 
         if (!feed.external) {
             for (feedSource in feedSources) {
-                SourceTable.update({
-                    SourceTable.id.eq(feedSource.sourceId) and
-                            (SourceTable.feedPosition.isNull() or SourceTable.feedPosition.greater(feedSource.position))
+                PageTable.update({
+                    PageTable.id.eq(feedSource.sourceId) and
+                            (PageTable.feedPosition.isNull() or PageTable.feedPosition.greater(feedSource.position))
                 }) {
-                    it[SourceTable.feedPosition] = feedSource.position
+                    it[PageTable.feedPosition] = feedSource.position
                 }
             }
         }
     }
 
     suspend fun readFeedSources(feedId: Int, limit: Int = 100) = dbQuery {
-        FeedSourceTable.leftJoin(SourceTable).leftJoin(ArticleTable).leftJoin(HostTable).leftJoin(NoteTable)
+        FeedSourceTable.leftJoin(PageTable).leftJoin(ArticleTable).leftJoin(HostTable).leftJoin(NoteTable)
             .select(sourceInfoColumns + FeedSourceTable.position)
             .where { FeedSourceTable.feedId.eq(feedId) }
             .orderBy(FeedSourceTable.position, SortOrder.ASC)

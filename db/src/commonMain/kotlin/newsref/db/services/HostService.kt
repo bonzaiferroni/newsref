@@ -75,16 +75,16 @@ class HostService : DbService() {
     ) = dbQuery {
         val time = Clock.System.now() - interval
         val orderColumn = when (sort ?: DataSort.Id) {
-            DataSort.Id -> SourceTable.id
-            DataSort.Time -> SourceTable.seenAt
-            DataSort.Name -> SourceTable.title
-            DataSort.Score -> SourceTable.score
+            DataSort.Id -> PageTable.id
+            DataSort.Time -> PageTable.seenAt
+            DataSort.Name -> PageTable.title
+            DataSort.Score -> PageTable.score
         }
         sourceInfoTables
             .where {
-                SourceTable.hostId.eq(hostId) and SourceTable.title.like("%$searchText%") and
-                        (SourceTable.type.eq(PageType.NEWS_ARTICLE) or SourceTable.type.eq(PageType.SOCIAL_POST)) and
-                        SourceTable.existedAfter(time)
+                PageTable.hostId.eq(hostId) and PageTable.title.like("%$searchText%") and
+                        (PageTable.type.eq(PageType.NEWS_ARTICLE) or PageTable.type.eq(PageType.SOCIAL_POST)) and
+                        PageTable.existedAfter(time)
             }
             .orderBy(orderColumn, (direction ?: SortDirection.Descending).toSortOrder())
             .limit(limit)

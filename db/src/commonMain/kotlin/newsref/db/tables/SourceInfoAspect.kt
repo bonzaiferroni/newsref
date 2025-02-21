@@ -6,14 +6,14 @@ import org.jetbrains.exposed.sql.ResultRow
 
 // sourceInfo
 internal val sourceInfoColumns = listOf(
-    SourceTable.id,
-    SourceTable.url,
-    SourceTable.title,
-    SourceTable.score,
-    SourceTable.imageUrl,
-    SourceTable.thumbnail,
-    SourceTable.seenAt,
-    SourceTable.publishedAt,
+    PageTable.id,
+    PageTable.url,
+    PageTable.title,
+    PageTable.score,
+    PageTable.imageUrl,
+    PageTable.thumbnail,
+    PageTable.seenAt,
+    PageTable.publishedAt,
     HostTable.core,
     HostTable.name,
     HostTable.logo,
@@ -24,18 +24,18 @@ internal val sourceInfoColumns = listOf(
     NoteTable.body
 )
 
-val sourceInfoTables get () = SourceTable.leftJoin(ArticleTable).leftJoin(HostTable).leftJoin(NoteTable)
+val sourceInfoTables get () = PageTable.leftJoin(ArticleTable).leftJoin(HostTable).leftJoin(NoteTable)
     .select(sourceInfoColumns)
 
 internal fun ResultRow.toSourceInfo() = SourceInfo(
-    sourceId = this[SourceTable.id].value,
-    url = this[SourceTable.url],
-    pageTitle = this[SourceTable.title],
-    score = this[SourceTable.score] ?: 0,
-    image = this.getOrNull(SourceTable.imageUrl),
-    thumbnail = this.getOrNull(SourceTable.thumbnail),
-    seenAt = this[SourceTable.seenAt].toInstantUtc(),
-    publishedAt = this.getOrNull(SourceTable.publishedAt)?.toInstantUtc(),
+    sourceId = this[PageTable.id].value,
+    url = this[PageTable.url],
+    pageTitle = this[PageTable.title],
+    score = this[PageTable.score] ?: 0,
+    image = this.getOrNull(PageTable.imageUrl),
+    thumbnail = this.getOrNull(PageTable.thumbnail),
+    seenAt = this[PageTable.seenAt].toInstantUtc(),
+    publishedAt = this.getOrNull(PageTable.publishedAt)?.toInstantUtc(),
     hostCore = this[HostTable.core],
     hostName = this.getOrNull(HostTable.name),
     hostLogo = this.getOrNull(HostTable.logo),

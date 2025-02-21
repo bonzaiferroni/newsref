@@ -8,7 +8,7 @@ import org.jetbrains.exposed.sql.*
 import org.jetbrains.exposed.sql.statements.InsertStatement
 
 internal object SourceVectorTable : LongIdTable("source_vector") {
-	val sourceId = reference("source_id", SourceTable, ReferenceOption.CASCADE)
+	val sourceId = reference("source_id", PageTable, ReferenceOption.CASCADE)
 	val modelId = reference("model_id", VectorModelTable, ReferenceOption.CASCADE)
 	val vector = vector("vector", 1536)
 }
@@ -23,8 +23,8 @@ internal fun ResultRow.toVectorModel() = VectorModel(
 )
 
 internal object SourceDistanceTable : LongIdTable("source_distance") {
-	val originId = reference("origin_id", SourceTable, ReferenceOption.CASCADE)
-	val targetId = reference("target_id", SourceTable, ReferenceOption.CASCADE)
+	val originId = reference("origin_id", PageTable, ReferenceOption.CASCADE)
+	val targetId = reference("target_id", PageTable, ReferenceOption.CASCADE)
 	val modelId = reference("model_id", VectorModelTable, ReferenceOption.CASCADE)
 	val distance = float("distance")
 }
@@ -46,15 +46,15 @@ internal fun InsertStatement<*>.fromModel(data: SourceDistance) {
 internal val distanceInfoColumns = listOf(
 	SourceDistanceTable.modelId,
 	SourceDistanceTable.distance,
-	SourceTable.id,
-	SourceTable.url,
-	SourceTable.title,
+	PageTable.id,
+	PageTable.url,
+	PageTable.title,
 )
 
 internal fun ResultRow.toDistanceInfo() = DistanceInfo(
-	sourceId = this[SourceTable.id].value,
+	sourceId = this[PageTable.id].value,
 	modelId = this[SourceDistanceTable.modelId].value,
 	distance = this[SourceDistanceTable.distance],
-	title = this[SourceTable.title],
-	url = this[SourceTable.url].toCheckedFromTrusted(),
+	title = this[PageTable.title],
+	url = this[PageTable.url].toCheckedFromTrusted(),
 )

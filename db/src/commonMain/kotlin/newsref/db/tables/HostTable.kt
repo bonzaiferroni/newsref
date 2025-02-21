@@ -41,7 +41,7 @@ internal class HostRow(id: EntityID<Int>) : IntEntity(id) {
 	var navParams by HostTable.navParams
 
 	var authors by AuthorRow via HostAuthorTable
-	val sources by SourceRow referrersOn SourceTable.hostId
+	val sources by SourceRow referrersOn PageTable.hostId
 	val leads by LeadRow referrersOn LeadTable.hostId
 }
 

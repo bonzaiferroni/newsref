@@ -10,7 +10,7 @@ import org.jetbrains.exposed.sql.ResultRow
 
 object ChapterSourceTable : LongIdTable("chapter_source") {
     val chapterId = reference("chapter_id", ChapterTable, ReferenceOption.CASCADE).index()
-    val sourceId = reference("source_id", SourceTable, ReferenceOption.CASCADE).index()
+    val sourceId = reference("source_id", PageTable, ReferenceOption.CASCADE).index()
     // val relevance = text("relevance")
     // val contrast = text("contrast")
     val type = enumeration("type", NewsSourceType::class)

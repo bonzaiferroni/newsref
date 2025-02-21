@@ -5,7 +5,7 @@ import newsref.db.core.SourceDistance
 import newsref.db.core.cosineDistance
 import newsref.db.globalConsole
 import newsref.db.tables.SourceVectorTable
-import newsref.db.tables.SourceTable
+import newsref.db.tables.PageTable
 import newsref.db.tables.VectorModelTable
 import newsref.db.tables.SourceDistanceTable
 import newsref.db.tables.distanceInfoColumns
@@ -40,10 +40,10 @@ class SourceVectorService : DbService() {
 	}
 
 	suspend fun findNextJob() = dbQuery {
-		SourceTable.leftJoin(SourceVectorTable).select(SourceTable.columns)
-			.where { SourceVectorTable.id.isNull() and SourceTable.contentCount.greater(EMBEDDING_MIN_WORDS) and
-					SourceTable.contentCount.less(EMBEDDING_MAX_WORDS) }
-			.orderBy(SourceTable.score, SortOrder.DESC_NULLS_LAST)
+		PageTable.leftJoin(SourceVectorTable).select(PageTable.columns)
+			.where { SourceVectorTable.id.isNull() and PageTable.contentCount.greater(EMBEDDING_MIN_WORDS) and
+					PageTable.contentCount.less(EMBEDDING_MAX_WORDS) }
+			.orderBy(PageTable.score, SortOrder.DESC_NULLS_LAST)
 			.firstOrNull()?.toSource()
 	}
 
@@ -82,11 +82,11 @@ class SourceVectorService : DbService() {
 	}
 
 	suspend fun readDistances(sourceId: Long) = dbQuery {
-		val fromOriginDistances = SourceDistanceTable.join(SourceTable, JoinType.LEFT, SourceDistanceTable.targetId, SourceTable.id)
+		val fromOriginDistances = SourceDistanceTable.join(PageTable, JoinType.LEFT, SourceDistanceTable.targetId, PageTable.id)
 			.select(distanceInfoColumns)
 			.where { SourceDistanceTable.originId.eq(sourceId)}
 			.map { it.toDistanceInfo() }
-		val fromTargetDistances = SourceDistanceTable.join(SourceTable, JoinType.LEFT, SourceDistanceTable.originId, SourceTable.id)
+		val fromTargetDistances = SourceDistanceTable.join(PageTable, JoinType.LEFT, SourceDistanceTable.originId, PageTable.id)
 			.select(distanceInfoColumns)
 			.where { SourceDistanceTable.targetId.eq(sourceId)}
 			.map { it.toDistanceInfo() }

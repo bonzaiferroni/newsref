@@ -24,24 +24,24 @@ import kotlin.time.Duration
 
 class SourceService : DbService() {
     suspend fun getSourceCollection(id: Long) = dbQuery {
-        SourceTable.getCollections { SourceTable.id eq id }.firstOrNull()
+        PageTable.getCollections { PageTable.id eq id }.firstOrNull()
     }
 
     suspend fun getSourceInfo(id: Long) = dbQuery {
-        sourceInfoTables.where { SourceTable.id eq id }
+        sourceInfoTables.where { PageTable.id eq id }
             .firstOrNull()?.toSourceInfo()
     }
 
     suspend fun getSource(id: Long) = dbQuery {
-        SourceTable.select(SourceTable.columns)
-            .where { SourceTable.id eq id }
+        PageTable.select(PageTable.columns)
+            .where { PageTable.id eq id }
             .firstOrNull()?.toSource()
     }
 
     suspend fun getSourceInfos(searchText: String? = null, limit: Int = 100) = dbQuery {
         sourceInfoTables
-            .applyIfNotNull(searchText) { this.where { SourceTable.title.like("$it%") or SourceTable.url.like("$it%") } }
-            .orderBy(SourceTable.id, SortOrder.DESC)
+            .applyIfNotNull(searchText) { this.where { PageTable.title.like("$it%") or PageTable.url.like("$it%") } }
+            .orderBy(PageTable.id, SortOrder.DESC)
             .limit(limit)
             .map { it.toSourceInfo() }
     }
@@ -49,14 +49,14 @@ class SourceService : DbService() {
     suspend fun getTopSourceInfos(duration: Duration, limit: Int = 100) = dbQuery {
         val time = (Clock.System.now() - duration).toLocalDateTimeUtc()
         sourceInfoTables
-            .where { SourceTable.seenAt.greater(time) }
-            .orderBy(SourceTable.score, SortOrder.DESC_NULLS_LAST)
+            .where { PageTable.seenAt.greater(time) }
+            .orderBy(PageTable.score, SortOrder.DESC_NULLS_LAST)
             .limit(limit)
             .map { it.toSourceInfo() }
     }
 
     suspend fun getSourceCount() = dbQuery {
-        SourceTable.selectAll().count()
+        PageTable.selectAll().count()
     }
 
     suspend fun getTopSources(duration: Duration, limit: Int) = dbQuery {
@@ -69,13 +69,13 @@ class SourceService : DbService() {
     }
 
     suspend fun readSourceByUrl(url: Url) = dbQuery {
-        SourceTable.selectAll()
-            .where { SourceTable.url.sameUrl(url) }
+        PageTable.selectAll()
+            .where { PageTable.url.sameUrl(url) }
             .firstOrNull()?.toSource()
     }
 }
 
-internal fun SourceTable.getCollections(block: SqlExpressionBuilder.() -> Op<Boolean>): List<SourceCollection> {
+internal fun PageTable.getCollections(block: SqlExpressionBuilder.() -> Op<Boolean>): List<SourceCollection> {
     val sourceInfos = sourceInfoTables
         .where(block)
         .map { it.toSourceInfo() }
@@ -120,7 +120,7 @@ fun String.findContainingSentence(substring: String): String? {
 
 private val openingChars = setOf('“', '\"')
 
-internal fun SourceTable.withinTimeRange(start: Instant, end: Instant): Op<Boolean> {
+internal fun PageTable.withinTimeRange(start: Instant, end: Instant): Op<Boolean> {
     val timeStart = start.toLocalDateTimeUtc()
     val timeEnd = end.toLocalDateTimeUtc()
     return Op.build {

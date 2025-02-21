@@ -5,18 +5,18 @@ import newsref.db.utils.toInstantUtc
 import newsref.model.dto.SourceDto
 import org.jetbrains.exposed.sql.ResultRow
 
-object SourceDtoAspect: Aspect(SourceTable) {
-    val id = add(SourceTable.id)
-    val url = add(SourceTable.url)
-    val title = add(SourceTable.title)
-    val type = add(SourceTable.type)
-    val score = add(SourceTable.score)
-    val imageUrl = add(SourceTable.imageUrl)
-    val thumbnail = add(SourceTable.thumbnail)
-    val embed = add(SourceTable.embed)
-    val wordCount = add(SourceTable.contentCount)
-    val seenAt = add(SourceTable.seenAt)
-    val publishedAt = add(SourceTable.publishedAt)
+object SourceDtoAspect: Aspect(PageTable) {
+    val id = add(PageTable.id)
+    val url = add(PageTable.url)
+    val title = add(PageTable.title)
+    val type = add(PageTable.type)
+    val score = add(PageTable.score)
+    val imageUrl = add(PageTable.imageUrl)
+    val thumbnail = add(PageTable.thumbnail)
+    val embed = add(PageTable.embed)
+    val wordCount = add(PageTable.contentCount)
+    val seenAt = add(PageTable.seenAt)
+    val publishedAt = add(PageTable.publishedAt)
 }
 
 internal fun ResultRow.toSourceDto() = SourceDto(

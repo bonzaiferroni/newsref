@@ -12,7 +12,7 @@ import org.jetbrains.exposed.sql.kotlin.datetime.datetime
 
 // todo: make all tables and rows internal
 internal object ArticleTable: LongIdTable("article") {
-    val sourceId = reference("source_id", SourceTable, ReferenceOption.CASCADE).index()
+    val sourceId = reference("source_id", PageTable, ReferenceOption.CASCADE).index()
 
     val headline = text("headline")
     val alternativeHeadline = text("alternative_headline").nullable()

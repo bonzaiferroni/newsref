@@ -15,7 +15,7 @@ import org.jetbrains.exposed.sql.kotlin.datetime.datetime
 
 // source cache
 internal object SourceCacheTable : IntIdTable("source_cache") {
-    val sourceId = reference("source_id", SourceTable, ReferenceOption.CASCADE)
+    val sourceId = reference("source_id", PageTable, ReferenceOption.CASCADE)
     val score = integer("score")
     val createdAt = datetime("created_at")
     val json = json<SourceCollection>("source", Json.Default)

@@ -49,7 +49,7 @@ internal fun NoteRow.fromModel(data: Note, userRow: UserRow) {
 }
 
 internal object SourceNoteTable : LongIdTable("source_note") {
-	val sourceId = reference("source_id", SourceTable, ReferenceOption.CASCADE).index()
+	val sourceId = reference("source_id", PageTable, ReferenceOption.CASCADE).index()
 	val noteId = reference("note_id", NoteTable, ReferenceOption.SET_NULL).index()
 }
 

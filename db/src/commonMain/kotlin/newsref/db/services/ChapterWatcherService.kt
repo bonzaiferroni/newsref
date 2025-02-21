@@ -36,22 +36,22 @@ class ChapterWatcherService : DbService() {
     }
 
     suspend fun readChapterSourceInfos(chapterId: Long) = dbQuery {
-        ChapterSourceTable.leftJoin(SourceTable)
-            .select(ChapterSourceTable.columns + SourceTable.columns)
+        ChapterSourceTable.leftJoin(PageTable)
+            .select(ChapterSourceTable.columns + PageTable.columns)
             .where { ChapterSourceTable.chapterId.eq(chapterId) }
-            .orderBy(SourceTable.score, SortOrder.DESC_NULLS_LAST)
+            .orderBy(PageTable.score, SortOrder.DESC_NULLS_LAST)
             .map { it.toChapterSourceInfo() }
     }
 
     suspend fun readNullRelevanceChapterSourceInfos(chapterId: Long) = dbQuery {
-        ChapterSourceTable.leftJoin(SourceTable)
-            .select(ChapterSourceTable.columns + SourceTable.columns)
+        ChapterSourceTable.leftJoin(PageTable)
+            .select(ChapterSourceTable.columns + PageTable.columns)
             .where {
                 ChapterSourceTable.chapterId.eq(chapterId) and
                         ChapterSourceTable.relevance.isNull() and
                         ChapterSourceTable.type.eq(NewsSourceType.Secondary)
             }
-            .orderBy(SourceTable.score, SortOrder.DESC_NULLS_LAST)
+            .orderBy(PageTable.score, SortOrder.DESC_NULLS_LAST)
             .map { it.toChapterSourceInfo() }
     }
 

@@ -79,7 +79,7 @@ fun FeedRow.fromModel(feed: Feed) {
 
 object FeedSourceTable : LongIdTable("feed_source") {
     val feedId = reference("feed_id", FeedTable, onDelete = ReferenceOption.CASCADE)
-    val sourceId = reference("source_id", SourceTable, onDelete = ReferenceOption.CASCADE)
+    val sourceId = reference("source_id", PageTable, onDelete = ReferenceOption.CASCADE)
     val position = integer("position")
 }
 

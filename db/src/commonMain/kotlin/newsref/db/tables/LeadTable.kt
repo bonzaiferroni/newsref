@@ -24,7 +24,7 @@ private val console = globalConsole.getHandle("LeadTable")
 internal object LeadTable : LongIdTable("lead") {
 	val url = text("url").uniqueIndex()
 	val hostId = reference("host_id", HostTable, ReferenceOption.CASCADE).index()
-	val sourceId = reference("source_id", SourceTable, ReferenceOption.SET_NULL).nullable().index()
+	val sourceId = reference("source_id", PageTable, ReferenceOption.SET_NULL).nullable().index()
 }
 
 internal class LeadRow(id: EntityID<Long>) : LongEntity(id) {

@@ -17,14 +17,14 @@ private val console = globalConsole.getHandle("ChapterComposerService")
 class ChapterComposerService : DbService() {
     suspend fun findNextSignal(excludedIds: List<Long>) = dbQuery {
         val subquery = ChapterSourceTable.select(ChapterSourceTable.sourceId)
-        SourceTable.select(SourceTable.columns).where {
-                SourceTable.score.greaterEq(2) and
-                        SourceTable.id.notInList(excludedIds) and
-                        SourceTable.id.notInSubQuery(subquery) and
-                        (SourceTable.type.neq(PageType.NEWS_ARTICLE) or
-                                SourceTable.contentCount.greaterEq(EMBEDDING_MIN_WORDS))
+        PageTable.select(PageTable.columns).where {
+                PageTable.score.greaterEq(2) and
+                        PageTable.id.notInList(excludedIds) and
+                        PageTable.id.notInSubQuery(subquery) and
+                        (PageTable.type.neq(PageType.NEWS_ARTICLE) or
+                                PageTable.contentCount.greaterEq(EMBEDDING_MIN_WORDS))
             }
-            .orderBy(SourceTable.seenAt, SortOrder.DESC)
+            .orderBy(PageTable.seenAt, SortOrder.DESC)
             .firstOrNull()?.toChapterSignal()
     }
 
@@ -44,8 +44,8 @@ class ChapterComposerService : DbService() {
     }
 
     suspend fun readChapterSourceSignals(chapterId: Long) = dbQuery {
-        ChapterSourceTable.leftJoin(SourceTable)
-            .select(SourceTable.columns + ChapterSourceTable.columns)
+        ChapterSourceTable.leftJoin(PageTable)
+            .select(PageTable.columns + ChapterSourceTable.columns)
             .where {
                 ChapterSourceTable.chapterId.eq(chapterId) and
                         ChapterSourceTable.type.eq(NewsSourceType.Secondary)
@@ -108,9 +108,9 @@ class ChapterComposerService : DbService() {
     }
 
     suspend fun readInboundSignals(sourceId: Long) = dbQuery {
-        LinkTable.leftJoin(LeadTable).join(SourceTable, JoinType.LEFT, LinkTable.sourceId, SourceTable.id)
-            .select(SourceTable.columns)
-            .where { LeadTable.sourceId.eq(sourceId) and SourceTable.contentCount.greaterEq(EMBEDDING_MIN_WORDS) }
+        LinkTable.leftJoin(LeadTable).join(PageTable, JoinType.LEFT, LinkTable.sourceId, PageTable.id)
+            .select(PageTable.columns)
+            .where { LeadTable.sourceId.eq(sourceId) and PageTable.contentCount.greaterEq(EMBEDDING_MIN_WORDS) }
             .map { it.toChapterSignal() }
     }
 

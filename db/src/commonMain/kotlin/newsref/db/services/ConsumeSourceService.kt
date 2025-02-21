@@ -38,7 +38,7 @@ class ConsumeSourceService : DbService() {
 			?: throw MissingResourceException("Missing Host", "SourceService", source.url.core)
 
 		// update or create source
-		val sourceRow = SourceRow.createOrUpdate(SourceTable.url.sameUrl(source.url)) { isModify ->
+		val sourceRow = SourceRow.createOrUpdate(PageTable.url.sameUrl(source.url)) { isModify ->
 			// console.log("${crawl.fetch.lead.id} $isModify ${source.url.href.take(40)}")
 			fromModel(source, hostRow, isModify)
 		}

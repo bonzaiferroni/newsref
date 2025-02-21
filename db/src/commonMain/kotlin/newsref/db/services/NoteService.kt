@@ -7,7 +7,7 @@ import newsref.db.tables.ArticleTable
 import newsref.db.tables.ContentTable
 import newsref.db.tables.SourceContentTable
 import newsref.db.tables.SourceRow
-import newsref.db.tables.SourceTable
+import newsref.db.tables.PageTable
 import newsref.db.tables.toModel
 import newsref.db.model.Note
 import org.jetbrains.exposed.sql.SortOrder
@@ -25,8 +25,8 @@ class NoteService : DbService() {
 	}
 
 	suspend fun findNextJob() = dbQuery {
-		SourceRow.find { SourceTable.noteId.isNull() and SourceTable.title.isNotNull() }
-			.orderBy(Pair(SourceTable.score, SortOrder.DESC_NULLS_LAST))
+		SourceRow.find { PageTable.noteId.isNull() and PageTable.title.isNotNull() }
+			.orderBy(Pair(PageTable.score, SortOrder.DESC_NULLS_LAST))
 			.firstOrNull()
 			?.toModel()
 	}
@@ -38,10 +38,10 @@ class NoteService : DbService() {
 			.orderBy(SourceContentTable.id)
 			.map { it[ContentTable.text] }
 		if (texts.isEmpty()) return@dbQuery null
-		val title = SourceTable.leftJoin(ArticleTable)
-			.select(SourceTable.title, ArticleTable.headline)
-			.where(SourceTable.id eq sourceId)
-			.map { it.getOrNull(ArticleTable.headline) ?: it.getOrNull(SourceTable.title) }
+		val title = PageTable.leftJoin(ArticleTable)
+			.select(PageTable.title, ArticleTable.headline)
+			.where(PageTable.id eq sourceId)
+			.map { it.getOrNull(ArticleTable.headline) ?: it.getOrNull(PageTable.title) }
 			.firstOrNull() ?: ""
 		Pair(title, texts)
 	}
