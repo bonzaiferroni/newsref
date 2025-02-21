@@ -54,6 +54,7 @@ class ChapterComposer(
             val model = sourceVectorService.readOrCreateModel(defaultModelName)
             while (true) {
                 readNextSignal(model)
+                delay(10)
             }
         }
     }
@@ -89,7 +90,7 @@ class ChapterComposer(
         excludeUntil(origin.source.id, 1.hours)
         val signals = service.readInboundSignals(origin.source.id)
         if (signals.isEmpty()) {
-            console.log("primary bucket empty")
+            // console.log("primary bucket empty")
             return
         }
         val bucket = ChapterBucket()
@@ -144,7 +145,7 @@ class ChapterComposer(
             chapterId = bucket.chapterId ?: 0,
             vector = bucket.averageVector,
             happenedAt = bucket.happenedAt,
-            maxDistance = CHAPTER_MAX_DISTANCE * CHAPTER_MERGE_FACTOR,
+            maxDistance = CHAPTER_MAX_DISTANCE / 2,
             model = model
         )
         if (buckets.isEmpty()) {

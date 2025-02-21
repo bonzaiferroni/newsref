@@ -1,9 +1,10 @@
 package newsref.dashboard
 
 import kotlinx.serialization.Serializable
+import newsref.app.blip.nav.NavRoute
 
 @Serializable
-sealed class DashRoute(val title: String = "Title") {
+sealed class DashRoute(override val title: String = "Title") : NavRoute {
 }
 
 @Serializable

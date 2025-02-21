@@ -1,5 +1,8 @@
 package newsref.dashboard
 
+import compose.icons.TablerIcons
+import compose.icons.tablericons.Dashboard
+import kotlinx.collections.immutable.persistentListOf
 import newsref.app.blip.core.BlipConfig
 import newsref.dashboard.ui.screens.ChapterItemScreen
 import newsref.dashboard.ui.screens.ChapterTableScreen
@@ -16,6 +19,7 @@ import newsref.dashboard.ui.screens.StoryItemScreen
 import newsref.dashboard.ui.screens.StoryTableScreen
 
 val dashConfig = BlipConfig(
+    name = "Dashboard",
     navGraph = {
         routeScreen<StartRoute> { StartScreen(it) }
         routeScreen<SourceTableRoute> { SourceTableScreen(it) }
@@ -30,5 +34,8 @@ val dashConfig = BlipConfig(
         routeScreen<ChartBoardRoute> { ChartBoardScreen(it) }
         routeScreen<StoryTableRoute> { StoryTableScreen(it) }
         routeScreen<StoryItemRoute> { StoryItemScreen(it) }
-    }
+    },
+    home = StartRoute(7),
+    logo = TablerIcons.Dashboard,
+    portalItems = persistentListOf()
 )

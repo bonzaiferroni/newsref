@@ -18,7 +18,7 @@ import kotlin.time.Duration
 import kotlin.time.Duration.Companion.days
 
 class ChapterTableModel(
-    private val chapterComposerService: ChapterComposerService = ChapterComposerService()
+    private val chapterComposerService: ChapterService = ChapterService()
 ) : StateModel<ChapterTableState>(ChapterTableState()) {
 
     init {
