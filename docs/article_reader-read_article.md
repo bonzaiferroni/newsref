@@ -10,17 +10,17 @@ Provide the document type that best fits, exactly as it appears in the list:
 
 Provide an objective summary of the article. Include as many details as mentioned in the document, up to 1000 words. Do not use the same phrasing. Maintain an objective perspective, if the author offers an opinion or perspective, simply take note of it. If the article provides a subjective detail without support, be careful to provide more objectivity in your summary. Rather than "government spending is out of control" you might say "the author believes that government spending is excessive."
 
-If the article provides content that is difficult to summarize in 1000 words, focus on the most important details. If the article provides content that is well below 1000 words, your summary may be shorter.
+If the article provides content that is difficult to summarize in 200 words, focus on the most important details. If the article provides content that is well below 200 words, your summary may be shorter. Use double-spacing after a period.
 
 ## Objectivity Score
 
 How would you rank this article in terms of objectivity? Provide a ranking between 1 and 5, with higher values indicating more objectivity. Use the following rubric: 
 
-A highly objective article with a score of 5 maintains a neutral perspective, providing only relevant facts without additional commentary. It reports the perspectives and opinions of the people involved without taking a perspective. 
+A highly objective article with a score of 5 maintains a neutral perspective, providing only relevant facts without additional commentary. It does not take a political perspective or offer opinions, although it may report the perspectives and opinions of the people involved.
 
 A medium objectivity article with a score of 3 offers original explanations and interpretations but also provides supporting evidence. It may try to persuade but offers reasonable justification. 
 
-A low objectivity article with a score of 1 offers opinions and assumptions as if they are objectively true, without providing support.
+A low objectivity article with a score of 1 offers opinions and assumptions as if they are objectively true, without providing support. This can be difficult to identify because the author might use a tone of factual authority. You must consider whether the information provided can be objectively offered or if it is inherently subjective. 
 
 ## Category
 
