@@ -47,7 +47,7 @@ class SourceItemModel(
     private suspend fun refreshItem() {
         val source = sourceService.getSource(stateNow.sourceId)
         val scores = sourceScoreService.readScores(stateNow.sourceId)
-        val contents = contentService.getSourceContent(stateNow.sourceId)
+        val contents = contentService.readSourceContent(stateNow.sourceId)
         val article = articleService.readBySource(stateNow.sourceId)
         val outbound = linkService.readOutboundLinks(stateNow.sourceId)
         val inbound = linkService.readInboundLinks(stateNow.sourceId)

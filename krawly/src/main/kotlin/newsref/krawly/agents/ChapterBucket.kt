@@ -93,8 +93,10 @@ class ChapterBucket(
         if (size == 0) return emptyList()
         val removedIds = mutableListOf<Long>()
         do {
-            val (distance, signal) = signals.filter { it.chapterSource?.relevance != Relevance.Relevant }
-                .map {
+            val unsureSignals = signals.filter { it.chapterSource?.relevance != Relevance.Relevant }
+            if (unsureSignals.isEmpty()) return emptyList()
+
+            val (distance, signal) = unsureSignals.map {
                     val distance = getDistanceVector(it, vectors.getValue(it.source.id)).magnitude
                     distance to it
                 }.maxBy { it.first }

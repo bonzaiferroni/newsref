@@ -20,7 +20,7 @@ class ContentService : DbService() {
 		contents.joinToString("\n\n")
 	}
 
-	suspend fun getSourceContent(sourceId: Long) = dbQuery {
+	suspend fun readSourceContent(sourceId: Long) = dbQuery {
 		SourceContentTable.leftJoin(ContentTable)
 			.select(ContentTable.columns)
 			.where{ SourceContentTable.sourceId eq sourceId}

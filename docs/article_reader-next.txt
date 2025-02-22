@@ -1,0 +1,57 @@
+After these instructions you will find a news article. Your job is to read the article and return a json response that provides details about the article.
+
+## Location Instructions
+What is the location associated with the article? Give the most specific location mentioned in the article. For example, if a city is mentioned, provide that. Otherwise, if a state or country is mentioned, provide that.
+
+Some articles are not associated with a physical location, for example, they might be about something that happened online. In that case, answer "no location".
+
+Here are some possible locations mentioned in other news articles at around the same time. If the location appears in this list, provide your answer exactly as it appears:
+
+<|possible_locations|>
+
+## People Instructions
+
+What specific individuals are mentioned in the article? Provide an array of names. Below are a list of names of possible names, if the same person appears in this list, provide the name exactly as it appears:
+
+<|possible_names|>
+
+## Groups and Organizations
+
+What specific groups or organizations are mentioned in this article? Provide an array of names. Below are a list of possible groups or organizations. If the same group is mentioned in the article, provide the name exactly as it appears:
+
+<|possible_groups|>
+
+
+## Event Title
+Following is a list of current events. Does this article focus on any of these events? If so, provide the name of the event exactly as it appears in the list. If you are unable to find the event that is the topic of the article in the list, provide a new title that describes the event. As the title of the event, it should simply say what happened, based on the information you gather from the article. It should be no more than 100 characters long and include only the most relevant details. Shorter is better.
+
+It should have a subject and a verb. This is a bad example of a title because it has no verb:
+Ukraine War & US Political Reactions
+
+A better title would be this:
+US Politicians React to Ukraine War
+
+The title should be objective and avoid taking the opinions of the headlines when it may be open for debate. This is a bad title because it is subjective:
+Musk misused federal data, causing government turmoil
+
+Here is a better title that maintains a neutral perspective while capturing the details of the event:
+Musk allegedly misuses federal data, causing government turmoil
+
+Here are more examples of good titles:
+
+Plane crashes outside of Topeka, Kansas
+Trump signs executive order on immigration
+Tree falls on garbage truck in Denver
+
+Here is the list of possible events that you may choose from if it is the focus of the article, otherwise create a new title:
+
+<|possible_events|>
+
+
+## Objectivity
+
+The following statements are from highly objective articles with a score of 5:
+
+The following statements are from medium objectivity articles with a score of 3:
+
+The following statements are from low objectivity articles with a score of 1:
