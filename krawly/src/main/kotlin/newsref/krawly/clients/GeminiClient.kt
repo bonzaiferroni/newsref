@@ -26,40 +26,41 @@ class GeminiClient(
     val client: HttpClient = globalKtor,
 ) {
 
-    suspend inline fun <reified Received> requestJson(vararg parts: String): Received? {
-        try {
-            val url = "https://generativelanguage.googleapis.com/v1beta/models/$model:generateContent?key=$token"
-            val request = GeminiRequest(
-                contents = parts.map { GeminiContent("user", listOf(GeminiRequestText(it))) },
-                generationConfig = GenerationConfig(
-                    responseMimeType = "application/json",
-                    responseSchema = generateJsonSchema<Received>()
+    suspend inline fun <reified Received> requestJson(maxAttempts: Int, vararg parts: String): Received? {
+        for (attempt in 0 until maxAttempts) {
+            try {
+                val url = "https://generativelanguage.googleapis.com/v1beta/models/$model:generateContent?key=$token"
+                val request = GeminiRequest(
+                    contents = parts.map { GeminiContent("user", listOf(GeminiRequestText(it))) },
+                    generationConfig = GenerationConfig(
+                        responseMimeType = "application/json",
+                        responseSchema = generateJsonSchema<Received>()
+                    )
                 )
-            )
-            val response = globalKtor.post(url) {
-                contentType(ContentType.Application.Json)
-                setBody(request)
+                val response = globalKtor.post(url) {
+                    contentType(ContentType.Application.Json)
+                    setBody(request)
+                }
+                if (response.status == HttpStatusCode.OK) {
+                    return response.body<GeminiResponse>()
+                        .candidates.firstOrNull()?.content?.parts?.firstOrNull()?.text?.let {
+                            Json.decodeFromString(it)
+                        }
+                } else {
+                    globalConsole.logError(
+                        "GeminiClient",
+                        "attempt ${attempt + 1} failed:\n${response.body<JsonObject>()}"
+                    )
+                }
+            } catch (e: HttpRequestTimeoutException) {
+                globalConsole.logError("GeminiClient", "Request timed out")
+            } catch (e: NoTransformationFoundException) {
+                globalConsole.logError("GeminiClient", "no transformation? 😕\n${e.message}")
+            } catch (e: Exception) {
+                globalConsole.logError("GeminiClient", "requestJson exception:\n${e.message}")
             }
-            if (response.status == HttpStatusCode.OK) {
-                return response.body<GeminiResponse>()
-                    .candidates.firstOrNull()?.content?.parts?.firstOrNull()?.text?.let {
-                        Json.decodeFromString(it)
-                    }
-            } else {
-                globalConsole.logError("GeminiClient", "Request failed:\n${response.body<JsonObject>()}")
-                return null
-            }
-        } catch (e: HttpRequestTimeoutException) {
-            globalConsole.logError("GeminiClient", "Request timed out")
-            return null
-        } catch (e: NoTransformationFoundException) {
-            globalConsole.logError("GeminiClient", "no transformation? 😕\n${e.message}")
-            return null
-        } catch (e: Exception) {
-            globalConsole.logError("GeminiClient", "requestJson exception:\n${e.message}")
-            return null
         }
-
+        return null
     }
 }
 

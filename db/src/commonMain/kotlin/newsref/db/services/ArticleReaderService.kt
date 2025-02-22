@@ -5,6 +5,7 @@ import newsref.db.model.*
 import newsref.db.tables.*
 import newsref.model.core.*
 import org.jetbrains.exposed.sql.*
+import kotlin.time.Duration.Companion.days
 
 class ArticleReaderService : DbService() {
     suspend fun readNext() = dbQuery {
@@ -12,6 +13,8 @@ class ArticleReaderService : DbService() {
         PageTable.select(PageTable.columns)
             .where {
                 PageTable.type.eq(PageType.NEWS_ARTICLE) and
+                        PageTable.existedSince(3.days) and
+                        PageTable.score.greaterEq(2) and
                         PageTable.title.isNotNull() and
                         PageTable.contentCount.greaterEq(READER_MIN_WORDS) and
                         PageTable.id.notInSubQuery(subquery)
@@ -23,7 +26,7 @@ class ArticleReaderService : DbService() {
     suspend fun createNewsArticle(
         pageId: Long,
         type: DocumentType,
-        summary: String,
+        summary: String?,
         category: NewsCategory,
     ) = dbQuery {
         NewsArticleTable.insert {

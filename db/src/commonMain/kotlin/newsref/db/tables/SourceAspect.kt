@@ -1,5 +1,6 @@
 package newsref.db.tables
 
+import kotlinx.datetime.Clock
 import kotlinx.datetime.Instant
 import newsref.db.core.Aspect
 import newsref.db.model.Source
@@ -7,6 +8,7 @@ import newsref.db.utils.*
 import org.jetbrains.exposed.dao.*
 import org.jetbrains.exposed.dao.id.EntityID
 import org.jetbrains.exposed.sql.*
+import kotlin.time.Duration
 
 object SourceAspect : Aspect(PageTable) {
     val hostId = add(PageTable.hostId)
@@ -111,6 +113,7 @@ internal fun SourceRow.addContents(contentEntities: List<ContentRow>) {
 }
 
 internal fun PageTable.existedAfter(instant: Instant) = instant.toLocalDateTimeUtc().let {
-    Op.build { (PageTable.publishedAt.isNull() and PageTable.seenAt.greater(it)) or
-            PageTable.publishedAt.greater(it) }
+    Op.build { (publishedAt.isNull() and seenAt.greater(it)) or publishedAt.greater(it) }
 }
+
+internal fun PageTable.existedSince(duration: Duration) = existedAfter(Clock.System.now() - duration)

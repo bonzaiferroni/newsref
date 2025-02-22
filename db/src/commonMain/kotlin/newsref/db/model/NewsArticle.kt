@@ -22,6 +22,7 @@ enum class DocumentType(override val title: String): TitleEnum {
 }
 
 enum class NewsCategory(override val title: String): TitleEnum {
+    Unknown("Unknown"),
     General("General News and Events"),
     Sports("Sports"),
     Government("Government and Policy"),

@@ -16,7 +16,7 @@ class ChapterWatcher(
     private val service: ChapterWatcherService = ChapterWatcherService(),
 ) {
 
-    private val client = GeminiClient(env.read("GEMINI_KEY"))
+    private val client = GeminiClient(env.read("GEMINI_KEY_FREE"))
 
     fun start() {
         CoroutineScope(Dispatchers.IO).launch {
@@ -46,7 +46,7 @@ class ChapterWatcher(
             "headlines" to headlines
         )
 
-        val response: TitleResponse = client.requestJson(prompt) ?: return
+        val response: TitleResponse = client.requestJson(2, prompt) ?: return
         service.updateChapterDescription(chapter.copy(title = response.title))
         console.log("Title: ${response.title.take(50)}")
     }
@@ -77,7 +77,7 @@ class ChapterWatcher(
             "headlines" to headlines.joinToString("\n")
         )
 
-        val response: RelevanceResponse? = client.requestJson(prompt)
+        val response: RelevanceResponse? = client.requestJson(2, prompt)
         if (response == null) {
             console.logError("received null json response, prompt:\n$prompt")
             return

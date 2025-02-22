@@ -16,13 +16,14 @@ class ArticleReader(
     private val service: ArticleReaderService = ArticleReaderService(),
     private val contentService: ContentService = ContentService()
 ) {
-    private val client = GeminiClient(env.read("GEMINI_KEY"))
+    private val client = GeminiClient(env.read("GEMINI_KEY_PAID"))
+    private var lastAttemptFail = false
 
     fun start() {
         CoroutineScope(Dispatchers.IO).launch {
             while (true) {
                 readNextArticle()
-                delay(60.seconds)
+                delay(100)
             }
         }
     }
@@ -37,7 +38,7 @@ class ArticleReader(
         val headlineAndText = buildString {
             append(title.uppercase())
             append("\n\n")
-            append(content)
+            append(content.take(20000))
         }
 
         val prompt = promptTemplate(
@@ -47,24 +48,28 @@ class ArticleReader(
             "headline_and_text" to headlineAndText,
         )
 
-        console.log(headlineAndText)
+        // console.log(headlineAndText)
 
-        val response: ArticleResponse = client.requestJson(prompt) ?: error("response is null")
-        val type = response.type.toDocumentType()
-        val category = response.category.toNewsCategory()
+        val response: ArticleResponse? = client.requestJson(3, prompt)
+        val type = response?.type?.toDocumentType() ?: DocumentType.Unknown
+        val category = response?.category?.toNewsCategory() ?: NewsCategory.Unknown
         service.createNewsArticle(
             pageId = source.id,
             type = type,
-            summary = response.summary,
+            summary = response?.summary,
             category = category
         )
 
-        console.log(
-            "Article read\n" +
-                    "type: ${type.title}\n" +
-                    "category: ${category.title}\n" +
-                    "summary:\n${response.summary}"
-        )
+        if (response != null) {
+            console.log(
+                "${type.title} // ${category.title}\n${source.url.href.take(80)}"
+                // "summary:\n${response.summary}"
+            )
+            lastAttemptFail = false
+        } else {
+            if (lastAttemptFail) error("two fails in a row")
+            lastAttemptFail = true
+        }
     }
 }
 
@@ -81,5 +86,5 @@ data class ObjectivityIndicator(
     val statement: String,
 )
 
-private fun String.toNewsCategory() = NewsCategory.entries.first { it.title == this }
-private fun String.toDocumentType() = DocumentType.entries.first { it.title == this }
+private fun String.toNewsCategory() = NewsCategory.entries.firstOrNull { it.title == this }
+private fun String.toDocumentType() = DocumentType.entries.firstOrNull { it.title == this }
