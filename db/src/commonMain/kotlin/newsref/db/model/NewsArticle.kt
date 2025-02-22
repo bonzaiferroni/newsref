@@ -5,9 +5,7 @@ data class NewsArticle(
     // val placeId: Int = 0,
     val type: DocumentType,
     val summary: String,
-    val objectivity: Float,
     val category: NewsCategory,
-    val isNewsArticle: Boolean,
 )
 
 // this is not a comprehensive list but intended to filter out misleading meta info
@@ -20,6 +18,7 @@ enum class DocumentType(override val title: String): TitleEnum {
     PressRelease("Press Release"),
     TechSupport("Tech Support"),
     WebsitePolicy("Website Policy"),
+    Missing("Missing Document")
 }
 
 enum class NewsCategory(override val title: String): TitleEnum {

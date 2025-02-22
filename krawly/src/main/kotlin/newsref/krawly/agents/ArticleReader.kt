@@ -1,14 +1,11 @@
 package newsref.krawly.agents
 
 import kotlinx.coroutines.*
-import kotlinx.serialization.SerialName
-import kotlinx.serialization.Serializable
+import kotlinx.serialization.*
 import newsref.db.*
 import newsref.db.model.*
 import newsref.db.services.*
-import newsref.db.tables.NewsArticleTable.objectivity
-import newsref.db.tables.NewsArticleTable.pageId
-import newsref.db.utils.format
+import newsref.db.utils.*
 import newsref.krawly.clients.*
 import kotlin.time.Duration.Companion.seconds
 
@@ -54,28 +51,20 @@ class ArticleReader(
 
         val response: ArticleResponse = client.requestJson(prompt) ?: error("response is null")
         val type = response.type.toDocumentType()
-        val objectivity =
-            (response.objectivityIndicators.sumOf { (it.rank - 1) / 4.0 } / response.objectivityIndicators.size)
-                .toFloat()
         val category = response.category.toNewsCategory()
         service.createNewsArticle(
             pageId = source.id,
             type = type,
             summary = response.summary,
-            objectivity = objectivity,
             category = category
         )
 
         console.log(
             "Article read\n" +
-                    "objectivity: ${objectivity.format(2)}\n" +
                     "type: ${type.title}\n" +
                     "category: ${category.title}\n" +
                     "summary:\n${response.summary}"
         )
-        console.log("indicators:\n" + response.objectivityIndicators.joinToString("\n") {
-            "${it.rank}: ${it.statement}"
-        })
     }
 }
 
@@ -83,8 +72,6 @@ class ArticleReader(
 data class ArticleResponse(
     val type: String,
     val summary: String,
-    @SerialName("objectivity_indicators")
-    val objectivityIndicators: List<ObjectivityIndicator>,
     val category: String,
 )
 

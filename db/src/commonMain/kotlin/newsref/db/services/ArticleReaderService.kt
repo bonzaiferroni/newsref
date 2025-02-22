@@ -24,14 +24,12 @@ class ArticleReaderService : DbService() {
         pageId: Long,
         type: DocumentType,
         summary: String,
-        objectivity: Float,
         category: NewsCategory,
     ) = dbQuery {
         NewsArticleTable.insert {
             it[this.pageId] = pageId
             it[this.type] = type
             it[this.summary] = summary
-            it[this.objectivity] = objectivity
             it[this.category] = category
         }
     }

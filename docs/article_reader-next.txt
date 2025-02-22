@@ -47,11 +47,12 @@ Here is the list of possible events that you may choose from if it is the focus 
 
 <|possible_events|>
 
+## Objectivity Indicators
 
-## Objectivity
+Provide exactly five statements from the article that indicate its level of objectivity. For each statement, provide a single sentence exactly as it appears in the article and a ranking between 1 and 5, with higher values indicating more objectivity and lower values indicating low objectivity. Do not pick just any statement, it must be relevant to the main points of the article. Use the following rubric:
 
-The following statements are from highly objective articles with a score of 5:
+A statement ranked as 5 indicates high objectivity. The statement is made with a neutral perspective, providing only relevant facts without additional commentary. It does not try to persuade or offer opinions, although it may report the perspectives and opinions of the people involved.
 
-The following statements are from medium objectivity articles with a score of 3:
+A statement ranked as 3 indicates medium objectivity. It may offer an opinion or interpretation influenced by personal judgment but also provides supporting evidence. It may try to persuade but offers reasonable justification.
 
-The following statements are from low objectivity articles with a score of 1:
+A statement ranked as 1 indicates low objectivity. It offers opinions and assumptions as if they are objectively true, without providing support. This can be difficult to identify because the author might use a tone of factual authority. You must consider the objective integrity or intent of the author and whether the information provided can be objectively offered or if it is inherently subjective.
