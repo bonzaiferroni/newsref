@@ -8,19 +8,19 @@ Provide the document type that best fits, exactly as it appears in the list:
 
 ## Summary Instructions
 
-Provide an objective summary of the article. Include as many details as mentioned in the document, up to 1000 words. Do not use the same phrasing. Maintain an objective perspective, if the author offers an opinion or perspective, simply take note of it. If the article provides a subjective detail without support, be careful to provide more objectivity in your summary. Rather than "government spending is out of control" you might say "the author believes that government spending is excessive."
+Provide an objective summary of the article. Include as many details as mentioned in the document, up to 200 words. Do not use the same phrasing. Maintain an objective perspective, if the author offers an opinion or perspective, simply take note of it. If the article provides a subjective detail without support, be careful to provide more objectivity in your summary. Rather than "government spending is out of control" you might say "the author believes that government spending is excessive."
 
 If the article provides content that is difficult to summarize in 200 words, focus on the most important details. If the article provides content that is well below 200 words, your summary may be shorter. Use double-spacing after a period.
 
-## Objectivity Score
+## Objectivity Indicators
 
-How would you rank this article in terms of objectivity? Provide a ranking between 1 and 5, with higher values indicating more objectivity. Use the following rubric: 
+Provide exactly five statements from the article that indicate its level of objectivity. For each statement, provide a single sentence exactly as it appears in the article and a ranking between 1 and 5, with higher values indicating more objectivity and lower values indicating low objectivity. Do not pick just any statement, it must be relevant to the main points of the article. Use the following rubric: 
 
-A highly objective article with a score of 5 maintains a neutral perspective, providing only relevant facts without additional commentary. It does not take a political perspective or offer opinions, although it may report the perspectives and opinions of the people involved.
+A statement ranked as 5 indicates high objectivity. The statement is made with a neutral perspective, providing only relevant facts without additional commentary. It does not try to persuade or offer opinions, although it may report the perspectives and opinions of the people involved.
 
-A medium objectivity article with a score of 3 offers original explanations and interpretations but also provides supporting evidence. It may try to persuade but offers reasonable justification. 
+A statement ranked as 3 indicates medium objectivity. It may offer an opinion or interpretation influenced by personal judgment but also provides supporting evidence. It may try to persuade but offers reasonable justification. 
 
-A low objectivity article with a score of 1 offers opinions and assumptions as if they are objectively true, without providing support. This can be difficult to identify because the author might use a tone of factual authority. You must consider whether the information provided can be objectively offered or if it is inherently subjective. 
+A statement ranked as 1 indicates low objectivity. It offers opinions and assumptions as if they are objectively true, without providing support. This can be difficult to identify because the author might use a tone of factual authority. You must consider the objective integrity or intent of the author and whether the information provided can be objectively offered or if it is inherently subjective. 
 
 ## Category
 
