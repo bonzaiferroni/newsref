@@ -53,9 +53,12 @@ The following are invalid locations along with the reason:
 
 ## People Mentioned
 
-Provide a name and identifier for each person mentioned in the article. The format you should use is "(name), (identifier)", with a comma and space between the two values. 
+Provide a name and identifier for each person mentioned in the article. The format you should use is "(name):(identifier)", with a colon separating the two values. 
 
 When the first and last name are given, or you are able to make a reasonable assumption, simply give the first and last name, with no initials, honorifics or suffixes. If the first name is unclear, simply give the last name.
+
+The following is an invalid response, because it uses a middle initial:
+* Amy J. Bodek:Los Angeles Regional Planning Director
 
 If the individual has an obvious title or position, provide that as the identifier. For example, if the article is about Joe Biden, put "U.S. President" as the identifier. If it is about Jared Polis, provide "Colorado Governor". 
 
@@ -65,11 +68,11 @@ The identifier should generally follow the pattern of "(Clarifier) (Identifier)"
 
 The following are valid responses:
 
-* Volodymyr Zelenskyy, Ukraine President
-* Elon Musk, Tesla CEO
-* Mercedes Colwin, Defense Attorney
-* Jason Crow, Colorado Representative
-* Jason Bollwerk, South Dakota Police Officer
+* Volodymyr Zelenskyy:Ukraine President
+* Elon Musk:Tesla CEO
+* Mercedes Colwin:Defense Attorney
+* Jason Crow:Colorado Representative
+* Jason Bollwerk:South Dakota Police Officer
 
 ## Article
 

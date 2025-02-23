@@ -58,7 +58,7 @@ class ArticleReader(
             category = category,
             location = location,
             people = response?.people?.map {
-                val array = it.split(", ")
+                val array = it.split(":")
                 Person(name = array[0], identifier = array.getOrNull(1) ?: "Unclear")
             }
         )
