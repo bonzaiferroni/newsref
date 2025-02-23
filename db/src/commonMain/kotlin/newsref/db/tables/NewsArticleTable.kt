@@ -17,3 +17,18 @@ object NewsArticleTable : Table("news_article") {
 object LocationTable : IntIdTable("location") {
     val name = text("name").uniqueIndex()
 }
+
+object PersonTable : IntIdTable("person") {
+    val name = text("name")
+    val identifier = text("identifier")
+
+    init {
+        uniqueIndex(name, identifier)
+    }
+}
+
+object PagePersonTable : Table("page_peron") {
+    val pageId = reference("page_id", PageTable, ReferenceOption.CASCADE).index()
+    val personId = reference("person_id", PersonTable, ReferenceOption.CASCADE).index()
+    override val primaryKey = PrimaryKey(pageId, personId)
+}

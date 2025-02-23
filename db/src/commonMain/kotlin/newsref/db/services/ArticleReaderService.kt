@@ -1,5 +1,6 @@
 package newsref.db.services
 
+import kotlinx.serialization.Serializable
 import newsref.db.*
 import newsref.db.model.*
 import newsref.db.tables.*
@@ -29,6 +30,7 @@ class ArticleReaderService : DbService() {
         summary: String?,
         category: NewsCategory,
         location: String?,
+        people: List<Person>?
     ) = dbQuery {
         val locationId = if (location != null) {
             LocationTable.select(LocationTable.id)
@@ -45,6 +47,23 @@ class ArticleReaderService : DbService() {
             it[this.type] = type
             it[this.summary] = summary
             it[this.category] = category
+        }
+
+        if (people != null) {
+            for (person in people) {
+                val personId = PersonTable.select(PersonTable.id)
+                    .where { PersonTable.name.eq(person.name) and PersonTable.identifier.eq(person.identifier) }
+                    .firstOrNull()?.let { it[PersonTable.id].value }
+                    ?: PersonTable.insertAndGetId {
+                        it[this.name] = person.name
+                        it[this.identifier] = person.identifier
+                    }.value
+
+                PagePersonTable.upsert {
+                    it[this.pageId] = pageId
+                    it[this.personId] = personId
+                }
+            }
         }
     }
 }

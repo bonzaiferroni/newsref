@@ -58,6 +58,8 @@ val dbTables = listOf(
 	IntegerLogTable,
 	JsonLogTable,
 	LocationTable,
+	PersonTable,
+	PagePersonTable,
 )
 
 const val URL = "jdbc:postgresql://localhost:5432/newsrefdb"

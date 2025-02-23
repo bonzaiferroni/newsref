@@ -5,7 +5,6 @@ import kotlinx.serialization.*
 import newsref.db.*
 import newsref.db.model.*
 import newsref.db.services.*
-import newsref.db.utils.*
 import newsref.krawly.clients.*
 import kotlin.time.Duration.Companion.minutes
 import kotlin.time.Duration.Companion.seconds
@@ -58,11 +57,16 @@ class ArticleReader(
             summary = response?.summary,
             category = category,
             location = location,
+            people = response?.people?.map {
+                val array = it.split(", ")
+                Person(name = array[0], identifier = array.getOrNull(1) ?: "Unclear")
+            }
         )
 
         if (response != null) {
             console.log("${type.title} // ${category.title}\n${source.url.href.take(80)}" +
                     "\nlocation: $location" +
+                    "\npeople:\n" + response.people.joinToString("\n") +
                     "\nsummary:\n${response.summary}")
             lastAttemptFail = false
         } else {
@@ -79,6 +83,7 @@ data class ArticleResponse(
     val summary: String,
     val category: String,
     val location: String,
+    val people: List<String>
 )
 
 private fun String.toNewsCategory() = NewsCategory.entries.firstOrNull { it.title == this }
