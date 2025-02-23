@@ -7,6 +7,7 @@ import newsref.db.model.*
 import newsref.db.services.*
 import newsref.db.utils.*
 import newsref.krawly.clients.*
+import kotlin.time.Duration.Companion.minutes
 import kotlin.time.Duration.Companion.seconds
 
 private val console = globalConsole.getHandle("ArticleReader")
@@ -23,7 +24,7 @@ class ArticleReader(
         CoroutineScope(Dispatchers.IO).launch {
             while (true) {
                 readNextArticle()
-                delay(100)
+                delay(20.seconds)
             }
         }
     }
@@ -35,17 +36,14 @@ class ArticleReader(
         if (content.length < READER_MIN_WORDS) error("Page content unexpectedly short: ${content.length}")
         val newsCategories = NewsCategory.entries.joinToString("\n") { "* ${it.title}" }
         val documentTypes = DocumentType.entries.joinToString("\n") { "* ${it.title}" }
-        val headlineAndText = buildString {
-            append(title.uppercase())
-            append("\n\n")
-            append(content.take(20000))
-        }
 
         val prompt = promptTemplate(
             "../docs/article_reader-read_article.md",
             "document_types" to documentTypes,
             "news_categories" to newsCategories,
-            "headline_and_text" to headlineAndText,
+            "title" to title,
+            "url" to source.url.href,
+            "body" to content.take(20000)
         )
 
         // console.log(headlineAndText)
@@ -53,22 +51,24 @@ class ArticleReader(
         val response: ArticleResponse? = client.requestJson(3, prompt)
         val type = response?.type?.toDocumentType() ?: DocumentType.Unknown
         val category = response?.category?.toNewsCategory() ?: NewsCategory.Unknown
+        val location = response?.location?.takeIf { it != "None" }
         service.createNewsArticle(
             pageId = source.id,
             type = type,
             summary = response?.summary,
-            category = category
+            category = category,
+            location = location,
         )
 
         if (response != null) {
-            console.log(
-                "${type.title} // ${category.title}\n${source.url.href.take(80)}"
-                // "summary:\n${response.summary}"
-            )
+            console.log("${type.title} // ${category.title}\n${source.url.href.take(80)}" +
+                    "\nlocation: $location" +
+                    "\nsummary:\n${response.summary}")
             lastAttemptFail = false
         } else {
             if (lastAttemptFail) error("two fails in a row")
             lastAttemptFail = true
+            delay(1.minutes)
         }
     }
 }
@@ -78,12 +78,7 @@ data class ArticleResponse(
     val type: String,
     val summary: String,
     val category: String,
-)
-
-@Serializable
-data class ObjectivityIndicator(
-    val rank: Int,
-    val statement: String,
+    val location: String,
 )
 
 private fun String.toNewsCategory() = NewsCategory.entries.firstOrNull { it.title == this }

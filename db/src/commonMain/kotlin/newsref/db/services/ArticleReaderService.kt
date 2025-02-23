@@ -13,7 +13,7 @@ class ArticleReaderService : DbService() {
         PageTable.select(PageTable.columns)
             .where {
                 PageTable.type.eq(PageType.NEWS_ARTICLE) and
-                        PageTable.existedSince(3.days) and
+                        PageTable.existedSince(7.days) and
                         PageTable.score.greaterEq(2) and
                         PageTable.title.isNotNull() and
                         PageTable.contentCount.greaterEq(READER_MIN_WORDS) and
@@ -28,9 +28,20 @@ class ArticleReaderService : DbService() {
         type: DocumentType,
         summary: String?,
         category: NewsCategory,
+        location: String?,
     ) = dbQuery {
+        val locationId = if (location != null) {
+            LocationTable.select(LocationTable.id)
+                .where { LocationTable.name.eq(location) }
+                .firstOrNull()?.let { it[LocationTable.id].value }
+                ?: LocationTable.insertAndGetId {
+                    it[this.name] = location
+                }.value
+        } else { null }
+
         NewsArticleTable.insert {
             it[this.pageId] = pageId
+            it[this.locationId] = locationId
             it[this.type] = type
             it[this.summary] = summary
             it[this.category] = category

@@ -15,10 +15,13 @@ interface TitleEnum { val title: String }
 enum class DocumentType(override val title: String): TitleEnum {
     Unknown("Unknown"),
     NewsArticle("News Article"),
+    AnalysisOrReport("Analysis or Report"),
     PressRelease("Press Release"),
     TechSupport("Tech Support"),
     WebsitePolicy("Website Policy"),
-    Missing("Missing Document")
+    Missing("Missing Document"),
+    Educational("Educational"),
+    Profile("Personal Profile or Biography")
 }
 
 enum class NewsCategory(override val title: String): TitleEnum {
