@@ -15,11 +15,11 @@ import kotlin.time.Duration.Companion.seconds
 private val console = globalConsole.getHandle("ArticleReader")
 
 class ArticleReader(
-    env: Environment,
+    private val client: GeminiClient,
     private val service: ArticleReaderService = ArticleReaderService(),
     private val contentService: ContentService = ContentService()
 ) {
-    private val client = GeminiClient(env.read("GEMINI_KEY_PAID"))
+
     private var lastAttemptFail = false
 
     fun start() {

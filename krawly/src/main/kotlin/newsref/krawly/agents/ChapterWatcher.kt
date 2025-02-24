@@ -12,11 +12,9 @@ import kotlin.time.Duration.Companion.seconds
 private val console = globalConsole.getHandle("ChapterWatcher")
 
 class ChapterWatcher(
-    env: Environment,
+    private val client: GeminiClient,
     private val service: ChapterWatcherService = ChapterWatcherService(),
 ) {
-
-    private val client = GeminiClient(env.read("GEMINI_KEY_FREE"))
 
     fun start() {
         CoroutineScope(Dispatchers.IO).launch {

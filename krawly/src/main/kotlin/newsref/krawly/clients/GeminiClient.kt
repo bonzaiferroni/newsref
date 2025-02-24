@@ -9,6 +9,8 @@ import io.ktor.client.request.setBody
 import io.ktor.http.ContentType
 import io.ktor.http.HttpStatusCode
 import io.ktor.http.contentType
+import kotlinx.datetime.Clock
+import kotlinx.datetime.Instant
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.descriptors.PrimitiveKind
@@ -19,14 +21,21 @@ import newsref.krawly.globalKtor
 import kotlinx.serialization.*
 import kotlinx.serialization.json.*
 import newsref.db.globalConsole
+import kotlin.time.Duration.Companion.hours
 
 class GeminiClient(
-    val token: String,
+    val limitedToken: String,
+    val unlimitedToken: String,
     val model: String = "gemini-1.5-flash",
     val client: HttpClient = globalKtor,
 ) {
+    var unlimitedUntil: Instant = Instant.DISTANT_PAST
 
     suspend inline fun <reified Received> requestJson(maxAttempts: Int, vararg parts: String): Received? {
+        val token = when {
+            Clock.System.now() < unlimitedUntil -> unlimitedToken
+            else -> limitedToken
+        }
         for (attempt in 0 until maxAttempts) {
             try {
                 val url = "https://generativelanguage.googleapis.com/v1beta/models/$model:generateContent?key=$token"
@@ -46,6 +55,12 @@ class GeminiClient(
                         .candidates.firstOrNull()?.content?.parts?.firstOrNull()?.text?.let {
                             Json.decodeFromString(it)
                         }
+                } else if (response.status == HttpStatusCode.TooManyRequests) {
+                    unlimitedUntil = Clock.System.now() + 4.hours
+                    globalConsole.logError(
+                        "GeminiClient",
+                        "Too many requests"
+                    )
                 } else {
                     globalConsole.logError(
                         "GeminiClient",
@@ -79,42 +94,6 @@ data class GeminiContent(
 @Serializable
 data class GeminiRequestText(
     val text: String
-)
-
-@Serializable
-data class GenerationConfig(
-    @SerialName("response_mime_type")
-    val responseMimeType: String,
-    @SerialName("response_schema")
-    val responseSchema: JsonElement
-)
-
-@Serializable
-data class GeminiResponse(
-    val candidates: List<GeminiResponseCandidate>,
-    val usageMetadata: GeminiUsage,
-    val modelVersion: String,
-)
-
-@Serializable
-data class GeminiResponseCandidate(
-    val content: GeminiContent,
-    val finishReason: String,
-    val avgLogprobs: Float
-)
-
-@Serializable
-data class GeminiUsage(
-    val promptTokenCount: Int,
-    val candidatesTokenCount: Int,
-    val totalTokenCount: Int,
-    val promptTokensDetails: List<PromptTokenDetails>
-)
-
-@Serializable
-data class PromptTokenDetails(
-    val modality: String,
-    val tokenCount: Int
 )
 
 inline fun <reified T> generateJsonSchema(): JsonElement {
