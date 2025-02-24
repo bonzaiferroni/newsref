@@ -6,5 +6,6 @@ import kotlinx.serialization.Serializable
 data class Person(
     val id: Int = 0,
     val name: String,
-    val identifier: String
+    val identifiers: Set<String>
 )
+

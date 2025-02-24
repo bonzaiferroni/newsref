@@ -10,9 +10,12 @@ fun promptTemplate(
     val sb = StringBuilder(text)
     items.forEach { (key, value) ->
         val templateKey = "<|$key|>"
-        var index = sb.indexOf(templateKey)
-        if (index < 0) error("key not found in template: $key")
-        sb.replace(index, index + templateKey.length, value)
+        do {
+            var index = sb.indexOf(templateKey)
+            if (index >= 0)  {
+                sb.replace(index, index + templateKey.length, value)
+            }
+        } while (index >= 0)
     }
     return sb.toString()
 }

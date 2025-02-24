@@ -7,8 +7,10 @@ import newsref.db.*
 import newsref.db.core.Url
 import newsref.db.model.*
 import newsref.db.services.*
+import newsref.db.tables.PagePersonTable.personId
 import newsref.krawly.clients.*
 import java.io.File
+import kotlin.text.split
 import kotlin.time.Duration.Companion.minutes
 import kotlin.time.Duration.Companion.seconds
 
@@ -39,13 +41,18 @@ class ArticleReader(
         val newsCategories = NewsCategory.entries.joinToString("\n") { "* ${it.title}" }
         val documentTypes = DocumentType.entries.joinToString("\n") { "* ${it.title}" }
 
+        val articleContent = buildString {
+            append("$title\n")
+            append("url: ${source.url.href}\n\n")
+            append(content.take(20000))
+        }
+
         val prompt = promptTemplate(
             "../docs/article_reader-read_article.md",
             "document_types" to documentTypes,
             "news_categories" to newsCategories,
-            "title" to title,
-            "url" to source.url.href,
-            "body" to content.take(20000)
+            "article_content" to articleContent,
+            "unclear_text" to PERSON_UNCLEAR
         )
 
         // console.log(headlineAndText)
@@ -60,22 +67,113 @@ class ArticleReader(
             summary = response?.summary,
             category = category,
             location = location,
-            people = response?.people?.map {
-                val array = it.split(":")
-                Person(name = array[0], identifier = array.getOrNull(1) ?: "Unclear")
-            }
         )
 
-        if (response != null) {
-            console.log("${type.title} // ${category.title}\n${source.url.href.take(80)}" +
-                    "\nlocation: $location" +
-                    "\npeople:\n" + response.people.joinToString("\n") +
-                    "\nsummary:\n${response.summary}")
-            lastAttemptFail = false
-        } else {
+        if (response == null) {
             if (lastAttemptFail) error("two fails in a row")
             lastAttemptFail = true
             delay(1.minutes)
+            return
+        }
+
+        console.log(
+            "${type.title} // ${category.title}\n${source.url.href.take(80)}" +
+                    "\nlocation: $location" +
+                    "\npeople:\n" + response.people.joinToString("\n") +
+                    "\nsummary:\n${response.summary}"
+        )
+        lastAttemptFail = false
+
+        linkPeople(source, response.people, articleContent)
+    }
+
+    private suspend fun linkPeople(source: Source, peopleResponses: List<String>, articleContent: String) {
+        val people = peopleResponses.map {
+            val split = it.split(":")
+            split[0] to split.getOrNull(1)
+        }
+
+        val records = mutableSetOf<Pair<Int, String>>()
+        val possibilities = mutableListOf<Person>()
+        for ((name, identifier) in people) {
+            var personId: Int? = null
+            if (identifier == null || identifier == PERSON_UNCLEAR) continue
+
+            val peopleWithName = service.readPeopleWithName(name)
+            for (personWithName in peopleWithName) {
+                if (personWithName.identifiers.map { it.lowercase() }.contains(identifier.lowercase())) {
+                    console.log("Identified person: $name ($identifier)")
+                    personId = personWithName.id
+                    break
+                }
+            }
+
+            if (personId == null) {
+                if (peopleWithName.isNotEmpty()) {
+                    possibilities.addAll(peopleWithName)
+                }
+            }
+
+            if (personId != null) {
+                records.add(personId to name)
+            }
+        }
+
+
+        if (possibilities.isNotEmpty()) {
+            val clarifyingPrompt = promptTemplate(
+                "../docs/article_reader-clarify_person.md",
+                "person_table" to createPersonTable(possibilities),
+                "article_content" to articleContent,
+            )
+
+            console.log(clarifyingPrompt)
+
+            val response: PersonChoiceResponse? = client.requestJson(2, clarifyingPrompt)
+            if (response == null) {
+                console.logError("unable to clarify, received no response")
+            } else {
+                val pairs = response.people.mapNotNull {
+                    val split = it.split(":")
+                    if (split.size != 2) return@mapNotNull null
+                    val id = split[0].toIntOrNull()
+                    val name = split[1]
+                    if (
+                        id == null ||
+                        !possibilities.any { it.id == id } ||
+                        !possibilities.any { it.name == name }
+                    ) return@mapNotNull null
+                    id to name
+                }
+                for ((id, name) in pairs) {
+                    if (pairs.count { it.second == name } != 1) continue
+                    val identifier = people.firstOrNull { it.first.lowercase() == name.lowercase() }?.second
+                    if (identifier == null) continue
+                    console.log("Clarified person: $name ($identifier)")
+                    service.addIdentifier(id, identifier)
+                    records.add(id to name)
+                }
+            }
+        }
+
+        for ((name, identifier) in people) {
+            if (identifier == null || records.any { it.second == name }) continue
+            console.log("Created person: $name ($identifier)")
+            val personId = service.createPerson(name, identifier)
+            records.add(personId to name)
+        }
+
+        for ((id, name) in records) {
+            service.linkPerson(source.id, id)
+        }
+        console.log("Linked ${records.size} people to the page")
+    }
+
+    private fun createPersonTable(people: List<Person>) = buildString {
+        append("|id|name|title|\n")
+        append("|---|---|---|\n")
+        for (person in people) {
+            append("|${person.id}|${person.name}|${person.identifiers.joinToString(", ")}|\n")
         }
     }
 
@@ -107,6 +205,11 @@ data class ArticleResponse(
     val summary: String,
     val category: String,
     val location: String,
+    val people: List<String>
+)
+
+@Serializable
+data class PersonChoiceResponse(
     val people: List<String>
 )
 

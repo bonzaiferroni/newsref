@@ -1,6 +1,5 @@
 package newsref.db.services
 
-import kotlinx.serialization.Serializable
 import newsref.db.*
 import newsref.db.model.*
 import newsref.db.tables.*
@@ -30,7 +29,6 @@ class ArticleReaderService : DbService() {
         summary: String?,
         category: NewsCategory,
         location: String?,
-        people: List<Person>?
     ) = dbQuery {
         val locationId = if (location != null) {
             LocationTable.select(LocationTable.id)
@@ -48,24 +46,38 @@ class ArticleReaderService : DbService() {
             it[this.summary] = summary
             it[this.category] = category
         }
+    }
 
-        if (people != null) {
-            for (person in people) {
-                val personId = PersonTable.select(PersonTable.id)
-                    .where { PersonTable.name.eq(person.name) and PersonTable.identifier.eq(person.identifier) }
-                    .firstOrNull()?.let { it[PersonTable.id].value }
-                    ?: PersonTable.insertAndGetId {
-                        it[this.name] = person.name
-                        it[this.identifier] = person.identifier
-                    }.value
+    suspend fun readPeopleWithName(name: String) = dbQuery {
+        PersonTable.select(PersonTable.columns)
+            .where { PersonTable.name.eq(name)}
+            .map { it.toPerson() }
+    }
 
-                PagePersonTable.upsert {
-                    it[this.pageId] = pageId
-                    it[this.personId] = personId
-                }
-            }
+    suspend fun linkPerson(pageId: Long, personId: Int) = dbQuery {
+        PagePersonTable.insert {
+            it[this.pageId] = pageId
+            it[this.personId] = personId
+        }
+    }
+
+    suspend fun createPerson(name: String, identifier: String) = dbQuery {
+        PersonTable.insertAndGetId {
+            it[this.name] = name
+            it[this.identifiers] = listOf(identifier)
+        }.value
+    }
+
+    suspend fun addIdentifier(personId: Int, identifier: String) = dbQuery {
+        val identifiers = PersonTable.select(PersonTable.identifiers)
+            .where { PersonTable.id.eq(personId) }
+            .firstOrNull()?.let { it[PersonTable.identifiers] } ?: emptyList()
+        PersonTable.update({PersonTable.id.eq(personId)}) {
+            it[this.identifiers] = identifiers + identifier
         }
     }
 }
+
+const val PERSON_UNCLEAR = "Unclear"
 
 const val READER_MIN_WORDS = 100

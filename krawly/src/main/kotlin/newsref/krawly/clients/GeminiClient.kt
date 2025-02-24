@@ -1,15 +1,11 @@
 package newsref.krawly.clients
 
-import io.ktor.client.HttpClient
-import io.ktor.client.call.NoTransformationFoundException
-import io.ktor.client.call.body
-import io.ktor.client.plugins.HttpRequestTimeoutException
-import io.ktor.client.request.post
-import io.ktor.client.request.setBody
-import io.ktor.http.ContentType
-import io.ktor.http.HttpStatusCode
-import io.ktor.http.contentType
-import kotlinx.datetime.Clock
+import io.ktor.client.*
+import io.ktor.client.call.*
+import io.ktor.client.plugins.*
+import io.ktor.client.request.*
+import io.ktor.http.*
+import kotlinx.datetime.*
 import kotlinx.datetime.Instant
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
