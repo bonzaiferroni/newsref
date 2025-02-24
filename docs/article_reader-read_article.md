@@ -64,7 +64,15 @@ If the individual has an obvious title or position, provide that as the identifi
 
 If there is no clear title or position, provide a relevant detail from the article, a short phrase about their identity. For example, if the news story is about a woman who lives in Denver, provide "Denver Resident" as the identifier. If it is about an educational award to student from Atlanta, provide "Atlanta Student".
 
-The identifier should generally follow the pattern of "(Clarifier) (Identifier)". When the clarifier is a place, do not use a demonym. In example above, "Atlanta Student" is provided instead of "Atlantan Student". Always provide a value for the identifier property. Make the best determination you can, based on your own knowledge and the information in the article. If it is impossible to make a determination, provide "Unclear".
+The identifier should generally follow the pattern of "(Clarifier) (Identifier)". When the clarifier is a place, do not use a demonym. In the example above, "Atlanta Student" is provided instead of "Atlantan Student". Always provide a value for the identifier property. Make the best determination you can, based on your own knowledge and the information in the article. If it is impossible to make a determination, provide "Unclear".
+
+The following is an invalid response because it contains no identifier.
+
+* Liam Doyle
+
+If the identifier isn't clear from the article, simply provide "Unclear" as the identifier. The following is a valid response:
+
+* Liam Doyle:Unclear
 
 The following are valid responses:
 
@@ -73,6 +81,8 @@ The following are valid responses:
 * Mercedes Colwin:Defense Attorney
 * Jason Crow:Colorado Representative
 * Jason Bollwerk:South Dakota Police Officer
+* Fox Mulder:FBI Agent
+* Jim Smith:Unclear
 
 ## Article
 
