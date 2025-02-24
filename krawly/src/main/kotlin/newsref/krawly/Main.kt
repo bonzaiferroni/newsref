@@ -7,6 +7,7 @@ import newsref.db.readEnvFromDirectory
 import newsref.db.utils.initProfiler
 import newsref.krawly.agents.*
 import newsref.krawly.clients.GeminiClient
+import newsref.krawly.clients.LocationClient
 
 fun main(args: Array<String>) {
     println(args.joinToString(", "))
@@ -23,6 +24,7 @@ fun crawl(args: Array<String>) {
         env.read("GEMINI_KEY_RATE_LIMIT_A"),
         env.read("GEMINI_KEY_RATE_LIMIT_B")
     )
+    val locationClient = LocationClient(env.read("GOOGLE_MAPS_KEY"))
     val sourceScoreFinder = SourceScoreFinder()
     val hostScoreFinder = HostScoreFinder()
     val hostAgent = HostAgent(web)
@@ -30,7 +32,7 @@ fun crawl(args: Array<String>) {
     val chapterComposer = ChapterComposer(env)
     val chapterReporter = ChapterReporter()
     val chapterWatcher = ChapterWatcher(aiClient)
-    val articleReader = ArticleReader(aiClient)
+    val articleReader = ArticleReader(aiClient, locationClient)
     val chapterLinker = ChapterLinker()
     val storyComposer = StoryComposer()
     val storyWatcher = StoryWatcher(env)

@@ -5,6 +5,7 @@ import newsref.db.model.*
 import newsref.db.tables.*
 import newsref.model.core.*
 import org.jetbrains.exposed.sql.*
+import org.postgresql.geometric.PGpoint
 import kotlin.time.Duration.Companion.days
 
 class ArticleReaderService : DbService() {
@@ -28,17 +29,8 @@ class ArticleReaderService : DbService() {
         type: DocumentType,
         summary: String?,
         category: NewsCategory,
-        location: String?,
+        locationId: Int?,
     ) = dbQuery {
-        val locationId = if (location != null) {
-            LocationTable.select(LocationTable.id)
-                .where { LocationTable.name.eq(location) }
-                .firstOrNull()?.let { it[LocationTable.id].value }
-                ?: LocationTable.insertAndGetId {
-                    it[this.name] = location
-                }.value
-        } else { null }
-
         NewsArticleTable.insert {
             it[this.pageId] = pageId
             it[this.locationId] = locationId
@@ -76,8 +68,31 @@ class ArticleReaderService : DbService() {
             it[this.identifiers] = identifiers + identifier
         }
     }
+
+    suspend fun readLocationId(name: String) = dbQuery {
+        LocationTable.select(LocationTable.id)
+            .where { LocationTable.name.lowerCase().eq(name.lowercase())}
+            .firstOrNull()?.let { it[LocationTable.id].value }
+    }
+
+    suspend fun createLocation(name: String, point: GeoPoint, northEast: GeoPoint, southWest: GeoPoint) = dbQuery {
+        LocationTable.insertAndGetId {
+            it[this.name] = name
+            it[this.geoPoint] = point.toPGpoint()
+            it[this.northEast] = northEast.toPGpoint()
+            it[this.southWest] = southWest.toPGpoint()
+        }.value
+    }
 }
 
 const val PERSON_UNCLEAR = "Unclear"
 
 const val READER_MIN_WORDS = 100
+
+data class GeoPoint(
+    val latitude: Double,
+    val longitude: Double,
+)
+
+fun GeoPoint.toPGpoint() = PGpoint(latitude, longitude)
+fun PGpoint.toGeoPoint() = GeoPoint(x, y)

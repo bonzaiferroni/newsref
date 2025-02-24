@@ -6,7 +6,6 @@ import org.jetbrains.exposed.sql.ReferenceOption
 import org.jetbrains.exposed.sql.ResultRow
 import org.jetbrains.exposed.sql.Table
 
-
 object PersonTable : IntIdTable("person") {
     val name = text("name")
     val identifiers = array<String>("identifiers")

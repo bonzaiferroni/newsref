@@ -7,7 +7,6 @@ import newsref.db.*
 import newsref.db.core.Url
 import newsref.db.model.*
 import newsref.db.services.*
-import newsref.db.tables.PagePersonTable.personId
 import newsref.krawly.clients.*
 import java.io.File
 import kotlin.text.split
@@ -18,6 +17,7 @@ private val console = globalConsole.getHandle("ArticleReader")
 
 class ArticleReader(
     private val client: GeminiClient,
+    private val locationClient: LocationClient,
     private val service: ArticleReaderService = ArticleReaderService(),
     private val contentService: ContentService = ContentService()
 ) {
@@ -60,13 +60,13 @@ class ArticleReader(
         val response: ArticleResponse? = readCachedResponse(source.url) ?: readUncachedResponse(source.url, prompt)
         val type = response?.type?.toDocumentType() ?: DocumentType.Unknown
         val category = response?.category?.toNewsCategory() ?: NewsCategory.Unknown
-        val location = response?.location?.takeIf { it != "None" }
+        val locationId = response?.location?.takeIf { it != "None" }?.let { readOrCreateLocation(it) }
         service.createNewsArticle(
             pageId = source.id,
             type = type,
             summary = response?.summary,
             category = category,
-            location = location,
+            locationId = locationId,
         )
 
         if (response == null) {
@@ -78,7 +78,7 @@ class ArticleReader(
 
         console.log(
             "${type.title} // ${category.title}\n${source.url.href.take(80)}" +
-                    "\nlocation: $location" +
+                    "\nlocation: ${response.location}" +
                     "\npeople:\n" + response.people.joinToString("\n") +
                     "\nsummary:\n${response.summary}"
         )
@@ -163,8 +163,8 @@ class ArticleReader(
             records.add(personId to name)
         }
 
-        for ((id, name) in records) {
-            service.linkPerson(source.id, id)
+        for (personId in records.map { it.first }.toSet()) {
+            service.linkPerson(source.id, personId)
         }
         console.log("Linked ${records.size} people to the page")
     }
@@ -175,6 +175,25 @@ class ArticleReader(
         for (person in people) {
             append("|${person.id}|${person.name}|${person.identifiers.joinToString(", ")}|\n")
         }
+    }
+
+    private suspend fun readOrCreateLocation(name: String): Int? {
+        var locationId = service.readLocationId(name)
+        if (locationId == null) {
+            val geometry = locationClient.fetchPlaceGeometry(name)
+            if (geometry == null) {
+                console.logError("Unable to find place geometry for $name")
+                return null
+            }
+            console.log("created location: $name\n${geometry.location.toGeoPoint()}")
+            locationId = service.createLocation(
+                name = name,
+                point = geometry.location.toGeoPoint(),
+                northEast = geometry.viewport.northeast.toGeoPoint(),
+                southWest = geometry.viewport.southwest.toGeoPoint(),
+            )
+        }
+        return locationId
     }
 
     private fun readCachedFile(url: Url): File = File("../cache/article_reader/${url.toFileName()}").let {
