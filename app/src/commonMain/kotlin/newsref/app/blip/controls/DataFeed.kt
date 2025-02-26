@@ -29,13 +29,25 @@ fun <T> DataFeed(
     }
 
     Box {
+        if (firstItemIndex < items.size) {
+            val item = items[firstItemIndex]
+            if (isPartiallyHidden) {
+                val alpha =  (100 - listState.firstVisibleItemScrollOffset) / 100f
+                Box(
+                    modifier = Modifier.alpha(alpha)
+                ) {
+                    content(item)
+                }
+            }
+        }
+
         LazyColumn(
             verticalArrangement = Blip.ruler.columnTight,
             state = listState,
         ) {
             itemsIndexed(items) { index, item ->
                 val alpha = when {
-                    index == firstItemIndex && isPartiallyHidden -> (100 - listState.firstVisibleItemScrollOffset) / 100f
+                    index == firstItemIndex && isPartiallyHidden -> 0f
                     else -> 1f
                 }
                 Box(
