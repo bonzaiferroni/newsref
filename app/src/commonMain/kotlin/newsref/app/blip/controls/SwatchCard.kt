@@ -28,12 +28,12 @@ fun SwatchCard(
         val swatchColor = swatches[swatchIndex % swatches.size]
         Box(
             modifier = modifier
-                .lightedBg(swatchColor, shape)
+                .bg(swatchColor, shape)
                 .padding(Blip.ruler.baseSpacing, 0.dp, 0.dp, 0.dp)
         ) {
             Column (
                 modifier = modifier
-                    .lightedBg(Blip.localColors.surface, shape)
+                    .bg(Blip.localColors.surface, shape)
                     .padding(Blip.ruler.basePadding)
             ) {
                 content()
