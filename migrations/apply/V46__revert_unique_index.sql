@@ -1,0 +1,1 @@
+ALTER TABLE IF EXISTS person DROP CONSTRAINT IF EXISTS person_name_unique;

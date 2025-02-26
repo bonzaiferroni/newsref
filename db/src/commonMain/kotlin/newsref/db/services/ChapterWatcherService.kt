@@ -68,7 +68,7 @@ class ChapterWatcherService : DbService() {
         for (chapterSource in chapterSources) {
             if (chapterSource.relevance == Relevance.Irrelevant) {
                 ChapterSourceTable.deleteWhere { id.eq(chapterSource.id) }
-                ChapterExclusionTable.insert {
+                ChapterExclusionTable.upsert(ChapterExclusionTable.chapterId, ChapterExclusionTable.sourceId) {
                     it[chapterId] = chapterSource.chapterId
                     it[sourceId] = chapterSource.sourceId
                 }

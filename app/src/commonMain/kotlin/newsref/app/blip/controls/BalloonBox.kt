@@ -1,3 +1,5 @@
+@file:Suppress("DuplicatedCode")
+
 package newsref.app.blip.controls
 
 import androidx.compose.animation.core.LinearEasing
@@ -71,8 +73,8 @@ internal fun BalloonBox(
             val center = Offset((point.x - space.xMin) * xScale, size.height - ((point.y - space.yMin) * yScale) - 20)
             val radius = maxOf(point.size * sizeScale, BALLOON_MIN_SIZE)
             val transition = rememberInfiniteTransition()
-            val initialValue = remember { (-5..5).random().toFloat() }
-            val targetValue = remember { (-5..5).random().toFloat() }
+            val initialValue = remember { (-10..10).random().toFloat() }
+            val targetValue = remember { (-10..10).random().toFloat() }
             val duration = remember { (4000..6000).random() }
             val offsetY by transition.animateFloat(
                 initialValue = initialValue,

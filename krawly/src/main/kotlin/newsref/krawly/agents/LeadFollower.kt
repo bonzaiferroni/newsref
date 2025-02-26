@@ -266,8 +266,6 @@ class LeadFollower(
 		val title = page.article?.headline ?: page.source.title ?: "[No title]"
 		console.cell(title, rowWidth, justify = Justify.LEFT)
 			.send(background = background, width = rowWidth)
-		console.cell("http://localhost:3000/#/source/$sourceId", justify = Justify.LEFT)
-			.send(background = background, width = rowWidth)
 		val externalLinkCount = page.links.count { it.isExternal }
 		console
 			.cell(page.source.type?.getEmoji() ?: "💢")

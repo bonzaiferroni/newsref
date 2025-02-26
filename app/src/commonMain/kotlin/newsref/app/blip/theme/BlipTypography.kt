@@ -7,11 +7,14 @@ import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontSynthesis
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.sp
-import newsref.app.generated.resources.PlayfairDisplay_Regular
+import newsref.app.generated.resources.Inter_18pt_Regular
+import newsref.app.generated.resources.Inter_28pt_Light
+import newsref.app.generated.resources.Inter_28pt_Thin
 import newsref.app.generated.resources.Res
 import newsref.app.generated.resources.forum_regular
 import newsref.app.generated.resources.oranienbaum_regular
 import org.jetbrains.compose.resources.ExperimentalResourceApi
+import org.jetbrains.compose.resources.FontResource
 
 interface BlipTypography {
     val title: TextStyle
@@ -27,21 +30,28 @@ fun DefaultTypography() = object : BlipTypography {
     )
     override val h1 = base.copy(
         fontSize = 28.sp,
-        fontWeight = FontWeight.Normal,
-        fontFamily = PlayfairFontFamily()
+        fontWeight = FontWeight.Light,
+        fontFamily = useFamily(Res.font.Inter_28pt_Light, FontWeight.Light),
     )
     override val h2 = base.copy(
         fontSize = 24.sp,
-        fontWeight = FontWeight.Normal,
-        fontFamily = PlayfairFontFamily()
+        fontWeight = FontWeight.Thin,
+        // fontFamily = PlayfairFontFamily()
     )
     override val body = base
 }
 
-private val base = TextStyle.Default
+private val base @Composable get() = TextStyle.Default.copy(
+    fontFamily = useFamily(Res.font.Inter_18pt_Regular)
+)
 
 
 @Composable
 fun PlayfairFontFamily() = FontFamily(
     Font(Res.font.forum_regular, weight = FontWeight.Normal),
+)
+
+@Composable
+fun useFamily(resource: FontResource, weight: FontWeight = FontWeight.Normal) = FontFamily(
+    Font(resource, weight = weight)
 )

@@ -28,7 +28,7 @@ class ArticleReader(
         CoroutineScope(Dispatchers.IO).launch {
             while (true) {
                 readNextArticle()
-                delay(20.seconds)
+                delay(2.seconds)
             }
         }
     }
@@ -77,10 +77,7 @@ class ArticleReader(
         }
 
         console.log(
-            "${type.title} // ${category.title}\n${source.url.href.take(80)}" +
-                    "\nlocation: ${response.location}" +
-                    "\npeople:\n" + response.people.joinToString("\n") +
-                    "\nsummary:\n${response.summary}"
+            "${type.title} // ${category.title}\n${source.url.href.take(80)}"
         )
         lastAttemptFail = false
 
@@ -97,16 +94,18 @@ class ArticleReader(
         val possibilities = mutableListOf<Person>()
         for ((name, identifier) in people) {
             var personId: Int? = null
-            if (identifier == null || identifier == PERSON_UNCLEAR) continue
 
             val peopleWithName = service.readPeopleWithName(name)
-            for (personWithName in peopleWithName) {
-                if (personWithName.identifiers.map { it.lowercase() }.contains(identifier.lowercase())) {
-                    console.log("Identified person: $name ($identifier)")
-                    personId = personWithName.id
-                    break
+            if (identifier == null || identifier == PERSON_UNCLEAR) {
+                if (peopleWithName.size == 1) {
+                    personId = peopleWithName.first().id
                 }
+                continue
             }
+
+            personId = peopleWithName.firstOrNull {
+                it.identifiers.map{ it.lowercase()}.contains(identifier.lowercase())
+            }?.id
 
             if (personId == null) {
                 if (peopleWithName.isNotEmpty()) {
@@ -126,8 +125,6 @@ class ArticleReader(
                 "person_table" to createPersonTable(possibilities),
                 "article_content" to articleContent,
             )
-
-            console.log(clarifyingPrompt)
 
             val response: PersonChoiceResponse? = client.requestJson(2, clarifyingPrompt)
             if (response == null) {
@@ -212,10 +209,7 @@ class ArticleReader(
 
     @OptIn(ExperimentalSerializationApi::class)
     private fun readCachedResponse(url: Url) = readCachedFile(url).takeIf { it.exists() }?.readBytes()
-        ?.let {
-            console.log("read cached response: ${url.href}")
-            Cbor.decodeFromByteArray(ArticleResponse.serializer(), it)
-        }
+        ?.let { Cbor.decodeFromByteArray(ArticleResponse.serializer(), it) }
 }
 
 @Serializable
