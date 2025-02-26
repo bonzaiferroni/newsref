@@ -8,6 +8,7 @@ import androidx.compose.ui.text.font.FontSynthesis
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.sp
 import newsref.app.generated.resources.Inter_18pt_Regular
+import newsref.app.generated.resources.Inter_24pt_Light
 import newsref.app.generated.resources.Inter_28pt_Light
 import newsref.app.generated.resources.Inter_28pt_Thin
 import newsref.app.generated.resources.Res
@@ -35,8 +36,8 @@ fun DefaultTypography() = object : BlipTypography {
     )
     override val h2 = base.copy(
         fontSize = 24.sp,
-        fontWeight = FontWeight.Thin,
-        // fontFamily = PlayfairFontFamily()
+        fontWeight = FontWeight.Light,
+        fontFamily = useFamily(Res.font.Inter_24pt_Light, FontWeight.Light),
     )
     override val body = base
 }

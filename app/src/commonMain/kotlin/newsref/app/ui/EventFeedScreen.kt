@@ -1,26 +1,34 @@
 package newsref.app.ui
 
 import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxHeight
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.draw.drawBehind
 import androidx.compose.ui.draw.shadow
+import androidx.compose.ui.graphics.drawscope.Stroke
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.text.font.FontVariation.width
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import coil3.compose.AsyncImage
 import newsref.app.*
 import newsref.app.blip.controls.*
 import newsref.app.blip.theme.Blip
+import newsref.app.blip.theme.ProvideBookColors
+import newsref.app.blip.theme.ProvideSkyColors
 
 @Composable
 fun EventFeedScreen(
@@ -39,34 +47,41 @@ fun EventFeedScreen(
         )
 
         DataFeed(state.chapterPacks) { pack ->
-            SwatchCard(
-                swatchIndex = pack.chapter.id.toInt(),
+            EventCard(
                 modifier = Modifier.fillMaxWidth()
                     .height(130.dp)
             ) {
                 Row(
                     horizontalArrangement = Blip.ruler.rowSpaced
                 ) {
-                    Column(
-                        verticalArrangement = Blip.ruler.columnGrouped
+                    val color = Blip.colors.getSwatchFromIndex(pack.chapter.id)
+                    val sizeFactor = pack.chapter.score / 100f
+                    Box(
+                        contentAlignment = Alignment.Center,
+                        modifier = Modifier.fillMaxHeight()
+                            .aspectRatio(1f)
+                            .drawBehind {
+                                val radius = ((size.minDimension / 2) - 10) * sizeFactor + 10
+                                drawCircle(
+                                    color = color.copy(.75f),
+                                    radius = radius
+                                )
+                                drawCircle(
+                                    color = color,
+                                    radius = radius,
+                                    style = Stroke(width = 2.dp.toPx()) // Stroke style
+                                )
+                            }
                     ) {
-                        Column(
-                            horizontalAlignment = Alignment.CenterHorizontally,
-                            modifier = Modifier
-                        ) {
+                        ProvideSkyColors {
                             H2(pack.chapter.score.toString())
-                            Label("visibility")
-                        }
-                        Column(
-                            horizontalAlignment = Alignment.CenterHorizontally,
-                            modifier = Modifier
-                        ) {
-                            H2(pack.chapter.size.toString())
-                            Label("articles")
                         }
                     }
+
                     Column(
+                        verticalArrangement = Arrangement.Center,
                         modifier = Modifier.weight(1f)
+                            .fillMaxHeight()
                     ) {
                         H1(pack.chapter.title ?: "null", maxLines = 2)
                         val source = pack.sources.first()
@@ -74,11 +89,11 @@ fun EventFeedScreen(
                     }
                     val imgUrl = pack.sources.firstOrNull { it.imageUrl != null }?.imageUrl
                     imgUrl?.let {
-                        val color = Blip.colors.getSwatchFromIndex(pack.chapter.id)
+
                         Box(
                             modifier = Modifier.fillMaxHeight()
                                 .aspectRatio(1f)
-                                .shadow(10.dp, Blip.ruler.round)
+                                .shadow(8.dp, Blip.ruler.round)
                                 .background(color)
                                 .padding(Blip.ruler.innerPadding)
                         ) {
@@ -93,6 +108,28 @@ fun EventFeedScreen(
                     }
                 }
             }
+        }
+    }
+}
+
+@Composable
+fun EventCard(
+    modifier: Modifier = Modifier,
+    content: @Composable () -> Unit
+) {
+    ProvideBookColors {
+        val shape = RoundedCornerShape(
+            topStartPercent = 50,
+            topEndPercent = 50,
+            bottomStartPercent = 50,
+            bottomEndPercent = 50
+        )
+        Column (
+            modifier = modifier
+                .bg(Blip.localColors.surface, shape)
+                .padding(Blip.ruler.halfPadding)
+        ) {
+            content()
         }
     }
 }
