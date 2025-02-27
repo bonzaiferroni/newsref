@@ -1,3 +1,5 @@
+@file:Suppress("DuplicatedCode")
+
 package newsref.app.blip.controls
 
 import androidx.compose.runtime.Composable
@@ -23,12 +25,15 @@ fun BalloonChart(
 }
 
 private fun generateBalloonSpace(points: List<BalloonPoint>): BalloonSpace {
-    val yMin = points.minOf { it.y - it.size }
-    val yMax = points.maxOf { it.y + it.size }
+    val yMinInitial = points.minOf { it.y - it.size / 2 }
+    val yMaxInitial = points.maxOf { it.y + it.size / 2 }
     val xMin = points.minOf { it.x }
     val xMax = points.maxOf { it.x }
     val sizeMin = points.minOf { it.size }
     val sizeMax = points.maxOf { it.size }
+    val sizeScale = sizeMax * 4 / (yMaxInitial - yMinInitial)
+    val yMin = points.minOf { it.y - (it.size / 2) / sizeScale}
+    val yMax = points.maxOf { it.y + (it.size / 2) / sizeScale}
     return BalloonSpace(
         yMin = yMin,
         yMax = yMax,
@@ -38,7 +43,7 @@ private fun generateBalloonSpace(points: List<BalloonPoint>): BalloonSpace {
         xRange = xMax - xMin,
         sizeMin = sizeMin,
         sizeMax = sizeMax,
-        sizeRange = sizeMax - sizeMin,
+        sizeScale = sizeScale,
     )
 }
 
@@ -59,7 +64,7 @@ internal data class BalloonSpace(
     val xRange: Float,
     val sizeMin: Float,
     val sizeMax: Float,
-    val sizeRange: Float,
+    val sizeScale: Float,
 )
 
 internal val balloonColors = listOf(

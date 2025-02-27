@@ -30,6 +30,7 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.clipToBounds
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.geometry.Size
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.layout.onGloballyPositioned
 import androidx.compose.ui.unit.Dp
@@ -59,7 +60,6 @@ internal fun BalloonBox(
         val yScale = size.height / space.yRange
         val xScale = size.width / space.xRange
         // val sizeScale = size.height / (space.sizeMax * 4)
-        val sizeScale = (size.height / 4) / maxOf(space.sizeRange, BALLOON_MIN_SIZE)
 
         var index = 0
         for (point in points) {
@@ -70,8 +70,8 @@ internal fun BalloonBox(
                 true -> color
                 false -> color.copy(alpha = .75f)
             }
-            val center = Offset((point.x - space.xMin) * xScale, size.height - ((point.y - space.yMin) * yScale) - 20)
-            val radius = maxOf(point.size * sizeScale, BALLOON_MIN_SIZE)
+            val center = Offset((point.x - space.xMin) * xScale, size.height - ((point.y - space.yMin) * yScale))
+            val radius = maxOf(point.size * space.sizeScale / 2, BALLOON_MIN_SIZE)
             val transition = rememberInfiniteTransition()
             val initialValue = remember { (-10..10).random().toFloat() }
             val targetValue = remember { (-10..10).random().toFloat() }
