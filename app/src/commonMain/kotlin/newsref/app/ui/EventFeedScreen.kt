@@ -7,7 +7,6 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxHeight
-import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
@@ -18,6 +17,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.drawBehind
 import androidx.compose.ui.draw.shadow
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.drawscope.Stroke
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.text.font.FontVariation.width
@@ -46,7 +46,7 @@ fun EventFeedScreen(
             { }
         )
 
-        DataFeed(state.chapterPacks) { pack ->
+        CardFeed(state.chapterPacks) { pack, isSelected ->
             EventCard(
                 modifier = Modifier.fillMaxWidth()
                     .height(130.dp)
@@ -55,6 +55,7 @@ fun EventFeedScreen(
                     horizontalArrangement = Blip.ruler.rowSpaced
                 ) {
                     val color = Blip.colors.getSwatchFromIndex(pack.chapter.id)
+                    val accent = Blip.colors.primary
                     val sizeFactor = pack.chapter.score / 100f
                     Box(
                         contentAlignment = Alignment.Center,
@@ -71,6 +72,13 @@ fun EventFeedScreen(
                                     radius = radius,
                                     style = Stroke(width = 2.dp.toPx()) // Stroke style
                                 )
+                                if (isSelected) {
+                                    drawCircle(
+                                        color = accent.copy(.5f),
+                                        radius = radius + 4f,
+                                        style = Stroke(width = 2.dp.toPx()) // Stroke style
+                                    )
+                                }
                             }
                     ) {
                         ProvideSkyColors {
