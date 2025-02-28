@@ -35,23 +35,15 @@ class EventFeedModel(
         }
     }
 
-    fun selectChapter(pack: ChapterPack) {
-        if (pack == stateNow.selected) return
-        setState { it.copy(selected = pack) }
-    }
-
-    fun selectCloud(id: Long) {
-        val chapter = stateNow.chapterPacks.firstOrNull { it.chapter.id == id }
-        if (chapter == null) return
-        selectChapter(chapter)
+    fun selectId(id: Long) {
+        if (id == stateNow.selectedId) return
+        setState { it.copy(selectedId = id) }
     }
 }
 
 data class ChapterFeedState(
-    val selected: ChapterPack? = null,
+    val selectedId: Long? = null,
     val chapterPacks: ImmutableList<ChapterPack> = persistentListOf(),
     val balloonPoints: ImmutableList<BalloonPoint> = persistentListOf(),
-) {
-    val selectedId get () = selected?.chapter?.id ?: 0
-}
+)
 

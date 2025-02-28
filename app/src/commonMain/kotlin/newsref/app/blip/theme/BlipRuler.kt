@@ -10,6 +10,7 @@ import androidx.compose.ui.unit.dp
 interface BlipRuler {
     val spacing: Int
     val corner: Int
+    val shadowElevation: Dp
 
     val baseSpacing: Dp get() = spacing.dp
     val halfSpacing: Dp get() = (spacing / 2).dp

@@ -1,6 +1,7 @@
 package newsref.app.ui
 
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -30,32 +31,34 @@ import newsref.app.blip.theme.ProvideSkyColors
 @Composable
 fun EventFeedScreen(
     route: EvemtFeedRoute,
-    viewModel: EventFeedModel = viewModel { EventFeedModel(route)}
+    viewModel: EventFeedModel = viewModel { EventFeedModel(route) }
 ) {
     val state by viewModel.state.collectAsState()
+    val ruler = Blip.ruler
 
     Column(
         verticalArrangement = Blip.ruler.columnSpaced
     ) {
         BalloonChart(
-            state.selectedId,
-            state.balloonPoints,
-            400.dp,
-            viewModel::selectCloud
+            selectedId = state.selectedId ?: 0,
+            points = state.balloonPoints,
+            height = 400.dp,
+            onClickCloud = viewModel::selectId
         )
 
         val height = 130
         CardFeed(
-            selected = state.selected,
+            selectedId = state.selectedId,
             items = state.chapterPacks,
-            onSelect = viewModel::selectChapter
+            onSelect = viewModel::selectId,
+            getId = { it.chapter.id }
         ) { pack, isSelected ->
             EventCard(
                 modifier = Modifier.fillMaxWidth()
                     .height(height.dp)
             ) {
                 Row(
-                    horizontalArrangement = Blip.ruler.rowSpaced
+                    horizontalArrangement = ruler.rowSpaced
                 ) {
                     val color = Blip.colors.getSwatchFromIndex(pack.chapter.id)
                     val accent = Blip.colors.primary
@@ -68,9 +71,11 @@ fun EventFeedScreen(
                         Box(
                             modifier = Modifier.size(balloonSize.dp)
                                 .circleIndicator(isSelected, accent) {
-                                drawBalloon(color)
-                            }
-                        ) { }
+                                    drawBalloon(color)
+                                }
+                                .clip(ruler.round)
+                                .clickable { viewModel.selectId(pack.chapter.id) }
+                        )
                         ProvideSkyColors {
                             H2(pack.chapter.score.toString())
                         }
@@ -91,16 +96,16 @@ fun EventFeedScreen(
                         Box(
                             modifier = Modifier.fillMaxHeight()
                                 .aspectRatio(1f)
-                                .shadow(8.dp, Blip.ruler.round)
+                                .shadow(ruler.shadowElevation, ruler.round)
                                 .background(color)
-                                .padding(Blip.ruler.innerPadding)
+                                .padding(ruler.innerPadding)
                         ) {
                             AsyncImage(
                                 model = it,
                                 contentDescription = null,
                                 contentScale = ContentScale.Crop,
                                 modifier = Modifier
-                                    .clip(Blip.ruler.round)
+                                    .clip(ruler.round)
                             )
                         }
                     }
@@ -122,7 +127,7 @@ fun EventCard(
             bottomStartPercent = 50,
             bottomEndPercent = 50
         )
-        Column (
+        Column(
             modifier = modifier
                 .bg(Blip.localColors.surface, shape)
                 .padding(Blip.ruler.halfPadding)

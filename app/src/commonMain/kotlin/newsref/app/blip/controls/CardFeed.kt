@@ -6,14 +6,15 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.*
 import androidx.compose.ui.draw.alpha
 import kotlinx.collections.immutable.ImmutableList
+import kotlinx.serialization.json.JsonNull.content
 import newsref.app.blip.theme.*
 
 @Composable
 fun <Item> CardFeed(
-    selected: Item?,
+    selectedId: Long?,
     items: ImmutableList<Item>,
-    getKey: ((Int, Item) -> Any)? = null,
-    onSelect: ((Item) -> Unit)? = null,
+    getId: (Item) -> Long,
+    onSelect: ((Long) -> Unit)? = null,
     content: @Composable (Item, Boolean) -> Unit
 ) {
     val listState = rememberLazyListState()
@@ -41,14 +42,15 @@ fun <Item> CardFeed(
         if (index >= items.size) return
         selectedIndex = index
         val item = items[index]
-        onSelect?.invoke(item)
+        onSelect?.invoke(getId(item))
     }
 
-    LaunchedEffect(selected) {
-        if (selected != null && onSelect != null) {
-            val index = items.indexOf(selected)
+    LaunchedEffect(selectedId) {
+        if (selectedId != null && onSelect != null) {
+            val index = items.indexOfFirst { getId(it) == selectedId }
             if (index < firstItemIndex || index > (lastItemIndex ?: 10))
                 listState.animateScrollToItem(index = index)
+            select(index)
         }
     }
 
@@ -77,11 +79,13 @@ fun <Item> CardFeed(
             }
         }
 
+        fun getKey(index: Int, item: Item): Any = getId(item)
+
         LazyColumn(
             verticalArrangement = Blip.ruler.columnTight,
             state = listState,
         ) {
-            itemsIndexed(items, getKey) { index, item ->
+            itemsIndexed(items, ::getKey) { index, item ->
                 val alpha = when {
                     index == firstItemIndex && isPartiallyHidden -> 0f
                     else -> 1f
