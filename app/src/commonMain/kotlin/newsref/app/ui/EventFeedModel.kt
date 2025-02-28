@@ -27,7 +27,8 @@ class EventFeedModel(
                     x = -x,
                     y = chapter.size.toFloat(),
                     size = chapter.score.toFloat(),
-                    text = chapter.title ?: chapter.id.toString()
+                    text = chapter.title ?: chapter.id.toString(),
+                    colorIndex = chapter.id.toInt()
                 )
             }.toImmutableList()
             setState { it.copy(chapterPacks = chapters, balloonPoints = balloons) }

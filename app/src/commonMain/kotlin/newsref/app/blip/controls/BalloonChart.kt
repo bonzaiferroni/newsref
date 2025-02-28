@@ -54,6 +54,7 @@ data class BalloonPoint(
     val y: Float,
     val size: Float,
     val text: String,
+    val colorIndex: Int
 )
 
 internal data class BalloonSpace(

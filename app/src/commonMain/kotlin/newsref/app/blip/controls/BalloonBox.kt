@@ -65,11 +65,11 @@ internal fun BalloonBox(
         val xScale = size.width / space.xRange
         // val sizeScale = size.height / (space.sizeMax * 4)
 
-        var index = 0
         for (point in points) {
             val accent = Blip.colors.primary
             val isSelected = point.id == selected
-            var color = balloonColors[index++ % balloonColors.size]
+
+            var color = Blip.colors.getSwatchFromIndex(point.colorIndex)
             val interactionSource = remember { MutableInteractionSource() }
             val isHovered = interactionSource.collectIsHoveredAsState().value
             val bgColor = when(isHovered) {
