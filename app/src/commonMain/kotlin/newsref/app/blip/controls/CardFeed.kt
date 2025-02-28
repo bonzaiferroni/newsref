@@ -10,11 +10,10 @@ import newsref.app.blip.theme.*
 
 @Composable
 fun <Item> CardFeed(
+    selected: Item?,
     items: ImmutableList<Item>,
-    scrollId: Long? = null,
     getKey: ((Int, Item) -> Any)? = null,
-    isSelected: ((Long, Item) -> Boolean)? = null,
-    onFirstVisibleIndex: ((Int) -> Unit)? = null,
+    onSelect: ((Item) -> Unit)? = null,
     content: @Composable (Item, Boolean) -> Unit
 ) {
     val listState = rememberLazyListState()
@@ -38,22 +37,30 @@ fun <Item> CardFeed(
         }
     }
 
-    LaunchedEffect(scrollId) {
-        if (scrollId != null && isSelected != null) {
-            val index = items.indexOfFirst { isSelected(scrollId, it) }
-            listState.animateScrollToItem(index = index) // Scroll to item 10 smoothly
+    fun select(index: Int) {
+        if (index >= items.size) return
+        selectedIndex = index
+        val item = items[index]
+        onSelect?.invoke(item)
+    }
+
+    LaunchedEffect(selected) {
+        if (selected != null && onSelect != null) {
+            val index = items.indexOf(selected)
+            if (index < firstItemIndex || index > (lastItemIndex ?: 10))
+                listState.animateScrollToItem(index = index)
         }
     }
 
     LaunchedEffect(isPartiallyHidden, firstItemIndex) {
         if (selectedIndex == firstItemIndex) {
-            selectedIndex = firstItemIndex + 1
+            select(firstItemIndex + 1)
         }
     }
 
     LaunchedEffect(lastItemIndex) {
         if (selectedIndex == lastItemIndex) {
-            selectedIndex = lastItemIndex!! - 1
+            select(lastItemIndex!! - 1)
         }
     }
 
@@ -88,5 +95,4 @@ fun <Item> CardFeed(
             }
         }
     }
-
 }

@@ -31,15 +31,19 @@ import androidx.compose.ui.draw.clipToBounds
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.drawscope.DrawScope
+import androidx.compose.ui.graphics.drawscope.Stroke
 import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.layout.onGloballyPositioned
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.toSize
 import kotlinx.collections.immutable.ImmutableList
+import newsref.app.blip.theme.Blip
 
 @Composable
 internal fun BalloonBox(
+    selected: Long,
     points: ImmutableList<BalloonPoint>,
     space: BalloonSpace,
     height: Dp,
@@ -63,6 +67,8 @@ internal fun BalloonBox(
 
         var index = 0
         for (point in points) {
+            val accent = Blip.colors.primary
+            val isSelected = point.id == selected
             var color = balloonColors[index++ % balloonColors.size]
             val interactionSource = remember { MutableInteractionSource() }
             val isHovered = interactionSource.collectIsHoveredAsState().value
@@ -88,12 +94,26 @@ internal fun BalloonBox(
                 modifier = Modifier.size((radius * 2).dp)
                     .offset((center.x - radius).dp, (center.y - radius).dp)
                     .graphicsLayer { translationY = offsetY }
+                    .circleIndicator(isSelected, accent) {
+                        drawBalloon(bgColor)
+                    }
                     .clip(CircleShape)
-                    .background(bgColor)
-                    .border(2.dp, color, CircleShape)
                     .hoverable(interactionSource)
                     .clickable { onClick(point.id) }
             )
         }
     }
+}
+
+fun DrawScope.drawBalloon(color: Color) {
+    val radius = size.minDimension / 2
+    drawCircle(
+        color = color.copy(.75f),
+        radius = radius
+    )
+    drawCircle(
+        color = color,
+        radius = radius,
+        style = Stroke(width = 2.dp.toPx()) // Stroke style
+    )
 }

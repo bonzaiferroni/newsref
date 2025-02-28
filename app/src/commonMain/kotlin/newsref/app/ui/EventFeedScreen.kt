@@ -10,17 +10,14 @@ import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.draw.drawBehind
 import androidx.compose.ui.draw.shadow
-import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.drawscope.Stroke
 import androidx.compose.ui.layout.ContentScale
-import androidx.compose.ui.text.font.FontVariation.width
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import coil3.compose.AsyncImage
@@ -41,46 +38,39 @@ fun EventFeedScreen(
         verticalArrangement = Blip.ruler.columnSpaced
     ) {
         BalloonChart(
+            state.selectedId,
             state.balloonPoints,
             400.dp,
-            { }
+            viewModel::selectCloud
         )
 
-        CardFeed(state.chapterPacks) { pack, isSelected ->
+        val height = 130
+        CardFeed(
+            selected = state.selected,
+            items = state.chapterPacks,
+            onSelect = viewModel::selectChapter
+        ) { pack, isSelected ->
             EventCard(
                 modifier = Modifier.fillMaxWidth()
-                    .height(130.dp)
+                    .height(height.dp)
             ) {
                 Row(
                     horizontalArrangement = Blip.ruler.rowSpaced
                 ) {
                     val color = Blip.colors.getSwatchFromIndex(pack.chapter.id)
                     val accent = Blip.colors.primary
-                    val sizeFactor = pack.chapter.score / 100f
                     Box(
                         contentAlignment = Alignment.Center,
                         modifier = Modifier.fillMaxHeight()
                             .aspectRatio(1f)
-                            .drawBehind {
-                                val radius = ((size.minDimension / 2) - 10) * sizeFactor + 10
-                                drawCircle(
-                                    color = color.copy(.75f),
-                                    radius = radius
-                                )
-                                drawCircle(
-                                    color = color,
-                                    radius = radius,
-                                    style = Stroke(width = 2.dp.toPx()) // Stroke style
-                                )
-                                if (isSelected) {
-                                    drawCircle(
-                                        color = accent.copy(.5f),
-                                        radius = radius + 4f,
-                                        style = Stroke(width = 2.dp.toPx()) // Stroke style
-                                    )
-                                }
-                            }
                     ) {
+                        val balloonSize = maxOf(pack.chapter.score / 50f * height, 32f)
+                        Box(
+                            modifier = Modifier.size(balloonSize.dp)
+                                .circleIndicator(isSelected, accent) {
+                                drawBalloon(color)
+                            }
+                        ) { }
                         ProvideSkyColors {
                             H2(pack.chapter.score.toString())
                         }

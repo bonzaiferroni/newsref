@@ -10,6 +10,7 @@ import kotlinx.collections.immutable.ImmutableList
 
 @Composable
 fun BalloonChart(
+    selected: Long,
     points: ImmutableList<BalloonPoint>,
     height: Dp,
     onClickCloud: (Long) -> Unit,
@@ -21,7 +22,7 @@ fun BalloonChart(
     }
 
     // CloudCanvas(points, space, height)
-    BalloonBox(points, space, height, onClickCloud)
+    BalloonBox(selected, points, space, height, onClickCloud)
 }
 
 private fun generateBalloonSpace(points: List<BalloonPoint>): BalloonSpace {
