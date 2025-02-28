@@ -19,6 +19,7 @@ fun <Item> CardFeed(
 ) {
     val listState = rememberLazyListState()
     var selectedIndex by remember { mutableStateOf(0) }
+    var autoScroll by remember { mutableStateOf(false)}
 
     val isPartiallyHidden by remember {
         derivedStateOf {
@@ -48,20 +49,24 @@ fun <Item> CardFeed(
     LaunchedEffect(selectedId) {
         if (selectedId != null && onSelect != null) {
             val index = items.indexOfFirst { getId(it) == selectedId }
-            if (index < firstItemIndex || index > (lastItemIndex ?: 10))
+            if (index < firstItemIndex || index > (lastItemIndex ?: 10)) {
+                autoScroll = true
                 listState.animateScrollToItem(index = index)
+                autoScroll = false
+            }
+
             select(index)
         }
     }
 
     LaunchedEffect(isPartiallyHidden, firstItemIndex) {
-        if (selectedIndex == firstItemIndex) {
+        if (!autoScroll && selectedIndex == firstItemIndex) {
             select(firstItemIndex + 1)
         }
     }
 
     LaunchedEffect(lastItemIndex) {
-        if (selectedIndex == lastItemIndex) {
+        if (!autoScroll && selectedIndex == lastItemIndex) {
             select(lastItemIndex!! - 1)
         }
     }
