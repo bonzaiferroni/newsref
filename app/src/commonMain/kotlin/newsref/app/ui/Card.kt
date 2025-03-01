@@ -13,14 +13,9 @@ import newsref.app.blip.theme.ProvideBookColors
 
 @Composable
 fun Card(
-    shape: Shape = RoundedCornerShape(
-        topStartPercent = 50,
-        topEndPercent = 50,
-        bottomStartPercent = 50,
-        bottomEndPercent = 50
-    ),
+    shape: Shape = Blip.ruler.rounded,
     modifier: Modifier = Modifier,
-    onClick: () -> Unit,
+    onClick: () -> Unit = { },
     content: @Composable () -> Unit
 ) {
     ProvideBookColors {

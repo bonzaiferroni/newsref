@@ -10,9 +10,12 @@ class ApiClient(
     val baseUrl: String,
     val client: HttpClient = globalKtorClient
 ) {
-    suspend inline fun <reified Received> get(url: String) = client.get("$baseUrl$url") {
+    suspend inline fun <reified Received> getById(id: Long, url: String): Received =
+        client.get("$baseUrl${url.replace(":id", id.toString())}").body()
+
+    suspend inline fun <reified Received> get(url: String): Received = client.get("$baseUrl$url") {
         contentType(ContentType.Application.Json)
-    }.body<Received>()
+    }.body()
 }
 
 val globalApiClient = ApiClient("http://localhost:8080/")

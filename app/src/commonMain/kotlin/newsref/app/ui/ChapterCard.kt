@@ -2,6 +2,7 @@ package newsref.app.ui
 
 import androidx.compose.foundation.*
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.runtime.*
 import androidx.compose.ui.*
 import androidx.compose.ui.draw.clip
@@ -27,6 +28,12 @@ fun ChapterCard(
     val ruler = Blip.ruler
 
     Card(
+        shape = RoundedCornerShape(
+            topStart = height / 2,
+            topEnd = height / 2,
+            bottomStart = height / 2,
+            bottomEnd = height / 2
+        ),
         onClick = onClick,
         modifier = Modifier.fillMaxWidth()
             .height(height.dp)
