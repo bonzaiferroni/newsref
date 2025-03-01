@@ -28,7 +28,8 @@ class EventFeedModel(
                     y = chapter.size.toFloat(),
                     size = chapter.score.toFloat(),
                     text = chapter.title ?: chapter.id.toString(),
-                    colorIndex = chapter.id.toInt()
+                    colorIndex = chapter.id.toInt(),
+                    imageUrl = sources.firstOrNull { it.imageUrl != null }?.imageUrl
                 )
             }.toImmutableList()
             setState { it.copy(chapterPacks = chapters, balloonPoints = balloons) }

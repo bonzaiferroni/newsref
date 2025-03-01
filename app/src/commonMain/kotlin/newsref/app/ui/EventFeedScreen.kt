@@ -61,7 +61,6 @@ fun EventFeedScreen(
                     horizontalArrangement = ruler.rowSpaced
                 ) {
                     val color = Blip.colors.getSwatchFromIndex(pack.chapter.id)
-                    val accent = Blip.colors.primary
                     Box(
                         contentAlignment = Alignment.Center,
                         modifier = Modifier.fillMaxHeight()
@@ -70,7 +69,7 @@ fun EventFeedScreen(
                         val balloonSize = maxOf(pack.chapter.score / 50f * height, 32f)
                         Box(
                             modifier = Modifier.size(balloonSize.dp)
-                                .circleIndicator(isSelected, accent) {
+                                .circleIndicator(isSelected) {
                                     drawBalloon(color)
                                 }
                                 .clip(ruler.round)
