@@ -91,8 +91,8 @@ fun EventFeedScreen(
                         H2(pack.chapter.title ?: "null", maxLines = 2)
                         val source = pack.sources.first()
                         Text(source.title ?: "null", maxLines = 1)
-                        Spacer(modifier = Modifier.height(4.dp))
-                        SourceArray(pack.sources)
+                        Spacer(modifier = Modifier.weight(1f))
+                        SourceArray(pack.sources, color)
                     }
                     val imgUrl = pack.sources.firstOrNull { it.imageUrl != null }?.imageUrl
                     imgUrl?.let {

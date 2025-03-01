@@ -19,3 +19,12 @@ data class SourceDto(
     val publishedAt: Instant? = null,
 ) {
 }
+
+@Serializable
+data class SourceBitDto(
+    val id: Long,
+    val url: String,
+    val imageUrl: String?,
+    val title: String?,
+    val score: Int
+)

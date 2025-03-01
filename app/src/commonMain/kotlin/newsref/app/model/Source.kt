@@ -2,6 +2,7 @@ package newsref.app.model
 
 import kotlinx.datetime.Instant
 import newsref.model.core.PageType
+import newsref.model.dto.SourceBitDto
 import newsref.model.dto.SourceDto
 
 data class Source(
@@ -32,11 +33,4 @@ fun SourceDto.toSource() = Source(
     wordCount = this.wordCount,
     seenAt = this.seenAt,
     publishedAt = this.publishedAt,
-)
-
-data class SourceImage(
-    val id: Long,
-    val url: String,
-    val title: String,
-    val score: Int
 )
