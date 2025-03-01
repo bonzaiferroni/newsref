@@ -11,6 +11,7 @@ import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -61,7 +62,7 @@ fun EventFeedScreen(
                     .height(height.dp)
             ) {
                 Row(
-                    horizontalArrangement = ruler.rowTight
+                    horizontalArrangement = ruler.rowSpaced
                 ) {
                     val color = Blip.colors.getSwatchFromIndex(pack.chapter.id)
                     Box(
@@ -88,7 +89,15 @@ fun EventFeedScreen(
                         modifier = Modifier.weight(1f)
                             .fillMaxHeight()
                     ) {
-                        H2(pack.chapter.title ?: "null", maxLines = 2)
+                        Box(
+                            contentAlignment = Alignment.BottomStart,
+                            modifier = Modifier.heightIn(min = 36.dp)
+                        ) {
+                            H2(
+                                text = pack.chapter.title ?: "null",
+                                maxLines = 2,
+                            )
+                        }
                         val source = pack.sources.first()
                         Text(source.title ?: "null", maxLines = 1)
                         Spacer(modifier = Modifier.weight(1f))

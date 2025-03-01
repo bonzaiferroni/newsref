@@ -81,8 +81,9 @@ internal fun BalloonBox(
             val center = Offset((point.x - space.xMin) * xScale, size.height - ((point.y - space.yMin) * yScale))
             val radius = maxOf(point.size * space.sizeScale / 2, BALLOON_MIN_SIZE)
             val transition = rememberInfiniteTransition()
-            val initialValue = remember { (-10..10).random().toFloat() }
-            val targetValue = remember { (-10..10).random().toFloat() }
+            val floatDistance = (point.size * .75).toInt()
+            val initialValue = remember { (-floatDistance..floatDistance).random().toFloat() }
+            val targetValue = remember { (-floatDistance..floatDistance).random().toFloat() }
             val duration = remember { (4000..6000).random() }
             val offsetY by transition.animateFloat(
                 initialValue = initialValue,

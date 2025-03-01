@@ -30,7 +30,7 @@ fun Modifier.circleIndicator(isVisible: Boolean, block: DrawScope.() -> Unit): M
         this.block()
         drawCircle(
             color = color.copy(.5f),
-            radius = size.width / 2f + 5f,
+            radius = size.width / 2f + 4f,
             style = Stroke(
                 width = 3.dp.toPx(),
                 pathEffect = PathEffect.dashPathEffect(floatArrayOf(3f, 3f), phase) // Dash pattern
