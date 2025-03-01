@@ -6,6 +6,7 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -22,11 +23,13 @@ import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import coil3.compose.AsyncImage
+import kotlinx.collections.immutable.ImmutableList
 import newsref.app.*
 import newsref.app.blip.controls.*
 import newsref.app.blip.theme.Blip
 import newsref.app.blip.theme.ProvideBookColors
 import newsref.app.blip.theme.ProvideSkyColors
+import newsref.app.model.Source
 
 @Composable
 fun EventFeedScreen(
@@ -58,7 +61,7 @@ fun EventFeedScreen(
                     .height(height.dp)
             ) {
                 Row(
-                    horizontalArrangement = ruler.rowSpaced
+                    horizontalArrangement = ruler.rowTight
                 ) {
                     val color = Blip.colors.getSwatchFromIndex(pack.chapter.id)
                     Box(
@@ -85,9 +88,11 @@ fun EventFeedScreen(
                         modifier = Modifier.weight(1f)
                             .fillMaxHeight()
                     ) {
-                        H1(pack.chapter.title ?: "null", maxLines = 2)
+                        H2(pack.chapter.title ?: "null", maxLines = 2)
                         val source = pack.sources.first()
                         Text(source.title ?: "null", maxLines = 1)
+                        Spacer(modifier = Modifier.height(4.dp))
+                        SourceArray(pack.sources)
                     }
                     val imgUrl = pack.sources.firstOrNull { it.imageUrl != null }?.imageUrl
                     imgUrl?.let {
@@ -110,28 +115,6 @@ fun EventFeedScreen(
                     }
                 }
             }
-        }
-    }
-}
-
-@Composable
-fun EventCard(
-    modifier: Modifier = Modifier,
-    content: @Composable () -> Unit
-) {
-    ProvideBookColors {
-        val shape = RoundedCornerShape(
-            topStartPercent = 50,
-            topEndPercent = 50,
-            bottomStartPercent = 50,
-            bottomEndPercent = 50
-        )
-        Column(
-            modifier = modifier
-                .bg(Blip.localColors.surface, shape)
-                .padding(Blip.ruler.halfPadding)
-        ) {
-            content()
         }
     }
 }

@@ -33,3 +33,10 @@ fun SourceDto.toSource() = Source(
     seenAt = this.seenAt,
     publishedAt = this.publishedAt,
 )
+
+data class SourceImage(
+    val id: Long,
+    val url: String,
+    val title: String,
+    val score: Int
+)
