@@ -1,5 +1,6 @@
 package newsref.app.model
 
+import kotlinx.serialization.Serializable
 import newsref.model.dto.SourceBitDto
 
 fun SourceBitDto.toSourceBit() = SourceBit(
@@ -10,6 +11,7 @@ fun SourceBitDto.toSourceBit() = SourceBit(
     score = this.score,
 )
 
+@Serializable
 data class SourceBit(
     val id: Long,
     val url: String,

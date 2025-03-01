@@ -1,8 +1,10 @@
 package newsref.app.model
 
 import kotlinx.datetime.Instant
+import kotlinx.serialization.Serializable
 import newsref.model.dto.ChapterDto
 
+@Serializable
 data class Chapter(
     val id: Long = 0,
     val title: String? = null,

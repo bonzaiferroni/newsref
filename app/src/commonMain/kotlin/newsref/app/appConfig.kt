@@ -17,10 +17,11 @@ val appConfig = BlipConfig(
     navGraph = {
         routeScreen<StartRoute> { StartScreen(it) }
         routeScreen<HelloRoute> { HelloScreen(it) }
-        routeScreen<EvemtFeedRoute> { EventFeedScreen(it) }
+        routeScreen<ChapterFeedRoute> { ChapterFeedScreen(it) }
+        routeScreen<ChapterRoute> { ChapterScreen(it) }
     },
     portalItems = persistentListOf(
         PortalRoute(TablerIcons.YinYang, "Hello", HelloRoute),
-        PortalRoute(TablerIcons.CalendarEvent, "Chapter Feed", EvemtFeedRoute)
+        PortalRoute(TablerIcons.CalendarEvent, "Chapter Feed", ChapterFeedRoute)
     )
 )

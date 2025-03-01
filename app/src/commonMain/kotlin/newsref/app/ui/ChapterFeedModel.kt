@@ -10,8 +10,8 @@ import newsref.app.blip.core.*
 import newsref.app.io.*
 import newsref.app.model.*
 
-class EventFeedModel(
-    val route: EvemtFeedRoute,
+class ChapterFeedModel(
+    val route: ChapterFeedRoute,
     val chapterStore: ChapterStore = ChapterStore()
 ) : StateModel<ChapterFeedState>(ChapterFeedState()) {
     init {
