@@ -1,10 +1,12 @@
 package newsref.db.services
 
+import kotlinx.datetime.Instant
 import newsref.db.DbService
 import newsref.db.model.Chapter
 import newsref.db.tables.*
 import newsref.db.utils.since
 import newsref.db.model.NewsSourceType
+import newsref.db.utils.isAfter
 import newsref.model.dto.ChapterDto
 import newsref.model.dto.ChapterPackDto
 import org.jetbrains.exposed.sql.SortOrder
@@ -14,9 +16,9 @@ import kotlin.time.*
 
 class ChapterDtoService : DbService() {
 
-    suspend fun readTopChapters(duration: Duration, limit: Int = 20) = dbQuery {
+    suspend fun readTopChapters(start: Instant, limit: Int = 20) = dbQuery {
         ChapterDtoAspect
-            .where { ChapterDtoAspect.happenedAt.since(duration) }
+            .where { ChapterDtoAspect.happenedAt.isAfter(start) }
             .orderBy(ChapterDtoAspect.score, SortOrder.DESC_NULLS_LAST)
             .limit(limit)
             .map { toChapterPackDto(it.toChapterDto()) }

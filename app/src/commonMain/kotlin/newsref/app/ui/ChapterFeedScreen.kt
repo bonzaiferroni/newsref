@@ -25,7 +25,7 @@ fun ChapterFeedScreen(
     ) {
         BalloonChart(
             selectedId = state.selectedId ?: 0,
-            points = state.balloonPoints,
+            config = state.chartConfig,
             height = 400.dp,
             onClickCloud = viewModel::selectId
         )

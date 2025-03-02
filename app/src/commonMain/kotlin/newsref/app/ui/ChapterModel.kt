@@ -12,6 +12,7 @@ import kotlinx.datetime.atStartOfDayIn
 import kotlinx.datetime.toLocalDateTime
 import newsref.app.ChapterRoute
 import newsref.app.blip.controls.AxisTick
+import newsref.app.blip.controls.BalloonConfig
 import newsref.app.blip.controls.BalloonPoint
 import newsref.app.blip.core.StateModel
 import newsref.app.io.ChapterStore
@@ -41,15 +42,18 @@ class ChapterModel(
                     )
             }.toImmutableList()
             val xTicks = generateAxisTicks(Clock.System.now() - 7.days)
-            setState { it.copy(pack = pack, balloonPoints = balloonPoints, xTicks = xTicks) }
+            val config = BalloonConfig(
+                points = balloonPoints,
+                xTicks = xTicks
+            )
+            setState { it.copy(pack = pack, chartConfig = config) }
         }
     }
 }
 
 data class ChapterState(
+    val chartConfig: BalloonConfig = BalloonConfig(),
     val pack: ChapterPack? = null,
-    val balloonPoints: ImmutableList<BalloonPoint> = persistentListOf(),
-    val xTicks: ImmutableList<AxisTick> = persistentListOf()
 )
 
 fun generateAxisTicks(earliest: Instant): ImmutableList<AxisTick> {

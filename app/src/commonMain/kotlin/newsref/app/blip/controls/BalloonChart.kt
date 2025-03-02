@@ -11,22 +11,23 @@ import kotlinx.collections.immutable.persistentListOf
 @Composable
 fun BalloonChart(
     selectedId: Long,
-    points: ImmutableList<BalloonPoint>,
+    config: BalloonConfig,
     height: Dp,
     onClickCloud: (Long) -> Unit,
-    xTicks: ImmutableList<AxisTick>? = null
 ) {
+    val points = config.points
     if (points.isEmpty()) return
 
-    val space = remember(points) {
-        generateBalloonSpace(points)
+    val space = remember(config) {
+        generateBalloonSpace(config)
     }
 
     // CloudCanvas(points, space, height)
-    BalloonBox(selectedId, points, space, height, onClickCloud, xTicks)
+    BalloonBox(selectedId, config, space, height, onClickCloud)
 }
 
-private fun generateBalloonSpace(points: List<BalloonPoint>): BalloonSpace {
+private fun generateBalloonSpace(config: BalloonConfig): BalloonSpace {
+    val points = config.points
     val yMinInitial = points.minOf { it.y - it.size / 2 }
     val yMaxInitial = points.maxOf { it.y + it.size / 2 }
     val sizeMin = points.minOf { it.size }
@@ -34,8 +35,8 @@ private fun generateBalloonSpace(points: List<BalloonPoint>): BalloonSpace {
     val sizeScale = sizeMax * 4 / (yMaxInitial - yMinInitial)
     val yMin = points.minOf { it.y - (it.size / 2) / sizeScale}
     val yMax = points.maxOf { it.y + (it.size / 2) / sizeScale}
-    val xMin = points.minOf { it.x }
-    val xMax = points.maxOf { it.x }
+    val xMin = config.xMin ?: points.minOf { it.x }
+    val xMax = config.xMax ?: points.maxOf { it.x }
     return BalloonSpace(
         yMin = yMin,
         yMax = yMax,
@@ -48,6 +49,13 @@ private fun generateBalloonSpace(points: List<BalloonPoint>): BalloonSpace {
         sizeScale = sizeScale,
     )
 }
+
+data class BalloonConfig(
+    val points: ImmutableList<BalloonPoint> = persistentListOf(),
+    val xTicks: ImmutableList<AxisTick>? = null,
+    val xMax: Float? = null,
+    val xMin: Float? = null,
+)
 
 data class BalloonPoint(
     val id: Long,

@@ -5,10 +5,13 @@ import kotlinx.collections.immutable.*
 import kotlinx.coroutines.launch
 import kotlinx.datetime.Clock
 import newsref.app.*
+import newsref.app.blip.controls.BalloonConfig
 import newsref.app.blip.controls.BalloonPoint
 import newsref.app.blip.core.*
 import newsref.app.io.*
 import newsref.app.model.*
+import newsref.model.utils.toDaysFromNow
+import kotlin.time.Duration.Companion.days
 
 class ChapterFeedModel(
     val route: ChapterFeedRoute,
@@ -16,7 +19,9 @@ class ChapterFeedModel(
 ) : StateModel<ChapterFeedState>(ChapterFeedState()) {
     init {
         viewModelScope.launch {
-            val chapters = chapterStore.readChapters()
+            val duration = 7.days
+            val start = Clock.System.now() - duration
+            val chapters = chapterStore.readChapters(duration)
                 .map { it.toModel() }
                 .toImmutableList()
 
@@ -32,7 +37,13 @@ class ChapterFeedModel(
                     imageUrl = sources.firstOrNull { it.imageUrl != null }?.imageUrl
                 )
             }.toImmutableList()
-            setState { it.copy(chapterPacks = chapters, balloonPoints = balloons) }
+            val chartConfig = BalloonConfig(
+                points = balloons,
+                xTicks = generateAxisTicks(start),
+                xMin = start.toDaysFromNow(),
+                xMax = 0f,
+            )
+            setState { it.copy(chapterPacks = chapters, chartConfig = chartConfig) }
         }
     }
 
@@ -45,6 +56,6 @@ class ChapterFeedModel(
 data class ChapterFeedState(
     val selectedId: Long? = null,
     val chapterPacks: ImmutableList<ChapterPack> = persistentListOf(),
-    val balloonPoints: ImmutableList<BalloonPoint> = persistentListOf(),
+    val chartConfig: BalloonConfig = BalloonConfig(),
 )
 

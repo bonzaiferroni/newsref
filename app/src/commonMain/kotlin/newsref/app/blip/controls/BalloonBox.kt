@@ -20,6 +20,7 @@ import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.SideEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -31,6 +32,7 @@ import androidx.compose.ui.draw.clipToBounds
 import androidx.compose.ui.draw.drawBehind
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.geometry.Size
+import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.drawscope.DrawScope
 import androidx.compose.ui.graphics.drawscope.Stroke
@@ -49,12 +51,13 @@ import newsref.app.blip.theme.Blip
 @Composable
 internal fun BalloonBox(
     selected: Long,
-    points: ImmutableList<BalloonPoint>,
+    config: BalloonConfig,
     space: BalloonSpace,
     height: Dp,
     onClick: (Long) -> Unit,
-    xTicks: ImmutableList<AxisTick>?
 ) {
+    val points = config.points
+    val xTicks = config.xTicks
     var size by remember { mutableStateOf(Size.Zero) }
     val ruler = Blip.ruler
 
@@ -137,12 +140,11 @@ internal fun AxisTickBox(xTicks: ImmutableList<AxisTick>, xScale: Float, space: 
             .drawBehind {
                 for (tick in xTicks) {
                     val x = (tick.value - space.xMin) * xScale
-                    println(x)
                     drawLine(
-                        color = Color.White.copy(.2f),  // Change to yer preferred color
-                        start = Offset(x, 0f),  // Start at left center
-                        end = Offset(x, size.height),  // End at right center
-                        strokeWidth = 5f  // Adjust thickness as needed
+                        color = Color.White.copy(.2f),
+                        start = Offset(x, 0f),
+                        end = Offset(x, size.height),
+                        strokeWidth = 5f
                     )
                     val textLayoutResult = textMeasurer.measure(tick.label)
                     drawText(textLayoutResult, Color.White.copy(.5f), Offset(x + 5, size.height - 20))
