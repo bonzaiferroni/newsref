@@ -26,5 +26,6 @@ data class SourceBitDto(
     val url: String,
     val imageUrl: String?,
     val title: String?,
-    val score: Int
+    val score: Int,
+    val existedAt: Instant
 )

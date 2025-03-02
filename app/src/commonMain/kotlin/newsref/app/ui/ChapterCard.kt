@@ -78,8 +78,7 @@ fun ChapterHeader(
             modifier = Modifier.fillMaxHeight()
                 .aspectRatio(1f)
         ) {
-            val balloonSize = maxOf(score / 50f, 1f) * height
-            println("$")
+            val balloonSize = maxOf(score / 50f, .25f) * height
             Box(
                 modifier = Modifier.size(balloonSize.dp)
                     .circleIndicator(isSelected) {
