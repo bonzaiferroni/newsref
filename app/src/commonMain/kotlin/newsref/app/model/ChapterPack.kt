@@ -9,7 +9,9 @@ import newsref.model.dto.ChapterPackDto
 data class ChapterPack(
     val chapter: Chapter,
     val sources: ImmutableList<SourceBit>
-)
+) {
+    val imageUrl get () = sources.firstNotNullOfOrNull { it.imageUrl }
+}
 
 fun ChapterPackDto.toModel() = ChapterPack(
     chapter = this.chapter.toChapter(),
