@@ -15,7 +15,8 @@ data class Chapter(
     val cohesion: Float,
     val storyDistance: Float?,
     val createdAt: Instant,
-    val happenedAt: Instant,
+    val averageAt: Instant,
+    val earliestAt: Instant,
 )
 
 enum class NewsSourceType {

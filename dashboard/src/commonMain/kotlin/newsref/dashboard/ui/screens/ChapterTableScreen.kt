@@ -70,7 +70,7 @@ fun ChapterDataTable(
             columns(
                 TableColumn(
                     name = "HpnAt", width = 60, align = AlignCell.Right, sort = DataSort.Time
-                ) { DurationAgoCell(it.happenedAt) },
+                ) { DurationAgoCell(it.averageAt) },
                 TableColumn(
                     name = "Size", width = 60, align = AlignCell.Right
                 ) { TextCell(it.size) },

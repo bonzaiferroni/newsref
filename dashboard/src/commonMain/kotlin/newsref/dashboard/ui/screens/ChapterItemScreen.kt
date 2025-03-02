@@ -42,7 +42,7 @@ fun ChapterItemScreen(
                 textRow("Score", item.score.toString()),
                 textRow("Size", item.size.toString()),
                 textRow("cohesion", item.cohesion.format(2)),
-                textRow("Happened", item.happenedAt.agoFormat()),
+                textRow("Happened", item.averageAt.agoFormat()),
                 textRow("Primaries", state.primaries.size.toString()),
                 textRow("Secondaries", state.secondaries.size.toString())
             )

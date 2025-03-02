@@ -49,10 +49,10 @@ class ChapterTableModel(
     }
 
     private fun sortAndFilterItems() {
-        val chapters = chapterCache.filter { it.happenedAt > Clock.System.now() - stateNow.since }
+        val chapters = chapterCache.filter { it.averageAt > Clock.System.now() - stateNow.since }
             .sort(stateNow.sorting)
         val cloudPoints = chapters.map {
-            val x = (Clock.System.now() - it.happenedAt).inWholeHours / 24f
+            val x = (Clock.System.now() - it.averageAt).inWholeHours / 24f
             CloudPoint(
                 id = it.id,
                 x = -x,
@@ -68,7 +68,7 @@ class ChapterTableModel(
 
     private fun List<Chapter>.sort(sorting: Sorting) = when (sorting.first) {
         DataSort.Id -> this.sortedByDirection(sorting.second) { it.id }
-        DataSort.Time -> this.sortedByDirection(sorting.second) { it.happenedAt }
+        DataSort.Time -> this.sortedByDirection(sorting.second) { it.averageAt }
         DataSort.Name -> error("no name sorting provided")
         DataSort.Score, null -> this.sortedByDirection(sorting.second) { it.score }
     }.toImmutableList()

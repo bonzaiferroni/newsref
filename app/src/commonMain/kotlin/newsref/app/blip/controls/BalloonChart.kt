@@ -4,9 +4,9 @@ package newsref.app.blip.controls
 
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.Dp
 import kotlinx.collections.immutable.ImmutableList
+import kotlinx.collections.immutable.persistentListOf
 
 @Composable
 fun BalloonChart(
@@ -14,6 +14,7 @@ fun BalloonChart(
     points: ImmutableList<BalloonPoint>,
     height: Dp,
     onClickCloud: (Long) -> Unit,
+    xTicks: ImmutableList<AxisTick>? = null
 ) {
     if (points.isEmpty()) return
 
@@ -22,19 +23,19 @@ fun BalloonChart(
     }
 
     // CloudCanvas(points, space, height)
-    BalloonBox(selectedId, points, space, height, onClickCloud)
+    BalloonBox(selectedId, points, space, height, onClickCloud, xTicks)
 }
 
 private fun generateBalloonSpace(points: List<BalloonPoint>): BalloonSpace {
     val yMinInitial = points.minOf { it.y - it.size / 2 }
     val yMaxInitial = points.maxOf { it.y + it.size / 2 }
-    val xMin = points.minOf { it.x }
-    val xMax = points.maxOf { it.x }
     val sizeMin = points.minOf { it.size }
     val sizeMax = points.maxOf { it.size }
     val sizeScale = sizeMax * 4 / (yMaxInitial - yMinInitial)
     val yMin = points.minOf { it.y - (it.size / 2) / sizeScale}
     val yMax = points.maxOf { it.y + (it.size / 2) / sizeScale}
+    val xMin = points.minOf { it.x }
+    val xMax = points.maxOf { it.x }
     return BalloonSpace(
         yMin = yMin,
         yMax = yMax,
@@ -58,6 +59,11 @@ data class BalloonPoint(
     val imageUrl: String? = null,
 )
 
+data class AxisTick(
+    val value: Float,
+    val label: String,
+)
+
 internal data class BalloonSpace(
     val yMin: Float,
     val yMax: Float,
@@ -68,18 +74,6 @@ internal data class BalloonSpace(
     val sizeMin: Float,
     val sizeMax: Float,
     val sizeScale: Float,
-)
-
-internal val balloonColors = listOf(
-    Color(0xFF18B199),
-    Color(0xFF004587),
-    Color(0xFFA11B0A),
-    Color(0xFFE3A100),
-    Color(0xFF6B3E26),
-    Color(0xFFDC6A00),
-    Color(0xFF7D3CCF),
-    Color(0xFF00B8C4),
-    Color(0xFF737373),
 )
 
 const val BALLOON_MIN_SIZE = 10f

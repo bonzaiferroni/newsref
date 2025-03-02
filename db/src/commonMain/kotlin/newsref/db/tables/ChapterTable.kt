@@ -3,7 +3,6 @@ package newsref.db.tables
 import newsref.db.core.*
 import newsref.db.utils.*
 import newsref.db.model.*
-import newsref.model.dto.*
 import org.jetbrains.exposed.dao.id.*
 import org.jetbrains.exposed.sql.*
 import org.jetbrains.exposed.sql.kotlin.datetime.datetime
@@ -47,7 +46,7 @@ fun ResultRow.toChapter() = Chapter(
     cohesion = this[ChapterTable.cohesion],
     storyDistance = this[ChapterTable.storyDistance],
     createdAt = this[ChapterTable.createdAt].toInstantUtc(),
-    happenedAt = this[ChapterTable.happenedAt].toInstantUtc(),
+    averageAt = this[ChapterTable.happenedAt].toInstantUtc(),
 )
 
 internal fun InsertStatement<*>.fromModel(chapter: Chapter) {
@@ -57,5 +56,5 @@ internal fun InsertStatement<*>.fromModel(chapter: Chapter) {
     this[ChapterTable.size] = chapter.size
     this[ChapterTable.cohesion] = chapter.cohesion
     this[ChapterTable.createdAt] = chapter.createdAt.toLocalDateTimeUtc()
-    this[ChapterTable.happenedAt] = chapter.happenedAt.toLocalDateTimeUtc()
+    this[ChapterTable.happenedAt] = chapter.averageAt.toLocalDateTimeUtc()
 }

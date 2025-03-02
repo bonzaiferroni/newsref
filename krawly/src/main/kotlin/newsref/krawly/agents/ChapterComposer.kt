@@ -172,7 +172,7 @@ class ChapterComposer(
                 size = 1,
                 cohesion = 1f,
                 createdAt = Clock.System.now(),
-                happenedAt = bucket.happenedAt,
+                averageAt = bucket.happenedAt,
                 storyDistance = null
             ),
             sources = sources,
@@ -218,7 +218,7 @@ class ChapterComposer(
         val sourceIds = originSignals.map { it.source.id }
         val chapterSignals = service.findTextRelatedChapters(chapterId, sourceIds, vector)
         return chapterSignals.mapNotNull { (chapter, textDistance) ->
-            val timeDistance = happenedAt.chapterDistanceTo(chapter.happenedAt)
+            val timeDistance = happenedAt.chapterDistanceTo(chapter.averageAt)
             val bucketDistance = BucketDistance(textDistance, timeDistance, 0f, 0f)
             if (bucketDistance.magnitude > maxDistance) return@mapNotNull null
             val bucket = ChapterBucket(chapter)

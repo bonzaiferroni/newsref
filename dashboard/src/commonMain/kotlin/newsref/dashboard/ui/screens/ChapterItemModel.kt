@@ -35,7 +35,7 @@ class ChapterItemModel(
         val primarySources = chapterSources.filter { it.chapterSource.type == NewsSourceType.Primary }
         val secondarySources = chapterSources.filter { it.chapterSource.type == NewsSourceType.Secondary }
         val children = chapterLinkerService.readChildren(stateNow.chapterId)
-            .sortedBy { it.happenedAt }
+            .sortedBy { it.averageAt }
             .toImmutableList()
         val nextChildId = children.firstOrNull()?.id
         setState { it.copy(

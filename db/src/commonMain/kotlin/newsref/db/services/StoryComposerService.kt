@@ -54,7 +54,7 @@ class StoryComposerService : DbService() {
             it[StoryTable.size] = chapterDistances.size
             it[StoryTable.title] = chapterDistances.maxBy { it.first.score }.first.title ?: story.title
             it[StoryTable.score] = chapterDistances.sumOf { it.first.score }
-            it[StoryTable.happenedAt] = chapterDistances.map { it.first.happenedAt }.averageInstant()
+            it[StoryTable.happenedAt] = chapterDistances.map { it.first.averageAt }.averageInstant()
                 .toLocalDateTimeUtc()
             it[StoryTable.coherence] = (chapterDistances.sumOf { it.second.toDouble() } / chapterDistances.size)
                 .toFloat()
@@ -74,7 +74,7 @@ class StoryComposerService : DbService() {
     suspend fun createStory(chapter: Chapter, vector: FloatArray) = dbQuery {
         val id = StoryTable.insertAndGetId {
             it[StoryTable.size] = 1
-            it[StoryTable.happenedAt] = chapter.happenedAt.toLocalDateTimeUtc()
+            it[StoryTable.happenedAt] = chapter.averageAt.toLocalDateTimeUtc()
             it[StoryTable.score] = chapter.score
             it[StoryTable.title] = chapter.title
             it[StoryTable.coherence] = 0f

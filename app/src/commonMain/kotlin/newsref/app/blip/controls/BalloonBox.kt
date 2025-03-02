@@ -13,10 +13,10 @@ import androidx.compose.foundation.hoverable
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.interaction.collectIsHoveredAsState
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.offset
-import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.runtime.Composable
@@ -28,6 +28,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.clipToBounds
+import androidx.compose.ui.draw.drawBehind
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.graphics.Color
@@ -36,6 +37,8 @@ import androidx.compose.ui.graphics.drawscope.Stroke
 import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.layout.onGloballyPositioned
+import androidx.compose.ui.text.drawText
+import androidx.compose.ui.text.rememberTextMeasurer
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.toSize
@@ -50,11 +53,12 @@ internal fun BalloonBox(
     space: BalloonSpace,
     height: Dp,
     onClick: (Long) -> Unit,
+    xTicks: ImmutableList<AxisTick>?
 ) {
     var size by remember { mutableStateOf(Size.Zero) }
     val ruler = Blip.ruler
 
-    Box (
+    Box(
         modifier = Modifier
             .height(height)
             .fillMaxWidth()
@@ -68,13 +72,17 @@ internal fun BalloonBox(
         val xScale = size.width / space.xRange
         // val sizeScale = size.height / (space.sizeMax * 4)
 
+        if (xTicks != null) {
+            AxisTickBox(xTicks, xScale, space)
+        }
+
         for (point in points) {
             val isSelected = point.id == selected
 
             var color = Blip.colors.getSwatchFromIndex(point.colorIndex)
             val interactionSource = remember { MutableInteractionSource() }
             val isHovered = interactionSource.collectIsHoveredAsState().value
-            val bgColor = when(isHovered) {
+            val bgColor = when (isHovered) {
                 true -> color
                 false -> color.copy(alpha = .75f)
             }
@@ -119,6 +127,28 @@ internal fun BalloonBox(
             }
         }
     }
+}
+
+@Composable
+internal fun AxisTickBox(xTicks: ImmutableList<AxisTick>, xScale: Float, space: BalloonSpace) {
+    val textMeasurer = rememberTextMeasurer()
+    Box(
+        modifier = Modifier.fillMaxSize()
+            .drawBehind {
+                for (tick in xTicks) {
+                    val x = (tick.value - space.xMin) * xScale
+                    println(x)
+                    drawLine(
+                        color = Color.White.copy(.2f),  // Change to yer preferred color
+                        start = Offset(x, 0f),  // Start at left center
+                        end = Offset(x, size.height),  // End at right center
+                        strokeWidth = 5f  // Adjust thickness as needed
+                    )
+                    val textLayoutResult = textMeasurer.measure(tick.label)
+                    drawText(textLayoutResult, Color.White.copy(.5f), Offset(x + 5, size.height - 20))
+                }
+            }
+    )
 }
 
 fun DrawScope.drawBalloon(color: Color) {

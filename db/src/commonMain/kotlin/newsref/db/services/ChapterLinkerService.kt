@@ -10,7 +10,6 @@ import newsref.db.utils.toLocalDateTimeUtc
 import org.jetbrains.exposed.sql.SortOrder
 import org.jetbrains.exposed.sql.alias
 import org.jetbrains.exposed.sql.and
-import org.jetbrains.exposed.sql.or
 import org.jetbrains.exposed.sql.update
 
 class ChapterLinkerService: DbService() {
@@ -22,7 +21,7 @@ class ChapterLinkerService: DbService() {
     }
 
     suspend fun findNearestParent(chapter: Chapter) = dbQuery {
-        val time = chapter.happenedAt.toLocalDateTimeUtc()
+        val time = chapter.averageAt.toLocalDateTimeUtc()
         val vector = ChapterTable.select(ChapterTable.vector)
             .where { ChapterTable.id.eq(chapter.id) }
             .firstOrNull()?.let { it[ChapterTable.vector] } ?: return@dbQuery null
