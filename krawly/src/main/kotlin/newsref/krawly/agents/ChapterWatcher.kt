@@ -3,10 +3,10 @@ package newsref.krawly.agents
 import kotlinx.coroutines.*
 import kotlinx.serialization.Serializable
 import newsref.db.*
-import newsref.db.model.Relevance
 import newsref.db.services.*
 import newsref.krawly.clients.GeminiClient
 import newsref.krawly.clients.promptTemplate
+import newsref.model.core.Relevance
 import kotlin.time.Duration.Companion.seconds
 
 private val console = globalConsole.getHandle("ChapterWatcher")

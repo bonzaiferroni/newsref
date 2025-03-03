@@ -6,9 +6,9 @@ import newsref.db.model.Chapter
 import newsref.db.services.*
 import newsref.db.utils.*
 import newsref.db.utils.distance
-import newsref.db.model.ChapterSource
-import newsref.db.model.NewsSourceType
-import newsref.db.model.Relevance
+import newsref.db.model.*
+import newsref.model.core.NewsSourceType
+import newsref.model.core.Relevance
 import kotlin.collections.maxBy
 import kotlin.collections.set
 import kotlin.math.abs

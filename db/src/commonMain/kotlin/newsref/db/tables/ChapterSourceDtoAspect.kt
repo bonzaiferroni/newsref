@@ -10,7 +10,7 @@ object ChapterSourceDtoAspect : Aspect<ChapterSourceDtoAspect, ChapterSourceDto>
     ResultRow::toChapterSourceDto
 ) {
     val chapterId = add(ChapterSourceTable.chapterId)
-    val sourceId = add(ChapterSourceTable.sourceId)
+    val pageId = add(ChapterSourceTable.sourceId)
     val title = add(PageTable.title)
     val score = add(PageTable.score)
     val url = add(PageTable.url)
@@ -30,7 +30,7 @@ object ChapterSourceDtoAspect : Aspect<ChapterSourceDtoAspect, ChapterSourceDto>
 
 fun ResultRow.toChapterSourceDto() = ChapterSourceDto(
     chapterId = this[ChapterSourceDtoAspect.chapterId].value,
-    sourceId = this[ChapterSourceDtoAspect.sourceId].value,
+    sourceId = this[ChapterSourceDtoAspect.pageId].value,
     title = this[ChapterSourceDtoAspect.title],
     score = this[ChapterSourceDtoAspect.score] ?: 0,
     url = this[ChapterSourceDtoAspect.url],

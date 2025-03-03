@@ -6,13 +6,14 @@ import io.ktor.client.request.get
 import io.ktor.http.ContentType
 import io.ktor.http.contentType
 import io.ktor.util.StringValues
+import newsref.model.Endpoint
 
 class ApiClient(
     val baseUrl: String,
     val client: HttpClient = globalKtorClient
 ) {
-    suspend inline fun <reified Received> getById(id: Long, url: String): Received =
-        client.get("$baseUrl${url.replace(":id", id.toString())}").body()
+    suspend inline fun <reified Received> getById(id: Long, endpoint: Endpoint): Received =
+        client.get("$baseUrl${endpoint.serverIdTemplate.replace(":id", id.toString())}").body()
 
     suspend inline fun <reified Received> get(
         url: String,

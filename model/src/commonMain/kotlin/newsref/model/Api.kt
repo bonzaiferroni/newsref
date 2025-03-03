@@ -13,20 +13,18 @@ object Api {
     // content
     val sourceEndpoint = Endpoint("/source")
     val feedEndpoint = Endpoint("/feed")
-    val chapterEndpoint = Endpoint("/chapter")
+    object ChapterSourceEndpoint : Endpoint("/chapter_source") {
+        val pageId = addLongParam("pageId")
+        val chapterId = addLongParam("chapterId")
+    }
 
     // user
     val userEndpoint = Endpoint("/user")
     val privateEndpoint = Endpoint("/user/private")
+
+    object ChapterEndpoint : Endpoint("/chapter") {
+        val start = addInstantParam("start")
+    }
 }
 
 val apiPrefix = "/api/v1"
-
-data class Endpoint(
-    val base: String
-) {
-    val path = "$apiPrefix$base"
-    val clientIdTemplate: String get() = "$path/:id"
-    val serverIdTemplate: String get() = "$path/{id}"
-    fun replaceClientId(id: Any) = this.clientIdTemplate.replace(":id", id.toString())
-}

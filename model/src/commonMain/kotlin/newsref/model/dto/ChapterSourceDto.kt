@@ -24,3 +24,9 @@ data class ChapterSourceDto(
     val accessedAt: Instant?,
     val publishedAt: Instant?,
 )
+
+@Serializable
+data class ChapterSourcePackDto(
+    val source: ChapterSourceDto,
+    val chapter: ChapterPackDto
+)

@@ -21,7 +21,7 @@ class ChapterFeedModel(
         viewModelScope.launch {
             val duration = 7.days
             val start = Clock.System.now() - duration
-            val chapters = chapterStore.readChapters(duration)
+            val chapters = chapterStore.readChapters(start)
                 .map { it.toModel() }
                 .toImmutableList()
 

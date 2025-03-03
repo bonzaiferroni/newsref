@@ -2,18 +2,18 @@ package newsref.db.services
 
 import kotlinx.datetime.Instant
 import newsref.db.DbService
-import newsref.db.model.*
 import newsref.db.tables.*
 import newsref.db.utils.*
 import newsref.model.core.*
 import newsref.model.dto.*
 import org.jetbrains.exposed.sql.*
-import kotlin.time.*
 
 class ChapterDtoService : DbService() {
 
     suspend fun readTopChapters(start: Instant, limit: Int = 20) = dbQuery {
-        ChapterDtoAspect.read(ChapterDtoAspect.score, SortOrder.DESC_NULLS_LAST, limit) { it.happenedAt.isAfter(start) }
+        ChapterDtoAspect.read(ChapterDtoAspect.score, SortOrder.DESC_NULLS_LAST, limit) {
+            it.happenedAt.isAfter(start)
+        }
             .map { toChapterPackDto(it) }
     }
 
@@ -35,6 +35,10 @@ class ChapterDtoService : DbService() {
     }
 
     suspend fun readChapterSource(chapterId: Long, pageId: Long) = dbQuery {
-        ChapterSourceDtoAspect.where { it.chapterId.eq(chapterId) }
+        val chapterSourceDto = ChapterSourceDtoAspect.readFirst {
+            it.chapterId.eq(chapterId) and it.pageId.eq(pageId)
+        } ?: return@dbQuery
+        val chapterPackDto = readChapter(chapterId)!!
+        ChapterSourcePackDto(chapterSourceDto, chapterPackDto)
     }
 }

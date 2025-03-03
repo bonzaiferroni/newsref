@@ -7,20 +7,27 @@ import kotlinx.datetime.Instant
 import newsref.db.services.*
 import newsref.model.Api
 import newsref.server.extensions.getIdOrThrow
+import newsref.server.utilities.getById
+import newsref.server.utilities.getByPath
+import newsref.server.utilities.readFromCall
 import kotlin.time.Duration.Companion.days
 
 fun Routing.serveChapters(service: ChapterDtoService = ChapterDtoService()) {
-    get(Api.chapterEndpoint.serverIdTemplate) {
-        val id = call.getIdOrThrow { it.toLongOrNull() }
+    getById(Api.ChapterEndpoint) { id, endpoint ->
         val chapter = service.readChapter(id) ?: error("unable to find chapter with id: $id")
         call.respond(chapter)
     }
 
-    get(Api.chapterEndpoint.path) {
-        val startEpochSeconds = call.request.queryParameters["start"]?.toLongOrNull()
-            ?: (Clock.System.now() - 7.days).epochSeconds
-        val startInstant = Instant.fromEpochSeconds(startEpochSeconds)
+    getByPath(Api.ChapterEndpoint) {
+        val startInstant = it.start.readFromCall(call) ?: (Clock.System.now() - 7.days)
         val chapters = service.readTopChapters(startInstant)
         call.respond(chapters)
+    }
+
+    getByPath(Api.ChapterSourceEndpoint) {
+        val pageId = it.pageId.readFromCall(call) ?: error("missing page id")
+        val chapterId = it.chapterId.readFromCall(call) ?: error("missing chapter id")
+        val chapterSource = service.readChapterSource(chapterId, pageId)
+        call.respond(chapterSource)
     }
 }

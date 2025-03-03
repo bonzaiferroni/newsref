@@ -49,6 +49,7 @@ class DataLogService : DbService() {
         read(variableId, log)
     }
 
+    @Suppress("UNCHECKED_CAST")
     suspend inline fun <reified T> read(log: DataLog<T>, since: Instant) = dbQuery {
         val variableId = readVariable(log.name)
         when (log) {
