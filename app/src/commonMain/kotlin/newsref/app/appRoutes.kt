@@ -23,7 +23,10 @@ data class ChapterRoute(
 ) : AppRoute("Chapter: $chapterTitle")
 
 @Serializable
-data class ChapterSourceRoute(val sourceBit: SourceBit) : AppRoute("Chapter")
+data class ChapterSourceRoute(
+    val pageId: Long,
+    val sourceTitle: String?
+) : AppRoute("Chapter")
 
 @Serializable
 data class SourceRoute(val pageId: Long) : AppRoute("Source")

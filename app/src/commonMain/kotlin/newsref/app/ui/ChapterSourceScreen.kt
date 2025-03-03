@@ -11,6 +11,9 @@ import newsref.app.*
 import newsref.app.blip.controls.*
 
 @Composable
-fun SourceScreen(route: SourceRoute) {
-
+fun ChapterSourceScreen(
+    route: ChapterSourceRoute,
+    viewModel: ChapterSourceModel = viewModel { ChapterSourceModel(route) }
+) {
+    Text("hello chapter source!")
 }
