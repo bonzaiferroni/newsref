@@ -13,16 +13,12 @@ import kotlin.time.*
 class ChapterDtoService : DbService() {
 
     suspend fun readTopChapters(start: Instant, limit: Int = 20) = dbQuery {
-        ChapterDtoAspect
-            .where { it.happenedAt.isAfter(start) }
-            .orderBy(ChapterDtoAspect.score, SortOrder.DESC_NULLS_LAST)
-            .limit(limit)
-            .map { toChapterPackDto(it.toChapterDto()) }
+        ChapterDtoAspect.read(ChapterDtoAspect.score, SortOrder.DESC_NULLS_LAST, limit) { it.happenedAt.isAfter(start) }
+            .map { toChapterPackDto(it) }
     }
 
     suspend fun readChapter(id: Long) = dbQuery {
-        ChapterDtoAspect.where { it.id.eq(id) }
-            .firstOrNull()?.toChapterDto()?.let { toChapterPackDto(it) }
+        ChapterDtoAspect.readFirst { it.id.eq(id) }?.let { toChapterPackDto(it) }
     }
 
     fun Transaction.toChapterPackDto(chapter: ChapterDto): ChapterPackDto {

@@ -5,8 +5,9 @@ import newsref.db.utils.*
 import newsref.model.dto.*
 import org.jetbrains.exposed.sql.*
 
-object ChapterSourceDtoAspect : Aspect<ChapterSourceDtoAspect>(
-    ChapterSourceTable.leftJoin(PageTable).leftJoin(HostTable).leftJoin(NewsArticleTable)
+object ChapterSourceDtoAspect : Aspect<ChapterSourceDtoAspect, ChapterSourceDto>(
+    ChapterSourceTable.leftJoin(PageTable).leftJoin(HostTable).leftJoin(NewsArticleTable),
+    ResultRow::toChapterSourceDto
 ) {
     val chapterId = add(ChapterSourceTable.chapterId)
     val sourceId = add(ChapterSourceTable.sourceId)

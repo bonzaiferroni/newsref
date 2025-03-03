@@ -1,13 +1,10 @@
 package newsref.db.core
 
-import org.jetbrains.exposed.sql.ColumnSet
-import org.jetbrains.exposed.sql.ExpressionWithColumnType
-import org.jetbrains.exposed.sql.Op
-import org.jetbrains.exposed.sql.SqlExpressionBuilder
+import org.jetbrains.exposed.sql.*
 
-@Suppress("UNCHECKED_CAST")
-open class Aspect<SubType: Aspect<SubType>>(
-    val columnSet: ColumnSet
+open class Aspect<Self: Aspect<Self, Data>, Data>(
+    val columnSet: ColumnSet,
+    val toData: ResultRow.() -> Data
 ) {
     private val _expressions = mutableListOf<ExpressionWithColumnType<*>>()
     val columns: List<ExpressionWithColumnType<*>> = _expressions
@@ -17,7 +14,21 @@ open class Aspect<SubType: Aspect<SubType>>(
         return expression
     }
 
-    fun where(predicate: SqlExpressionBuilder.(SubType) -> Op<Boolean>) =
+    @Suppress("UNCHECKED_CAST")
+    fun where(predicate: SqlExpressionBuilder.(Self) -> Op<Boolean>) =
         columnSet.select(columns)
-            .where { predicate(this, this@Aspect as SubType) }
+            .where { predicate(this, this@Aspect as Self) }
+
+    fun readFirst(predicate: SqlExpressionBuilder.(Self) -> Op<Boolean>) = where(predicate)
+        .firstOrNull()?.let { toData(it) }
+
+    fun read(
+        sortBy: Expression<*>,
+        orderBy: SortOrder,
+        limit: Int,
+        predicate: SqlExpressionBuilder.(Self) -> Op<Boolean>
+    ) = where(predicate)
+        .orderBy(sortBy, orderBy)
+        .limit(limit)
+        .map { toData(it) }
 }

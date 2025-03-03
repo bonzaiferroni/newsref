@@ -5,7 +5,10 @@ import newsref.db.utils.toInstantUtc
 import newsref.model.dto.SourceBitDto
 import org.jetbrains.exposed.sql.ResultRow
 
-object SourceBitAspect: Aspect<SourceBitAspect>(PageTable.leftJoin(HostTable)) {
+object SourceBitAspect : Aspect<SourceBitAspect, SourceBitDto>(
+    PageTable.leftJoin(HostTable),
+    ResultRow::toSourceBitDto
+) {
     val id = add(PageTable.id)
     val url = add(PageTable.url)
     val imageUrl = add(PageTable.imageUrl)

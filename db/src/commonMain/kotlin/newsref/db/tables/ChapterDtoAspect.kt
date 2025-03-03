@@ -5,7 +5,7 @@ import newsref.db.utils.*
 import newsref.model.dto.*
 import org.jetbrains.exposed.sql.*
 
-object ChapterDtoAspect : Aspect<ChapterDtoAspect>(ChapterTable) {
+object ChapterDtoAspect : Aspect<ChapterDtoAspect, ChapterDto>(ChapterTable, ResultRow::toChapterDto) {
     val id = add(ChapterTable.id)
     val title = add(ChapterTable.title)
     val score = add(ChapterTable.score)
