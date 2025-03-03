@@ -20,7 +20,7 @@ import newsref.app.blip.theme.*
 fun Text(
     text: String,
     color: Color = Blip.localColors.content,
-    style: TextStyle = TextStyle.Default,
+    style: TextStyle = Blip.typ.body,
     maxLines: Int = Int.MAX_VALUE,
     modifier: Modifier = Modifier
 ) = BasicText(

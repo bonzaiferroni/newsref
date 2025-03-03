@@ -1,5 +1,6 @@
 package newsref.app.blip.nav
 
+import androidx.compose.animation.AnimatedContent
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.core.LinearEasing
 import androidx.compose.animation.core.RepeatMode
@@ -134,28 +135,27 @@ fun RowScope.PortalTitle(
         navState.hover?.let { hoverTitleDisplay = it.title }
     }
 
-    Column (
+    Box (
         modifier = Modifier.weight(1f)
-            .height(26.dp)
     ) {
-        AnimatedVisibility(
-            visible = navState.hover != null,
-            enter = slideInVertically() { it }
-        ) {
-            Text(
-                text = ": $hoverTitleDisplay",
-                style = Blip.typ.title,
-                color = Blip.colors.shine.copy(.8f),
-                modifier = Modifier.fillMaxWidth()
-            )
+        val hoverVisible = navState.hover != null && navState.hover != currentRoute
+        AnimatedContent(targetState = hoverVisible, label = "Visibility") { visible ->
+            if (visible) {
+                Text(
+                    text = ": $hoverTitleDisplay",
+                    style = Blip.typ.title,
+                    color = Blip.colors.shine.copy(.8f),
+                    modifier = Modifier.fillMaxWidth()
+                )
+            } else {
+                Text(
+                    text = ": ${currentRoute.title}",
+                    style = Blip.typ.title,
+                    color = Blip.localColors.content.copy(.6f),
+                    modifier = Modifier.fillMaxWidth()
+                )
+            }
         }
-
-        Text(
-            text = ": ${currentRoute.title}",
-            style = Blip.typ.title,
-            color = Blip.localColors.content.copy(.6f),
-            modifier = Modifier.fillMaxWidth()
-        )
     }
 }
 
