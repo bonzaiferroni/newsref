@@ -24,6 +24,7 @@ data class ChapterRoute(
 
 @Serializable
 data class ChapterSourceRoute(
+    val chapterId: Long,
     val pageId: Long,
     val sourceTitle: String?
 ) : AppRoute("Chapter")

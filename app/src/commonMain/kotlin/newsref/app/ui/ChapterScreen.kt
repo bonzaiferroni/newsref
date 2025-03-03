@@ -18,7 +18,7 @@ fun ChapterScreen(
     val state by viewModel.state.collectAsState()
     val pack = state.pack
     val headerHeight = 130f
-    BalloonChart(0, state.chartConfig, 400.dp, { })
+    BalloonChart(0, state.balloons, 400.dp, { })
     Card(
         shape = RoundedCornerShape(
             topStart = headerHeight / 2,

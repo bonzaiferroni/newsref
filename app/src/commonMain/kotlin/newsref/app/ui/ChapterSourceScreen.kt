@@ -19,8 +19,8 @@ fun ChapterSourceScreen(
         verticalArrangement = ruler.columnSpaced
     ) {
         BalloonChart(
-            selectedId = route.pageId,
-            data = state.balloonsData,
+            selectedId = state.selectedId,
+            balloons = state.balloons,
             height = 400.dp,
             onClickBalloon = { }
         )

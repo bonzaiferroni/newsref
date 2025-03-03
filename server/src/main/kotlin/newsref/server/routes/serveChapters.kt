@@ -1,5 +1,6 @@
 package newsref.server.routes
 
+import io.ktor.http.HttpStatusCode
 import io.ktor.server.response.*
 import io.ktor.server.routing.*
 import kotlinx.datetime.Clock
@@ -14,8 +15,8 @@ import kotlin.time.Duration.Companion.days
 
 fun Routing.serveChapters(service: ChapterDtoService = ChapterDtoService()) {
     getById(Api.ChapterEndpoint) { id, endpoint ->
-        val chapter = service.readChapter(id) ?: error("unable to find chapter with id: $id")
-        call.respond(chapter)
+        val chapter = service.readChapter(id)
+        call.respondOrNotFound(chapter)
     }
 
     getByPath(Api.ChapterEndpoint) {
@@ -28,6 +29,14 @@ fun Routing.serveChapters(service: ChapterDtoService = ChapterDtoService()) {
         val pageId = it.pageId.readFromCall(call) ?: error("missing page id")
         val chapterId = it.chapterId.readFromCall(call) ?: error("missing chapter id")
         val chapterSource = service.readChapterSource(chapterId, pageId)
-        call.respond(chapterSource)
+        call.respondOrNotFound(chapterSource)
+    }
+}
+
+suspend fun <T> RoutingCall.respondOrNotFound(value: T?) {
+    if (value != null) {
+        respond(value)
+    } else {
+        respond(HttpStatusCode.NotFound)
     }
 }

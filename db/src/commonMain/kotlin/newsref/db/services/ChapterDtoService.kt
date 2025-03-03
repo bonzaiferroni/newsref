@@ -35,10 +35,6 @@ class ChapterDtoService : DbService() {
     }
 
     suspend fun readChapterSource(chapterId: Long, pageId: Long) = dbQuery {
-        val chapterSourceDto = ChapterSourceDtoAspect.readFirst {
-            it.chapterId.eq(chapterId) and it.pageId.eq(pageId)
-        } ?: return@dbQuery
-        val chapterPackDto = readChapter(chapterId)!!
-        ChapterSourcePackDto(chapterSourceDto, chapterPackDto)
+        ChapterSourceDtoAspect.readFirst { it.chapterId.eq(chapterId) and it.pageId.eq(pageId) }
     }
 }

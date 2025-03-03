@@ -50,7 +50,7 @@ import newsref.app.blip.theme.Blip
 @Composable
 fun BalloonChart(
     selectedId: Long,
-    data: BalloonsData?,
+    balloons: BalloonsData?,
     height: Dp,
     onClickBalloon: (Long) -> Unit,
 ) {
@@ -66,12 +66,12 @@ fun BalloonChart(
                 size = coordinates.size.toSize() // Capture the box size
             }
     ) {
-        if (data == null || size == Size.Zero) return
-        val space = remember(data) {
-            generateBalloonSpace(data)
+        if (balloons == null || size == Size.Zero) return
+        val space = remember(balloons) {
+            generateBalloonSpace(balloons)
         }
-        val points = data.points
-        val xTicks = data.xTicks
+        val points = balloons.points
+        val xTicks = balloons.xTicks
         val bottomMargin = 30
         val chartHeight = size.height - bottomMargin
         val yScale = chartHeight / space.yRange

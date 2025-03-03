@@ -25,7 +25,7 @@ fun ChapterFeedScreen(
     ) {
         BalloonChart(
             selectedId = state.selectedId ?: 0,
-            data = state.chartConfig,
+            balloons = state.chartConfig,
             height = 400.dp,
             onClickBalloon = viewModel::selectId
         )
@@ -46,7 +46,7 @@ fun ChapterFeedScreen(
                 ),
                 onClick = {
                     val firstSource = pack.sources.firstOrNull() ?: return@Card
-                    nav.go(ChapterSourceRoute(firstSource.id, firstSource.title))
+                    nav.go(ChapterSourceRoute(pack.chapter.id, firstSource.id, firstSource.title))
                 },
                 modifier = Modifier.fillMaxWidth()
                     .height(height.dp)

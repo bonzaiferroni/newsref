@@ -28,40 +28,14 @@ class ChapterModel(
     init {
         viewModelScope.launch {
             val pack = chapterStore.readChapter(route.id).toModel()
-            val balloonPoints = pack.sources.map {
-                val x = (Clock.System.now() - it.existedAt).inWholeHours / 24f
-                BalloonPoint(
-                    id = it.id,
-                    x = -x,
-                    y = it.score.toFloat(),
-                    size = it.score.toFloat(),
-                    text = it.title.toString(),
-                    colorIndex = pack.chapter.id.toInt(),
-                    it.imageUrl
-                    )
-            }.toImmutableList()
-            val eventTime = pack.chapter.averageAt - 2.days
-            val now = Clock.System.now()
-            val minStartTime = now - 4.days
-            val startTime = when {
-                eventTime > minStartTime -> minStartTime
-                else -> eventTime
-            }
-            val endTime = startTime + 4.days
-            val xTicks = generateAxisTicks(startTime)
-            val config = BalloonsData(
-                points = balloonPoints,
-                xTicks = xTicks,
-                xMax = endTime.toDaysFromNow(),
-                xMin = startTime.toDaysFromNow()
-            )
-            setState { it.copy(pack = pack, chartConfig = config) }
+            val data = pack.toBalloonsData()
+            setState { it.copy(pack = pack, balloons = data) }
         }
     }
 }
 
 data class ChapterState(
-    val chartConfig: BalloonsData = BalloonsData(),
+    val balloons: BalloonsData = BalloonsData(),
     val pack: ChapterPack? = null,
 )
 
@@ -94,4 +68,34 @@ fun generateAxisTicks(earliest: Instant, latest: Instant = Clock.System.now()): 
         val x = (now - time).inWholeHours / 24f
         AxisTick(-x, label)
     }.toImmutableList()
+}
+
+fun ChapterPack.toBalloonsData(): BalloonsData {
+    val balloonPoints = this.sources.map {
+        val x = (Clock.System.now() - it.existedAt).inWholeHours / 24f
+        BalloonPoint(
+            id = it.id,
+            x = -x,
+            y = it.score.toFloat(),
+            size = it.score.toFloat(),
+            text = it.title.toString(),
+            colorIndex = this.chapter.id.toInt(),
+            it.imageUrl
+        )
+    }.toImmutableList()
+    val eventTime = this.chapter.averageAt - 2.days
+    val now = Clock.System.now()
+    val minStartTime = now - 4.days
+    val startTime = when {
+        eventTime > minStartTime -> minStartTime
+        else -> eventTime
+    }
+    val endTime = startTime + 4.days
+    val xTicks = generateAxisTicks(startTime)
+    return BalloonsData(
+        points = balloonPoints,
+        xTicks = xTicks,
+        xMax = endTime.toDaysFromNow(),
+        xMin = startTime.toDaysFromNow()
+    )
 }
