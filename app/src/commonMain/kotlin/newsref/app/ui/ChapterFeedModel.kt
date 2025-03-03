@@ -5,7 +5,7 @@ import kotlinx.collections.immutable.*
 import kotlinx.coroutines.launch
 import kotlinx.datetime.Clock
 import newsref.app.*
-import newsref.app.blip.controls.BalloonConfig
+import newsref.app.blip.controls.BalloonsData
 import newsref.app.blip.controls.BalloonPoint
 import newsref.app.blip.core.*
 import newsref.app.io.*
@@ -37,7 +37,7 @@ class ChapterFeedModel(
                     imageUrl = sources.firstOrNull { it.imageUrl != null }?.imageUrl
                 )
             }.toImmutableList()
-            val chartConfig = BalloonConfig(
+            val chartConfig = BalloonsData(
                 points = balloons,
                 xTicks = generateAxisTicks(start),
                 xMin = start.toDaysFromNow(),
@@ -56,6 +56,6 @@ class ChapterFeedModel(
 data class ChapterFeedState(
     val selectedId: Long? = null,
     val chapterPacks: ImmutableList<ChapterPack> = persistentListOf(),
-    val chartConfig: BalloonConfig = BalloonConfig(),
+    val chartConfig: BalloonsData = BalloonsData(),
 )
 

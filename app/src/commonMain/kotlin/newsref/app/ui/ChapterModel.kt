@@ -11,7 +11,7 @@ import kotlinx.datetime.atStartOfDayIn
 import kotlinx.datetime.toLocalDateTime
 import newsref.app.ChapterRoute
 import newsref.app.blip.controls.AxisTick
-import newsref.app.blip.controls.BalloonConfig
+import newsref.app.blip.controls.BalloonsData
 import newsref.app.blip.controls.BalloonPoint
 import newsref.app.blip.core.StateModel
 import newsref.app.io.ChapterStore
@@ -49,7 +49,7 @@ class ChapterModel(
             }
             val endTime = startTime + 4.days
             val xTicks = generateAxisTicks(startTime)
-            val config = BalloonConfig(
+            val config = BalloonsData(
                 points = balloonPoints,
                 xTicks = xTicks,
                 xMax = endTime.toDaysFromNow(),
@@ -61,7 +61,7 @@ class ChapterModel(
 }
 
 data class ChapterState(
-    val chartConfig: BalloonConfig = BalloonConfig(),
+    val chartConfig: BalloonsData = BalloonsData(),
     val pack: ChapterPack? = null,
 )
 

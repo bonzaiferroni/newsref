@@ -19,6 +19,7 @@ fun Application.configureCors() {
         allowHost("192.168.1.100:8080")
         allowHost("newsref.org")
         allowHost("localhost:8081")
+        allowHost("192.168.1.100:8081")
         allowHeader(HttpHeaders.ContentType)
         allowHeader(HttpHeaders.AccessControlAllowOrigin)
         allowCredentials = true

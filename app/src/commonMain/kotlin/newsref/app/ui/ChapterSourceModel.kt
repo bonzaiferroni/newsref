@@ -3,6 +3,7 @@ package newsref.app.ui
 import androidx.lifecycle.viewModelScope
 import kotlinx.coroutines.launch
 import newsref.app.*
+import newsref.app.blip.controls.BalloonsData
 import newsref.app.blip.core.*
 import newsref.app.io.ChapterStore
 import newsref.app.model.*
@@ -20,5 +21,6 @@ class ChapterSourceModel(
 
 data class ChapterSourceState(
     val sourcePack: ChapterSourcePack? = null,
-    val chapterPack: ChapterPack? = null
+    val chapterPack: ChapterPack? = null,
+    val balloonsData: BalloonsData? = null
 )

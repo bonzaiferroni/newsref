@@ -1,19 +1,31 @@
 package newsref.app.ui
 
 import androidx.compose.foundation.layout.*
-import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.runtime.*
-import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
-import kotlinx.collections.immutable.persistentListOf
 import newsref.app.*
 import newsref.app.blip.controls.*
+import newsref.app.blip.theme.Blip.ruler
 
 @Composable
 fun ChapterSourceScreen(
     route: ChapterSourceRoute,
     viewModel: ChapterSourceModel = viewModel { ChapterSourceModel(route) }
 ) {
-    Text("hello chapter source!")
+    val state by viewModel.state.collectAsState()
+
+    Column(
+        verticalArrangement = ruler.columnSpaced
+    ) {
+        BalloonChart(
+            selectedId = route.pageId,
+            data = state.balloonsData,
+            height = 400.dp,
+            onClickBalloon = { }
+        )
+
+        Text("hello chapter source!")
+    }
+
 }

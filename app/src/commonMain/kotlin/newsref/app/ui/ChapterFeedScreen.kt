@@ -25,9 +25,9 @@ fun ChapterFeedScreen(
     ) {
         BalloonChart(
             selectedId = state.selectedId ?: 0,
-            config = state.chartConfig,
+            data = state.chartConfig,
             height = 400.dp,
-            onClickCloud = viewModel::selectId
+            onClickBalloon = viewModel::selectId
         )
 
         val height = 130f

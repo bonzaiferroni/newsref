@@ -2,31 +2,173 @@
 
 package newsref.app.blip.controls
 
+import androidx.compose.animation.core.LinearEasing
+import androidx.compose.animation.core.RepeatMode
+import androidx.compose.animation.core.animateFloat
+import androidx.compose.animation.core.infiniteRepeatable
+import androidx.compose.animation.core.rememberInfiniteTransition
+import androidx.compose.animation.core.tween
+import androidx.compose.foundation.clickable
+import androidx.compose.foundation.hoverable
+import androidx.compose.foundation.interaction.MutableInteractionSource
+import androidx.compose.foundation.interaction.collectIsHoveredAsState
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.offset
+import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.alpha
+import androidx.compose.ui.draw.clip
+import androidx.compose.ui.draw.clipToBounds
+import androidx.compose.ui.draw.drawBehind
+import androidx.compose.ui.geometry.Offset
+import androidx.compose.ui.geometry.Size
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.drawscope.DrawScope
+import androidx.compose.ui.graphics.drawscope.Stroke
+import androidx.compose.ui.graphics.graphicsLayer
+import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.layout.onGloballyPositioned
+import androidx.compose.ui.text.drawText
+import androidx.compose.ui.text.rememberTextMeasurer
 import androidx.compose.ui.unit.Dp
+import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.toSize
+import coil3.compose.AsyncImage
 import kotlinx.collections.immutable.ImmutableList
 import kotlinx.collections.immutable.persistentListOf
+import newsref.app.blip.theme.Blip
 
 @Composable
 fun BalloonChart(
     selectedId: Long,
-    config: BalloonConfig,
+    data: BalloonsData?,
     height: Dp,
-    onClickCloud: (Long) -> Unit,
+    onClickBalloon: (Long) -> Unit,
 ) {
-    val points = config.points
-    if (points.isEmpty()) return
+    var size by remember { mutableStateOf(Size.Zero) }
+    val ruler = Blip.ruler
 
-    val space = remember(config) {
-        generateBalloonSpace(config)
+    Box(
+        modifier = Modifier
+            .height(height)
+            .fillMaxWidth()
+            .clipToBounds()
+            .onGloballyPositioned { coordinates ->
+                size = coordinates.size.toSize() // Capture the box size
+            }
+    ) {
+        if (data == null || size == Size.Zero) return
+        val space = remember(data) {
+            generateBalloonSpace(data)
+        }
+        val points = data.points
+        val xTicks = data.xTicks
+        val bottomMargin = 30
+        val chartHeight = size.height - bottomMargin
+        val yScale = chartHeight / space.yRange
+        val xScale = size.width / space.xRange
+        // val sizeScale = size.height / (space.sizeMax * 4)
+
+        if (xTicks != null) {
+            AxisTickBox(xTicks, xScale, space)
+        }
+
+        for (point in points) {
+            val isSelected = point.id == selectedId
+            var color = Blip.colors.getSwatchFromIndex(point.colorIndex)
+            val interactionSource = remember { MutableInteractionSource() }
+            val isHovered = interactionSource.collectIsHoveredAsState().value
+            val bgColor = when (isHovered) {
+                true -> color
+                false -> color.copy(alpha = .75f)
+            }
+            val radius = maxOf((point.size * yScale / space.sizeScale) / 2, BALLOON_MIN_SIZE)
+            val x = (point.x - space.xMin) * xScale
+            val y = maxOf(((point.y - space.yMin) * yScale), radius)
+            val center = Offset(x, chartHeight - y)
+            val transition = rememberInfiniteTransition()
+            val initialValue = remember { (-10..10).random().toFloat() }
+            val targetValue = remember { (-10..10).random().toFloat() }
+            val duration = remember { (4000..6000).random() }
+            val offsetY by transition.animateFloat(
+                initialValue = initialValue,
+                targetValue = targetValue,
+                animationSpec = infiniteRepeatable(
+                    animation = tween(durationMillis = duration, easing = LinearEasing),
+                    repeatMode = RepeatMode.Reverse
+                )
+            )
+            Box(
+                modifier = Modifier.size((radius * 2).dp)
+                    .offset((center.x - radius).dp, (center.y - radius).dp)
+                    .graphicsLayer { translationY = offsetY }
+                    .circleIndicator(isSelected) {
+                        drawBalloon(bgColor)
+                    }
+                    .clip(CircleShape)
+                    .hoverable(interactionSource)
+                    .clickable { onClickBalloon(point.id) }
+            ) {
+                point.imageUrl?.let {
+                    AsyncImage(
+                        model = it,
+                        contentDescription = null,
+                        contentScale = ContentScale.Crop,
+                        modifier = Modifier
+                            .clip(ruler.round)
+                            .alpha(.5f)
+                    )
+                }
+            }
+        }
     }
-
-    // CloudCanvas(points, space, height)
-    BalloonBox(selectedId, config, space, height, onClickCloud)
 }
 
-private fun generateBalloonSpace(config: BalloonConfig): BalloonSpace {
+@Composable
+internal fun AxisTickBox(xTicks: ImmutableList<AxisTick>, xScale: Float, space: BalloonSpace) {
+    val textMeasurer = rememberTextMeasurer()
+    Box(
+        modifier = Modifier.fillMaxSize()
+            .drawBehind {
+                for (tick in xTicks) {
+                    val x = (tick.value - space.xMin) * xScale
+                    drawLine(
+                        color = Color.White.copy(.2f),
+                        start = Offset(x, 0f),
+                        end = Offset(x, size.height),
+                        strokeWidth = 5f
+                    )
+                    val textLayoutResult = textMeasurer.measure(tick.label)
+                    val y = size.height - textLayoutResult.size.height
+                    drawText(textLayoutResult, Color.White.copy(.5f), Offset(x + 5, y))
+                }
+            }
+    )
+}
+
+fun DrawScope.drawBalloon(color: Color) {
+    val radius = size.minDimension / 2
+    drawCircle(
+        color = color.copy(.75f),
+        radius = radius
+    )
+    drawCircle(
+        color = color,
+        radius = radius,
+        style = Stroke(width = 2.dp.toPx()) // Stroke style
+    )
+}
+
+private fun generateBalloonSpace(config: BalloonsData): BalloonSpace {
     val points = config.points
     val yMinInitial = points.minOf { it.y - it.size / 2 }
     val yMaxInitial = points.maxOf { it.y + it.size / 2 }
@@ -50,7 +192,7 @@ private fun generateBalloonSpace(config: BalloonConfig): BalloonSpace {
     )
 }
 
-data class BalloonConfig(
+data class BalloonsData(
     val points: ImmutableList<BalloonPoint> = persistentListOf(),
     val xTicks: ImmutableList<AxisTick>? = null,
     val xMax: Float? = null,
