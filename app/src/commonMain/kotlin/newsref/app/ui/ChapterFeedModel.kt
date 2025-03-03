@@ -26,7 +26,7 @@ class ChapterFeedModel(
                 .toImmutableList()
 
             val balloons = chapters.map { (chapter, sources) ->
-                val x = (Clock.System.now() - chapter.happenedAt).inWholeHours / 24f
+                val x = (Clock.System.now() - chapter.averageAt).inWholeHours / 24f
                 BalloonPoint(
                     id = chapter.id,
                     x = -x,

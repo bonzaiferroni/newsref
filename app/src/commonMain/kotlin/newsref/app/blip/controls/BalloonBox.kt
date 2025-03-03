@@ -71,7 +71,9 @@ internal fun BalloonBox(
             }
     ) {
         if (size == Size.Zero) return
-        val yScale = size.height / space.yRange
+        val bottomMargin = 30
+        val chartHeight = size.height - bottomMargin
+        val yScale = chartHeight / space.yRange
         val xScale = size.width / space.xRange
         // val sizeScale = size.height / (space.sizeMax * 4)
 
@@ -81,7 +83,6 @@ internal fun BalloonBox(
 
         for (point in points) {
             val isSelected = point.id == selected
-
             var color = Blip.colors.getSwatchFromIndex(point.colorIndex)
             val interactionSource = remember { MutableInteractionSource() }
             val isHovered = interactionSource.collectIsHoveredAsState().value
@@ -92,9 +93,8 @@ internal fun BalloonBox(
             val radius = maxOf((point.size * yScale / space.sizeScale) / 2, BALLOON_MIN_SIZE)
             val x = (point.x - space.xMin) * xScale
             val y = maxOf(((point.y - space.yMin) * yScale), radius)
-            val center = Offset(x, size.height - y)
+            val center = Offset(x, chartHeight - y)
             val transition = rememberInfiniteTransition()
-            val floatDistance = (point.size * .75).toInt()
             val initialValue = remember { (-10..10).random().toFloat() }
             val targetValue = remember { (-10..10).random().toFloat() }
             val duration = remember { (4000..6000).random() }
@@ -147,7 +147,8 @@ internal fun AxisTickBox(xTicks: ImmutableList<AxisTick>, xScale: Float, space: 
                         strokeWidth = 5f
                     )
                     val textLayoutResult = textMeasurer.measure(tick.label)
-                    drawText(textLayoutResult, Color.White.copy(.5f), Offset(x + 5, size.height - 20))
+                    val y = size.height - textLayoutResult.size.height
+                    drawText(textLayoutResult, Color.White.copy(.5f), Offset(x + 5, y))
                 }
             }
     )

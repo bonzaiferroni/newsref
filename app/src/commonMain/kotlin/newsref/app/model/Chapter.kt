@@ -11,7 +11,7 @@ data class Chapter(
     val score: Int,
     val size: Int,
     val cohesion: Float,
-    val happenedAt: Instant,
+    val averageAt: Instant,
 )
 
 fun ChapterDto.toChapter() = Chapter(
@@ -20,5 +20,5 @@ fun ChapterDto.toChapter() = Chapter(
     score = this.score,
     size = this.size,
     cohesion = this.cohesion,
-    happenedAt = this.happenedAt,
+    averageAt = this.happenedAt,
 )
