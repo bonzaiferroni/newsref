@@ -24,3 +24,6 @@ data class ChapterRoute(
 
 @Serializable
 data class ChapterSourceRoute(val sourceBit: SourceBit) : AppRoute("Chapter")
+
+@Serializable
+data class SourceRoute(val pageId: Long) : AppRoute("Source")
