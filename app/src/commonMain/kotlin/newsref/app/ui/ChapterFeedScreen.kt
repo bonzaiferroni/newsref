@@ -51,8 +51,8 @@ fun ChapterFeedScreen(
                 modifier = Modifier.fillMaxWidth()
                     .height(height.dp)
             ) {
-                ChapterHeader(
-                    chapterId = pack.chapter.id,
+                BalloonHeader(
+                    balloonId = pack.chapter.id,
                     title = pack.chapter.title,
                     imageUrl = pack.imageUrl,
                     score = pack.chapter.score,

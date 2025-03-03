@@ -1,13 +1,13 @@
-package newsref.dashboard.ui.controls
+package newsref.app.blip.controls
 
 import kotlinx.collections.immutable.*
 import androidx.compose.foundation.*
 import androidx.compose.foundation.layout.*
-import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.*
-import newsref.app.blip.controls.TabPage
-import newsref.dashboard.*
+import androidx.compose.ui.draw.shadow
+import androidx.compose.ui.unit.dp
+import newsref.app.blip.theme.Blip
 
 @Composable
 fun TabPages(
@@ -32,15 +32,16 @@ fun TabPages(
         Row {
             for (page in pages) {
                 if (!page.isVisible) continue
-                val background = when {
-                    currentPage.name == page.name -> MaterialTheme.colorScheme.primaryContainer
-                    else -> MaterialTheme.colorScheme.surfaceDim
+                val (background, elevation) = when {
+                    currentPage.name == page.name -> Blip.localColors.surface to Blip.ruler.shadowElevation
+                    else -> Blip.localColors.surface.copy(.8f) to 0.dp
                 }
                 Box(
                     modifier = Modifier
                         .clickable { onChangePage(page.name) }
+                        .shadow(elevation)
                         .background(background)
-                        .padding(halfPadding)
+                        .padding(Blip.ruler.basePadding)
                         .weight(1f)
                 ) {
                     Text(
@@ -51,18 +52,26 @@ fun TabPages(
             }
         }
         if (currentPage.scrollbar) {
-            ScrollBox(
-                modifier = Modifier.fillMaxSize()
-            ) {
-                currentPage.content()
-            }
+            Text("Scrollbar not supported")
         } else {
-            Column(
-                modifier = Modifier.fillMaxSize()
-            ) {
-                Spacer(modifier = Modifier.height(baseSpacing))
-                currentPage.content()
+            Surface() {
+                Column(
+                    modifier = Modifier.fillMaxSize()
+                        .padding(Blip.ruler.innerPadding)
+                ) {
+                    Spacer(modifier = Modifier.height(Blip.ruler.halfSpacing))
+                    currentPage.content()
+                }
             }
         }
     }
 }
+
+data class TabPage(
+    val name: String,
+    val scrollbar: Boolean = true,
+    val isVisible: Boolean = true,
+    val content: @Composable () -> Unit,
+)
+
+fun pages(vararg elements: TabPage) = elements.toImmutableList()

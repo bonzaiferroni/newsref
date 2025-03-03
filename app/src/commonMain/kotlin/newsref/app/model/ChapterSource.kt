@@ -8,7 +8,7 @@ import newsref.model.core.Relevance
 @Serializable
 data class ChapterSource(
     val chapterId: Long,
-    val sourceId: Long,
+    val pageId: Long,
     val title: String?,
     val score: Int,
     val url: String,

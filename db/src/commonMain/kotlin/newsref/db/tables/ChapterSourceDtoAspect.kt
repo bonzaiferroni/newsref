@@ -30,7 +30,7 @@ object ChapterSourceDtoAspect : Aspect<ChapterSourceDtoAspect, ChapterSourceDto>
 
 fun ResultRow.toChapterSourceDto() = ChapterSourceDto(
     chapterId = this[ChapterSourceDtoAspect.chapterId].value,
-    sourceId = this[ChapterSourceDtoAspect.pageId].value,
+    pageId = this[ChapterSourceDtoAspect.pageId].value,
     title = this[ChapterSourceDtoAspect.title],
     score = this[ChapterSourceDtoAspect.score] ?: 0,
     url = this[ChapterSourceDtoAspect.url],

@@ -7,7 +7,7 @@ import newsref.model.core.*
 @Serializable
 data class ChapterSourceDto(
     val chapterId: Long,
-    val sourceId: Long,
+    val pageId: Long,
     val title: String?,
     val score: Int,
     val url: String,

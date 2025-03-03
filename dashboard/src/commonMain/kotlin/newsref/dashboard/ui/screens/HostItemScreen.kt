@@ -7,6 +7,9 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
+import newsref.app.blip.controls.TabPage
+import newsref.app.blip.controls.TabPages
+import newsref.app.blip.controls.pages
 import newsref.dashboard.HostItemRoute
 import newsref.dashboard.LocalNavigator
 import newsref.dashboard.ui.controls.*

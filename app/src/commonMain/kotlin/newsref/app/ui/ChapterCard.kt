@@ -17,8 +17,8 @@ import newsref.app.blip.theme.ProvideSkyColors
 import newsref.app.model.SourceBit
 
 @Composable
-fun ChapterHeader(
-    chapterId: Long,
+fun BalloonHeader(
+    balloonId: Long,
     title: String?,
     imageUrl: String?,
     score: Int,
@@ -31,7 +31,7 @@ fun ChapterHeader(
         horizontalArrangement = ruler.rowSpaced,
         modifier = Modifier.height(height.dp)
     ) {
-        val color = Blip.colors.getSwatchFromIndex(chapterId)
+        val color = Blip.colors.getSwatchFromIndex(balloonId)
         Box(
             modifier = Modifier.fillMaxHeight()
                 .aspectRatio(1f)
@@ -60,7 +60,7 @@ fun ChapterHeader(
                 modifier = Modifier.heightIn(min = 36.dp)
             ) {
                 H2(
-                    text = title ?: "Chapter Id: $chapterId",
+                    text = title ?: "Chapter Id: $balloonId",
                     maxLines = 2,
                 )
             }

@@ -9,10 +9,12 @@ import androidx.compose.ui.*
 import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.unit.dp
 import kotlinx.datetime.*
+import newsref.app.blip.controls.TabPage
+import newsref.app.blip.controls.TabPages
+import newsref.app.blip.controls.pages
 import newsref.dashboard.FeedItemRoute
 import newsref.dashboard.FeedTableRoute
 import newsref.dashboard.LocalNavigator
-import newsref.dashboard.ui.controls.*
 import newsref.model.core.*
 import kotlin.time.Duration.Companion.hours
 
@@ -33,7 +35,7 @@ fun FeedTableScreen(
         onChangePage = viewModel::changePage,
         pages = pages(
             TabPage(name = "Feeds", scrollbar = false) {
-                FlowRow (
+                FlowRow(
                     horizontalArrangement = Arrangement.SpaceEvenly,
                     modifier = Modifier.fillMaxWidth()
                 ) {

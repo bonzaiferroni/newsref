@@ -5,11 +5,13 @@ import androidx.compose.runtime.*
 import androidx.compose.material3.*
 import androidx.compose.ui.platform.LocalUriHandler
 import androidx.lifecycle.viewmodel.compose.viewModel
+import newsref.app.blip.controls.TabPage
+import newsref.app.blip.controls.TabPages
+import newsref.app.blip.controls.pages
 import newsref.dashboard.*
 import newsref.dashboard.ChapterItemRoute
 import newsref.dashboard.LocalNavigator
 import newsref.dashboard.SourceItemRoute
-import newsref.dashboard.ui.controls.*
 import newsref.dashboard.ui.table.*
 import newsref.db.model.ChapterSourceInfo
 import newsref.db.utils.format

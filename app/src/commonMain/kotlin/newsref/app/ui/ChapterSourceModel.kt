@@ -29,11 +29,16 @@ class ChapterSourceModel(
         }
         setState { it.copy(selectedId = pageId)}
     }
+
+    fun onChangePage(page: String) {
+        setState { it.copy(page = page) }
+    }
 }
 
 data class ChapterSourceState(
     val selectedId: Long,
     val chapter: ChapterPack? = null,
     val source: ChapterSource? = null,
-    val balloons: BalloonsData? = null
+    val balloons: BalloonsData? = null,
+    val page: String? = null,
 )

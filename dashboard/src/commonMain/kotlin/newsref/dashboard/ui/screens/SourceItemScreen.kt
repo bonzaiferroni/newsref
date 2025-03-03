@@ -9,10 +9,12 @@ import androidx.compose.ui.*
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import coil3.compose.AsyncImage
+import newsref.app.blip.controls.TabPage
+import newsref.app.blip.controls.TabPages
+import newsref.app.blip.controls.pages
 import newsref.dashboard.*
 import newsref.dashboard.LocalNavigator
 import newsref.dashboard.SourceItemRoute
-import newsref.dashboard.ui.controls.*
 import newsref.db.model.Source
 
 @Composable

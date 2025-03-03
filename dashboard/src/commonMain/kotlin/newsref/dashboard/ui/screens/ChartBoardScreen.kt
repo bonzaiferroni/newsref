@@ -7,10 +7,10 @@ import androidx.lifecycle.viewmodel.compose.*
 import newsref.dashboard.*
 import newsref.dashboard.ChartBoardRoute
 import newsref.dashboard.ui.controls.ChartType
-import newsref.dashboard.ui.controls.TabPage
-import newsref.dashboard.ui.controls.TabPages
+import newsref.app.blip.controls.TabPage
+import newsref.app.blip.controls.TabPages
 import newsref.dashboard.ui.controls.TimeChart
-import newsref.dashboard.ui.controls.pages
+import newsref.app.blip.controls.pages
 
 @Composable
 fun ChartBoardScreen(

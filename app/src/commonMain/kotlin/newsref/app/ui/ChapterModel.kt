@@ -83,14 +83,15 @@ fun ChapterPack.toBalloonsData(): BalloonsData {
             it.imageUrl
         )
     }.toImmutableList()
-    val eventTime = this.chapter.averageAt - 2.days
+    val dayRange = 3.0
+    val eventTime = this.chapter.averageAt - (dayRange / 2).days
     val now = Clock.System.now()
-    val minStartTime = now - 4.days
+    val minStartTime = now - dayRange.days
     val startTime = when {
         eventTime > minStartTime -> minStartTime
         else -> eventTime
     }
-    val endTime = startTime + 4.days
+    val endTime = startTime + dayRange.days
     val xTicks = generateAxisTicks(startTime)
     return BalloonsData(
         points = balloonPoints,

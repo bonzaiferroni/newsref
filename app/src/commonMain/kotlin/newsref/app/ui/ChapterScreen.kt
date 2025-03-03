@@ -6,7 +6,6 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
-import kotlinx.collections.immutable.persistentListOf
 import newsref.app.*
 import newsref.app.blip.controls.*
 
@@ -29,8 +28,8 @@ fun ChapterScreen(
         modifier = Modifier.fillMaxWidth()
             .heightIn(min = 400.dp)
     ) {
-        ChapterHeader(
-            chapterId = route.id,
+        BalloonHeader(
+            balloonId = route.id,
             title = pack?.chapter?.title ?: route.chapterTitle ?: "Chapter: ${route.id}",
             imageUrl = pack?.imageUrl,
             score = pack?.chapter?.score ?: 0,
