@@ -2,8 +2,8 @@ package newsref.db.tables
 
 import newsref.db.model.ChapterSource
 import newsref.db.model.ChapterSourceInfo
-import newsref.db.model.Relevance
-import newsref.db.model.NewsSourceType
+import newsref.model.core.NewsSourceType
+import newsref.model.core.Relevance
 import org.jetbrains.exposed.dao.id.LongIdTable
 import org.jetbrains.exposed.sql.ReferenceOption
 import org.jetbrains.exposed.sql.ResultRow
@@ -13,12 +13,12 @@ object ChapterSourceTable : LongIdTable("chapter_source") {
     val sourceId = reference("source_id", PageTable, ReferenceOption.CASCADE).index()
     // val relevance = text("relevance")
     // val contrast = text("contrast")
-    val type = enumeration("type", NewsSourceType::class)
+    val type = enumeration<NewsSourceType>("type")
     val distance = float("distance").nullable()
     val textDistance = float("text_distance").nullable()
     val timeDistance = float("time_distance").nullable()
     val linkDistance = float("link_distance").nullable()
-    val relevance = enumeration("relevance", Relevance::class).nullable()
+    val relevance = enumeration<Relevance>("relevance").nullable()
 
     init {
         uniqueIndex(chapterId, sourceId)

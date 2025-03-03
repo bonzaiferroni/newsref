@@ -5,7 +5,7 @@ import newsref.db.utils.toInstantUtc
 import newsref.model.dto.SourceDto
 import org.jetbrains.exposed.sql.ResultRow
 
-object SourceDtoAspect: Aspect(PageTable) {
+object SourceDtoAspect: Aspect<SourceDtoAspect>(PageTable) {
     val id = add(PageTable.id)
     val url = add(PageTable.url)
     val title = add(PageTable.title)

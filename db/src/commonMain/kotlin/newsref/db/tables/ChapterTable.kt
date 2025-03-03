@@ -22,7 +22,7 @@ object ChapterTable : LongIdTable("chapter") {
     val vector = vector("vector", 1536)
 }
 
-object ChapterAspect : Aspect(ChapterTable) {
+object ChapterAspect : Aspect<ChapterAspect>(ChapterTable) {
     val id = add(ChapterTable.id)
     val storyId = add(ChapterTable.storyId)
     val parentId = add(ChapterTable.parentId)

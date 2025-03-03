@@ -16,10 +16,5 @@ data class Chapter(
     val storyDistance: Float?,
     val createdAt: Instant,
     val averageAt: Instant,
-    val earliestAt: Instant,
+    // val earliestAt: Instant,
 )
-
-enum class NewsSourceType {
-    Primary,
-    Secondary,
-}

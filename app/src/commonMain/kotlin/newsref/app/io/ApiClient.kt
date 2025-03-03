@@ -16,11 +16,11 @@ class ApiClient(
 
     suspend inline fun <reified Received> get(
         url: String,
-        params: Map<String, String>? = null
+        vararg params: Pair<String, String>
     ): Received = client.get("$baseUrl$url") {
         contentType(ContentType.Application.Json)
-        params?.let {
-            url { params.forEach { parameters.append(it.key, it.value) } }
+        if (params.isNotEmpty()) {
+            url { params.forEach { parameters.append(it.first, it.second) } }
         }
     }.body()
 }

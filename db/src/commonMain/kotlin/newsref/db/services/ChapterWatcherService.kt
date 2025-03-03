@@ -3,6 +3,7 @@ package newsref.db.services
 import newsref.db.DbService
 import newsref.db.model.*
 import newsref.db.tables.*
+import newsref.model.core.*
 import org.jetbrains.exposed.sql.*
 import org.jetbrains.exposed.sql.SqlExpressionBuilder.eq
 

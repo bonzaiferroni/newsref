@@ -5,7 +5,8 @@ import org.jetbrains.exposed.sql.ExpressionWithColumnType
 import org.jetbrains.exposed.sql.Op
 import org.jetbrains.exposed.sql.SqlExpressionBuilder
 
-open class Aspect(
+@Suppress("UNCHECKED_CAST")
+open class Aspect<SubType: Aspect<SubType>>(
     val columnSet: ColumnSet
 ) {
     private val _expressions = mutableListOf<ExpressionWithColumnType<*>>()
@@ -16,7 +17,7 @@ open class Aspect(
         return expression
     }
 
-    fun where(predicate: SqlExpressionBuilder.() -> Op<Boolean>) =
+    fun where(predicate: SqlExpressionBuilder.(SubType) -> Op<Boolean>) =
         columnSet.select(columns)
-            .where(predicate)
+            .where { predicate(this, this@Aspect as SubType) }
 }

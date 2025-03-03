@@ -10,7 +10,7 @@ import org.jetbrains.exposed.dao.id.EntityID
 import org.jetbrains.exposed.sql.*
 import kotlin.time.Duration
 
-object SourceAspect : Aspect(PageTable) {
+object SourceAspect : Aspect<SourceAspect>(PageTable) {
     val hostId = add(PageTable.hostId)
     val url = add(PageTable.url)
     val title = add(PageTable.title)

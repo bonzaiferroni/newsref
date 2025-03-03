@@ -1,11 +1,11 @@
 package newsref.db.tables
 
-import newsref.db.core.Aspect
-import newsref.db.utils.toInstantUtc
-import newsref.model.dto.ChapterDto
-import org.jetbrains.exposed.sql.ResultRow
+import newsref.db.core.*
+import newsref.db.utils.*
+import newsref.model.dto.*
+import org.jetbrains.exposed.sql.*
 
-object ChapterDtoAspect : Aspect(ChapterTable) {
+object ChapterDtoAspect : Aspect<ChapterDtoAspect>(ChapterTable) {
     val id = add(ChapterTable.id)
     val title = add(ChapterTable.title)
     val score = add(ChapterTable.score)

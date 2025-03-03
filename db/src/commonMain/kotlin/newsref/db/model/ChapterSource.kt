@@ -1,5 +1,7 @@
 package newsref.db.model
 
+import newsref.model.core.*
+
 data class ChapterSource(
     val id: Long = 0,
     val chapterId: Long = 0,
@@ -13,9 +15,3 @@ data class ChapterSource(
     val linkDistance: Float?,
     val relevance: Relevance? = null,
 )
-
-enum class Relevance {
-    Irrelevant,
-    Relevant,
-    Unsure,
-}
