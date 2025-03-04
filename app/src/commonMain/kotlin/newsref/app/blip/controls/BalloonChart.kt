@@ -37,9 +37,11 @@ import androidx.compose.ui.graphics.drawscope.Stroke
 import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.layout.onGloballyPositioned
+import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.text.drawText
 import androidx.compose.ui.text.rememberTextMeasurer
 import androidx.compose.ui.unit.Dp
+import androidx.compose.ui.unit.DpSize
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.toSize
 import coil3.compose.AsyncImage
@@ -54,8 +56,10 @@ fun BalloonChart(
     height: Dp,
     onClickBalloon: (Long) -> Unit,
 ) {
-    var size by remember { mutableStateOf(Size.Zero) }
+    var size by remember { mutableStateOf(DpSize.Zero) }
     val ruler = Blip.ruler
+
+    val density = LocalDensity.current
 
     Box(
         modifier = Modifier
@@ -63,23 +67,23 @@ fun BalloonChart(
             .fillMaxWidth()
             .clipToBounds()
             .onGloballyPositioned { coordinates ->
-                size = coordinates.size.toSize() // Capture the box size
+                size = with(density) { coordinates.size.toSize().toDpSize() }
             }
     ) {
-        if (balloons == null || balloons.points.isEmpty() || size == Size.Zero) return
+        if (balloons == null || balloons.points.isEmpty() || size == DpSize.Zero) return
         val space = remember(balloons) {
             generateBalloonSpace(balloons)
         }
         val points = balloons.points
         val xTicks = balloons.xTicks
         val bottomMargin = 30
-        val chartHeight = size.height - bottomMargin
+        val chartHeight = size.height.value - bottomMargin
         val yScale = chartHeight / space.yRange
-        val xScale = size.width / space.xRange
+        val xScale = size.width.value / space.xRange
         // val sizeScale = size.height / (space.sizeMax * 4)
 
         if (xTicks != null) {
-            AxisTickBox(xTicks, xScale, space)
+            AxisTickBox(xTicks, density.density * xScale, space)
         }
 
         for (point in points) {
