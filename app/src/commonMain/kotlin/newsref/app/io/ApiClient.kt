@@ -26,4 +26,4 @@ class ApiClient(
     }.body()
 }
 
-val globalApiClient = ApiClient("http://localhost:8080/")
+val globalApiClient = ApiClient("http://192.168.1.100:8080")

@@ -48,6 +48,9 @@ kotlin {
         androidMain.dependencies {
             implementation(compose.preview)
             implementation(libs.androidx.activity.compose)
+            implementation(libs.ktor.client.okhttp)
+            implementation(libs.kotlinx.coroutines.android)
+            implementation("com.github.tony19:logback-android:3.0.0")
         }
         commonMain.dependencies {
             implementation(compose.runtime)
@@ -66,7 +69,6 @@ kotlin {
             implementation(libs.kotlinx.collections.immutable)
             implementation(libs.kotlinx.datetime)
             implementation(libs.composeIcons.tablerIcons)
-            implementation(libs.logback.classic)
             implementation(libs.coil.compose)
             implementation(libs.coil.network.ktor3)
 
@@ -77,9 +79,11 @@ kotlin {
         desktopMain.dependencies {
             implementation(compose.desktop.currentOs)
             implementation(libs.kotlinx.coroutines.swing)
+            implementation(libs.logback.classic)
         }
         wasmJsMain.dependencies {
             implementation(libs.ktor.client.js)
+            implementation(libs.logback.classic)
         }
     }
 }
