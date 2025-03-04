@@ -47,6 +47,7 @@ fun H1(
     text: String,
     color: Color = Blip.localColors.content,
     maxLines: Int = Int.MAX_VALUE,
+    modifier: Modifier = Modifier
 ) = BasicText(
     text = text,
     color = { color },
@@ -59,11 +60,12 @@ fun H2(
     text: String,
     color: Color = Blip.localColors.content,
     maxLines: Int = Int.MAX_VALUE,
+    style: TextStyle? = null,
     modifier: Modifier = Modifier
 ) = BasicText(
     text = text,
     color = { color },
-    style = Blip.typ.h2,
+    style = Blip.typ.h2.merge(style),
     maxLines = maxLines,
     modifier = modifier
 )

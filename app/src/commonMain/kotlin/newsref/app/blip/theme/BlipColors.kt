@@ -30,7 +30,7 @@ data class BlipLocalColors(
 
 object DefaultColors : BlipColors{
     override val primary = Color(0xFF57965c)
-    override val accent = Color(0xFFffe746)
+    override val accent = Color(0xFF009489)
     override val contentSky = Color(0xFFf5f6f6)
     override val surfaceSky = Color.Transparent
     override val contentBook = Color(0xFF1d190e)

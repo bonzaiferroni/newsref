@@ -51,9 +51,10 @@ fun ChapterFeedScreen(
                 modifier = Modifier.fillMaxWidth()
                     .height(height.dp)
             ) {
+                val color = Blip.colors.getSwatchFromIndex(pack.chapter.id)
                 BalloonHeader(
-                    balloonId = pack.chapter.id,
-                    title = pack.chapter.title,
+                    color = color,
+                    title = pack.chapter.title ?: "Chapter id: ${pack.chapter.id}",
                     imageUrl = pack.imageUrl,
                     score = pack.chapter.score,
                     height = height,

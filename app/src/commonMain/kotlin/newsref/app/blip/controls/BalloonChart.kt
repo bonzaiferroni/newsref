@@ -66,7 +66,7 @@ fun BalloonChart(
                 size = coordinates.size.toSize() // Capture the box size
             }
     ) {
-        if (balloons == null || size == Size.Zero) return
+        if (balloons == null || balloons.points.isEmpty() || size == Size.Zero) return
         val space = remember(balloons) {
             generateBalloonSpace(balloons)
         }

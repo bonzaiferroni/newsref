@@ -17,6 +17,7 @@ data class ChapterSourceDto(
     val sourceType: NewsSourceType,
     val textDistance: Float?,
     val relevance: Relevance?,
+    val summary: String?,
     val hostCore: String,
     val hostName: String?,
     val hostLogo: String?,

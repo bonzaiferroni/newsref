@@ -10,6 +10,7 @@ import androidx.compose.ui.unit.dp
 interface BlipRuler {
     val spacing: Int
     val corner: Int
+    val bigCorner: Int
     val shadowElevation: Dp
 
     val baseSpacing: Dp get() = spacing.dp
@@ -28,6 +29,7 @@ interface BlipRuler {
 
     val round: Shape get() = RoundedCornerShape(percent = 100)
     val rounded: Shape get() = RoundedCornerShape(corner.dp)
+    val bigRounded: Shape get() = RoundedCornerShape(bigCorner.dp)
     val innerCorners: Shape get() = RoundedCornerShape((corner / 4).dp)
 
     val roundTop: Shape get() = RoundedCornerShape(
@@ -57,4 +59,11 @@ interface BlipRuler {
         bottomStart = corner.dp,
         bottomEnd = corner.dp
     )
+}
+
+object DefaultRuler : BlipRuler{
+    override val spacing: Int = 16
+    override val corner: Int = 16
+    override val bigCorner: Int = 64
+    override val shadowElevation = 12.dp
 }

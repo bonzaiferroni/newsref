@@ -20,6 +20,7 @@ object ChapterSourceDtoAspect : Aspect<ChapterSourceDtoAspect, ChapterSourceDto>
     val sourceType = add(ChapterSourceTable.type)
     val textDistance = add(ChapterSourceTable.textDistance)
     val relevance = add(ChapterSourceTable.relevance)
+    val summary = add(NewsArticleTable.summary)
     val hostCore = add(HostTable.core)
     val hostName = add(HostTable.name)
     val hostLogo = add(HostTable.logo)
@@ -40,6 +41,7 @@ fun ResultRow.toChapterSourceDto() = ChapterSourceDto(
     sourceType = this[ChapterSourceDtoAspect.sourceType],
     textDistance = this[ChapterSourceDtoAspect.textDistance],
     relevance = this[ChapterSourceDtoAspect.relevance],
+    summary = this[ChapterSourceDtoAspect.summary],
     hostCore = this[ChapterSourceDtoAspect.hostCore],
     hostName = this[ChapterSourceDtoAspect.hostName],
     hostLogo = this[ChapterSourceDtoAspect.hostLogo],

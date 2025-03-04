@@ -8,6 +8,7 @@ import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import newsref.app.*
 import newsref.app.blip.controls.*
+import newsref.app.blip.theme.Blip
 
 @Composable
 fun ChapterScreen(
@@ -28,8 +29,9 @@ fun ChapterScreen(
         modifier = Modifier.fillMaxWidth()
             .heightIn(min = 400.dp)
     ) {
+        val color = Blip.colors.getSwatchFromIndex(route.id)
         BalloonHeader(
-            balloonId = route.id,
+            color = color,
             title = pack?.chapter?.title ?: route.chapterTitle ?: "Chapter: ${route.id}",
             imageUrl = pack?.imageUrl,
             score = pack?.chapter?.score ?: 0,
