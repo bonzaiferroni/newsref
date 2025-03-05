@@ -12,12 +12,15 @@ import androidx.compose.ui.input.key.type
 
 inline fun <V> Modifier.modifyIfNotNull(
     value: V?,
-    noinline elseBlock: (Modifier.() -> Modifier)? = null,
     block: Modifier.(V) -> Modifier
 ): Modifier {
     if (value != null) return this.block(value)
-    else if(elseBlock != null) return this.elseBlock()
     return this
+}
+
+inline fun Modifier.modifyIfTrue(value: Boolean, block: Modifier.() -> Modifier) = when {
+    value -> this.block()
+    else -> this
 }
 
 fun Modifier.changeFocusWithTab(focusManager: FocusManager) = this.onPreviewKeyEvent {

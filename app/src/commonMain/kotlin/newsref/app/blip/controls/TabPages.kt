@@ -8,6 +8,7 @@ import androidx.compose.ui.*
 import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.unit.dp
 import newsref.app.blip.theme.Blip
+import newsref.app.utils.modifyIfTrue
 
 @Composable
 fun TabPages(
@@ -38,7 +39,7 @@ fun TabPages(
                 }
                 Box(
                     modifier = Modifier
-                        .clickable { onChangePage(page.name) }
+                        .modifyIfTrue(currentPage.name != page.name) { Modifier.clickable { onChangePage(page.name) } }
                         .shadow(elevation)
                         .background(background)
                         .padding(Blip.ruler.basePadding)

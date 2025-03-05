@@ -28,7 +28,7 @@ fun ChapterScreen(
         pages = pages(
             TabPage("Articles", false) {
                 LazyColumn(
-                    verticalArrangement = Blip.ruler.columnTight
+                    verticalArrangement = Blip.ruler.columnSpaced
                 ) {
                     items(state.articles) {
                         SourceHeadline(it)
