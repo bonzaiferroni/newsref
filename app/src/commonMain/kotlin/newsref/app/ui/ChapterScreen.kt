@@ -20,32 +20,37 @@ fun ChapterScreen(
     val state by viewModel.state.collectAsState()
     val pack = state.pack
     if (pack == null) return
-    BalloonChart(0, state.balloons, 400.dp, { })
-    H1(pack.chapter.title ?: "Chapter: ${pack.chapter.id}")
-    TabCard(
-        currentPageName = state.tab,
-        onChangePage = viewModel::changeTab,
-        pages = pages(
-            TabPage("Articles", false) {
-                LazyColumn(
-                    verticalArrangement = Blip.ruler.columnSpaced
-                ) {
-                    items(state.articles) {
-                        SourceHeadline(it)
+    Column(
+        verticalArrangement = Blip.ruler.columnTight
+    ) {
+        BalloonChart(0, state.balloons, 400.dp, { })
+        H1(pack.chapter.title ?: "Chapter: ${pack.chapter.id}")
+        Text("${pack.chapter.size} sources, ${pack.chapter.averageAt.agoLongFormat()} ago")
+        TabCard(
+            currentPageName = state.tab,
+            onChangePage = viewModel::changeTab,
+            pages = pages(
+                TabPage("Articles", false) {
+                    LazyColumn(
+                        verticalArrangement = Blip.ruler.columnSpaced
+                    ) {
+                        items(state.articles) {
+                            SourceHeadline(it)
+                        }
+                    }
+                },
+                TabPage("Other Sources", false) {
+                    LazyColumn(
+                        verticalArrangement = Blip.ruler.columnTight
+                    ) {
+                        items(state.references) {
+                            SourceHeadline(it)
+                        }
                     }
                 }
-            },
-            TabPage("Other Sources", false) {
-                LazyColumn(
-                    verticalArrangement = Blip.ruler.columnTight
-                ) {
-                    items(state.references) {
-                        SourceHeadline(it)
-                    }
-                }
-            }
+            )
         )
-    )
+    }
 }
 
 @Composable
