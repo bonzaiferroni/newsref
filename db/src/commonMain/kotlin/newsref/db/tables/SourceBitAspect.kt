@@ -2,6 +2,8 @@ package newsref.db.tables
 
 import newsref.db.core.Aspect
 import newsref.db.utils.toInstantUtc
+import newsref.model.core.PageType
+import newsref.model.core.SourceType
 import newsref.model.dto.SourceBitDto
 import org.jetbrains.exposed.sql.ResultRow
 
@@ -14,6 +16,7 @@ object SourceBitAspect : Aspect<SourceBitAspect, SourceBitDto>(
     val imageUrl = add(PageTable.imageUrl)
     val thumbnail = add(PageTable.thumbnail)
     val hostLogo = add(HostTable.logo)
+    val type = add(PageTable.type)
     val title = add(PageTable.title)
     val score = add(PageTable.score)
     val publishedAt = add(PageTable.publishedAt)
@@ -26,5 +29,6 @@ internal fun ResultRow.toSourceBitDto() = SourceBitDto(
     imageUrl = this[SourceBitAspect.thumbnail] ?: this[SourceBitAspect.imageUrl] ?: this[SourceBitAspect.hostLogo],
     title = this[SourceBitAspect.title],
     score = this[SourceBitAspect.score] ?: 0,
-    existedAt = (this[SourceBitAspect.publishedAt] ?: this[SourceBitAspect.seenAt]).toInstantUtc()
+    pageType = this[SourceBitAspect.type] ?: PageType.UNKNOWN,
+    existedAt = (this[SourceBitAspect.publishedAt] ?: this[SourceBitAspect.seenAt]).toInstantUtc(),
 )

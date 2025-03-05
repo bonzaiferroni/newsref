@@ -7,7 +7,7 @@ import newsref.db.services.*
 import newsref.db.utils.*
 import newsref.db.utils.distance
 import newsref.db.model.*
-import newsref.model.core.NewsSourceType
+import newsref.model.core.SourceType
 import newsref.model.core.Relevance
 import kotlin.collections.maxBy
 import kotlin.collections.set
@@ -114,7 +114,7 @@ class ChapterBucket(
         ChapterSource(
             chapterId = chapterId ?: 0,
             sourceId = it,
-            type = NewsSourceType.Primary,
+            type = SourceType.Reference,
             distance = null,
             textDistance = null,
             linkDistance = null,
@@ -126,7 +126,7 @@ class ChapterBucket(
         ChapterSource(
             chapterId = chapterId ?: 0,
             sourceId = it.source.id,
-            type = NewsSourceType.Secondary,
+            type = SourceType.Article,
             distance = distances.getValue(it.source.id),
             textDistance = contentDistance(it),
             linkDistance = outboundDistance(it.linkIds),

@@ -7,6 +7,7 @@ import kotlinx.datetime.Clock
 import newsref.app.*
 import newsref.app.blip.controls.BalloonsData
 import newsref.app.blip.controls.BalloonPoint
+import newsref.app.blip.controls.generateAxisTicks
 import newsref.app.blip.core.*
 import newsref.app.io.*
 import newsref.app.model.*

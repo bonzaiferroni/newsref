@@ -2,7 +2,7 @@ package newsref.app.model
 
 import kotlinx.datetime.Instant
 import kotlinx.serialization.Serializable
-import newsref.model.core.NewsSourceType
+import newsref.model.core.SourceType
 import newsref.model.core.Relevance
 
 @Serializable
@@ -15,7 +15,7 @@ data class ChapterSource(
     val thumbnail: String?,
     val imageUrl: String?,
     val cachedWordCount: Int,
-    val sourceType: NewsSourceType,
+    val sourceType: SourceType,
     val textDistance: Float?,
     val relevance: Relevance?,
     val summary: String?,

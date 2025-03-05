@@ -14,7 +14,7 @@ internal object PageTable : LongIdTable("source") {
     val noteId = reference("note_id", NoteTable, ReferenceOption.SET_NULL).nullable().index()
     val url = text("url").uniqueIndex()
     val title = text("title").nullable()
-    val type = enumeration("source_type", PageType::class).nullable()
+    val type = enumeration<PageType>("source_type").nullable()
     val score = integer("score").nullable()
     val feedPosition = integer("feed_position").nullable()
     val imageUrl = text("image_url").nullable()

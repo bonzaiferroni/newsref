@@ -47,7 +47,15 @@ import androidx.compose.ui.unit.toSize
 import coil3.compose.AsyncImage
 import kotlinx.collections.immutable.ImmutableList
 import kotlinx.collections.immutable.persistentListOf
+import kotlinx.collections.immutable.toImmutableList
+import kotlinx.datetime.Clock
+import kotlinx.datetime.Instant
+import kotlinx.datetime.TimeZone
+import kotlinx.datetime.atStartOfDayIn
+import kotlinx.datetime.toLocalDateTime
 import newsref.app.blip.theme.Blip
+import kotlin.time.Duration.Companion.days
+import kotlin.time.Duration.Companion.hours
 
 @Composable
 fun BalloonChart(
@@ -194,6 +202,37 @@ private fun generateBalloonSpace(config: BalloonsData): BalloonSpace {
         sizeMax = sizeMax,
         sizeScale = sizeScale,
     )
+}
+
+fun generateAxisTicks(earliest: Instant, latest: Instant = Clock.System.now()): ImmutableList<AxisTick> {
+    val now = Clock.System.now()
+    val span = latest - earliest
+    val interval = when {
+        span > 21.days -> 7.days
+        span > 10.days -> 3.days
+        span > 2.days -> 1.days
+        else -> 6.hours
+    }
+    val tz = TimeZone.currentSystemDefault()
+    val timeStart = (earliest + 1.days).toLocalDateTime(tz).date
+        .atStartOfDayIn(tz)
+    val intervalCount = (span / interval).toInt()
+    val currentYear = now.toLocalDateTime(tz).year
+    return (0 until intervalCount).map { i ->
+        val time = timeStart + interval * i
+        val localTime = time.toLocalDateTime(tz)
+        val year = localTime.year.toString()
+        val date = "${localTime.monthNumber}/${localTime.dayOfMonth}"
+        val day = localTime.dayOfWeek.toString().take(3)
+        val label = when {
+            localTime.year != currentYear -> "$day,\n$date, $year"
+            time < now - 7.days -> "$day,\n$date"
+            localTime.hour == 0 && localTime.minute == 0 -> day
+            else -> "${localTime.hour}:${localTime.minute.toString().padStart(2, '0')}"
+        }
+        val x = (now - time).inWholeHours / 24f
+        AxisTick(-x, label)
+    }.toImmutableList()
 }
 
 data class BalloonsData(

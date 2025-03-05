@@ -14,7 +14,7 @@ data class ChapterSourceDto(
     val thumbnail: String?,
     val imageUrl: String?,
     val cachedWordCount: Int,
-    val sourceType: NewsSourceType,
+    val sourceType: SourceType,
     val textDistance: Float?,
     val relevance: Relevance?,
     val summary: String?,

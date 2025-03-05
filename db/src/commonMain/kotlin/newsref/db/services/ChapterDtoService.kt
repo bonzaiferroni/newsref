@@ -26,7 +26,7 @@ class ChapterDtoService : DbService() {
             .select(SourceBitAspect.columns)
             .where {
                 ChapterSourceTable.chapterId.eq(chapter.id) and
-                        ChapterSourceTable.type.eq(NewsSourceType.Secondary)
+                        ChapterSourceTable.type.eq(SourceType.Article)
             }
             .orderBy(PageTable.score, SortOrder.DESC_NULLS_LAST)
             .limit(30)

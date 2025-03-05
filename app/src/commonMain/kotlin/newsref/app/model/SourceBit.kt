@@ -2,6 +2,7 @@ package newsref.app.model
 
 import kotlinx.datetime.Instant
 import kotlinx.serialization.Serializable
+import newsref.model.core.*
 import newsref.model.dto.SourceBitDto
 
 fun SourceBitDto.toSourceBit() = SourceBit(
@@ -10,7 +11,8 @@ fun SourceBitDto.toSourceBit() = SourceBit(
     imageUrl = this.imageUrl,
     title = this.title,
     score = this.score,
-    existedAt = this.existedAt
+    pageType = this.pageType,
+    existedAt = this.existedAt,
 )
 
 @Serializable
@@ -20,5 +22,6 @@ data class SourceBit(
     val imageUrl: String?,
     val title: String?,
     val score: Int,
+    val pageType: PageType,
     val existedAt: Instant,
 )

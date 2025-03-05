@@ -49,8 +49,7 @@ fun ChapterFeedScreen(
                     bottomEnd = 0f
                 ),
                 onClick = {
-                    val firstSource = pack.sources.firstOrNull() ?: return@Card
-                    nav.go(ChapterSourceRoute(pack.chapter.id, firstSource.id, firstSource.title))
+                    nav.go(ChapterRoute(pack.chapter.id, pack.chapter.title))
                 },
                 modifier = Modifier.fillMaxWidth()
                     .height(height.dp)

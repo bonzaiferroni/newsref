@@ -48,7 +48,7 @@ class ChapterComposerService : DbService() {
             .select(PageTable.columns + ChapterSourceTable.columns)
             .where {
                 ChapterSourceTable.chapterId.eq(chapterId) and
-                        ChapterSourceTable.type.eq(NewsSourceType.Secondary)
+                        ChapterSourceTable.type.eq(SourceType.Article)
             }
             .map { it.toChapterSignal() }
     }

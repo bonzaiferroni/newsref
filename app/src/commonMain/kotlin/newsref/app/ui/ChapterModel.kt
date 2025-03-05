@@ -2,6 +2,7 @@ package newsref.app.ui
 
 import androidx.lifecycle.viewModelScope
 import kotlinx.collections.immutable.ImmutableList
+import kotlinx.collections.immutable.persistentListOf
 import kotlinx.collections.immutable.toImmutableList
 import kotlinx.coroutines.launch
 import kotlinx.datetime.Clock
@@ -13,10 +14,13 @@ import newsref.app.ChapterRoute
 import newsref.app.blip.controls.AxisTick
 import newsref.app.blip.controls.BalloonsData
 import newsref.app.blip.controls.BalloonPoint
+import newsref.app.blip.controls.generateAxisTicks
 import newsref.app.blip.core.StateModel
 import newsref.app.io.ChapterStore
 import newsref.app.model.ChapterPack
+import newsref.app.model.SourceBit
 import newsref.app.model.toModel
+import newsref.model.core.PageType
 import newsref.model.utils.toDaysFromNow
 import kotlin.time.Duration.Companion.days
 import kotlin.time.Duration.Companion.hours
@@ -28,47 +32,30 @@ class ChapterModel(
     init {
         viewModelScope.launch {
             val pack = chapterStore.readChapter(route.id).toModel()
+            val articles = pack.sources.filter { it.pageType == PageType.NEWS_ARTICLE }.toImmutableList()
+            val references = pack.sources.filter { it.pageType != PageType.NEWS_ARTICLE }.toImmutableList()
             val data = pack.toBalloonsData()
-            setState { it.copy(pack = pack, balloons = data) }
+            setState { it.copy(
+                pack = pack,
+                balloons = data,
+                articles = articles,
+                references = references,
+            ) }
         }
+    }
+
+    fun changeTab(tab: String) {
+        setState { it.copy(tab = tab) }
     }
 }
 
 data class ChapterState(
     val balloons: BalloonsData = BalloonsData(),
     val pack: ChapterPack? = null,
+    val articles: ImmutableList<SourceBit> = persistentListOf(),
+    val references: ImmutableList<SourceBit> = persistentListOf(),
+    val tab: String? = null,
 )
-
-fun generateAxisTicks(earliest: Instant, latest: Instant = Clock.System.now()): ImmutableList<AxisTick> {
-    val now = Clock.System.now()
-    val span = latest - earliest
-    val interval = when {
-        span > 21.days -> 7.days
-        span > 10.days -> 3.days
-        span > 2.days -> 1.days
-        else -> 6.hours
-    }
-    val tz = TimeZone.currentSystemDefault()
-    val timeStart = (earliest + 1.days).toLocalDateTime(tz).date
-        .atStartOfDayIn(tz)
-    val intervalCount = (span / interval).toInt()
-    val currentYear = now.toLocalDateTime(tz).year
-    return (0 until intervalCount).map { i ->
-        val time = timeStart + interval * i
-        val localTime = time.toLocalDateTime(tz)
-        val year = localTime.year.toString()
-        val date = "${localTime.monthNumber}/${localTime.dayOfMonth}"
-        val day = localTime.dayOfWeek.toString().take(3)
-        val label = when {
-            localTime.year != currentYear -> "$day,\n$date, $year"
-            time < now - 7.days -> "$day,\n$date"
-            localTime.hour == 0 && localTime.minute == 0 -> day
-            else -> "${localTime.hour}:${localTime.minute.toString().padStart(2, '0')}"
-        }
-        val x = (now - time).inWholeHours / 24f
-        AxisTick(-x, label)
-    }.toImmutableList()
-}
 
 fun ChapterPack.toBalloonsData(): BalloonsData {
     val balloonPoints = this.sources.map {
