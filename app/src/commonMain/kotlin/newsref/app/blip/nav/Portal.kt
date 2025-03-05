@@ -24,6 +24,7 @@ import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import compose.icons.TablerIcons
+import compose.icons.tablericons.ArrowBack
 import compose.icons.tablericons.X
 import newsref.app.blip.controls.*
 import newsref.app.blip.core.BlipConfig
@@ -37,6 +38,7 @@ fun Portal(
     content: @Composable () -> Unit
 ) {
     val nav = LocalNav.current
+    val navState by nav.state.collectAsState()
 
     val infiniteTransition = rememberInfiniteTransition()
     val width = 2000f
@@ -78,6 +80,12 @@ fun Portal(
                 .fillMaxWidth()
                 .padding(Blip.ruler.innerPadding)
         ) {
+            IconToggle(
+                value = currentRoute == config.home,
+                imageVector = TablerIcons.ArrowBack,
+                enabled = navState.canGoBack,
+            ) { nav.goBack() }
+
             PortalTitle(currentRoute, config)
 
             for (item in config.portalItems) {
@@ -118,11 +126,6 @@ fun RowScope.PortalTitle(
 ) {
     val nav = LocalNav.current
     val navState by nav.state.collectAsState()
-    IconToggle(
-        value = currentRoute == config.home,
-        imageVector = config.logo,
-        modifier = Modifier.isHovered { nav.setHover(config.home, it) }
-    ) { nav.go(config.home) }
     Text(
         text = "${config.name}:",
         style = Blip.typ.title,

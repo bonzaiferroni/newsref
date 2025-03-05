@@ -28,8 +28,8 @@ fun Navigator(
 ) {
     val state by nav.state.collectAsState()
 
-    LaunchedEffect(state.destination) {
-        state.destination?.let { changeRoute(it) }
+    LaunchedEffect(state.route) {
+        changeRoute(state.route)
     }
 
     CompositionLocalProvider(LocalNav provides nav) {
