@@ -25,4 +25,6 @@ data class ChapterSource(
     val seenAt: Instant,
     val accessedAt: Instant?,
     val publishedAt: Instant?,
-)
+) {
+    val existedAt get() = publishedAt ?: seenAt
+}

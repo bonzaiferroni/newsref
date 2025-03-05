@@ -76,6 +76,8 @@ fun SourceHeader(height: Float, source: ChapterSource, chapter: ChapterPack) {
                 height = height,
                 isSelected = false,
                 onSelect = { },
+                storyCount = null,
+                time = source.existedAt,
                 sources = chapter.sources
             )
             Row(

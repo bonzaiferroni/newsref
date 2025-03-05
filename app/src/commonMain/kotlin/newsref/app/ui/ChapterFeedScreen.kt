@@ -4,6 +4,7 @@ import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import newsref.app.*
@@ -20,6 +21,8 @@ fun ChapterFeedScreen(
     val ruler = Blip.ruler
     val nav = LocalNav.current
 
+    val density = LocalDensity.current
+
     Column(
         verticalArrangement = ruler.columnSpaced
     ) {
@@ -30,19 +33,20 @@ fun ChapterFeedScreen(
             onClickBalloon = viewModel::selectId
         )
 
-        val height = 130f
+        val height = 108f
         CardFeed(
             selectedId = state.selectedId,
             items = state.chapterPacks,
             onSelect = viewModel::selectId,
             getId = { it.chapter.id }
         ) { pack, isSelected ->
+            val corner = (height / 2) * density.density
             Card(
                 shape = RoundedCornerShape(
-                    topStart = height / 2,
-                    topEnd = height / 2,
-                    bottomStart = height / 2,
-                    bottomEnd = height / 2
+                    topStart = corner,
+                    topEnd = 0f,
+                    bottomStart = corner,
+                    bottomEnd = 0f
                 ),
                 onClick = {
                     val firstSource = pack.sources.firstOrNull() ?: return@Card
@@ -60,10 +64,11 @@ fun ChapterFeedScreen(
                     height = height,
                     isSelected = isSelected,
                     onSelect = { viewModel.selectId(pack.chapter.id) },
+                    storyCount = pack.chapter.size,
+                    time = pack.chapter.averageAt,
                     sources = pack.sources
                 )
             }
-
         }
     }
 }

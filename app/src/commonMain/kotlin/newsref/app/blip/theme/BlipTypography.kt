@@ -21,6 +21,7 @@ interface BlipTypography {
     val title: TextStyle
     val h1: TextStyle
     val h2: TextStyle
+    val h3: TextStyle
     val body: TextStyle
 }
 
@@ -36,6 +37,11 @@ fun DefaultTypography() = object : BlipTypography {
     )
     override val h2 = base.copy(
         fontSize = 24.sp,
+        fontWeight = FontWeight.Light,
+        fontFamily = useFamily(Res.font.Inter_24pt_Light, FontWeight.Light),
+    )
+    override val h3 = base.copy(
+        fontSize = 20.sp,
         fontWeight = FontWeight.Light,
         fontFamily = useFamily(Res.font.Inter_24pt_Light, FontWeight.Light),
     )

@@ -11,10 +11,15 @@ import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.unit.dp
 import coil3.compose.AsyncImage
 import kotlinx.collections.immutable.ImmutableList
+import kotlinx.datetime.Clock
+import kotlinx.datetime.Instant
 import newsref.app.blip.controls.*
 import newsref.app.blip.theme.Blip
 import newsref.app.blip.theme.ProvideSkyColors
 import newsref.app.model.SourceBit
+import kotlin.time.Duration.Companion.days
+import kotlin.time.Duration.Companion.hours
+import kotlin.time.Duration.Companion.minutes
 
 @Composable
 fun BalloonHeader(
@@ -25,29 +30,30 @@ fun BalloonHeader(
     height: Float,
     isSelected: Boolean,
     onSelect: () -> Unit,
+    storyCount: Int?,
+    time: Instant,
     sources: ImmutableList<SourceBit>?
 ) {
     Row(
-        horizontalArrangement = Blip.ruler.rowSpaced,
+        horizontalArrangement = Blip.ruler.rowTight,
         modifier = Modifier.height(height.dp)
     ) {
         HeaderImage(color, imageUrl)
 
-        HeaderTitle(title, sources, color)
+        HeaderMiddle(title, sources, color, time, storyCount)
 
-        HeaderBalloon(score, isSelected, color, onSelect, height)
+        // HeaderBalloon(score, isSelected, color, onSelect, height)
     }
 }
 
 @Composable
 fun HeaderImage(color: Color, imageUrl: String?) {
-    val ruler = Blip.ruler
     Box(
         modifier = Modifier.fillMaxHeight()
             .aspectRatio(1f)
-            .shadow(ruler.shadowElevation, ruler.round)
+            .shadow(Blip.ruler.shadowElevation, Blip.ruler.round)
             .background(color)
-            .padding(ruler.innerPadding)
+            .padding(Blip.ruler.innerPadding)
     ) {
         imageUrl?.let {
             AsyncImage(
@@ -55,37 +61,48 @@ fun HeaderImage(color: Color, imageUrl: String?) {
                 contentDescription = null,
                 contentScale = ContentScale.Crop,
                 modifier = Modifier
-                    .clip(ruler.round)
+                    .clip(Blip.ruler.round)
             )
         }
     }
 }
 
 @Composable
-fun RowScope.HeaderTitle(
+fun RowScope.HeaderMiddle(
     title: String,
     sources: ImmutableList<SourceBit>?,
-    color: Color
+    color: Color,
+    time: Instant,
+    storyCount: Int?,
 ) {
     Column(
-        verticalArrangement = Arrangement.Center,
+        verticalArrangement = Arrangement.SpaceBetween,
         modifier = Modifier.weight(1f)
             .fillMaxHeight()
     ) {
         Box(
             contentAlignment = Alignment.BottomStart,
-            modifier = Modifier.heightIn(min = 36.dp)
+            modifier = Modifier.heightIn(min = 32.dp)
         ) {
             H2(
                 text = title,
                 maxLines = 2,
             )
         }
-        if (sources != null) {
-            val source = sources.first()
-            Text("Next: ${source.title}", maxLines = 1)
-            Spacer(modifier = Modifier.weight(1f))
-            SourceArray(sources, color)
+        Row(
+            horizontalArrangement = Blip.ruler.rowSpaced,
+            modifier = Modifier.height(IntrinsicSize.Max)
+        ) {
+            Column(
+                verticalArrangement = Arrangement.Bottom,
+                modifier = Modifier.fillMaxHeight()
+            ) {
+                storyCount?.let { Text("$it sources") }
+                Text("${time.agoLongFormat()} ago")
+            }
+            if (sources != null) {
+                SourceArray(sources, color)
+            }
         }
     }
 }
@@ -116,5 +133,18 @@ fun HeaderBalloon(
         ProvideSkyColors {
             H2(score.toString())
         }
+    }
+}
+
+fun Instant.agoLongFormat() = (Clock.System.now() - this).let {
+    when {
+        it > 365.days -> "${it.inWholeDays / 365} years"
+        it > 2.days -> "${it.inWholeDays} days"
+        it > 1.days -> "1 day"
+        it > 2.hours -> "${it.inWholeHours} hours"
+        it > 1.hours -> "1 hour"
+        it > 2.minutes -> "${it.inWholeMinutes} minutes"
+        it > 1.minutes -> "1 minute"
+        else -> "${it.inWholeSeconds} seconds"
     }
 }
