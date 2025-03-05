@@ -32,6 +32,13 @@ fun ChapterScreen(
                         SourceHeadline(it)
                     }
                 }
+            },
+            TabPage("Other Sources", false) {
+                LazyColumn() {
+                    items(state.references) {
+                        SourceHeadline(it)
+                    }
+                }
             }
         )
     )
