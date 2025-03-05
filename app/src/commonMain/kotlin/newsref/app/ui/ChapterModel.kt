@@ -58,7 +58,17 @@ data class ChapterState(
 )
 
 fun ChapterPack.toBalloonsData(): BalloonsData {
-    val balloonPoints = this.sources.map {
+    val dayRange = 3.0
+    val eventTime = this.chapter.averageAt - (dayRange / 2).days
+    val now = Clock.System.now()
+    val minStartTime = now - dayRange.days
+    val startTime = when {
+        eventTime > minStartTime -> minStartTime
+        else -> eventTime
+    }
+    val endTime = startTime + dayRange.days
+    val balloonPoints = this.sources.mapNotNull {
+        if (it.existedAt > endTime || it.existedAt < startTime) return@mapNotNull null
         val x = (Clock.System.now() - it.existedAt).inWholeHours / 24f
         BalloonPoint(
             id = it.id,
@@ -70,15 +80,6 @@ fun ChapterPack.toBalloonsData(): BalloonsData {
             it.imageUrl
         )
     }.toImmutableList()
-    val dayRange = 3.0
-    val eventTime = this.chapter.averageAt - (dayRange / 2).days
-    val now = Clock.System.now()
-    val minStartTime = now - dayRange.days
-    val startTime = when {
-        eventTime > minStartTime -> minStartTime
-        else -> eventTime
-    }
-    val endTime = startTime + dayRange.days
     val xTicks = generateAxisTicks(startTime)
     return BalloonsData(
         points = balloonPoints,
