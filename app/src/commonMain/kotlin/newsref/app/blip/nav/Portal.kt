@@ -21,6 +21,7 @@ import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.TileMode
 import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import compose.icons.TablerIcons
 import compose.icons.tablericons.X
@@ -145,6 +146,8 @@ fun RowScope.PortalTitle(
                     text = ": $hoverTitleDisplay",
                     style = Blip.typ.title,
                     color = Blip.colors.shine.copy(.8f),
+                    maxLines = 1,
+                    overflow = TextOverflow.Ellipsis,
                     modifier = Modifier.fillMaxWidth()
                 )
             } else {
@@ -152,6 +155,8 @@ fun RowScope.PortalTitle(
                     text = ": ${currentRoute.title}",
                     style = Blip.typ.title,
                     color = Blip.localColors.content.copy(.6f),
+                    maxLines = 1,
+                    overflow = TextOverflow.Ellipsis,
                     modifier = Modifier.fillMaxWidth()
                 )
             }

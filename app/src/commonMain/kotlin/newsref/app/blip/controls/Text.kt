@@ -22,6 +22,7 @@ fun Text(
     color: Color = Blip.localColors.content,
     style: TextStyle = Blip.typ.body,
     maxLines: Int = Int.MAX_VALUE,
+    overflow: TextOverflow = TextOverflow.Clip,
     modifier: Modifier = Modifier
 ) = BasicText(
     text = text,
@@ -29,6 +30,7 @@ fun Text(
     style = style,
     modifier = modifier,
     maxLines = maxLines,
+    overflow = overflow
 )
 
 @Composable
