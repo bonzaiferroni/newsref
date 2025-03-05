@@ -124,7 +124,7 @@ fun RowScope.PortalTitle(
         modifier = Modifier.isHovered { nav.setHover(config.home, it) }
     ) { nav.go(config.home) }
     Text(
-        text = config.name,
+        text = "${config.name}:",
         style = Blip.typ.title,
         modifier = Modifier.isHovered { nav.setHover(config.home, it) }
             .clickable(interactionSource = null, indication = null, onClick = { nav.go(config.home)} )
@@ -143,7 +143,7 @@ fun RowScope.PortalTitle(
         AnimatedContent(targetState = hoverVisible, label = "Visibility") { visible ->
             if (visible) {
                 Text(
-                    text = ": $hoverTitleDisplay",
+                    text = hoverTitleDisplay,
                     style = Blip.typ.title,
                     color = Blip.colors.shine.copy(.8f),
                     maxLines = 1,
@@ -152,7 +152,7 @@ fun RowScope.PortalTitle(
                 )
             } else {
                 Text(
-                    text = ": ${currentRoute.title}",
+                    text = currentRoute.title,
                     style = Blip.typ.title,
                     color = Blip.localColors.content.copy(.6f),
                     maxLines = 1,

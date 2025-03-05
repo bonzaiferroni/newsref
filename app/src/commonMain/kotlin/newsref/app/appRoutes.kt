@@ -20,14 +20,14 @@ object ChapterFeedRoute : AppRoute("Chapters")
 data class ChapterRoute(
     val id: Long,
     val chapterTitle: String?
-) : AppRoute("Chapter: $chapterTitle")
+) : AppRoute(chapterTitle ?: "Chapter: $id")
 
 @Serializable
 data class ChapterSourceRoute(
     val chapterId: Long,
     val pageId: Long,
     val sourceTitle: String?
-) : AppRoute("Chapter")
+) : AppRoute(sourceTitle ?: "Source: $pageId")
 
 @Serializable
 data class SourceRoute(val pageId: Long) : AppRoute("Source")
