@@ -59,7 +59,6 @@ fun TabPages(
                     modifier = Modifier.fillMaxSize()
                         .padding(Blip.ruler.innerPadding)
                 ) {
-                    Spacer(modifier = Modifier.height(Blip.ruler.halfSpacing))
                     currentPage.content()
                 }
             }

@@ -47,13 +47,17 @@ fun BalloonHeader(
 }
 
 @Composable
-fun HeaderImage(color: Color, imageUrl: String?) {
+fun HeaderImage(
+    color: Color,
+    imageUrl: String?,
+    padding: PaddingValues = Blip.ruler.innerPadding
+) {
     Box(
         modifier = Modifier.fillMaxHeight()
             .aspectRatio(1f)
             .shadow(Blip.ruler.shadowElevation, Blip.ruler.round)
             .background(color)
-            .padding(Blip.ruler.innerPadding)
+            .padding(padding)
     ) {
         imageUrl?.let {
             AsyncImage(

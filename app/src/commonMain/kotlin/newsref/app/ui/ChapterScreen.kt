@@ -27,14 +27,18 @@ fun ChapterScreen(
         onChangePage = viewModel::changeTab,
         pages = pages(
             TabPage("Articles", false) {
-                LazyColumn() {
+                LazyColumn(
+                    verticalArrangement = Blip.ruler.columnTight
+                ) {
                     items(state.articles) {
                         SourceHeadline(it)
                     }
                 }
             },
             TabPage("Other Sources", false) {
-                LazyColumn() {
+                LazyColumn(
+                    verticalArrangement = Blip.ruler.columnTight
+                ) {
                     items(state.references) {
                         SourceHeadline(it)
                     }
@@ -46,5 +50,14 @@ fun ChapterScreen(
 
 @Composable
 fun SourceHeadline(source: SourceBit) {
-    Text(source.title ?: "source: ${source.id}")
+    Row(
+        horizontalArrangement = Blip.ruler.rowTight,
+        modifier = Modifier.height(48.dp)
+    ) {
+        val color = Blip.colors.getSwatchFromIndex(source.id)
+        source.imageUrl?.let {
+            HeaderImage(color, it, PaddingValues(1.dp))
+        }
+        H3(source.title ?: "source: ${source.id}")
+    }
 }

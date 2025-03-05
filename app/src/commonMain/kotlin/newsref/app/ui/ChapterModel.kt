@@ -76,7 +76,7 @@ fun ChapterPack.toBalloonsData(): BalloonsData {
             y = it.score.toFloat(),
             size = it.score.toFloat(),
             text = it.title.toString(),
-            colorIndex = this.chapter.id.toInt(),
+            colorIndex = it.id.toInt(),
             it.imageUrl
         )
     }.toImmutableList()
