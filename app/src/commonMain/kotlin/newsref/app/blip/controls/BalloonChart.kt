@@ -136,6 +136,7 @@ fun BalloonChart(
                         contentDescription = null,
                         contentScale = ContentScale.Crop,
                         modifier = Modifier
+                            .fillMaxSize()
                             .clip(ruler.round)
                             .alpha(.5f)
                     )
@@ -186,7 +187,7 @@ private fun generateBalloonSpace(config: BalloonsData): BalloonSpace {
     val yMaxInitial = points.maxOf { it.y + it.size / 2 }
     val sizeMin = points.minOf { it.size }
     val sizeMax = points.maxOf { it.size }
-    val sizeScale = sizeMax * 4 / (yMaxInitial - yMinInitial)
+    val sizeScale = sizeMax * 8 / (yMaxInitial - yMinInitial)
     val yMin = points.minOf { it.y - (it.size / 2) / sizeScale}
     val yMax = points.maxOf { it.y + (it.size / 2) / sizeScale}
     val xMin = config.xMin ?: points.minOf { it.x }
@@ -269,4 +270,4 @@ internal data class BalloonSpace(
     val sizeScale: Float,
 )
 
-const val BALLOON_MIN_SIZE = 10f
+const val BALLOON_MIN_SIZE = 20f

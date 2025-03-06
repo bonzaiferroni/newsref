@@ -68,7 +68,7 @@ data class ChapterFeedState(
 )
 
 val timeSpans: ImmutableList<Pair<Duration, String>> = persistentListOf(
-    1.days to "Day",
+    2.days to "Day",
     7.days to "Week",
     30.days to "Month",
     365.days to "Year",
