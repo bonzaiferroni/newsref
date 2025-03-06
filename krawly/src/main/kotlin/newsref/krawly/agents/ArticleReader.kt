@@ -28,7 +28,7 @@ class ArticleReader(
         CoroutineScope(Dispatchers.IO).launch {
             while (true) {
                 readNextArticle()
-                delay(2.seconds)
+                delay(4.seconds)
             }
         }
     }
