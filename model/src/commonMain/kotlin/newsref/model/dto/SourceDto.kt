@@ -25,6 +25,7 @@ data class SourceBitDto(
     val id: Long,
     val url: String,
     val imageUrl: String?,
+    val hostCore: String,
     val title: String?,
     val score: Int,
     val pageType: PageType,

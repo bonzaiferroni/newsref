@@ -88,6 +88,21 @@ fun H3(
 )
 
 @Composable
+fun H4(
+    text: String,
+    color: Color = Blip.localColors.content,
+    maxLines: Int = Int.MAX_VALUE,
+    style: TextStyle? = null,
+    modifier: Modifier = Modifier
+) = BasicText(
+    text = text,
+    color = { color },
+    style = Blip.typ.h4.merge(style),
+    maxLines = maxLines,
+    modifier = modifier
+)
+
+@Composable
 fun OtherText(
     text: String,
     modifier: Modifier = Modifier,

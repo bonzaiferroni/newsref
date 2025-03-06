@@ -16,6 +16,7 @@ object SourceBitAspect : Aspect<SourceBitAspect, SourceBitDto>(
     val imageUrl = add(PageTable.imageUrl)
     val thumbnail = add(PageTable.thumbnail)
     val hostLogo = add(HostTable.logo)
+    val hostCore = add(HostTable.core)
     val type = add(PageTable.type)
     val title = add(PageTable.title)
     val score = add(PageTable.score)
@@ -27,6 +28,7 @@ internal fun ResultRow.toSourceBitDto() = SourceBitDto(
     id = this[SourceBitAspect.id].value,
     url = this[SourceBitAspect.url],
     imageUrl = this[SourceBitAspect.thumbnail] ?: this[SourceBitAspect.imageUrl] ?: this[SourceBitAspect.hostLogo],
+    hostCore = this[SourceBitAspect.hostCore],
     title = this[SourceBitAspect.title],
     score = this[SourceBitAspect.score] ?: 0,
     pageType = this[SourceBitAspect.type] ?: PageType.UNKNOWN,

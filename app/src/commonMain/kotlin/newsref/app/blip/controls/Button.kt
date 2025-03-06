@@ -17,7 +17,6 @@ fun Button(
 ) {
     Box(
         modifier = modifier
-            .clip(Blip.ruler.innerCorners)
             .clickable(onClick = onClick)
             .background(background)
             .padding(Blip.ruler.halfPadding)

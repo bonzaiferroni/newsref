@@ -38,7 +38,11 @@ fun BalloonHeader(
         horizontalArrangement = Blip.ruler.rowTight,
         modifier = Modifier.height(height.dp)
     ) {
-        HeaderImage(color, imageUrl)
+        HeaderImage(
+            color = color,
+            imageUrl = imageUrl,
+            modifier = Modifier.fillMaxHeight()
+        )
 
         HeaderMiddle(title, sources, color, time, storyCount)
 
@@ -50,11 +54,11 @@ fun BalloonHeader(
 fun HeaderImage(
     color: Color,
     imageUrl: String?,
-    padding: PaddingValues = Blip.ruler.innerPadding
+    padding: PaddingValues = Blip.ruler.innerPadding,
+    modifier: Modifier = Modifier,
 ) {
     Box(
-        modifier = Modifier.fillMaxHeight()
-            .aspectRatio(1f)
+        modifier = modifier.aspectRatio(1f)
             .shadow(Blip.ruler.shadowElevation, Blip.ruler.round)
             .background(color)
             .padding(padding)

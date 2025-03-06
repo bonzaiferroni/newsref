@@ -5,6 +5,7 @@ import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalUriHandler
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import kotlinx.datetime.Clock
@@ -18,7 +19,7 @@ import newsref.app.model.SourceBit
 @Composable
 fun ChapterScreen(
     route: ChapterRoute,
-    viewModel: ChapterModel = viewModel { ChapterModel(route)}
+    viewModel: ChapterModel = viewModel { ChapterModel(route) }
 ) {
     val state by viewModel.state.collectAsState()
     val pack = state.pack
@@ -36,7 +37,6 @@ fun ChapterScreen(
             pages = pages(
                 TabPage("Articles", false) {
                     LazyColumn(
-                        verticalArrangement = Blip.ruler.columnSpaced
                     ) {
                         items(state.articles) {
                             SourceHeadline(chapter.id, it)
@@ -45,7 +45,6 @@ fun ChapterScreen(
                 },
                 TabPage("Other Sources", false) {
                     LazyColumn(
-                        verticalArrangement = Blip.ruler.columnTight
                     ) {
                         items(state.references) {
                             SourceHeadline(chapter.id, it)
@@ -62,13 +61,25 @@ fun SourceHeadline(chapterId: Long, source: SourceBit) {
     val nav = LocalNav.current
     Row(
         horizontalArrangement = Blip.ruler.rowTight,
-        modifier = Modifier.height(48.dp)
+        modifier = Modifier
             .clickable { nav.go(ChapterSourceRoute(chapterId, source.id, source.title)) }
+            .padding(vertical = Blip.ruler.innerSpacing)
     ) {
         val color = Blip.colors.getSwatchFromIndex(source.id)
-        source.imageUrl?.let {
-            HeaderImage(color, it, PaddingValues(1.dp))
+        HeaderImage(
+            color = color,
+            imageUrl = source.imageUrl,
+            padding = PaddingValues(1.dp),
+            modifier = Modifier.height(48.dp)
+        )
+        Column(modifier = Modifier.weight(1f)) {
+            H4(source.title ?: "source: ${source.id}", maxLines = 2)
+            Text("${source.hostCore}, visibility: ${source.score}")
         }
-        H3(source.title ?: "source: ${source.id}")
+        val uriHandler = LocalUriHandler.current
+        Button(
+            onClick = { uriHandler.openUri(source.url) },
+            background = Blip.colors.accent
+        ) { Text("Read") }
     }
 }
