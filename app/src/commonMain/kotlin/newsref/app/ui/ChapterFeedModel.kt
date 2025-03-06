@@ -12,6 +12,7 @@ import newsref.app.blip.core.*
 import newsref.app.io.*
 import newsref.app.model.*
 import newsref.model.utils.toDaysFromNow
+import kotlin.time.Duration
 import kotlin.time.Duration.Companion.days
 
 class ChapterFeedModel(
@@ -19,9 +20,19 @@ class ChapterFeedModel(
     val chapterStore: ChapterStore = ChapterStore()
 ) : StateModel<ChapterFeedState>(ChapterFeedState()) {
     init {
+        changeSpan(7.days)
+    }
+
+    fun selectId(id: Long) {
+        if (id == stateNow.selectedId) return
+        setState { it.copy(selectedId = id) }
+    }
+
+    fun changeSpan(span: Duration) {
+        if (span == stateNow.timeSpan) return
+        setState { it.copy(timeSpan = span) }
         viewModelScope.launch {
-            val duration = 7.days
-            val start = Clock.System.now() - duration
+            val start = Clock.System.now() - stateNow.timeSpan
             val chapters = chapterStore.readChapters(start)
                 .map { it.toModel() }
                 .toImmutableList()
@@ -47,16 +58,19 @@ class ChapterFeedModel(
             setState { it.copy(chapterPacks = chapters, chartConfig = chartConfig) }
         }
     }
-
-    fun selectId(id: Long) {
-        if (id == stateNow.selectedId) return
-        setState { it.copy(selectedId = id) }
-    }
 }
 
 data class ChapterFeedState(
     val selectedId: Long? = null,
     val chapterPacks: ImmutableList<ChapterPack> = persistentListOf(),
     val chartConfig: BalloonsData = BalloonsData(),
+    val timeSpan: Duration = Duration.ZERO
 )
 
+val timeSpans: ImmutableList<Pair<Duration, String>> = persistentListOf(
+    1.days to "Day",
+    7.days to "Week",
+    30.days to "Month",
+    365.days to "Year",
+    Duration.INFINITE to "All"
+)
