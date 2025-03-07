@@ -16,9 +16,9 @@ import newsref.app.blip.theme.ProvideSkyColors
 @Composable
 fun <T> DropMenu(
     selected: T,
-    onSelect: (T) -> Unit,
     items: ImmutableList<Pair<T, String>>,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
+    onSelect: (T) -> Unit,
 ) {
     var expanded by remember { mutableStateOf(false) }
     ProvideSkyColors {

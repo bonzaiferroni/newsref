@@ -3,6 +3,7 @@ package newsref.app
 import kotlinx.serialization.Serializable
 import newsref.app.blip.nav.NavRoute
 import newsref.app.model.SourceBit
+import newsref.app.ui.FeedSpan
 
 @Serializable
 sealed class AppRoute(override val title: String) : NavRoute
@@ -14,7 +15,7 @@ object StartRoute : AppRoute("Start")
 object HelloRoute : AppRoute("Hello")
 
 @Serializable
-object ChapterFeedRoute : AppRoute("Chapters")
+data class ChapterFeedRoute(val feedSpan: Int = FeedSpan.Week.ordinal) : AppRoute("Chapters")
 
 @Serializable
 data class ChapterRoute(

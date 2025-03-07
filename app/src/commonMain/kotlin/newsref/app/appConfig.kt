@@ -23,6 +23,6 @@ val appConfig = BlipConfig(
     },
     portalItems = persistentListOf(
         PortalRoute(TablerIcons.YinYang, "Hello", HelloRoute),
-        PortalRoute(TablerIcons.CalendarEvent, "Chapter Feed", ChapterFeedRoute)
+        PortalRoute(TablerIcons.CalendarEvent, "Chapter Feed", ChapterFeedRoute())
     )
 )

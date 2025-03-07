@@ -26,7 +26,10 @@ fun ChapterFeedScreen(
     Column(
         verticalArrangement = ruler.columnSpaced
     ) {
-        DropMenu(selected = state.feedSpan, onSelect = viewModel::changeSpan, items = feedSpans)
+        DropMenu(selected = state.feedSpan, items = feedSpans) {
+            viewModel.changeSpan(it)
+            nav.setRoute(ChapterFeedRoute(it.ordinal))
+        }
         BalloonChart(
             selectedId = state.selectedId ?: 0,
             balloons = state.chartConfig,

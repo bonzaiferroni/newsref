@@ -20,7 +20,7 @@ class ChapterFeedModel(
     val chapterStore: ChapterStore = ChapterStore()
 ) : StateModel<ChapterFeedState>(ChapterFeedState()) {
     init {
-        changeSpan(FeedSpan.Week)
+        changeSpan(FeedSpan.fromOrdinal(route.feedSpan))
     }
 
     fun selectId(id: Long) {
@@ -76,5 +76,9 @@ enum class FeedSpan(val duration: Duration, val label: String) {
     Week(7.days, "Week"),
     Month(30.days, "Month"),
     Year(365.days, "Year"),
-    All(Duration.INFINITE, "All")
+    All(Duration.INFINITE, "All");
+
+    companion object {
+        fun fromOrdinal(ordinal: Int) = entries.getOrNull(ordinal) ?: Week
+    }
 }
