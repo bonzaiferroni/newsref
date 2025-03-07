@@ -12,7 +12,7 @@ class ChapterDtoService : DbService() {
 
     suspend fun readTopChapters(start: Instant, limit: Int = 20) = dbQuery {
         ChapterDtoAspect.read(ChapterDtoAspect.score, SortOrder.DESC_NULLS_LAST, limit) {
-            it.happenedAt.isAfter(start)
+            it.happenedAt.greater(start)
         }
             .map { toChapterPackDto(it) }
     }

@@ -13,18 +13,22 @@ object Api {
     // content
     val sourceEndpoint = Endpoint("/source")
     val feedEndpoint = Endpoint("/feed")
-    object ChapterSourceEndpoint : Endpoint("/chapter_source") {
+    object ChapterSources : Endpoint("/chapter_source") {
         val pageId = addLongParam("pageId")
         val chapterId = addLongParam("chapterId")
     }
 
-    val hostEndpoint = Endpoint("/host")
+    object Hosts : Endpoint("/host") {
+        object Sources : Endpoint("/sources", this) {
+            val start = addInstantParam("start")
+        }
+    }
 
     // user
     val userEndpoint = Endpoint("/user")
     val privateEndpoint = Endpoint("/user/private")
 
-    object ChapterEndpoint : Endpoint("/chapter") {
+    object Chapters : Endpoint("/chapter") {
         val start = addInstantParam("start")
     }
 }

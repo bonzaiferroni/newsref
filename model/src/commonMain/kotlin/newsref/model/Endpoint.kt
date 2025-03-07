@@ -3,9 +3,15 @@ package newsref.model
 import kotlinx.datetime.Instant
 
 open class Endpoint(
-    val base: String
+    val base: String,
+    val parent: Endpoint? = null,
 ) {
-    val path = "$apiPrefix$base"
+    val baseWithParent: String = when {
+        parent != null -> "${parent.baseWithParent}$base"
+        else -> base
+    }
+
+    val path = "$apiPrefix$baseWithParent"
     val clientIdTemplate: String get() = "$path/:id"
     val serverIdTemplate: String get() = "$path/{id}"
     fun replaceClientId(id: Any) = this.clientIdTemplate.replace(":id", id.toString())

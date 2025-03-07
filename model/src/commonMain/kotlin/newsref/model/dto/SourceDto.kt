@@ -23,11 +23,13 @@ data class SourceDto(
 @Serializable
 data class SourceBitDto(
     val id: Long,
+    val hostId: Int,
     val url: String,
     val imageUrl: String?,
     val hostCore: String,
     val title: String?,
     val score: Int,
+    val feedPosition: Int?,
     val pageType: PageType,
     val existedAt: Instant,
 )

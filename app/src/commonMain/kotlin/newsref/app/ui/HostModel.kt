@@ -20,11 +20,18 @@ class HostModel(
     init {
         viewModelScope.launch {
             val host = store.readHost(route.hostId)
-            setState{ it.copy(host = host) }
+            val sources = store.readFeedSources(route.hostId, Clock.System.now() - 1.days).toImmutableList()
+            setState{ it.copy(host = host, sources = sources) }
         }
+    }
+
+    fun changeTab(tab: String) {
+        setState { it.copy(tab = tab) }
     }
 }
 
 data class HostState(
-    val host: Host? = null
+    val host: Host? = null,
+    val tab: String? = null,
+    val sources: ImmutableList<SourceBit> = persistentListOf()
 )

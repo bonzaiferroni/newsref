@@ -5,13 +5,11 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.RectangleShape
 import androidx.compose.ui.graphics.Shape
 import kotlinx.collections.immutable.ImmutableList
-import newsref.app.blip.theme.Blip
 import newsref.app.blip.theme.ProvideBookColors
-import newsref.app.ui.Card
 
 @Composable
 fun TabCard(
-    currentPageName: String?,
+    currentTab: String?,
     onChangePage: (String) -> Unit,
     pages: ImmutableList<TabPage>,
     shape: Shape = RectangleShape,
@@ -19,7 +17,7 @@ fun TabCard(
 ) {
     ProvideBookColors {
         TabPages(
-            currentPageName,
+            currentTab,
             onChangePage,
             pages,
         )

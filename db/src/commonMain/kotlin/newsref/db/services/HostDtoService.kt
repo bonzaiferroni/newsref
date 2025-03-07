@@ -16,4 +16,10 @@ class HostDtoService : DbService() {
     suspend fun readHost(hostId: Int) = dbQuery {
         HostDtoAspect.readFirst { it.hostId.eq(hostId) }
     }
+
+    suspend fun readSources(hostId: Int, start: Instant, limit: Int = 20) = dbQuery {
+        SourceBitAspect.read(SourceBitAspect.feedPosition, SortOrder.ASC_NULLS_LAST, limit) {
+            it.hostId.eq(hostId) and it.seenAt.greater(start)
+        }
+    }
 }

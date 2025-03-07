@@ -30,7 +30,7 @@ fun ChapterScreen(
         H1(chapter.title ?: "Chapter: ${chapter.id}")
         Text("${chapter.size} sources, ${chapter.averageAt.agoLongFormat()} ago")
         TabCard(
-            currentPageName = state.tab,
+            currentTab = state.tab,
             onChangePage = viewModel::changeTab,
             pages = pages(
                 TabPage("Articles", false) {

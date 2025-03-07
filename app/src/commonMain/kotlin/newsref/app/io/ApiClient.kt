@@ -12,16 +12,28 @@ class ApiClient(
     val baseUrl: String,
     val client: HttpClient = globalKtorClient
 ) {
-    suspend inline fun <reified Received> getById(id: Int, endpoint: Endpoint): Received =
-        getById(id.toLong(), endpoint)
+    suspend inline fun <reified Received> getById(
+        id: Int,
+        endpoint: Endpoint,
+        vararg params: Pair<String, String>
+    ): Received =
+        getById(id.toLong(), endpoint, *params)
 
-    suspend inline fun <reified Received> getById(id: Long, endpoint: Endpoint): Received =
-        client.get("$baseUrl${endpoint.clientIdTemplate.replace(":id", id.toString())}").body()
+    suspend inline fun <reified Received> getById(
+        id: Long,
+        endpoint: Endpoint,
+        vararg params: Pair<String, String>
+    ): Received = getRequest("$baseUrl${endpoint.clientIdTemplate.replace(":id", id.toString())}", *params)
 
     suspend inline fun <reified Received> get(
         url: String,
         vararg params: Pair<String, String>
-    ): Received = client.get("$baseUrl$url") {
+    ): Received = getRequest("$baseUrl$url", *params)
+
+    suspend inline fun <reified Received> getRequest(
+        url: String,
+        vararg params: Pair<String, String>
+    ): Received = client.get(url) {
         contentType(ContentType.Application.Json)
         if (params.isNotEmpty()) {
             url { params.forEach { parameters.append(it.first, it.second) } }
