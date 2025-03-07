@@ -31,4 +31,13 @@ open class Aspect<Self: Aspect<Self, Data>, Data>(
         .orderBy(sortBy, orderBy)
         .limit(limit)
         .map { toData(it) }
+
+    fun readAll(
+        sortBy: Expression<*>,
+        orderBy: SortOrder,
+        limit: Int,
+    ) = columnSet.select(columns)
+        .orderBy(sortBy, orderBy)
+        .limit(limit)
+        .map { toData(it) }
 }

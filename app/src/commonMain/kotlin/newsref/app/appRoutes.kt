@@ -32,3 +32,6 @@ data class ChapterSourceRoute(
 
 @Serializable
 data class SourceRoute(val pageId: Long) : AppRoute("Source")
+
+@Serializable
+object HostFeedRoute : AppRoute("Hosts")

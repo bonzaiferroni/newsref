@@ -1,8 +1,8 @@
 package newsref.model.dto
 
 import kotlinx.datetime.Instant
-import kotlinx.serialization.Serializable
-import newsref.model.core.PageType
+import kotlinx.serialization.*
+import newsref.model.core.*
 
 @Serializable
 data class SourceDto(

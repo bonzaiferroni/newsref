@@ -1,10 +1,9 @@
 package newsref.app.model
 
-import kotlinx.collections.immutable.ImmutableList
-import kotlinx.collections.immutable.toImmutableList
-import kotlinx.serialization.Serializable
-import newsref.model.core.PageType
-import newsref.model.dto.ChapterPackDto
+import kotlinx.collections.immutable.*
+import kotlinx.serialization.*
+import newsref.model.core.*
+import newsref.model.dto.*
 
 @Serializable
 data class ChapterPack(

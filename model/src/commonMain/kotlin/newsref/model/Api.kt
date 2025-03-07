@@ -18,6 +18,8 @@ object Api {
         val chapterId = addLongParam("chapterId")
     }
 
+    val hostEndpoint = Endpoint("/host")
+
     // user
     val userEndpoint = Endpoint("/user")
     val privateEndpoint = Endpoint("/user/private")

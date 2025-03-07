@@ -1,9 +1,9 @@
 package newsref.app.model
 
 import kotlinx.datetime.Instant
-import kotlinx.serialization.Serializable
+import kotlinx.serialization.*
 import newsref.model.core.*
-import newsref.model.dto.SourceBitDto
+import newsref.model.dto.*
 
 fun SourceBitDto.toSourceBit() = SourceBit(
     id = this.id,

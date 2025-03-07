@@ -12,4 +12,5 @@ fun Routing.dataRouting() {
     userRouting(UserService())
     sourceRouting()
     serveChapters()
+    serveHosts()
 }

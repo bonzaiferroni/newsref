@@ -7,10 +7,7 @@ import kotlinx.datetime.Clock
 import kotlinx.datetime.Instant
 import newsref.db.services.*
 import newsref.model.Api
-import newsref.server.extensions.getIdOrThrow
-import newsref.server.utilities.getById
-import newsref.server.utilities.getByPath
-import newsref.server.utilities.readFromCall
+import newsref.server.utilities.*
 import kotlin.time.Duration.Companion.days
 
 fun Routing.serveChapters(service: ChapterDtoService = ChapterDtoService()) {

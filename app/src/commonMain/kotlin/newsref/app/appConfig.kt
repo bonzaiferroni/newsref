@@ -20,9 +20,11 @@ val appConfig = BlipConfig(
         routeScreen<ChapterFeedRoute> { ChapterFeedScreen(it) }
         routeScreen<ChapterRoute> { ChapterScreen(it) }
         routeScreen<ChapterSourceRoute> { ChapterSourceScreen(it) }
+        routeScreen<HostFeedRoute> { HostFeedScreen(it) }
     },
     portalItems = persistentListOf(
         PortalRoute(TablerIcons.YinYang, "Hello", HelloRoute),
-        PortalRoute(TablerIcons.CalendarEvent, "Chapter Feed", ChapterFeedRoute())
+        PortalRoute(TablerIcons.CalendarEvent, "Chapter Feed", ChapterFeedRoute()),
+        PortalRoute(TablerIcons.News, "Hosts", HostFeedRoute)
     )
 )
