@@ -35,3 +35,6 @@ data class SourceRoute(val pageId: Long) : AppRoute("Source")
 
 @Serializable
 object HostFeedRoute : AppRoute("Hosts")
+
+@Serializable
+data class HostRoute(val hostId: Int, val core: String) : AppRoute(core)

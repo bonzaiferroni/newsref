@@ -7,6 +7,7 @@ import androidx.compose.ui.*
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.Shape
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.unit.dp
 import coil3.compose.AsyncImage
@@ -38,9 +39,9 @@ fun BalloonHeader(
         horizontalArrangement = Blip.ruler.rowTight,
         modifier = Modifier.height(height.dp)
     ) {
-        HeaderImage(
+        ShapeImage(
             color = color,
-            imageUrl = imageUrl,
+            url = imageUrl,
             modifier = Modifier.fillMaxHeight()
         )
 
@@ -51,25 +52,26 @@ fun BalloonHeader(
 }
 
 @Composable
-fun HeaderImage(
+fun ShapeImage(
+    url: String?,
     color: Color,
-    imageUrl: String?,
     padding: PaddingValues = Blip.ruler.innerPadding,
+    shape: Shape = Blip.ruler.round,
     modifier: Modifier = Modifier,
 ) {
     Box(
         modifier = modifier.aspectRatio(1f)
-            .shadow(Blip.ruler.shadowElevation, Blip.ruler.round)
+            .shadow(Blip.ruler.shadowElevation, shape)
             .background(color)
             .padding(padding)
     ) {
-        imageUrl?.let {
+        url?.let {
             AsyncImage(
                 model = it,
                 contentDescription = null,
                 contentScale = ContentScale.Crop,
                 modifier = Modifier
-                    .clip(Blip.ruler.round)
+                    .clip(shape)
             )
         }
     }

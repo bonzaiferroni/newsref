@@ -15,4 +15,9 @@ fun Routing.serveHosts(service: HostDtoService = HostDtoService()) {
         val hosts = service.readTopHosts()
         call.respond(hosts)
     }
+
+    getById(Api.hostEndpoint) {  id, endpoint ->
+        val host = service.readHost(id.toInt())
+        call.respondOrNotFound(host)
+    }
 }

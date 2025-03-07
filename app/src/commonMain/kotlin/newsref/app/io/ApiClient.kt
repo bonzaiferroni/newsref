@@ -12,6 +12,9 @@ class ApiClient(
     val baseUrl: String,
     val client: HttpClient = globalKtorClient
 ) {
+    suspend inline fun <reified Received> getById(id: Int, endpoint: Endpoint): Received =
+        getById(id.toLong(), endpoint)
+
     suspend inline fun <reified Received> getById(id: Long, endpoint: Endpoint): Received =
         client.get("$baseUrl${endpoint.clientIdTemplate.replace(":id", id.toString())}").body()
 

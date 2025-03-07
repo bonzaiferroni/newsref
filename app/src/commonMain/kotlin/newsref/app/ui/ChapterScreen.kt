@@ -8,12 +8,10 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalUriHandler
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
-import kotlinx.datetime.Clock
 import newsref.app.*
 import newsref.app.blip.controls.*
 import newsref.app.blip.nav.LocalNav
 import newsref.app.blip.theme.Blip
-import newsref.app.model.ChapterSource
 import newsref.app.model.SourceBit
 
 @Composable
@@ -66,9 +64,9 @@ fun SourceHeadline(chapterId: Long, source: SourceBit) {
             .padding(vertical = Blip.ruler.innerSpacing)
     ) {
         val color = Blip.colors.getSwatchFromIndex(source.id)
-        HeaderImage(
+        ShapeImage(
             color = color,
-            imageUrl = source.imageUrl,
+            url = source.imageUrl,
             padding = PaddingValues(1.dp),
             modifier = Modifier.height(48.dp)
         )

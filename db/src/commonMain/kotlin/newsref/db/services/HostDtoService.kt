@@ -12,4 +12,8 @@ class HostDtoService : DbService() {
     suspend fun readTopHosts(limit: Int = 20) = dbQuery {
         HostDtoAspect.readAll(HostDtoAspect.score, SortOrder.DESC_NULLS_LAST, limit)
     }
+
+    suspend fun readHost(hostId: Int) = dbQuery {
+        HostDtoAspect.readFirst { it.hostId.eq(hostId) }
+    }
 }
