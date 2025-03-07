@@ -21,7 +21,7 @@ import kotlin.time.Duration.Companion.hours
 
 class GeminiClient(
     val limitedToken: String,
-    val unlimitedToken: String,
+    val unlimitedToken: String? = null,
     val model: String = "gemini-1.5-flash",
     val client: HttpClient = globalKtor,
 ) {
@@ -29,7 +29,7 @@ class GeminiClient(
 
     suspend inline fun <reified Received> requestJson(maxAttempts: Int, vararg parts: String): Received? {
         val token = when {
-            Clock.System.now() < unlimitedUntil -> unlimitedToken
+            unlimitedToken != null && Clock.System.now() < unlimitedUntil -> unlimitedToken
             else -> limitedToken
         }
         for (attempt in 0 until maxAttempts) {
@@ -73,7 +73,49 @@ class GeminiClient(
         }
         return null
     }
+
+    suspend fun generateEmbeddings(text: String): FloatArray? {
+        val url = "https://generativelanguage.googleapis.com/v1beta/models/text-embedding-004:embedContent" +
+                "?key=$limitedToken"
+        val request = GeminiEmbeddingRequest(
+            content = GeminiContent(parts = listOf(GeminiRequestText(text))),
+            taskType = EmbeddingTaskType.SEMANTIC_SIMILARITY
+        )
+        val response = globalKtor.post(url) {
+            contentType(ContentType.Application.Json)
+            setBody(request)
+        }
+        if (response.status == HttpStatusCode.OK) {
+            return response.body<GeminiEmbeddingResponse>()
+                .embedding.values
+        } else {
+            globalConsole.logError(
+                "GeminiClient",
+                "failed:\n${response.body<JsonObject>()}"
+            )
+        }
+        return null
+    }
 }
+
+@Serializable
+data class GeminiEmbeddingResponse(
+    val embedding: ContentEmbedding
+)
+
+@Suppress("ArrayInDataClass")
+@Serializable
+data class ContentEmbedding(
+    val values: FloatArray
+)
+
+@Serializable
+data class GeminiEmbeddingRequest(
+    val content: GeminiContent,
+    val taskType: EmbeddingTaskType? = null,
+    val title: String? = null,
+    val outputDimensionality: Int? = null
+)
 
 @Serializable
 data class GeminiRequest(
@@ -83,7 +125,7 @@ data class GeminiRequest(
 
 @Serializable
 data class GeminiContent(
-    val role: String,
+    val role: String? = null,
     val parts: List<GeminiRequestText>,
 )
 
@@ -91,6 +133,17 @@ data class GeminiContent(
 data class GeminiRequestText(
     val text: String
 )
+
+enum class EmbeddingTaskType {
+    TASK_TYPE_UNSPECIFIED,
+    RETRIEVAL_QUERY,
+    RETRIEVAL_DOCUMENT,
+    SEMANTIC_SIMILARITY,
+    CLASSIFICATION,
+    CLUSTERING,
+    QUESTION_ANSWERING,
+    FACT_VERIFICATION
+}
 
 inline fun <reified T> generateJsonSchema(): JsonElement {
     val descriptor = serializer<T>().descriptor

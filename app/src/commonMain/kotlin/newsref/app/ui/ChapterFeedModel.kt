@@ -20,7 +20,7 @@ class ChapterFeedModel(
     val chapterStore: ChapterStore = ChapterStore()
 ) : StateModel<ChapterFeedState>(ChapterFeedState()) {
     init {
-        changeSpan(7.days)
+        changeSpan(FeedSpan.Week)
     }
 
     fun selectId(id: Long) {
@@ -28,11 +28,11 @@ class ChapterFeedModel(
         setState { it.copy(selectedId = id) }
     }
 
-    fun changeSpan(span: Duration) {
-        if (span == stateNow.timeSpan) return
-        setState { it.copy(timeSpan = span) }
+    fun changeSpan(span: FeedSpan) {
+        if (span == stateNow.feedSpan && stateNow.chapterPacks.isNotEmpty()) return
+        setState { it.copy(feedSpan = span) }
         viewModelScope.launch {
-            val start = Clock.System.now() - stateNow.timeSpan
+            val start = Clock.System.now() - stateNow.feedSpan.duration
             val chapters = chapterStore.readChapters(start)
                 .map { it.toModel() }
                 .toImmutableList()
@@ -64,13 +64,17 @@ data class ChapterFeedState(
     val selectedId: Long? = null,
     val chapterPacks: ImmutableList<ChapterPack> = persistentListOf(),
     val chartConfig: BalloonsData = BalloonsData(),
-    val timeSpan: Duration = Duration.ZERO
+    val feedSpan: FeedSpan = FeedSpan.Week
 )
 
-val timeSpans: ImmutableList<Pair<Duration, String>> = persistentListOf(
-    2.days to "Day",
-    7.days to "Week",
-    30.days to "Month",
-    365.days to "Year",
-    Duration.INFINITE to "All"
-)
+val feedSpans: ImmutableList<Pair<FeedSpan, String>> = FeedSpan.entries.map {
+    it to it.label
+}.toImmutableList()
+
+enum class FeedSpan(val duration: Duration, val label: String) {
+    Day(1.days, "Day"),
+    Week(7.days, "Week"),
+    Month(30.days, "Month"),
+    Year(365.days, "Year"),
+    All(Duration.INFINITE, "All")
+}
