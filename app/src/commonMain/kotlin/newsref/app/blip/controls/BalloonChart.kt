@@ -215,8 +215,8 @@ fun generateAxisTicks(earliest: Instant, latest: Instant = Clock.System.now()): 
         else -> 6.hours
     }
     val tz = TimeZone.currentSystemDefault()
-    val timeStart = (earliest + 1.days).toLocalDateTime(tz).date
-        .atStartOfDayIn(tz)
+    val dayStart = earliest.toLocalDateTime(tz).date.atStartOfDayIn(tz)
+    val timeStart = dayStart + interval * (((earliest - dayStart) / interval).toInt() + 1)
     val intervalCount = (span / interval).toInt()
     val currentYear = now.toLocalDateTime(tz).year
     return (0 until intervalCount).map { i ->
