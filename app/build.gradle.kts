@@ -73,6 +73,8 @@ kotlin {
             implementation(libs.coil.network.ktor3)
 
             implementation("com.adamglin:compose-shadow:2.0.3")
+            implementation("androidx.datastore:datastore:1.1.3")
+            implementation("androidx.datastore:datastore-preferences:1.1.3")
 
             implementation(project(":model"))
         }

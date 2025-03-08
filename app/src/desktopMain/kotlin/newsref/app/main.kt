@@ -5,21 +5,25 @@ import androidx.compose.ui.window.Window
 import androidx.compose.ui.window.application
 import kotlinx.serialization.Serializable
 
-fun main() = application {
-    val cacheFlow = CacheFile("appcache.json") { AppCache() }
-    val cache by cacheFlow.collectAsState()
+fun main() {
+    val dataStore = createDataStore { dataStoreFileName }
 
-    val windowState = WatchWindow(cache.windowSize) {
-        cacheFlow.value = cacheFlow.value.copy(windowSize = it)
-    }
+    application {
+        val cacheFlow = CacheFile("appcache.json") { AppCache() }
+        val cache by cacheFlow.collectAsState()
 
-    Window(
-        state = windowState,
-        onCloseRequest = ::exitApplication,
-        title = "App",
-        undecorated = true,
-    ) {
-        App(cache.route, { cacheFlow.value = cache.copy(route = it as AppRoute )}, ::exitApplication)
+        val windowState = WatchWindow(cache.windowSize) {
+            cacheFlow.value = cacheFlow.value.copy(windowSize = it)
+        }
+
+        Window(
+            state = windowState,
+            onCloseRequest = ::exitApplication,
+            title = "App",
+            undecorated = true,
+        ) {
+            App(cache.route, dataStore, { cacheFlow.value = cache.copy(route = it as AppRoute )}, ::exitApplication)
+        }
     }
 }
 
