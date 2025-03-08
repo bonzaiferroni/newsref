@@ -14,6 +14,7 @@ import newsref.app.*
 import newsref.app.blip.controls.*
 import newsref.app.blip.nav.LocalNav
 import newsref.app.blip.theme.Blip
+import newsref.app.model.Host
 
 @Composable
 fun HostFeedScreen(
@@ -21,20 +22,33 @@ fun HostFeedScreen(
     viewModel: HostFeedModel = viewModel { HostFeedModel(route) }
 ) {
     val state by viewModel.state.collectAsState()
-    val nav = LocalNav.current
     LazyColumn(
         verticalArrangement = Blip.ruler.columnTight
     ) {
         items(state.hosts) {
-            Row(
-                horizontalArrangement = Blip.ruler.rowTight,
-                verticalAlignment = Alignment.CenterVertically,
-                modifier = Modifier.clickable { nav.go(HostRoute(it.id, it.core)) }
-            ) {
-                val color = Blip.colors.getSwatchFromIndex(it.id)
-                ShapeImage(url = it.logo, color = color, modifier = Modifier.height(48.dp))
-                H2(it.core)
-            }
+            HostItem(it)
+        }
+    }
+}
+
+@Composable
+fun HostItem(
+    host: Host
+) {
+    val nav = LocalNav.current
+    Row(
+        horizontalArrangement = Blip.ruler.rowTight,
+        verticalAlignment = Alignment.CenterVertically,
+        modifier = Modifier.fillMaxWidth()
+            .clickable { nav.go(HostRoute(host.id, host.core)) }
+    ) {
+        val color = Blip.colors.getSwatchFromIndex(host.id)
+        ShapeImage(url = host.logo, color = color, modifier = Modifier.height(48.dp))
+        Column(
+            verticalArrangement = Blip.ruler.columnTight,
+        ) {
+            H2(host.name ?: host.core)
+            Text("Visibility: ${host.score}")
         }
     }
 }
