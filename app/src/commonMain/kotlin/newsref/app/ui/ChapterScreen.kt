@@ -37,7 +37,7 @@ fun ChapterScreen(
                     LazyColumn(
                     ) {
                         items(state.articles) {
-                            SourceHeadline(chapter.id, it)
+                            SourceBitItem(it, chapter.id)
                         }
                     }
                 },
@@ -45,7 +45,7 @@ fun ChapterScreen(
                     LazyColumn(
                     ) {
                         items(state.references) {
-                            SourceHeadline(chapter.id, it)
+                            SourceBitItem(it, chapter.id)
                         }
                     }
                 }
@@ -55,12 +55,15 @@ fun ChapterScreen(
 }
 
 @Composable
-fun SourceHeadline(chapterId: Long, source: SourceBit) {
+fun SourceBitItem(source: SourceBit, chapterId: Long? = null) {
     val nav = LocalNav.current
     Row(
         horizontalArrangement = Blip.ruler.rowTight,
         modifier = Modifier
-            .clickable { nav.go(ChapterSourceRoute(chapterId, source.id, source.title)) }
+            .clickable {
+                if (chapterId != null)
+                    nav.go(ChapterSourceRoute(chapterId, source.id, source.title))
+            }
             .padding(vertical = Blip.ruler.innerSpacing)
     ) {
         val color = Blip.colors.getSwatchFromIndex(source.id)
@@ -71,13 +74,24 @@ fun SourceHeadline(chapterId: Long, source: SourceBit) {
             modifier = Modifier.height(48.dp)
         )
         Column(modifier = Modifier.weight(1f)) {
-            H4(source.title ?: "source: ${source.id}", maxLines = 2)
-            Text("${source.hostCore}, visibility: ${source.score}")
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Blip.ruler.rowTight
+            ) {
+                val uriHandler = LocalUriHandler.current
+                H4(source.title ?: "source: ${source.id}", maxLines = 2, modifier = Modifier.weight(1f))
+                Button(
+                    onClick = { uriHandler.openUri(source.url) },
+                    background = Blip.colors.accent
+                ) { Text("Read") }
+            }
+            Row(
+                horizontalArrangement = Arrangement.SpaceBetween,
+                modifier = Modifier.fillMaxWidth()
+            ) {
+                Text("Visibility: ${source.score}")
+                Text(source.hostCore)
+            }
         }
-        val uriHandler = LocalUriHandler.current
-        Button(
-            onClick = { uriHandler.openUri(source.url) },
-            background = Blip.colors.accent
-        ) { Text("Read") }
     }
 }

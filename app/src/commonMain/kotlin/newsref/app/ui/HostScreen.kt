@@ -22,7 +22,7 @@ fun HostScreen(
             TabPage(name = "Feed", scrollbar = false) {
                 LazyColumn {
                     items(state.sources) {
-                        Text(it.title.toString())
+                        SourceBitItem(it)
                     }
                 }
             }
