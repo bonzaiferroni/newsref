@@ -40,7 +40,7 @@ fun Label(
     modifier: Modifier = Modifier
 ) = BasicText(
     text = text,
-    color = { color.copy(.5f) },
+    color = { color.copy(.75f) },
     modifier = modifier,
 )
 

@@ -16,12 +16,16 @@ import kotlin.time.Duration.Companion.days
 class HostModel(
     private val route: HostRoute,
     private val store: HostStore = HostStore()
-): StateModel<HostState>(HostState()) {
+) : StateModel<HostState>(HostState()) {
     init {
         viewModelScope.launch {
             val host = store.readHost(route.hostId)
-            val sources = store.readFeedSources(route.hostId, Clock.System.now() - 1.days).toImmutableList()
-            setState{ it.copy(host = host, sources = sources) }
+            val sources = store.readFeedSources(route.hostId, Clock.System.now() - 1.days)
+                .sortedWith(compareBy<SourceBit> { it.feedPosition }
+                    .thenByDescending { it.score }
+                    .thenByDescending { it.existedAt })
+                .toImmutableList()
+            setState { it.copy(host = host, sources = sources) }
         }
     }
 

@@ -48,7 +48,7 @@ fun HostItem(
             verticalArrangement = Blip.ruler.columnTight,
         ) {
             H2(host.name ?: host.core)
-            Text("Visibility: ${host.score}")
+            Label("Visibility: ${host.score}")
         }
     }
 }

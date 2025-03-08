@@ -89,8 +89,8 @@ fun SourceBitItem(source: SourceBit, chapterId: Long? = null) {
                 horizontalArrangement = Arrangement.SpaceBetween,
                 modifier = Modifier.fillMaxWidth()
             ) {
-                Text("Visibility: ${source.score}")
-                Text(source.hostCore)
+                Label("${source.existedAt.agoLongFormat()} ago, visibility: ${source.score}")
+                Label(source.hostCore)
             }
         }
     }
