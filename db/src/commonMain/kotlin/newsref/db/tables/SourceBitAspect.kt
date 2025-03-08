@@ -1,10 +1,9 @@
 package newsref.db.tables
 
 import newsref.db.core.Aspect
-import newsref.db.utils.toInstantUtc
-import newsref.model.core.PageType
-import newsref.model.core.SourceType
-import newsref.model.dto.SourceBitDto
+import newsref.db.utils.*
+import newsref.model.core.*
+import newsref.model.dto.*
 import org.jetbrains.exposed.sql.ResultRow
 
 object SourceBitAspect : Aspect<SourceBitAspect, SourceBitDto>(

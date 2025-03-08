@@ -5,12 +5,9 @@ import kotlinx.collections.immutable.*
 import kotlinx.coroutines.launch
 import kotlinx.datetime.Clock
 import newsref.app.*
-import newsref.app.blip.controls.*
 import newsref.app.blip.core.*
 import newsref.app.io.*
 import newsref.app.model.*
-import newsref.model.utils.*
-import kotlin.time.Duration
 import kotlin.time.Duration.Companion.days
 
 class HostModel(
@@ -20,12 +17,13 @@ class HostModel(
     init {
         viewModelScope.launch {
             val host = store.readHost(route.hostId)
-            val sources = store.readFeedSources(route.hostId, Clock.System.now() - 1.days)
+            val sources = store.readHostSources(route.hostId, Clock.System.now() - 1.days)
                 .sortedWith(compareBy<SourceBit> { it.feedPosition }
                     .thenByDescending { it.score }
                     .thenByDescending { it.existedAt })
                 .toImmutableList()
-            setState { it.copy(host = host, sources = sources) }
+            val feeds = store.readHostFeeds(route.core).toImmutableList()
+            setState { it.copy(host = host, sources = sources, feeds = feeds) }
         }
     }
 
@@ -37,5 +35,6 @@ class HostModel(
 data class HostState(
     val host: Host? = null,
     val tab: String? = null,
-    val sources: ImmutableList<SourceBit> = persistentListOf()
+    val sources: ImmutableList<SourceBit> = persistentListOf(),
+    val feeds: ImmutableList<Feed> = persistentListOf(),
 )

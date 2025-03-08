@@ -22,6 +22,8 @@ open class Aspect<Self: Aspect<Self, Data>, Data>(
     fun readFirst(predicate: SqlExpressionBuilder.(Self) -> Op<Boolean>) = where(predicate)
         .firstOrNull()?.let { toData(it) }
 
+    fun read(predicate: SqlExpressionBuilder.(Self) -> Op<Boolean>) = where(predicate).map { toData(it) }
+
     fun read(
         sortBy: Expression<*>,
         orderBy: SortOrder,

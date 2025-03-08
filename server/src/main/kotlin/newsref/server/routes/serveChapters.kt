@@ -16,14 +16,14 @@ fun Routing.serveChapters(service: ChapterDtoService = ChapterDtoService()) {
     }
 
     getByPath(Api.Chapters) {
-        val startInstant = it.start.readFromCall(call) ?: (Clock.System.now() - 7.days)
+        val startInstant = it.start.readFromCallOrNull(call) ?: (Clock.System.now() - 7.days)
         val chapters = service.readTopChapters(startInstant)
         call.respond(chapters)
     }
 
     getByPath(Api.ChapterSources) {
-        val pageId = it.pageId.readFromCall(call) ?: error("missing page id")
-        val chapterId = it.chapterId.readFromCall(call) ?: error("missing chapter id")
+        val pageId = it.pageId.readFromCallOrNull(call) ?: error("missing page id")
+        val chapterId = it.chapterId.readFromCallOrNull(call) ?: error("missing chapter id")
         val chapterSource = service.readChapterSource(chapterId, pageId)
         call.respondOrNotFound(chapterSource)
     }

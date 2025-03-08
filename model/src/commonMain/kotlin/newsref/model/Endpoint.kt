@@ -29,6 +29,12 @@ open class Endpoint(
         toValue = { Instant.fromEpochSeconds(it.toLong())},
         toString = { it.epochSeconds.toString() }
     )
+
+    fun addStringParam(key: String) = EndpointParam(
+        key = key,
+        toValue = { it },
+        toString = { it }
+    )
 }
 
 class EndpointParam<T>(

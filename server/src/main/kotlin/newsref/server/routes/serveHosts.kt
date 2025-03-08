@@ -1,5 +1,6 @@
 package newsref.server.routes
 
+import io.ktor.http.HttpStatusCode
 import io.ktor.server.response.*
 import io.ktor.server.routing.*
 import kotlinx.datetime.Clock
@@ -20,8 +21,14 @@ fun Routing.serveHosts(service: HostDtoService = HostDtoService()) {
     }
 
     getById(Api.Hosts.Sources) { id, endpoint ->
-        val start = endpoint.start.readFromCall(call) ?: (Clock.System.now() - 1.days)
+        val start = endpoint.start.readFromCallOrNull(call) ?: (Clock.System.now() - 1.days)
         val sources = service.readSources(id.toInt(), start)
         call.respond(sources)
+    }
+
+    getByPath(Api.Hosts.Feeds) {
+        val core = it.core.readFromCall(call)
+        val feeds = service.readFeeds(core)
+        call.respond(feeds)
     }
 }

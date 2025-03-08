@@ -22,6 +22,9 @@ object Api {
         object Sources : Endpoint("/sources", this) {
             val start = addInstantParam("start")
         }
+        object Feeds : Endpoint("/feeds", this) {
+            val core = addStringParam("core")
+        }
     }
 
     // user

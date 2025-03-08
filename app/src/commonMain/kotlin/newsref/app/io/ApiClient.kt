@@ -26,9 +26,9 @@ class ApiClient(
     ): Received = getRequest("$baseUrl${endpoint.clientIdTemplate.replace(":id", id.toString())}", *params)
 
     suspend inline fun <reified Received> get(
-        url: String,
+        endpoint: Endpoint,
         vararg params: Pair<String, String>
-    ): Received = getRequest("$baseUrl$url", *params)
+    ): Received = getRequest("$baseUrl${endpoint.path}", *params)
 
     suspend inline fun <reified Received> getRequest(
         url: String,
