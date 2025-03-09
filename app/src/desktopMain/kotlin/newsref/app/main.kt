@@ -6,8 +6,6 @@ import androidx.compose.ui.window.application
 import kotlinx.serialization.Serializable
 
 fun main() {
-    val dataStore = createDataStore { dataStoreFileName }
-
     application {
         val cacheFlow = CacheFile("appcache.json") { AppCache() }
         val cache by cacheFlow.collectAsState()
@@ -22,7 +20,7 @@ fun main() {
             title = "App",
             undecorated = true,
         ) {
-            App(cache.route, dataStore, { cacheFlow.value = cache.copy(route = it as AppRoute )}, ::exitApplication)
+            App(cache.route, { cacheFlow.value = cache.copy(route = it as AppRoute )}, ::exitApplication)
         }
     }
 }
