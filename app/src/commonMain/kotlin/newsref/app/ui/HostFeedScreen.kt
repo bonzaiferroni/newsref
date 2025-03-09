@@ -3,17 +3,11 @@ package newsref.app.ui
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.*
-import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.foundation.text.BasicTextField
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.unit.dp
-import androidx.datastore.preferences.core.edit
-import androidx.datastore.preferences.core.stringPreferencesKey
 import androidx.lifecycle.viewmodel.compose.viewModel
-import kotlinx.coroutines.flow.map
 import newsref.app.*
 import newsref.app.blip.controls.*
 import newsref.app.blip.nav.LocalNav
@@ -25,14 +19,10 @@ fun HostFeedScreen(
     route: HostFeedRoute,
     viewModel: HostFeedModel = viewModel { HostFeedModel(route) }
 ) {
-    val keyStore = LocalKeyStore.current
-    val query by keyStore.readString("query").collectAsState("")
-
-    BasicTextField(value = query, onValueChange = { value ->
-        keyStore.writeString("query", value)
-    })
-
     val state by viewModel.state.collectAsState()
+
+    TextField(state.searchText, viewModel::changeSearchText)
+
     LazyColumn(
         verticalArrangement = Blip.ruler.columnTight
     ) {

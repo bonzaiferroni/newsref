@@ -6,8 +6,12 @@ import newsref.model.Api
 
 class HostStore(private val client: ApiClient = globalApiClient) {
     suspend fun readPinnedHosts(pinnedIds: Set<Int>): List<Host> = client.get(
-        Api.Hosts.Pinned,
-        Api.Hosts.Pinned.ids.write(pinnedIds)
+        Api.Hosts,
+        Api.Hosts.ids.write(pinnedIds)
+    )
+    suspend fun searchHosts(search: String): List<Host> = client.get(
+        Api.Hosts,
+        Api.Hosts.search.write(search)
     )
     suspend fun readTopHosts(): List<Host> = client.get(Api.Hosts)
     suspend fun readHost(hostId: Int): Host = client.getById(hostId, Api.Hosts)

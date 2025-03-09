@@ -32,4 +32,8 @@ class HostDtoService : DbService() {
     suspend fun readFeeds(core: String) = dbQuery {
         FeedDtoAspect.read { it.url.like("%$core%") }
     }
+
+    suspend fun searchHosts(text: String) = dbQuery {
+        HostDtoAspect.read { it.core.like("${text}%") or it.name.lowerCase().like("%${text.lowercase()}%") }
+    }
 }

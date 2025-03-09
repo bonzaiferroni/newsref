@@ -19,14 +19,14 @@ object Api {
     }
 
     object Hosts : Endpoint("/host") {
+        val ids = addIntList("ids")
+        val search = addStringParam("search")
+
         object Sources : Endpoint("/sources", this) {
             val start = addInstantParam("start")
         }
         object Feeds : Endpoint("/feeds", this) {
             val core = addStringParam("core")
-        }
-        object Pinned : Endpoint("/pinned", this) {
-            val ids = addIntList("ids")
         }
     }
 

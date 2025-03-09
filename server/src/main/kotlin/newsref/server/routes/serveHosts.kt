@@ -11,14 +11,16 @@ import kotlin.time.Duration.Companion.days
 
 fun Routing.serveHosts(service: HostDtoService = HostDtoService()) {
 
-    getByPath(Api.Hosts.Pinned) {
-        val pinnedIds = it.ids.readFromCall(call)
-        val hosts = service.readHosts(pinnedIds)
-        call.respond(hosts)
-    }
-
     getByPath(Api.Hosts) {
-        val hosts = service.readTopHosts()
+        val ids = it.ids.readFromCallOrNull(call)
+        val search = it.search.readFromCallOrNull(call)
+        val hosts = if (ids != null) {
+            service.readHosts(ids)
+        } else if (search != null) {
+            service.searchHosts(search)
+        } else {
+            service.readTopHosts()
+        }
         call.respond(hosts)
     }
 
