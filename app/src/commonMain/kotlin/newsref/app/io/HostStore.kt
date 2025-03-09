@@ -3,10 +3,13 @@ package newsref.app.io
 import kotlinx.datetime.Instant
 import newsref.app.model.*
 import newsref.model.Api
-import newsref.model.dto.*
 
 class HostStore(private val client: ApiClient = globalApiClient) {
-    suspend fun readHosts(): List<Host> = client.get(Api.Hosts)
+    suspend fun readPinnedHosts(pinnedIds: Set<Int>): List<Host> = client.get(
+        Api.Hosts.Pinned,
+        Api.Hosts.Pinned.ids.write(pinnedIds)
+    )
+    suspend fun readTopHosts(): List<Host> = client.get(Api.Hosts)
     suspend fun readHost(hostId: Int): Host = client.getById(hostId, Api.Hosts)
     suspend fun readHostSources(hostId: Int, start: Instant): List<SourceBit> = client.getById(
         hostId,

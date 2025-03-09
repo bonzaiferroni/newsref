@@ -36,15 +36,21 @@ fun HostFeedScreen(
     LazyColumn(
         verticalArrangement = Blip.ruler.columnTight
     ) {
+        items(state.pinnedHosts) {
+            HostItem(it, true, viewModel::togglePin)
+        }
+
         items(state.hosts) {
-            HostItem(it)
+            HostItem(it, false, viewModel::togglePin)
         }
     }
 }
 
 @Composable
 fun HostItem(
-    host: Host
+    host: Host,
+    isPinned: Boolean,
+    togglePin: (Int) -> Unit
 ) {
     val nav = LocalNav.current
     Row(
@@ -58,7 +64,14 @@ fun HostItem(
         Column(
             verticalArrangement = Blip.ruler.columnTight,
         ) {
-            H2(host.name ?: host.core)
+            Row(
+                horizontalArrangement = Blip.ruler.rowTight
+            ) {
+                H2(host.name ?: host.core, modifier = Modifier.weight(1f))
+                Button(onClick = { togglePin(host.id) }) {
+                    Text(if (isPinned) "Unpin" else "Pin")
+                }
+            }
             Label("Visibility: ${host.score}")
         }
     }

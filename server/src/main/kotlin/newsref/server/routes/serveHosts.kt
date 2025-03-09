@@ -10,6 +10,13 @@ import newsref.server.utilities.*
 import kotlin.time.Duration.Companion.days
 
 fun Routing.serveHosts(service: HostDtoService = HostDtoService()) {
+
+    getByPath(Api.Hosts.Pinned) {
+        val pinnedIds = it.ids.readFromCall(call)
+        val hosts = service.readHosts(pinnedIds)
+        call.respond(hosts)
+    }
+
     getByPath(Api.Hosts) {
         val hosts = service.readTopHosts()
         call.respond(hosts)

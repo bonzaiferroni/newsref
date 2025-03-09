@@ -10,6 +10,11 @@ import org.jetbrains.exposed.sql.*
 import org.jetbrains.exposed.sql.json.contains
 
 class HostDtoService : DbService() {
+
+    suspend fun readHosts(ids: Collection<Int>) = dbQuery {
+        HostDtoAspect.read { it.hostId.inList(ids) }
+    }
+
     suspend fun readTopHosts(limit: Int = 20) = dbQuery {
         HostDtoAspect.readAll(HostDtoAspect.score, SortOrder.DESC_NULLS_LAST, limit)
     }

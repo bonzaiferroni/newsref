@@ -25,6 +25,9 @@ object Api {
         object Feeds : Endpoint("/feeds", this) {
             val core = addStringParam("core")
         }
+        object Pinned : Endpoint("/pinned", this) {
+            val ids = addIntList("ids")
+        }
     }
 
     // user

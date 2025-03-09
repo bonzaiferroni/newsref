@@ -9,7 +9,7 @@ open class Aspect<Self: Aspect<Self, Data>, Data>(
     private val _expressions = mutableListOf<ExpressionWithColumnType<*>>()
     val columns: List<ExpressionWithColumnType<*>> = _expressions
 
-    fun <T> add(expression: ExpressionWithColumnType<T>): ExpressionWithColumnType<T> {
+    fun <T, E: ExpressionWithColumnType<T>> add(expression: E): E {
         _expressions.add(expression)
         return expression
     }

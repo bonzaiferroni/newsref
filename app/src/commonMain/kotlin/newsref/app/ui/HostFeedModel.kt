@@ -3,28 +3,46 @@ package newsref.app.ui
 import androidx.lifecycle.viewModelScope
 import kotlinx.collections.immutable.*
 import kotlinx.coroutines.launch
-import kotlinx.datetime.Clock
+import kotlinx.serialization.Serializable
 import newsref.app.*
-import newsref.app.blip.controls.*
 import newsref.app.blip.core.*
 import newsref.app.io.*
 import newsref.app.model.*
-import newsref.model.utils.toDaysFromNow
-import kotlin.time.Duration
-import kotlin.time.Duration.Companion.days
 
 class HostFeedModel(
     route: HostFeedRoute,
-    store: HostStore = HostStore()
+    private val store: HostStore = HostStore(),
+    private val keyStore: KeyStore = KeyStore(),
 ): StateModel<HostFeedState>(HostFeedState()) {
+
+    private var preferences = HostFeedPrefs()
+
     init {
         viewModelScope.launch {
-            val hosts = store.readHosts().toImmutableList()
-            setState { it.copy(hosts = hosts) }
+            keyStore.readObject { HostFeedPrefs() }.collect { prefs ->
+                preferences = prefs
+                val pinnedHosts = store.readPinnedHosts(prefs.pinnedIds).toImmutableList()
+                val hosts = store.readTopHosts().filter{ !prefs.pinnedIds.contains(it.id) }.toImmutableList()
+                setState { it.copy(pinnedHosts = pinnedHosts, hosts = hosts) }
+            }
         }
+    }
+
+    fun togglePin(hostId: Int) {
+        val prefs = if (preferences.pinnedIds.contains(hostId))
+            preferences.copy(pinnedIds = preferences.pinnedIds - hostId)
+        else
+            preferences.copy(pinnedIds = preferences.pinnedIds + hostId)
+        keyStore.writeObject(prefs)
     }
 }
 
 data class HostFeedState(
-    val hosts: ImmutableList<Host> = persistentListOf()
+    val pinnedHosts: ImmutableList<Host> = persistentListOf(),
+    val hosts: ImmutableList<Host> = persistentListOf(),
+)
+
+@Serializable
+data class HostFeedPrefs(
+    val pinnedIds: Set<Int> = emptySet()
 )

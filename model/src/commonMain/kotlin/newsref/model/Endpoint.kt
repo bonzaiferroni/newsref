@@ -35,6 +35,14 @@ open class Endpoint(
         toValue = { it },
         toString = { it }
     )
+
+    fun addIntList(key: String) = addListParam(key, { it.toInt()}, { it.toString() })
+
+    fun <T> addListParam(key: String, toValue: (String) -> T, toString: (T) -> String) = EndpointParam<Collection<T>>(
+        key = key,
+        toValue = { it.takeIf { it.isNotEmpty() }?. split(",")?.map { toValue(it)} ?: emptyList() },
+        toString = { it.joinToString(",") { toString(it)} }
+    )
 }
 
 class EndpointParam<T>(
