@@ -6,7 +6,9 @@ import newsref.app.model.SourceBit
 import newsref.app.ui.FeedSpan
 
 @Serializable
-sealed class AppRoute(override val title: String) : NavRoute
+sealed class AppRoute(
+    override val title: String,
+) : NavRoute
 
 @Serializable
 object StartRoute : AppRoute("Start")

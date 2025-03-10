@@ -1,6 +1,7 @@
 package newsref.app.blip.nav
 
 import androidx.navigation.NavController
+import newsref.app.KeyStore
 import newsref.app.blip.core.StateModel
 
 class NavigatorModel(
@@ -53,3 +54,5 @@ data class NavState(
     val hover: NavRoute? = null,
     val canGoBack: Boolean = false
 )
+
+const val NAV_KEY = "nav_route"
