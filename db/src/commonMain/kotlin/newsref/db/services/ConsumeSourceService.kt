@@ -73,7 +73,7 @@ class ConsumeSourceService : DbService() {
 
 		// update host with found data
 		if (hostRow.core == page.pageHost.core) {
-			page.hostName?.let { hostRow.name = it }
+			if (hostRow.name == null) page.hostName?.let { hostRow.name = it }
 		}
 
 		// create or update lead for page url
