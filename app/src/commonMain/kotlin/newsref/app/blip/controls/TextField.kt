@@ -21,7 +21,7 @@ fun TextField(
         onValueChange = onTextChange,
         textStyle = TextStyle(color = color),
         cursorBrush = SolidColor(color),
-        modifier = modifier.background(Blip.colors.primary.copy(.5f))
+        modifier = modifier.background(Blip.colors.primary.copy(.75f))
             .padding(Blip.ruler.halfPadding)
     )
 }

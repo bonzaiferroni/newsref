@@ -25,7 +25,7 @@ fun initDb(env: Environment) {
 
 val dbTables = listOf(
 	UserTable,
-	SessionTokenTable,
+	RefreshTokenTable,
 	PageTable,
 	NewsArticleTable,
 	SourceScoreTable,

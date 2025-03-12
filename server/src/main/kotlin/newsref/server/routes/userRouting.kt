@@ -8,12 +8,12 @@ import newsref.model.Api
 import newsref.model.dto.EditUserRequest
 import newsref.model.dto.SignUpRequest
 import newsref.model.dto.SignUpResult
-import newsref.server.db.services.UserService
+import newsref.server.db.services.UserDtoService
 import newsref.server.extensions.getClaim
 import newsref.server.plugins.CLAIM_USERNAME
 import newsref.server.plugins.authenticateJwt
 
-fun Routing.userRouting(service: UserService = UserService()) {
+fun Routing.userRouting(service: UserDtoService = UserDtoService()) {
 
     post(Api.userEndpoint.path) {
         val info = call.receive<SignUpRequest>()

@@ -42,4 +42,6 @@ open class Aspect<Self: Aspect<Self, Data>, Data>(
         .orderBy(sortBy, orderBy)
         .limit(limit)
         .map { toData(it) }
+
+    fun any(predicate: SqlExpressionBuilder.(Self) -> Op<Boolean>) = readFirst(predicate) != null
 }

@@ -4,7 +4,7 @@ import kotlinx.datetime.*
 import kotlinx.datetime.TimeZone
 import org.jetbrains.exposed.dao.EntityClass
 import org.jetbrains.exposed.dao.id.EntityID
-import newsref.model.dto.UserInfo
+import newsref.model.dto.UserDto
 import newsref.db.model.User
 import newsref.db.utils.toLocalDateTimeUtc
 import newsref.model.core.UserRole
@@ -20,7 +20,6 @@ object UserTable : LongIdTable("user") {
     val email = text("email").nullable()
     val roles = array<String>("roles")
     val avatarUrl = text("avatar_url").nullable()
-    val venmo = text("venmo").nullable()
     val createdAt = datetime("created_at")
     val updatedAt = datetime("updated_at")
 }
@@ -35,7 +34,6 @@ class UserRow(id: EntityID<Long>) : LongEntity(id) {
     var email by UserTable.email
     var roles by UserTable.roles
     var avatarUrl by UserTable.avatarUrl
-    var venmo by UserTable.venmo
     var createdAt by UserTable.createdAt
     var updatedAt by UserTable.updatedAt
 }
@@ -49,7 +47,6 @@ fun UserRow.toModel() = User(
     this.email,
     this.roles.map { UserRole.valueOf(it) }.toSet(),
     this.avatarUrl,
-    this.venmo,
     this.createdAt.toInstant(UtcOffset.ZERO),
     this.updatedAt.toInstant(UtcOffset.ZERO),
 )
@@ -62,16 +59,14 @@ fun UserRow.fromModel(data: User) {
     email = data.email
     roles = data.roles.map { it.name }
     avatarUrl = data.avatarUrl
-    venmo = data.venmo
     createdAt = data.createdAt.toLocalDateTime(TimeZone.UTC)
     updatedAt = Clock.System.now().toLocalDateTimeUtc()
 }
 
-fun UserRow.toInfo() = UserInfo(
+fun UserRow.toInfo() = UserDto(
     this.username,
     this.roles.map { UserRole.valueOf(it) }.toSet(),
     this.avatarUrl,
-    this.venmo,
     this.createdAt.toInstant(UtcOffset.ZERO),
     this.updatedAt.toInstant(UtcOffset.ZERO),
 )

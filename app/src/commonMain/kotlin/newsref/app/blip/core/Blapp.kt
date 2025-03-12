@@ -11,14 +11,12 @@ fun Blapp(
     config: BlipConfig,
     exitApp: (() -> Unit)?,
 ) {
-    ProvideTheme{
-        ProvideSkyColors {
-            Navigator(
-                startRoute = initialRoute,
-                changeRoute = changeRoute,
-                config = config,
-                exitApp = exitApp
-            )
-        }
+    ProvideSkyColors {
+        Navigator(
+            startRoute = initialRoute,
+            changeRoute = changeRoute,
+            config = config,
+            exitApp = exitApp
+        )
     }
 }

@@ -1,6 +1,7 @@
-package newsref.app
+package newsref.app.blip.nav
 
-import newsref.app.blip.nav.NavRoute
+import newsref.app.ChapterFeedRoute
+import newsref.app.StartRoute
 
 // this is how I might support the location bar in the browser, on hold
 

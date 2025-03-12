@@ -5,6 +5,7 @@ import kotlinx.datetime.Instant
 import kotlinx.datetime.LocalDateTime
 import org.jetbrains.exposed.sql.ExpressionWithColumnType
 import org.jetbrains.exposed.sql.Op
+import org.jetbrains.exposed.sql.lowerCase
 import org.jetbrains.exposed.sql.or
 import kotlin.time.Duration
 
@@ -21,3 +22,6 @@ fun <T> ExpressionWithColumnType<T>.isNullOrEq(t: T) =
 
 fun <T> ExpressionWithColumnType<T>.isNullOrNeq(t: T) =
     Op.build { this@isNullOrNeq.isNull() or this@isNullOrNeq.neq(t) }
+
+fun ExpressionWithColumnType<String>.eqLowercase(str: String) =
+    Op.build { this@eqLowercase.lowerCase() eq str.lowercase()}

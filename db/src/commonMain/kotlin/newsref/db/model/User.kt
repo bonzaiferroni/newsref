@@ -15,7 +15,6 @@ data class User(
     val email: String? = null,
     val roles: Set<UserRole> = emptySet(),
     val avatarUrl: String? = null,
-    val venmo: String? = null,
     val createdAt: Instant = Instant.DISTANT_PAST,
     val updatedAt: Instant = Instant.DISTANT_PAST,
 )
