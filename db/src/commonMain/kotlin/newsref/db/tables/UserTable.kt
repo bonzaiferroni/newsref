@@ -62,11 +62,3 @@ fun UserRow.fromModel(data: User) {
     createdAt = data.createdAt.toLocalDateTime(TimeZone.UTC)
     updatedAt = Clock.System.now().toLocalDateTimeUtc()
 }
-
-fun UserRow.toInfo() = UserDto(
-    this.username,
-    this.roles.map { UserRole.valueOf(it) }.toSet(),
-    this.avatarUrl,
-    this.createdAt.toInstant(UtcOffset.ZERO),
-    this.updatedAt.toInstant(UtcOffset.ZERO),
-)

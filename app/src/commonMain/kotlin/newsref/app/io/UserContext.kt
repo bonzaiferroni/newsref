@@ -18,7 +18,7 @@ class UserContext(
     private val userStore: UserStore = UserStore()
 ): StateModel<UserContextState>(UserContextState()) {
 
-    var _cache = keyStore.readObjectOrNull(USER_CACHE_KEY) ?: UserContextCache()
+    var _cache = keyStore.readObjectOrNull() ?: UserContextCache()
     var cache
         get() = _cache
         set(value) = keyStore.writeObject(value).also { _cache = value }
@@ -29,7 +29,7 @@ class UserContext(
             login(LoginRequest(
                 usernameOrEmail = usernameOrEmail,
                 stayLoggedIn = stayLoggedIn,
-                password = refreshToken
+                refreshToken = refreshToken
             ))
         }
         setState{ it.copy(
@@ -72,11 +72,17 @@ class UserContext(
     }
 
     fun setUsernameOrEmail(value: String) = setState { it.copy(usernameOrEmail = value) }
-        .also { cache = cache.copy(usernameOrEmail = value) }
+        .also { if (stateNow.saveLogin) cache = cache.copy(usernameOrEmail = value) }
     fun setPassword(value: String) = setState { it.copy(password = value) }
-        .also { cache = cache.copy(refreshToken = value) }
     fun setStayLoggedIn(value: Boolean) = setState { it.copy(stayLoggedIn = value) }
         .also { cache = cache.copy(stayLoggedIn = value) }
+    fun setSaveLogin(value: Boolean) = setState { it.copy(saveLogin = value) }.also {
+        if (value) {
+            cache = cache.copy(usernameOrEmail = stateNow.usernameOrEmail)
+        } else {
+            cache = cache.copy(usernameOrEmail = null)
+        }
+    }
 }
 
 data class UserContextState(

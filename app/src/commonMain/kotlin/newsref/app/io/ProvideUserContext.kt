@@ -1,19 +1,9 @@
 package newsref.app.io
 
-import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.text.BasicTextField
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.CompositionLocalProvider
-import androidx.compose.runtime.collectAsState
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.staticCompositionLocalOf
+import androidx.compose.foundation.layout.*
+import androidx.compose.runtime.*
 import androidx.lifecycle.viewmodel.compose.viewModel
-import newsref.app.blip.controls.Button
-import newsref.app.blip.controls.DialogOld
-import newsref.app.blip.controls.Text
-import newsref.app.blip.controls.TextField
+import newsref.app.blip.controls.*
 import newsref.app.blip.theme.Blip
 
 @Composable
@@ -26,12 +16,26 @@ fun ProvideUserContext(
     CompositionLocalProvider(LocalUserContext provides userContext) {
         Box {
             block()
-            DialogOld(state.loginVisible, userContext::dismissLogin) {
+            FloatyBox(state.loginVisible, userContext::dismissLogin) {
                 Column(
                     verticalArrangement = Blip.ruler.columnTight
                 ) {
                     TextField(state.usernameOrEmail, userContext::setUsernameOrEmail)
-                    TextField(state.password, userContext::setPassword)
+                    TextField(
+                        text = state.password,
+                        onTextChange = userContext::setPassword,
+                        hideCharacters = true,
+                    )
+                    LabelCheckbox(
+                        value = state.saveLogin,
+                        onValueChanged = userContext::setSaveLogin,
+                        label = "Save username",
+                    )
+                    LabelCheckbox(
+                        value = state.stayLoggedIn,
+                        onValueChanged = userContext::setStayLoggedIn,
+                        label = "Stay logged in",
+                    )
                     Row(
                         horizontalArrangement = Blip.ruler.rowTight
                     ) {
