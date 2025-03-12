@@ -16,7 +16,6 @@ fun Application.configureApiRoutes() {
         }
 
         post(Api.loginEndpoint.path) {
-            println("ey!")
             call.authorize()
         }
 

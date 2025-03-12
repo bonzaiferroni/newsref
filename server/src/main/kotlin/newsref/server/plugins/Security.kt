@@ -79,7 +79,6 @@ fun createJWT(username: String, roles: Set<UserRole>): String {
         .withClaim(CLAIM_USERNAME, username)
         .withClaim(CLAIM_ROLES, roles.toClaimValue())
         .sign(Algorithm.HMAC256(secret))
-        .also { println("token: $it") }
 }
 
 fun Route.authenticateJwt(block: Route.() -> Unit) = authenticate(TOKEN_NAME) {
