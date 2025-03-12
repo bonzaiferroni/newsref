@@ -17,7 +17,6 @@ import newsref.krawly.utils.toMarkdown
 import newsref.model.core.*
 
 class SourceReader(
-	web: SpiderWeb,
 	private val hostAgent: HostAgent,
 	private val pageReader: PageReader = PageReader(hostAgent),
 	private val tweetReader: TweetReader = TweetReader()
@@ -95,9 +94,6 @@ class SourceReader(
 	}
 
 	private fun cacheResult(result: WebResult?, url: Url) {
-		if (result == null || !result.isOk) {
-			result?.screenshot?.cacheResource(url.core, "png", "nav_fail")
-		}
 //        result?.screenshot?.cacheResource(url.domain, "png")
 		result?.content?.cacheResource(url.core, "html", "html")
 	}

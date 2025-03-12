@@ -30,7 +30,6 @@ data class WebResult(
 	val pageHref: String? = null,
 	val status: Int? = null,
 	val content: String? = null,
-	val screenshot: ByteArray? = null,
 	val timeout: Boolean = false,
 	val exception: String? = null,
 	val noConnection: Boolean = false,

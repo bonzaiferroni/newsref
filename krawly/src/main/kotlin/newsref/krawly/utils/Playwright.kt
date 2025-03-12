@@ -18,14 +18,12 @@ data class RedirectResult(
 	fun isRedirect() = status == 301
 }
 
-fun pwFetch(url: Url, screenshot: Boolean = false): WebResult = useChromiumPage { page ->
+fun pwFetch(url: Url): WebResult = useChromiumPage { page ->
 	tryNavigate({
 		val response = page.navigate(url.toString())
-		val bytes = if (screenshot) page.screenshot(screenshotOptions) else null
 		WebResult(
 			status = response.status(),
 			content = page.content(),
-			screenshot = bytes,
 			pageHref = page.url(),
 		)
 	}, {

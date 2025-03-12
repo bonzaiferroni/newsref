@@ -133,7 +133,6 @@ class PageReader(
 			if (it.width != null && it.width >= 640 && it.width <= 1280) it else null
 		}?.url ?: newsArticle?.image?.firstOrNull()?.url ?: doc.readImageUrl()
 		val imageUrl = imageUrlString?.toUrlWithContextOrNull(pageUrl)
-		// todo: fix bug that renamed The Washington Post to George F. Will
 		val hostName = newsArticle?.publisher?.name ?: doc.readHostName()
 		val headline = doc.readHeadline() ?: newsArticle?.headline ?: doc.titleText
 		val description = newsArticle?.description ?: doc.readDescription()
