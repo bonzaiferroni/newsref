@@ -1,0 +1,1 @@
+ALTER TABLE news_article ALTER COLUMN news_type TYPE INT, ALTER COLUMN news_type SET NOT NULL, ALTER COLUMN news_type SET DEFAULT 0;

@@ -38,8 +38,9 @@ class ArticleReader(
         val title = source.title ?: error("Article title missing")
         val content = contentService.readSourceContentText(sourceId = source.id)
         if (content.length < READER_MIN_WORDS) error("Page content unexpectedly short: ${content.length}")
-        val newsCategories = NewsCategory.entries.joinToString("\n") { "* ${it.title}" }
+        val newsCategories = NewsSection.entries.joinToString("\n") { "* ${it.title}" }
         val documentTypes = DocumentType.entries.joinToString("\n") { "* ${it.title}" }
+        val newsTypes = NewsType.entries.joinToString("\n") { "* ${it.title}" }
 
         val articleContent = buildString {
             append("$title\n")
@@ -51,6 +52,7 @@ class ArticleReader(
             "../docs/article_reader-read_article.md",
             "document_types" to documentTypes,
             "news_categories" to newsCategories,
+            "news_type" to newsTypes,
             "article_content" to articleContent,
             "unclear_text" to PERSON_UNCLEAR
         )
@@ -58,15 +60,17 @@ class ArticleReader(
         // console.log(headlineAndText)
 
         val response: ArticleResponse? = readCachedResponse(source.url) ?: readUncachedResponse(source.url, prompt)
-        val type = response?.type?.toDocumentType() ?: DocumentType.Unknown
-        val category = response?.category?.toNewsCategory() ?: NewsCategory.Unknown
+        val documentType = response?.documentType?.toDocumentType() ?: DocumentType.Unknown
+        val category = response?.section?.toNewsCategory() ?: NewsSection.Unknown
+        val newsType = response?.newsType?.toNewsType() ?: NewsType.Unknown
         val locationId = response?.location?.takeIf { it != "None" }?.let { readOrCreateLocation(it) }
         service.createNewsArticle(
             pageId = source.id,
-            type = type,
-            summary = response?.summary,
-            category = category,
             locationId = locationId,
+            summary = response?.summary,
+            documentType = documentType,
+            category = category,
+            newsType = newsType
         )
 
         if (response == null) {
@@ -77,7 +81,7 @@ class ArticleReader(
         }
 
         console.log(
-            "${type.title} // ${category.title}\n${source.url.href.take(80)}"
+            "${documentType.title} // ${category.title}\n${source.url.href.take(80)}"
         )
         lastAttemptFail = false
 
@@ -214,9 +218,10 @@ class ArticleReader(
 
 @Serializable
 data class ArticleResponse(
-    val type: String,
     val summary: String,
-    val category: String,
+    val documentType: String,
+    val section: String,
+    val newsType: String,
     val location: String,
     val people: List<String>
 )
@@ -226,7 +231,8 @@ data class PersonChoiceResponse(
     val people: List<String>
 )
 
-private fun String.toNewsCategory() = NewsCategory.entries.firstOrNull { it.title == this }
+private fun String.toNewsCategory() = NewsSection.entries.firstOrNull { it.title == this }
 private fun String.toDocumentType() = DocumentType.entries.firstOrNull { it.title == this }
+private fun String.toNewsType() = NewsType.entries.firstOrNull { it.title == this }
 
 private fun Url.toFileName() = "${this.href.replace(Regex("[^a-zA-Z]"), "").take(100)}.dat"

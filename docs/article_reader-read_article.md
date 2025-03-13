@@ -14,11 +14,24 @@ Provide an objective summary of the article. Include as many details as mentione
 
 If the article provides content that is difficult to summarize in 200 words, focus on the most important details. If the article provides content that is well below 200 words, your summary may be shorter. Use double-spacing after a period.
 
-## Category
+## News Section
 
-How would you categorize the article? Provide the name of the category exactly as it appears in the list. Here are the possible categories:
+Assuming it is a news article, in which section would you expect to see the article in a newspaper? Provide the name of the section exactly as it appears in the list. Here are the possible sections:
 
 <|news_categories|>
+
+## News Article Type
+
+Assuming it is a news article, choose the article type that best describes the article. Here is some information about each category to help you choose the best option. 
+
+* A report conveys the basic facts about the event or issue: who, what, where, when, why. It is also called straight news. It is written objectively and with a neutral perspective.
+* An opinion piece provides a personal perspective on an issue. It draws from the experience or position of the author to back up its main points. It includes op-eds and editorials and all other articles published as opinions.
+* An analysis provides a perspective informed by experts and research. It goes beyond a basic report by offering more than a neutral perspective based on credible sources. 
+* An investigation gives the story of how the author discovers new information, through research, interviews, and other fact finding. It describes the process of discovery and the results.
+
+Which news article type best describes this article? Provide the news article type exactly as it appears in this list:
+
+<|news_type|>
 
 ## General Location
 

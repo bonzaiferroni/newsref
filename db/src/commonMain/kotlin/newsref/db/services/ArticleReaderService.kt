@@ -26,17 +26,18 @@ class ArticleReaderService : DbService() {
 
     suspend fun createNewsArticle(
         pageId: Long,
-        type: DocumentType,
-        summary: String?,
-        category: NewsCategory,
         locationId: Int?,
+        summary: String?,
+        documentType: DocumentType,
+        category: NewsSection,
+        newsType: NewsType
     ) = dbQuery {
         NewsArticleTable.insert {
             it[this.pageId] = pageId
             it[this.locationId] = locationId
-            it[this.documentType] = type
+            it[this.documentType] = documentType
             it[this.summary] = summary
-            it[this.category] = category
+            it[this.section] = category
         }
     }
 

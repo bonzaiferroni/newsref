@@ -5,8 +5,8 @@ data class NewsArticle(
     // val placeId: Int = 0,
     val summary: String,
     val documentType: DocumentType,
-    val category: NewsCategory,
-    val newsType: NewsType?,
+    val section: NewsSection,
+    val newsType: NewsType,
 )
 
 interface TitleEnum { val title: String }
@@ -25,7 +25,7 @@ enum class DocumentType(override val title: String): TitleEnum {
     GeneralInformation("General Information"),
 }
 
-enum class NewsCategory(override val title: String): TitleEnum {
+enum class NewsSection(override val title: String): TitleEnum {
     Unknown("Unknown"),
     General("General News and Events"),
     Sports("Sports"),
@@ -41,6 +41,7 @@ enum class NewsCategory(override val title: String): TitleEnum {
 }
 
 enum class NewsType(override val title: String): TitleEnum {
+    Unknown("Unknown"),
     Report("Report"),
     Opinion("Opinion"),
     Analysis("Analysis"),
