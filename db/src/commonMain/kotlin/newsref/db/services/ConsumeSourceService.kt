@@ -135,6 +135,6 @@ class ConsumeSourceService : DbService() {
 }
 
 fun isNewsContent(type: PageType?, language: String?) =
-	(type == PageType.NEWS_ARTICLE || type == PageType.SOCIAL_POST)
+	(type == PageType.NewsArticle || type == PageType.SocialPost)
 			&& language?.startsWith("en") == true
 

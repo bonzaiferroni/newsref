@@ -1,0 +1,4 @@
+* Reorder relevance enum
+* Make NewsType not nullable
+* On NewsArticleTable, rename type column to document_type
+

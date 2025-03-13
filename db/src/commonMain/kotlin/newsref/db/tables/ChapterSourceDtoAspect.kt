@@ -21,6 +21,7 @@ object ChapterSourceDtoAspect : Aspect<ChapterSourceDtoAspect, ChapterSourceDto>
     val textDistance = add(ChapterSourceTable.textDistance)
     val relevance = add(ChapterSourceTable.relevance)
     val summary = add(NewsArticleTable.summary)
+    val newsType = add(NewsArticleTable.newsType)
     val hostCore = add(HostTable.core)
     val hostName = add(HostTable.name)
     val hostLogo = add(HostTable.logo)

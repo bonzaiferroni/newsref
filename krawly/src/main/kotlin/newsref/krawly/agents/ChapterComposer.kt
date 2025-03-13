@@ -74,7 +74,7 @@ class ChapterComposer(
         }
 
         setState { it.copy(signalDate = origin.source.seenAt) }
-        if (origin.source.type == PageType.NEWS_ARTICLE) {
+        if (origin.source.type == PageType.NewsArticle) {
             // console.log("found secondary signal ${origin.source.id}")
             setState { it.copy(secondarySignals = it.secondarySignals + 1) }
             findSecondaryBucket(origin, model)
@@ -94,7 +94,7 @@ class ChapterComposer(
         }
         val bucket = ChapterBucket()
         for (signal in signals) {
-            if (signal.source.type != PageType.NEWS_ARTICLE) continue
+            if (signal.source.type != PageType.NewsArticle) continue
             if (bucket.contains(signal.source.id)) continue
             val vector = readOrFetchVector(signal.source, model) ?: continue
             bucket.add(signal, vector)

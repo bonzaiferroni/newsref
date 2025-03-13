@@ -7,6 +7,7 @@ import newsref.model.core.Relevance
 import org.jetbrains.exposed.dao.id.LongIdTable
 import org.jetbrains.exposed.sql.ReferenceOption
 import org.jetbrains.exposed.sql.ResultRow
+import org.jetbrains.exposed.sql.kotlin.datetime.datetime
 
 object ChapterSourceTable : LongIdTable("chapter_source") {
     val chapterId = reference("chapter_id", ChapterTable, ReferenceOption.CASCADE).index()
@@ -46,7 +47,20 @@ internal fun ResultRow.toChapterSourceInfo() = ChapterSourceInfo(
     source = this.toSource(),
 )
 
-//internal fun SourceTable.notInChapter(): NotInSubQueryOp<EntityID<Long>> {
-//    val subquery = ChapterSourceTable.select(sourceId).where { relevance.isNullOrNeq(Relevance.Irrelevant) }
-//    return this.id.notInSubQuery(subQuery)
-//}
+object EditSourceRelevanceTable : LongIdTable("edit_source_relevance") {
+    val chapterId = reference("chapter_id", ChapterTable, ReferenceOption.CASCADE).index()
+    val sourceId = reference("source_id", PageTable, ReferenceOption.CASCADE).index()
+    val huddleId = reference("huddle_id", HuddleTable, ReferenceOption.CASCADE).index()
+    val relevance = enumeration<Relevance>("relevance").nullable()
+    val status = enumeration<EditStatus>("status")
+    val startedAt = datetime("started_at")
+    val finishedAt = datetime("finished_at")
+}
+
+enum class EditStatus {
+    Proposed,
+    Extended,
+    ConsensusAccepted,
+    ConsensusRejected,
+    NoConsensus,
+}

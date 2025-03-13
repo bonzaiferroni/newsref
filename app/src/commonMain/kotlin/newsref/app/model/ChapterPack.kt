@@ -12,7 +12,7 @@ data class ChapterPack(
 ) {
     val imageUrl
         get() = sources.firstNotNullOfOrNull {
-            if (it.pageType != PageType.NEWS_ARTICLE) return@firstNotNullOfOrNull null
+            if (it.pageType != PageType.NewsArticle) return@firstNotNullOfOrNull null
             it.imageUrl
         }
 }

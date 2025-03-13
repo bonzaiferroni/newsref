@@ -21,7 +21,7 @@ class ChapterComposerService : DbService() {
                 PageTable.score.greaterEq(2) and
                         PageTable.id.notInList(excludedIds) and
                         PageTable.id.notInSubQuery(subquery) and
-                        (PageTable.type.neq(PageType.NEWS_ARTICLE) or
+                        (PageTable.type.neq(PageType.NewsArticle) or
                                 PageTable.contentCount.greaterEq(EMBEDDING_MIN_WORDS))
             }
             .orderBy(PageTable.seenAt, SortOrder.DESC)

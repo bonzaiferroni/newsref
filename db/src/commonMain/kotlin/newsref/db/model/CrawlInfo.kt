@@ -41,7 +41,7 @@ data class WebResult(
 data class PageInfo(
 	val source: Source,
 	val article: Article? = null,
-	val articleType: ArticleType = ArticleType.UNKNOWN,
+	val articleType: ArticleType = ArticleType.Unknown,
 	val pageHost: Host,
 	val hostName: String?,
 	val language: String?,

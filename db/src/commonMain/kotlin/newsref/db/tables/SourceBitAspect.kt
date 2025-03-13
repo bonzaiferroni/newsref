@@ -34,6 +34,6 @@ internal fun ResultRow.toSourceBitDto() = SourceBitDto(
     title = this[SourceBitAspect.title],
     score = this[SourceBitAspect.score] ?: 0,
     feedPosition = this[SourceBitAspect.feedPosition],
-    pageType = this[SourceBitAspect.type] ?: PageType.UNKNOWN,
+    pageType = this[SourceBitAspect.type] ?: PageType.Unknown,
     existedAt = (this[SourceBitAspect.publishedAt] ?: this[SourceBitAspect.seenAt]).toInstantUtc(),
 )

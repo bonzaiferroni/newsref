@@ -6,6 +6,6 @@ enum class SourceType {
 }
 
 fun PageType.toSourceType() = when {
-    this == PageType.NEWS_ARTICLE -> SourceType.Article
+    this == PageType.NewsArticle -> SourceType.Article
     else -> SourceType.Reference
 }

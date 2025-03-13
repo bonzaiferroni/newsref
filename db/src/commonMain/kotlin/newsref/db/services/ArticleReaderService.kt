@@ -13,7 +13,7 @@ class ArticleReaderService : DbService() {
         val subquery = NewsArticleTable.select(NewsArticleTable.pageId)
         PageTable.select(PageTable.columns)
             .where {
-                PageTable.type.eq(PageType.NEWS_ARTICLE) and
+                PageTable.type.eq(PageType.NewsArticle) and
                         PageTable.existedSince(7.days) and
                         PageTable.score.greaterEq(2) and
                         PageTable.title.isNotNull() and
@@ -34,7 +34,7 @@ class ArticleReaderService : DbService() {
         NewsArticleTable.insert {
             it[this.pageId] = pageId
             it[this.locationId] = locationId
-            it[this.type] = type
+            it[this.documentType] = type
             it[this.summary] = summary
             it[this.category] = category
         }

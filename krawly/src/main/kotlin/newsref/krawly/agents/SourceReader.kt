@@ -12,7 +12,6 @@ import newsref.db.model.FetchResult
 import newsref.db.model.LeadResult
 import newsref.db.model.PageInfo
 import newsref.db.model.WebResult
-import newsref.krawly.SpiderWeb
 import newsref.krawly.utils.toMarkdown
 import newsref.model.core.*
 
@@ -83,7 +82,7 @@ class SourceReader(
 			return FetchResult.CAPTCHA
 		// todo: support other languages
 		if (page.language?.startsWith("en") != true) return FetchResult.IRRELEVANT
-		if (page.source.type == PageType.NEWS_ARTICLE) {
+		if (page.source.type == PageType.NewsArticle) {
 			if (page.foundNewsArticle) return FetchResult.RELEVANT
 			val wordCount = page.article?.wordCount ?: 0
 			val maybeUseful = page.source.publishedAt != null && page.links.any { it.isExternal } && wordCount > 100

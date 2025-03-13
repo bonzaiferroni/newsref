@@ -25,9 +25,9 @@ class ElementReader {
 
 		val wordBuilder = StringBuilder()
 		val articleSets = mutableMapOf(
-			ArticleType.NEWS to Pair(newsSet, 0),
+			ArticleType.News to Pair(newsSet, 0),
 			// ArticleType.HELP to Pair(helpSet, 0),
-			ArticleType.POLICY to Pair(policySet, 0),
+			ArticleType.Policy to Pair(policySet, 0),
 			// ArticleType.JOURNAL to Pair(journalSet, 0),
 		)
 		var wordCount = 0
@@ -58,7 +58,7 @@ class ElementReader {
 			}
 		}
 
-		signalScore += articleSets[ArticleType.NEWS]?.second ?: 0
+		signalScore += articleSets[ArticleType.News]?.second ?: 0
 
 		if (noiseScore > signalScore) return null
 

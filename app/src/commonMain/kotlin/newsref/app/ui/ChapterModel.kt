@@ -6,12 +6,7 @@ import kotlinx.collections.immutable.persistentListOf
 import kotlinx.collections.immutable.toImmutableList
 import kotlinx.coroutines.launch
 import kotlinx.datetime.Clock
-import kotlinx.datetime.Instant
-import kotlinx.datetime.TimeZone
-import kotlinx.datetime.atStartOfDayIn
-import kotlinx.datetime.toLocalDateTime
 import newsref.app.ChapterRoute
-import newsref.app.blip.controls.AxisTick
 import newsref.app.blip.controls.BalloonsData
 import newsref.app.blip.controls.BalloonPoint
 import newsref.app.blip.controls.generateAxisTicks
@@ -23,7 +18,6 @@ import newsref.app.model.toModel
 import newsref.model.core.PageType
 import newsref.model.utils.toDaysFromNow
 import kotlin.time.Duration.Companion.days
-import kotlin.time.Duration.Companion.hours
 
 class ChapterModel(
     private val route: ChapterRoute,
@@ -32,8 +26,8 @@ class ChapterModel(
     init {
         viewModelScope.launch {
             val pack = chapterStore.readChapter(route.id).toModel()
-            val articles = pack.sources.filter { it.pageType == PageType.NEWS_ARTICLE }.toImmutableList()
-            val references = pack.sources.filter { it.pageType != PageType.NEWS_ARTICLE }.toImmutableList()
+            val articles = pack.sources.filter { it.pageType == PageType.NewsArticle }.toImmutableList()
+            val references = pack.sources.filter { it.pageType != PageType.NewsArticle }.toImmutableList()
             val data = pack.toBalloonsData()
             setState { it.copy(
                 pack = pack,

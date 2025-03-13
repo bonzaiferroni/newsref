@@ -49,10 +49,10 @@ class PageReader(
 		var contentWordCount = 0
 		var readWordCount = 0
 		val typeSets = mutableMapOf(
-			ArticleType.NEWS to 0,
-			ArticleType.HELP to 0,
-			ArticleType.POLICY to 0,
-			ArticleType.JOURNAL to 0,
+			ArticleType.News to 0,
+			ArticleType.Help to 0,
+			ArticleType.Policy to 0,
+			ArticleType.Journal to 0,
 		)
 		val stack = mutableListOf<DocElement>()
 		stack.addAll(doc.children.reversed())
@@ -139,14 +139,14 @@ class PageReader(
 		val publishedAt = newsArticle?.readPublishedAt() ?: doc.readPublishedAt()
 		val modifiedAt = newsArticle?.readModifiedAt() ?: doc.readModifiedAt()
 		val authors = newsArticle?.readAuthor() ?: doc.readAuthor()?.let { listOf(PageAuthor(name = it)) }
-		val articleType = typeSets.maxByOrNull { it.value }?.key ?: ArticleType.UNKNOWN
+		val articleType = typeSets.maxByOrNull { it.value }?.key ?: ArticleType.Unknown
 		val metaType = doc.readType()
-		val pageType = getSourceType(newsArticle, articleType, metaType ?: PageType.UNKNOWN, contentWordCount)
+		val pageType = getSourceType(newsArticle, articleType, metaType ?: PageType.Unknown, contentWordCount)
 		val language = newsArticle?.inLanguage ?: doc.readLanguage()
 		val thumbnail = newsArticle?.thumbnailUrl ?: newsArticle?.image?.takeIf { it.size > 1 }
 			?.firstNotNullOfOrNull{ if (it.width != null && it.width < 640) it else null }?.url
 
-		if (pageType == PageType.NEWS_ARTICLE) articleCount++
+		if (pageType == PageType.NewsArticle) articleCount++
 		docCount++
 		console.status = "$articleCount/$docCount"
 
@@ -195,9 +195,9 @@ class PageReader(
 		pageType: PageType,
 		wordCount: Int
 	): PageType {
-		if (newsArticle != null) return PageType.NEWS_ARTICLE
-		if (wordCount < 100 || pageType != PageType.NEWS_ARTICLE) return pageType
-		if (articleType == ArticleType.POLICY) return PageType.WEBSITE
+		if (newsArticle != null) return PageType.NewsArticle
+		if (wordCount < 100 || pageType != PageType.NewsArticle) return pageType
+		if (articleType == ArticleType.Policy) return PageType.Website
 		return pageType
 	}
 }
@@ -249,12 +249,12 @@ private val notParentTags = setOf(
 private val lassoTags = setOf("body", "main", "article")
 
 fun PageType.getEmoji() = when (this) {
-	PageType.NEWS_ARTICLE -> "📜"
-	PageType.WEBSITE -> "🥱"
-	PageType.IMAGE -> "🌆"
-	PageType.BLOG_POST -> "📝"
-	PageType.VIDEO -> "📼"
-	PageType.SOCIAL_POST -> "👯"
+	PageType.NewsArticle -> "📜"
+	PageType.Website -> "🥱"
+	PageType.Image -> "🌆"
+	PageType.BlogPost -> "📝"
+	PageType.Video -> "📼"
+	PageType.SocialPost -> "👯"
 	else -> "🧀"
 }
 

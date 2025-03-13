@@ -87,7 +87,7 @@ class FeedChecker(
                 // todo: block from robots.txt
                 val source = sourceService.readSourceByUrl(url)
                 if (source != null) {
-                    if (source.type == PageType.NEWS_ARTICLE && now - source.existedAt < FAMILIAR_HREF_INTERVAL) {
+                    if (source.type == PageType.NewsArticle && now - source.existedAt < FAMILIAR_HREF_INTERVAL) {
                         feedSources.add(FeedSource(feedId = feed.id, sourceId = source.id, position = linkCount))
                         linkCount++
                     }
