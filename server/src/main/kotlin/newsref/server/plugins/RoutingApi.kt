@@ -20,7 +20,7 @@ fun Application.configureApiRoutes() {
         }
 
         serveUsers(UserDtoService())
-        sourceRouting()
+        articleRouting()
         serveChapters()
         serveHosts()
     }

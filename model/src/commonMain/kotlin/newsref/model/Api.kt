@@ -12,7 +12,9 @@ object Api {
 
     // content
     val sourceEndpoint = Endpoint("/source")
-    val feedEndpoint = Endpoint("/feed")
+    object TopSources : Endpoint("/top_chapters") {
+        val spanOrdinal = addIntParam("span_ordinal")
+    }
     object ChapterSources : Endpoint("/chapter_source") {
         val pageId = addLongParam("pageId")
         val chapterId = addLongParam("chapterId")
