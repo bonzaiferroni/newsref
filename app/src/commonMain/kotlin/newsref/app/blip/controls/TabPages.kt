@@ -14,9 +14,10 @@ import newsref.app.utils.modifyIfTrue
 fun TabPages(
     currentPageName: String?,
     onChangePage: (String) -> Unit,
-    pages: ImmutableList<TabPage>,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
+    pageContents: @Composable () -> ImmutableList<TabPage>
 ) {
+    val pages = pageContents()
     if (pages.isEmpty()) return
 
     val currentPage = pages.firstOrNull() { it.name == currentPageName }
@@ -73,5 +74,8 @@ data class TabPage(
     val isVisible: Boolean = true,
     val content: @Composable () -> Unit,
 )
+
+@Composable
+fun rememberPages(vararg elements: TabPage) = remember { pages(*elements) }
 
 fun pages(vararg elements: TabPage) = elements.toImmutableList()

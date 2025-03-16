@@ -9,7 +9,7 @@ import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import newsref.app.blip.controls.TabPage
 import newsref.app.blip.controls.TabPages
-import newsref.app.blip.controls.pages
+import newsref.app.blip.controls.rememberPages
 import newsref.dashboard.HostItemRoute
 import newsref.dashboard.LocalNavigator
 import newsref.dashboard.ui.controls.*
@@ -34,7 +34,8 @@ fun HostItemScreen(
             nav.setRoute(route.copy(page = it))
             viewModel.changePage(it)
         },
-        pages = pages(
+    ) {
+        rememberPages(
             TabPage("Properties") {
                 PropertyTable(
                     name = host.core,
@@ -69,5 +70,5 @@ fun HostItemScreen(
                 )
             }
         )
-    )
+    }
 }

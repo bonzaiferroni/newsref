@@ -30,7 +30,7 @@ class ArticleReaderService : DbService() {
         summary: String?,
         documentType: DocumentType,
         category: NewsSection,
-        newsType: NewsType
+        articleType: ArticleType
     ) = dbQuery {
         NewsArticleTable.insert {
             it[this.pageId] = pageId
@@ -38,6 +38,7 @@ class ArticleReaderService : DbService() {
             it[this.documentType] = documentType
             it[this.summary] = summary
             it[this.section] = category
+            it[this.articleType] = articleType
         }
     }
 

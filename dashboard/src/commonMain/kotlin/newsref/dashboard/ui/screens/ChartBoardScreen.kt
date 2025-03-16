@@ -9,8 +9,8 @@ import newsref.dashboard.ChartBoardRoute
 import newsref.dashboard.ui.controls.ChartType
 import newsref.app.blip.controls.TabPage
 import newsref.app.blip.controls.TabPages
+import newsref.app.blip.controls.rememberPages
 import newsref.dashboard.ui.controls.TimeChart
-import newsref.app.blip.controls.pages
 
 @Composable
 fun ChartBoardScreen(
@@ -22,7 +22,8 @@ fun ChartBoardScreen(
     TabPages(
         state.page,
         viewModel::onChangePage,
-        pages = pages(
+    ) {
+        rememberPages(
             TabPage("Chapter Finder") {
                 Column(
                     verticalArrangement = Arrangement.spacedBy(baseSpacing)
@@ -35,5 +36,5 @@ fun ChartBoardScreen(
                 }
             }
         )
-    )
+    }
 }

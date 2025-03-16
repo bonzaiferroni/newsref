@@ -19,7 +19,7 @@ fun Application.configureApiRoutes() {
             call.authorize()
         }
 
-        userRouting(UserDtoService())
+        serveUsers(UserDtoService())
         sourceRouting()
         serveChapters()
         serveHosts()

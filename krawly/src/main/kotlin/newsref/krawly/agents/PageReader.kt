@@ -49,10 +49,10 @@ class PageReader(
 		var contentWordCount = 0
 		var readWordCount = 0
 		val typeSets = mutableMapOf(
-			ArticleType.News to 0,
-			ArticleType.Help to 0,
-			ArticleType.Policy to 0,
-			ArticleType.Journal to 0,
+			ArticleCategory.News to 0,
+			ArticleCategory.Help to 0,
+			ArticleCategory.Policy to 0,
+			ArticleCategory.Journal to 0,
 		)
 		val stack = mutableListOf<DocElement>()
 		stack.addAll(doc.children.reversed())
@@ -139,9 +139,9 @@ class PageReader(
 		val publishedAt = newsArticle?.readPublishedAt() ?: doc.readPublishedAt()
 		val modifiedAt = newsArticle?.readModifiedAt() ?: doc.readModifiedAt()
 		val authors = newsArticle?.readAuthor() ?: doc.readAuthor()?.let { listOf(PageAuthor(name = it)) }
-		val articleType = typeSets.maxByOrNull { it.value }?.key ?: ArticleType.Unknown
+		val articleCategory = typeSets.maxByOrNull { it.value }?.key ?: ArticleCategory.Unknown
 		val metaType = doc.readType()
-		val pageType = getSourceType(newsArticle, articleType, metaType ?: PageType.Unknown, contentWordCount)
+		val pageType = getSourceType(newsArticle, articleCategory, metaType ?: PageType.Unknown, contentWordCount)
 		val language = newsArticle?.inLanguage ?: doc.readLanguage()
 		val thumbnail = newsArticle?.thumbnailUrl ?: newsArticle?.image?.takeIf { it.size > 1 }
 			?.firstNotNullOfOrNull{ if (it.width != null && it.width < 640) it else null }?.url
@@ -164,7 +164,7 @@ class PageReader(
                 okResponse = true,
             ),
 			pageHost = pageHost,
-			articleType = articleType,
+			articleCategory = articleCategory,
 			hostName = hostName,
 			language = language,
 			foundNewsArticle = newsArticle != null,
@@ -191,13 +191,13 @@ class PageReader(
 
 	private fun getSourceType(
 		newsArticle: NewsArticle?,
-		articleType: ArticleType,
+		articleCategory: ArticleCategory,
 		pageType: PageType,
 		wordCount: Int
 	): PageType {
 		if (newsArticle != null) return PageType.NewsArticle
 		if (wordCount < 100 || pageType != PageType.NewsArticle) return pageType
-		if (articleType == ArticleType.Policy) return PageType.Website
+		if (articleCategory == ArticleCategory.Policy) return PageType.Website
 		return pageType
 	}
 }

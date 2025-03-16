@@ -12,7 +12,7 @@ import newsref.db.utils.jsonDecoder
 import org.jetbrains.exposed.sql.SqlExpressionBuilder.eq
 import java.io.File
 
-class UserService: DbService() {
+class UserInitService: DbService() {
 	suspend fun initUsers() = dbQuery {
 		val userFile = File("$RESOURCE_PATH/config/users.json")
 		if (!userFile.exists()) return@dbQuery false

@@ -11,15 +11,15 @@ import newsref.app.blip.theme.ProvideBookColors
 fun TabCard(
     currentTab: String?,
     onChangePage: (String) -> Unit,
-    pages: ImmutableList<TabPage>,
     shape: Shape = RectangleShape,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
+    pageContents: @Composable () -> ImmutableList<TabPage>
 ) {
     ProvideBookColors {
         TabPages(
-            currentTab,
-            onChangePage,
-            pages,
+            currentPageName = currentTab,
+            onChangePage = onChangePage,
+            pageContents = pageContents
         )
     }
 }

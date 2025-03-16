@@ -1,16 +1,12 @@
 package newsref.app.io
 
-import androidx.compose.foundation.layout.Box
-import androidx.compose.runtime.*
 import androidx.lifecycle.viewModelScope
-import androidx.lifecycle.viewmodel.compose.viewModel
 import kotlinx.coroutines.launch
 import kotlinx.serialization.Serializable
 import newsref.app.KeyStore
 import newsref.app.blip.core.StateModel
-import newsref.app.model.Auth
 import newsref.app.model.User
-import newsref.model.dto.LoginRequest
+import newsref.model.data.LoginRequest
 import newsref.model.utils.obfuscate
 
 class UserContext(

@@ -7,7 +7,7 @@ import newsref.model.dto.*
 import org.jetbrains.exposed.sql.ResultRow
 
 object SourceBitAspect : Aspect<SourceBitAspect, SourceBitDto>(
-    PageTable.leftJoin(HostTable),
+    PageTable.leftJoin(HostTable).leftJoin(ArticleTable).leftJoin(NewsArticleTable),
     ResultRow::toSourceBitDto
 ) {
     val id = add(PageTable.id)
@@ -19,8 +19,11 @@ object SourceBitAspect : Aspect<SourceBitAspect, SourceBitDto>(
     val hostCore = add(HostTable.core)
     val type = add(PageTable.type)
     val title = add(PageTable.title)
+    val headline = add(ArticleTable.headline)
     val score = add(PageTable.score)
     val feedPosition = add(PageTable.feedPosition)
+    val newsType = add(NewsArticleTable.articleType)
+    val newsSection = add(NewsArticleTable.section)
     val publishedAt = add(PageTable.publishedAt)
     val seenAt = add(PageTable.seenAt)
 }
@@ -31,9 +34,11 @@ internal fun ResultRow.toSourceBitDto() = SourceBitDto(
     url = this[SourceBitAspect.url],
     imageUrl = this[SourceBitAspect.thumbnail] ?: this[SourceBitAspect.imageUrl] ?: this[SourceBitAspect.hostLogo],
     hostCore = this[SourceBitAspect.hostCore],
-    title = this[SourceBitAspect.title],
+    headline = this.getOrNull(SourceBitAspect.headline) ?: this[SourceBitAspect.title],
     score = this[SourceBitAspect.score] ?: 0,
     feedPosition = this[SourceBitAspect.feedPosition],
     pageType = this[SourceBitAspect.type] ?: PageType.Unknown,
+    articleType = this.getOrNull(SourceBitAspect.newsType) ?: ArticleType.Unknown,
+    newsSection = this.getOrNull(SourceBitAspect.newsSection) ?: NewsSection.Unknown,
     existedAt = (this[SourceBitAspect.publishedAt] ?: this[SourceBitAspect.seenAt]).toInstantUtc(),
 )

@@ -1,15 +1,15 @@
 package newsref.db.model
 
+import newsref.model.core.*
+
 data class NewsArticle(
     val pageId: Long,
     // val placeId: Int = 0,
     val summary: String,
     val documentType: DocumentType,
     val section: NewsSection,
-    val newsType: NewsType,
+    val articleType: ArticleType,
 )
-
-interface TitleEnum { val title: String }
 
 // this is not a comprehensive list but intended to filter out misleading meta info
 enum class DocumentType(override val title: String): TitleEnum {
@@ -23,27 +23,4 @@ enum class DocumentType(override val title: String): TitleEnum {
     Educational("Educational"),
     Profile("Personal Profile or Biography"),
     GeneralInformation("General Information"),
-}
-
-enum class NewsSection(override val title: String): TitleEnum {
-    Unknown("Unknown"),
-    General("General News and Events"),
-    Sports("Sports"),
-    Government("Government and Policy"),
-    Entertainment("Arts and Entertainment"),
-    Weather("Weather"),
-    International("International"),
-    Technology("Internet and Technology"),
-    Business("Business and Markets"),
-    Science("Science and Space"),
-    Celebrity("Celebrity and Influencer"),
-    Editorial("Editorial and Opinion"),
-}
-
-enum class NewsType(override val title: String): TitleEnum {
-    Unknown("Unknown"),
-    Report("Report"),
-    Opinion("Opinion"),
-    Analysis("Analysis"),
-    Investigation("Investigation"),
 }

@@ -30,6 +30,8 @@ object Api {
         }
     }
 
+    object Huddles : Endpoint("/huddle")
+
     // user
     val userEndpoint = Endpoint("/user")
     val privateEndpoint = Endpoint("/user/private")

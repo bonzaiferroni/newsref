@@ -7,6 +7,8 @@ import newsref.db.tables.*
 import newsref.db.utils.eqLowercase
 import newsref.db.utils.toLocalDateTimeUtc
 import newsref.model.core.UserRole
+import newsref.model.data.EditUserRequest
+import newsref.model.data.SignUpRequest
 import newsref.model.dto.*
 import newsref.model.utils.*
 import newsref.server.db.*
@@ -15,7 +17,7 @@ import org.jetbrains.exposed.sql.*
 
 class UserDtoService : DbService() {
 
-    fun findByUsername(username: String): User? =
+    private fun findByUsername(username: String): User? =
         UserAspect.readFirst { UserTable.username.lowerCase() eq username.lowercase() }
 
     suspend fun findByUsernameOrEmail(usernameOrEmail: String): User? = dbQuery {

@@ -5,7 +5,7 @@ enum class PageType(
 ) {
     Unknown("Unknown"),
     NewsArticle("News Article"),
-    Article("Article"),
+    MiscArticle("Miscellaneous Article"),
     BlogPost("Blog Post"),
     SocialPost("Social Media Post"),
     Video("Video"),
@@ -29,7 +29,7 @@ enum class PageType(
     }
 }
 
-enum class ArticleType {
+enum class ArticleCategory {
     Unknown, News, Help, Policy, Journal
 }
 

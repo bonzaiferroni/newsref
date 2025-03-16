@@ -22,7 +22,8 @@ fun HostScreen(
     TabCard(
         currentTab = state.tab,
         onChangePage = viewModel::changeTab,
-        pages = pages(
+    ) {
+        rememberPages(
             TabPage(name = "Sources", scrollbar = false) {
                 LazyColumn {
                     items(state.sources) {
@@ -39,5 +40,5 @@ fun HostScreen(
                 }
             }
         )
-    )
+    }
 }

@@ -1,6 +1,7 @@
 package newsref.db.tables
 
 import newsref.db.model.*
+import newsref.model.core.*
 import org.jetbrains.exposed.sql.*
 
 object NewsArticleTable : Table("news_article") {
@@ -9,7 +10,7 @@ object NewsArticleTable : Table("news_article") {
     val summary = text("summary").nullable()
     val documentType = enumeration<DocumentType>("type")
     val section = enumeration<NewsSection>("category")
-    val newsType = enumeration<NewsType>("news_type").default(NewsType.Unknown)
+    val articleType = enumeration<ArticleType>("news_type").default(ArticleType.Unknown)
 
     override val primaryKey = PrimaryKey(pageId)
 }

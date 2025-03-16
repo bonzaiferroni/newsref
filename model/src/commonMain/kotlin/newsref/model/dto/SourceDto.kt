@@ -6,17 +6,21 @@ import newsref.model.core.*
 
 @Serializable
 data class SourceDto(
-    val id: Long = 0,
+    val pageId: Long,
+    val hostId: Int,
     val url: String,
-    val title: String? = null,
-    val type: PageType? = null,
-    val score: Int? = null,
-    val thumbnail: String? = null,
-    val imageUrl: String? = null,
-    val embed: String? = null,
-    val wordCount: Int? = null,
+    val headline: String?,
+    val type: PageType?,
+    val score: Int?,
+    val thumbnail: String?,
+    val imageUrl: String?,
+    val embed: String?,
+    val wordCount: Int?,
+    val summary: String?,
+    val articleType: ArticleType?,
     val seenAt: Instant,
-    val publishedAt: Instant? = null,
+    val accessedAt: Instant?,
+    val publishedAt: Instant?,
 ) {
 }
 
@@ -27,9 +31,11 @@ data class SourceBitDto(
     val url: String,
     val imageUrl: String?,
     val hostCore: String,
-    val title: String?,
+    val headline: String?,
     val score: Int,
     val feedPosition: Int?,
     val pageType: PageType,
+    val articleType: ArticleType,
+    val newsSection: NewsSection,
     val existedAt: Instant,
 )

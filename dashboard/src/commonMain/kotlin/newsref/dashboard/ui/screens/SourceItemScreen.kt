@@ -11,7 +11,7 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import coil3.compose.AsyncImage
 import newsref.app.blip.controls.TabPage
 import newsref.app.blip.controls.TabPages
-import newsref.app.blip.controls.pages
+import newsref.app.blip.controls.rememberPages
 import newsref.dashboard.*
 import newsref.dashboard.LocalNavigator
 import newsref.dashboard.SourceItemRoute
@@ -41,7 +41,7 @@ fun SourceItemScreen(
                 viewModel.changePage(it)
                 nav.setRoute(route.copy(pageName = it))
             },
-            pages = pages(
+            pageContents = rememberPages(
                 TabPage("Data") {
                     SourceDataView(viewModel)
                 },

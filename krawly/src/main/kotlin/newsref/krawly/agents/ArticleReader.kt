@@ -8,6 +8,8 @@ import newsref.db.core.Url
 import newsref.db.model.*
 import newsref.db.services.*
 import newsref.krawly.clients.*
+import newsref.model.core.ArticleType
+import newsref.model.core.NewsSection
 import java.io.File
 import kotlin.text.split
 import kotlin.time.Duration.Companion.minutes
@@ -40,7 +42,7 @@ class ArticleReader(
         if (content.length < READER_MIN_WORDS) error("Page content unexpectedly short: ${content.length}")
         val newsCategories = NewsSection.entries.joinToString("\n") { "* ${it.title}" }
         val documentTypes = DocumentType.entries.joinToString("\n") { "* ${it.title}" }
-        val newsTypes = NewsType.entries.joinToString("\n") { "* ${it.title}" }
+        val newsTypes = ArticleType.entries.joinToString("\n") { "* ${it.title}" }
 
         val articleContent = buildString {
             append("$title\n")
@@ -62,7 +64,7 @@ class ArticleReader(
         val response: ArticleResponse? = readCachedResponse(source.url) ?: readUncachedResponse(source.url, prompt)
         val documentType = response?.documentType?.toDocumentType() ?: DocumentType.Unknown
         val category = response?.section?.toNewsCategory() ?: NewsSection.Unknown
-        val newsType = response?.newsType?.toNewsType() ?: NewsType.Unknown
+        val newsType = response?.newsType?.toNewsType() ?: ArticleType.Unknown
         val locationId = response?.location?.takeIf { it != "None" }?.let { readOrCreateLocation(it) }
         service.createNewsArticle(
             pageId = source.id,
@@ -70,7 +72,7 @@ class ArticleReader(
             summary = response?.summary,
             documentType = documentType,
             category = category,
-            newsType = newsType
+            articleType = newsType
         )
 
         if (response == null) {
@@ -81,7 +83,9 @@ class ArticleReader(
         }
 
         console.log(
-            "${documentType.title} // ${category.title}\n${source.url.href.take(80)}"
+            "${documentType.title.take(30)} | ${category.title.take(30)} | ${newsType.title.take(30)}" +
+                    "\n${source.title?.take(80)}" +
+                    "\n${source.url.href.take(80)}"
         )
         lastAttemptFail = false
 
@@ -219,8 +223,10 @@ class ArticleReader(
 @Serializable
 data class ArticleResponse(
     val summary: String,
+    @SerialName("document_type")
     val documentType: String,
     val section: String,
+    @SerialName("news_type")
     val newsType: String,
     val location: String,
     val people: List<String>
@@ -233,6 +239,6 @@ data class PersonChoiceResponse(
 
 private fun String.toNewsCategory() = NewsSection.entries.firstOrNull { it.title == this }
 private fun String.toDocumentType() = DocumentType.entries.firstOrNull { it.title == this }
-private fun String.toNewsType() = NewsType.entries.firstOrNull { it.title == this }
+private fun String.toNewsType() = ArticleType.entries.firstOrNull { it.title == this }
 
 private fun Url.toFileName() = "${this.href.replace(Regex("[^a-zA-Z]"), "").take(100)}.dat"

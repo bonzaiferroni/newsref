@@ -32,7 +32,8 @@ fun ChapterScreen(
         TabCard(
             currentTab = state.tab,
             onChangePage = viewModel::changeTab,
-            pages = pages(
+        ) {
+            rememberPages(
                 TabPage("Articles", false) {
                     LazyColumn(
                     ) {
@@ -50,7 +51,7 @@ fun ChapterScreen(
                     }
                 }
             )
-        )
+        }
     }
 }
 

@@ -5,17 +5,18 @@ import kotlinx.coroutines.launch
 import newsref.app.*
 import newsref.app.blip.controls.BalloonsData
 import newsref.app.blip.core.*
-import newsref.app.io.ChapterStore
+import newsref.app.io.*
 import newsref.app.model.*
-import newsref.model.dto.ChapterSourceDto
 
 class ChapterSourceModel(
     private val route: ChapterSourceRoute,
-    private val store: ChapterStore = ChapterStore()
+    private val chapterStore: ChapterStore = ChapterStore(),
+    private val sourceStore: SourceStore = SourceStore(),
+    private val hostStore: HostStore = HostStore(),
 ) : StateModel<ChapterSourceState>(ChapterSourceState(route.pageId)) {
     init {
         viewModelScope.launch {
-            val chapter = store.readChapter(route.chapterId).toModel()
+            val chapter = this@ChapterSourceModel.chapterStore.readChapter(route.chapterId).toModel()
             val balloons = chapter.toBalloonsData()
             setState { it.copy(chapter = chapter, balloons = balloons) }
         }
@@ -23,11 +24,16 @@ class ChapterSourceModel(
     }
 
     fun selectSource(pageId: Long) {
-        viewModelScope.launch {
-            val source = store.readChapterSource(route.chapterId, pageId)
-            setState { it.copy(source = source) }
-        }
         setState { it.copy(selectedId = pageId)}
+        viewModelScope.launch {
+            val chapterSource = chapterStore.readChapterSource(route.chapterId, pageId)
+            setState { it.copy(chapterSource = chapterSource) }
+        }
+        viewModelScope.launch {
+            val source = sourceStore.readSource(pageId)
+            val host = hostStore.readHost(source.hostId)
+            setState { it.copy(article = source, host = host) }
+        }
     }
 
     fun onChangePage(page: String) {
@@ -38,7 +44,9 @@ class ChapterSourceModel(
 data class ChapterSourceState(
     val selectedId: Long,
     val chapter: ChapterPack? = null,
-    val source: ChapterSource? = null,
+    val chapterSource: ChapterSource? = null,
+    val article: Article? = null,
+    val host: Host? = null,
     val balloons: BalloonsData? = null,
     val page: String? = null,
 )

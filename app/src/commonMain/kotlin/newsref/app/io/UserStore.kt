@@ -1,12 +1,10 @@
 package newsref.app.io
 
-import kotlinx.datetime.Instant
 import newsref.app.model.*
 import newsref.model.Api
-import newsref.model.dto.*
-import kotlin.text.get
+import newsref.model.data.LoginRequest
 
-class UserStore(private val client: ApiClient = globalApiClient) {
+class UserStore : ApiStore() {
 
     suspend fun login(request: LoginRequest): Auth? =
         client.post<Auth?, LoginRequest>(Api.loginEndpoint, request)?.also {

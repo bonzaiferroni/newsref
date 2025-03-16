@@ -8,7 +8,7 @@ import androidx.compose.ui.*
 import androidx.compose.material3.*
 import newsref.app.blip.controls.TabPage
 import newsref.app.blip.controls.TabPages
-import newsref.app.blip.controls.pages
+import newsref.app.blip.controls.rememberPages
 import newsref.dashboard.*
 import newsref.dashboard.FeedItemRoute
 import newsref.dashboard.LocalNavigator
@@ -59,7 +59,8 @@ fun FeedItemScreen(
     TabPages(
         currentPageName = state.page,
         onChangePage = viewModel::changePage,
-        pages = pages(
+    ) {
+        rememberPages(
             TabPage(name = "Sources", scrollbar = false) {
                 SourceTable(
                     sources = state.sourceInfos
@@ -86,7 +87,7 @@ fun FeedItemScreen(
                 )
             }
         )
-    )
+    }
 }
 
 @Composable

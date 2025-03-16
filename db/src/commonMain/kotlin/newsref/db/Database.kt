@@ -2,7 +2,7 @@ package newsref.db
 
 import kotlinx.coroutines.runBlocking
 import newsref.db.core.PgVectorManager
-import newsref.db.services.UserService
+import newsref.db.services.UserInitService
 import newsref.db.tables.*
 import org.jetbrains.exposed.sql.*
 import org.jetbrains.exposed.sql.transactions.TransactionManager
@@ -19,7 +19,7 @@ fun initDb(env: Environment) {
 		// exec("CREATE INDEX IF NOT EXISTS idx_text_prefix ON content (SUBSTRING(text FROM 1 FOR 100))")
 	}
 	runBlocking {
-		UserService().initUsers()
+		UserInitService().initUsers()
 	}
 }
 
@@ -60,6 +60,10 @@ val dbTables = listOf(
 	LocationTable,
 	PersonTable,
 	PagePersonTable,
+	HuddleTable,
+	HuddleCommentTable,
+	HuddleResponseTable,
+	CommentTable,
 )
 
 const val URL = "jdbc:postgresql://localhost:5432/newsrefdb"

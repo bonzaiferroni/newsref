@@ -5,22 +5,20 @@ import io.ktor.server.request.*
 import io.ktor.server.response.*
 import io.ktor.server.routing.*
 import newsref.model.Api
-import newsref.model.dto.EditUserRequest
-import newsref.model.dto.SignUpRequest
-import newsref.model.dto.SignUpResult
+import newsref.model.data.*
 import newsref.server.db.services.UserDtoService
 import newsref.server.extensions.getClaim
 import newsref.server.plugins.CLAIM_USERNAME
 import newsref.server.plugins.authenticateJwt
 
-fun Routing.userRouting(service: UserDtoService = UserDtoService()) {
+fun Routing.serveUsers(service: UserDtoService = UserDtoService()) {
 
     post(Api.userEndpoint.path) {
         val info = call.receive<SignUpRequest>()
         try {
             service.createUser(info)
         } catch (e: IllegalArgumentException) {
-            println("userRouting.createUser: ${e.message}")
+            println("serveUsers.createUser: ${e.message}")
             call.respond(HttpStatusCode.OK, SignUpResult(false, e.message.toString()))
             return@post
         }

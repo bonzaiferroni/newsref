@@ -2,7 +2,7 @@ package newsref.db.model
 
 import kotlinx.datetime.Clock
 import kotlinx.datetime.Instant
-import newsref.model.core.ArticleType
+import newsref.model.core.ArticleCategory
 import newsref.db.core.CheckedUrl
 import newsref.model.dto.PageAuthor
 import kotlin.time.Duration.Companion.days
@@ -41,7 +41,7 @@ data class WebResult(
 data class PageInfo(
 	val source: Source,
 	val article: Article? = null,
-	val articleType: ArticleType = ArticleType.Unknown,
+	val articleCategory: ArticleCategory = ArticleCategory.Unknown,
 	val pageHost: Host,
 	val hostName: String?,
 	val language: String?,

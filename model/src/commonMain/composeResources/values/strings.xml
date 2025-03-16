@@ -1,0 +1,7 @@
+<resources>
+    <string name="article_type_report_description">
+        A report conveys just the basic facts about the event or issue: who, what, where, when, why.
+        It is also called straight news. It is written objectively and with a neutral perspective.
+    </string>
+    <string name="title">Some title</string>
+</resources>

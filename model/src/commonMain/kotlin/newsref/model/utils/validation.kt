@@ -1,6 +1,6 @@
 package newsref.model.utils
 
-import newsref.model.dto.SignUpRequest
+import newsref.model.data.SignUpRequest
 
 val SignUpRequest.validSignUp: Boolean
     get() = password.validPassword && username.validUsername && email.validEmail

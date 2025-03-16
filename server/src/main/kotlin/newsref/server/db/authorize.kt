@@ -6,7 +6,7 @@ import io.ktor.server.request.*
 import io.ktor.server.response.*
 import newsref.db.model.User
 import newsref.model.dto.AuthDto
-import newsref.model.dto.LoginRequest
+import newsref.model.data.LoginRequest
 import newsref.db.tables.UserTable
 import newsref.model.utils.deobfuscate
 import newsref.server.db.services.RefreshTokenService

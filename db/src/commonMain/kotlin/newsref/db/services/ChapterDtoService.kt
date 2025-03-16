@@ -22,7 +22,7 @@ class ChapterDtoService : DbService() {
     }
 
     fun Transaction.toChapterPackDto(chapter: ChapterDto): ChapterPackDto {
-        val sources = ChapterSourceTable.leftJoin(PageTable).leftJoin(HostTable)
+        val sources = ChapterSourceTable.leftJoin(PageTable).leftJoin(HostTable).leftJoin(ArticleTable).leftJoin(NewsArticleTable)
             .select(SourceBitAspect.columns)
             .where { ChapterSourceTable.chapterId.eq(chapter.id) and ChapterSourceTable.type.eq(SourceType.Article) }
             .orderBy(PageTable.score, SortOrder.DESC_NULLS_LAST)

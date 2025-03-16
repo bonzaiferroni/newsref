@@ -24,10 +24,10 @@ Assuming it is a news article, in which section would you expect to see the arti
 
 Assuming it is a news article, choose the article type that best describes the article. Here is some information about each category to help you choose the best option. 
 
-* A report conveys the basic facts about the event or issue: who, what, where, when, why. It is also called straight news. It is written objectively and with a neutral perspective.
-* An opinion piece provides a personal perspective on an issue. It draws from the experience or position of the author to back up its main points. It includes op-eds and editorials and all other articles published as opinions.
-* An analysis provides a perspective informed by experts and research. It goes beyond a basic report by offering more than a neutral perspective based on credible sources. 
-* An investigation gives the story of how the author discovers new information, through research, interviews, and other fact finding. It describes the process of discovery and the results.
+* A **report** conveys the basic facts about the event or issue: who, what, where, when, why. It is also called straight news. It is written objectively and with a neutral perspective.
+* A **perspective** or opinion article describes an issue from the author's point of view. It draws from the experience or position of the author to back up its main points. It includes op-eds and editorials and all other articles published as opinions.
+* An **analysis** provides an exploration informed by experts and research. It goes beyond basic reporting by offering more than a neutral perspective based on credible sources. 
+* An **investigation** gives the story of how the author discovers new information, through research, interviews, and other fact finding. It describes the process of discovery and the results.
 
 Which news article type best describes this article? Provide the news article type exactly as it appears in this list:
 

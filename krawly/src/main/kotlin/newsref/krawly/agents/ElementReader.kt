@@ -1,12 +1,12 @@
 package newsref.krawly.agents
 
 import it.skrape.selects.DocElement
-import newsref.model.core.ArticleType
+import newsref.model.core.ArticleCategory
 
 data class ContentInfo(
 	val text: String,
 	val wordCount: Int,
-	val typeSets: Map<ArticleType, Int>
+	val typeSets: Map<ArticleCategory, Int>
 )
 
 class ElementReader {
@@ -25,9 +25,9 @@ class ElementReader {
 
 		val wordBuilder = StringBuilder()
 		val articleSets = mutableMapOf(
-			ArticleType.News to Pair(newsSet, 0),
+			ArticleCategory.News to Pair(newsSet, 0),
 			// ArticleType.HELP to Pair(helpSet, 0),
-			ArticleType.Policy to Pair(policySet, 0),
+			ArticleCategory.Policy to Pair(policySet, 0),
 			// ArticleType.JOURNAL to Pair(journalSet, 0),
 		)
 		var wordCount = 0
@@ -58,7 +58,7 @@ class ElementReader {
 			}
 		}
 
-		signalScore += articleSets[ArticleType.News]?.second ?: 0
+		signalScore += articleSets[ArticleCategory.News]?.second ?: 0
 
 		if (noiseScore > signalScore) return null
 
