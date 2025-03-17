@@ -4,14 +4,10 @@ import io.ktor.http.*
 import io.ktor.server.response.*
 import io.ktor.server.routing.*
 import newsref.db.services.ArticleDtoService
-import newsref.db.services.SourceService
 import newsref.model.Api
-import newsref.model.core.NewsSpan
 import newsref.server.utilities.getById
-import newsref.server.utilities.getByPath
-import newsref.server.utilities.readFromCall
 
-fun Routing.articleRouting(
+fun Routing.serveArticles(
     service: ArticleDtoService = ArticleDtoService()
 ) {
 

@@ -7,12 +7,14 @@ import androidx.compose.foundation.selection.selectableGroup
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.drawscope.Fill
 import androidx.compose.ui.graphics.drawscope.Stroke
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import newsref.app.blip.controls.*
+import newsref.app.blip.theme.Blip
 import newsref.app.io.*
 import newsref.app.model.*
 import newsref.model.core.ArticleType
@@ -29,7 +31,11 @@ fun ArticlePropertiesColumn(
     EditArticleTypeFloatyBox(
         editingArticleType = state.editingArticleType,
         articleType = state.articleType,
+        canSubmit = state.isValidArticleType,
+        commentText = state.comment,
+        onChangeComment = viewModel::setComment,
         onDismiss = viewModel::toggleEditingArticleType,
+        onSubmit = viewModel::sendArticleTypeEdit,
         selectArticleType = viewModel::selectArticleType
     )
 
@@ -58,15 +64,40 @@ fun ArticlePropertiesColumn(
 fun EditArticleTypeFloatyBox(
     editingArticleType: Boolean,
     articleType: ArticleType,
+    canSubmit: Boolean,
+    commentText: String,
+    onChangeComment: (String) -> Unit,
     onDismiss: () -> Unit,
-    selectArticleType: (ArticleType) -> Unit
+    selectArticleType: (ArticleType) -> Unit,
+    onSubmit: () -> Unit,
 ) {
     val options = remember { editArticleTypeOptions.map { it.value to it.label }}
 
     FloatyBox(editingArticleType, onDismiss) {
-        Column {
+        Column(
+            modifier = Modifier.clip(Blip.ruler.roundBottom)
+        ) {
             H2("Edit Article Type")
             RadioGroup(options, articleType, selectArticleType)
+            TextField(
+                text = commentText,
+                onTextChange = onChangeComment,
+                minLines = 3,
+                modifier = Modifier.fillMaxWidth()
+            )
+            Row(
+                modifier = Modifier.fillMaxWidth()
+            ) {
+                Button(
+                    onClick = onDismiss,
+                    modifier = Modifier.weight(1f)
+                ) { Text("Cancel") }
+                Button(
+                    onClick = onSubmit,
+                    isEnabled = canSubmit,
+                    modifier = Modifier.weight(1f)
+                ) { Text("Send") }
+            }
         }
     }
 }

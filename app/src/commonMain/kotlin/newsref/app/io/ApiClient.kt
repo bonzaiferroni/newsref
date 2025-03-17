@@ -65,10 +65,8 @@ class ApiClient(
     ): Received = client.post("$baseUrl${endpoint.path}") {
         contentType(ContentType.Application.Json)
         val auth = auth
-        if (auth != null) {
-            headers {
-                append(HttpHeaders.Authorization, "Bearer ${auth.jwt}")
-            }
+        auth?.let {
+            header(HttpHeaders.Authorization, "Bearer ${auth.jwt}")
         }
         setBody(value)
         if (params.isNotEmpty()) {

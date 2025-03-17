@@ -57,6 +57,7 @@ class HuddleSeedService : DbService() {
             it[userId] = sendingUserId
             it[commentId] = newCommentId.value
             it[time] = Clock.nowToLocalDateTimeUtc()
+            it[response] = responseIndex
         }
 
         newHuddleId.value

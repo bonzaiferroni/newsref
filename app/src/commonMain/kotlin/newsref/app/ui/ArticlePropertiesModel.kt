@@ -25,13 +25,18 @@ class ArticlePropertiesModel(
     fun sendArticleTypeEdit() {
         if (!stateNow.isValidArticleType) return
         viewModelScope.launch {
-            huddleStore.createHuddle(HuddleSeed(
+            val id = huddleStore.createHuddle(HuddleSeed(
                 pageId = article.pageId,
                 type = HuddleType.EditArticleType,
                 value = stateNow.articleType.name,
                 comment = stateNow.comment
             ))
+            println(id)
         }
+    }
+
+    fun setComment(comment: String) {
+        setState { it.copy(comment = comment) }
     }
 }
 

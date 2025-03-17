@@ -16,6 +16,7 @@ fun TextField(
     text: String,
     onTextChange: (String) -> Unit,
     hideCharacters: Boolean = false,
+    minLines: Int = 1,
     modifier: Modifier = Modifier
 ) {
     val color = Blip.colors.contentSky
@@ -24,6 +25,7 @@ fun TextField(
         onValueChange = onTextChange,
         textStyle = TextStyle(color = color),
         cursorBrush = SolidColor(color),
+        minLines = minLines,
         modifier = modifier.background(Blip.colors.primary.copy(.75f))
             .padding(Blip.ruler.halfPadding),
         visualTransformation = when (hideCharacters) {
