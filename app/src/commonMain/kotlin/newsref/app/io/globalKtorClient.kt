@@ -24,7 +24,7 @@ val globalKtorClient = HttpClient {
         }
     }
     install(HttpTimeout) {
-        requestTimeoutMillis = 120_000 // Set request timeout
+        requestTimeoutMillis = 120_000 // Set sendRequest timeout
         connectTimeoutMillis = 120_000 // Set connection timeout
         socketTimeoutMillis = 120_000  // Set socket timeout
     }

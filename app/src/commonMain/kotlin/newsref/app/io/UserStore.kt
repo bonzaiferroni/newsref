@@ -6,12 +6,9 @@ import newsref.model.data.LoginRequest
 
 class UserStore : ApiStore() {
 
-    suspend fun login(request: LoginRequest): Auth? =
-        client.post<Auth?, LoginRequest>(Api.loginEndpoint, request)?.also {
-            client.setAuth(it)
-        }
+    suspend fun login(request: LoginRequest): Auth? = client.login(request)
 
-    suspend fun readUser(): User? = client.get(Api.userEndpoint)
+    suspend fun readUser(): User = client.get(Api.userEndpoint)
 
     // returns null if successful, otherwise returns an error message
     // suspend fun createUser(info: SignUpRequest): SignUpResult = client.post(Api.user, info)
