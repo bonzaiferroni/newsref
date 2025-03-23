@@ -7,11 +7,11 @@ import newsref.model.core.HuddleType
 data class Huddle(
     val id: Long,
     val chapterId: Long,
-    val sourceId: Long,
+    val pageId: Long,
     val initiatorId: Long,
     val huddleType: HuddleType,
     val guide: String,
-    val options: List<String>,
+    val options: List<SerializedHuddleOption>,
     val consensus: Int?,
     val status: HuddleStatus,
     val startedAt: Instant,
@@ -19,3 +19,17 @@ data class Huddle(
     val recordedAt: Instant?,
 ) {
 }
+
+data class HuddleResponse(
+    val id: Long,
+    val huddleId: Long,
+    val userId: Long,
+    val commentId: Long?,
+    val response: Int,
+    val time: Instant,
+)
+
+data class SerializedHuddleOption(
+    val label: String,
+    val value: String,
+)

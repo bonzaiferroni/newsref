@@ -42,3 +42,8 @@ const val DESCRIPTION_INVESTIGATION =
             "It describes the process of discovery and the results."
 
 val editArticleTypeGuide = "[Placeholder for EditArticleType Guide]"
+
+private suspend fun completeArticleType(huddle: Huddle, stringValue: String) {
+    val value = ArticleType.valueOf(stringValue)
+    articleService.updateArticleType(huddle.pageId, huddle.id, value)
+}

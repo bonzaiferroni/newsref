@@ -3,14 +3,13 @@ package newsref.db.tables
 import kotlinx.serialization.json.*
 import newsref.db.core.Aspect
 import newsref.db.core.HuddleStatus
-import newsref.db.model.Huddle
+import newsref.db.model.*
 import newsref.db.utils.toInstantUtc
 import newsref.model.core.HuddleType
 import org.jetbrains.exposed.dao.id.LongIdTable
 import org.jetbrains.exposed.sql.*
+import org.jetbrains.exposed.sql.json.jsonb
 import org.jetbrains.exposed.sql.kotlin.datetime.datetime
-
-val jsonFormat = Json { prettyPrint = true }
 
 object HuddleTable : LongIdTable("huddle") {
     val chapterId = reference("chapter_id", ChapterTable, ReferenceOption.CASCADE).nullable().index()
@@ -18,7 +17,7 @@ object HuddleTable : LongIdTable("huddle") {
     val initiatorId = reference("initiator_id", UserTable, ReferenceOption.CASCADE).index()
     val huddleType = enumeration<HuddleType>("huddle_type")
     val guide = text("guide")
-    val options = array<String>("options")
+    val options = jsonb<List<SerializedHuddleOption>>("options", Json.Default)
     val consensus = integer("consensus").nullable()
     val status = enumeration<HuddleStatus>("status")
     val startedAt = datetime("started_at")
@@ -29,7 +28,7 @@ object HuddleTable : LongIdTable("huddle") {
 fun ResultRow.toHuddle() = Huddle(
     id = this[HuddleTable.id].value,
     chapterId = this[HuddleTable.chapterId]?.value ?: 0,
-    sourceId = this[HuddleTable.pageId]?.value ?: 0,
+    pageId = this[HuddleTable.pageId]?.value ?: 0,
     initiatorId = this[HuddleTable.initiatorId].value,
     huddleType = this[HuddleTable.huddleType],
     guide = this[HuddleTable.guide],
@@ -64,12 +63,4 @@ object HuddleCommentTable : Table("huddle_comment") {
     val commentId = reference("comment_id", CommentTable, ReferenceOption.CASCADE).index()
 
     override val primaryKey = PrimaryKey(huddleId, commentId)
-}
-
-object HuddleResponseTable : Table("huddle_response") {
-    val huddleId = reference("huddle_id", HuddleTable, ReferenceOption.CASCADE).index()
-    val userId = reference("user_id", UserTable, ReferenceOption.CASCADE).index()
-    val commentId = reference("comment_id", CommentTable, ReferenceOption.CASCADE).nullable().index()
-    val response = integer("response")
-    val time = datetime("datetime")
 }

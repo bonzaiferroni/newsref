@@ -17,6 +17,9 @@ fun ExpressionWithColumnType<LocalDateTime>.since(duration: Duration) = duration
 fun ExpressionWithColumnType<LocalDateTime>.greater(instant: Instant) =
     Op.build { this@greater.greater(instant.toLocalDateTimeUtc()) }
 
+fun ExpressionWithColumnType<LocalDateTime>.less(instant: Instant) =
+    Op.build { this@less.less(instant.toLocalDateTimeUtc()) }
+
 fun <T> ExpressionWithColumnType<T>.isNullOrEq(t: T) =
     Op.build { this@isNullOrEq.isNull() or this@isNullOrEq.eq(t) }
 

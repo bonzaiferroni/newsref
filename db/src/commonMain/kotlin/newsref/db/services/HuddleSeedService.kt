@@ -3,6 +3,7 @@ package newsref.db.services
 import kotlinx.datetime.Clock
 import newsref.db.DbService
 import newsref.db.core.HuddleStatus
+import newsref.db.model.SerializedHuddleOption
 import newsref.db.tables.CommentTable
 import newsref.db.tables.HuddleCommentTable
 import newsref.db.tables.HuddleResponseTable
@@ -35,7 +36,7 @@ class HuddleSeedService : DbService() {
             it[initiatorId] = sendingUserId
             it[huddleType] = seed.type
             it[guide] = huddleGuide
-            it[options] = huddleOptions.map { "${it.label}|${it.value}" }
+            it[options] = huddleOptions.map { SerializedHuddleOption(it.label, it.value) }
             it[status] = HuddleStatus.Proposed
             it[startedAt] = Clock.nowToLocalDateTimeUtc()
             it[finishedAt] = (Clock.System.now() + duration).toLocalDateTimeUtc()
