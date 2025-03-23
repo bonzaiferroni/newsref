@@ -51,6 +51,11 @@ open class Endpoint(
     )
 }
 
+open class PostEndpoint<T>(
+    base: String,
+    parent: Endpoint? = null,
+): Endpoint(base, parent)
+
 class EndpointParam<T>(
     val key: String,
     private val toValue: (String) -> T,

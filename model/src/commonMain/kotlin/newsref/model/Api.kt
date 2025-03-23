@@ -1,5 +1,8 @@
 package newsref.model
 
+import newsref.model.data.HuddleKey
+import newsref.model.data.HuddleSeed
+
 object Api {
     // utility
     val loginEndpoint = Endpoint("/login")
@@ -32,7 +35,9 @@ object Api {
         }
     }
 
-    object Huddles : Endpoint("/huddle")
+    object Huddles : PostEndpoint<HuddleSeed>("/huddle") {
+        object Options : PostEndpoint<HuddleKey>("/options", this)
+    }
 
     // user
     val userEndpoint = Endpoint("/user")

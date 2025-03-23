@@ -1,17 +1,9 @@
 package newsref.app.ui
 
-import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.layout.*
-import androidx.compose.foundation.selection.selectable
-import androidx.compose.foundation.selection.selectableGroup
 import androidx.compose.runtime.*
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.drawscope.Fill
-import androidx.compose.ui.graphics.drawscope.Stroke
-import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.mikepenz.markdown.compose.Markdown
 import kotlinx.collections.immutable.ImmutableList
@@ -20,8 +12,8 @@ import newsref.app.blip.controls.*
 import newsref.app.blip.theme.Blip
 import newsref.app.io.*
 import newsref.app.model.*
-import newsref.model.core.ArticleType
-import newsref.model.core.editArticleTypeOptions
+import newsref.model.core.HuddleType
+import newsref.model.data.HuddleKey
 
 @Composable
 fun ArticlePropertiesColumn(
@@ -31,15 +23,14 @@ fun ArticlePropertiesColumn(
     val userState by LocalUserContext.current.state.collectAsState()
     val state by viewModel.state.collectAsState()
 
-    EditArticleTypeFloatyBox(
-        editingArticleType = state.editingArticleType,
-        articleType = state.articleType,
-        canSubmit = state.isValidArticleType,
-        commentText = state.comment,
-        onChangeComment = viewModel::setComment,
-        onDismiss = viewModel::toggleEditingArticleType,
-        onSubmit = viewModel::sendArticleTypeEdit,
-        selectArticleType = viewModel::selectArticleType
+    HuddleCreatorBox(
+        huddleName = "Edit Article Type",
+        showBox = state.editingArticleType,
+        key = HuddleKey(
+            pageId = state.article.pageId,
+            type = HuddleType.EditArticleType
+        ),
+        onDismiss = viewModel::toggleEditingArticleType
     )
 
     Column {
@@ -64,25 +55,27 @@ fun ArticlePropertiesColumn(
 }
 
 @Composable
-fun EditArticleTypeFloatyBox(
-    editingArticleType: Boolean,
-    articleType: ArticleType,
+fun <T> HuddleFloatyBox(
+    showHuddle: Boolean,
+    huddleName: String,
+    selected: T,
+    options: ImmutableList<RadioOption<T>>,
     canSubmit: Boolean,
     commentText: String,
     onChangeComment: (String) -> Unit,
     onDismiss: () -> Unit,
-    selectArticleType: (ArticleType) -> Unit,
+    selectArticleType: (T) -> Unit,
     onSubmit: () -> Unit,
 ) {
-    FloatyBox(editingArticleType, onDismiss) {
+    FloatyBox(showHuddle, onDismiss) {
         Column(
             modifier = Modifier.clip(Blip.ruler.roundBottom)
         ) {
-            H2("Edit Article Type")
-            RadioGroup(articleType, selectArticleType) {
-                editArticleTypeOptions.map {
-                    RadioOption(it.value) {
-                        Markdown(it.label, mdColors, mdTypography, Modifier)
+            H2(huddleName)
+            RadioGroup(selected, selectArticleType) {
+                options.map { option ->
+                    RadioContent(option) {
+                        Markdown(option.label, mdColors, mdTypography, Modifier)
                     }
                 }.toImmutableList()
             }

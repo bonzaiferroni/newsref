@@ -13,7 +13,7 @@ object HuddleResponseTable : LongIdTable("huddle_response") {
     val huddleId = reference("huddle_id", HuddleTable, ReferenceOption.CASCADE).index()
     val userId = reference("user_id", UserTable, ReferenceOption.CASCADE).index()
     val commentId = reference("comment_id", CommentTable, ReferenceOption.CASCADE).nullable().index()
-    val response = integer("response")
+    val response = text("response")
     val time = datetime("datetime")
 }
 

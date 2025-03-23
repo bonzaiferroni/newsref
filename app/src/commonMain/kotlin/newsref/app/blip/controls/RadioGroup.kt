@@ -19,18 +19,18 @@ import kotlinx.collections.immutable.ImmutableList
 fun <T> RadioGroup(
     selectedValue: T,
     onOptionSelected: (T) -> Unit,
-    composeOptions: () -> ImmutableList<RadioOption<T>>
+    composeOptions: () -> ImmutableList<RadioContent<T>>
 ) {
     val options = remember { composeOptions() }
 
     Column(Modifier.selectableGroup()) {
-        options.forEach { (value, content) ->
+        options.forEach { (option, content) ->
             Row(
                 Modifier
                     .fillMaxWidth()
                     .selectable(
-                        selected = value == selectedValue,
-                        onClick = { onOptionSelected(value) }
+                        selected = option.value == selectedValue,
+                        onClick = { onOptionSelected(option.value) }
                     )
                     .padding(8.dp),
                 verticalAlignment = Alignment.CenterVertically
@@ -41,8 +41,8 @@ fun <T> RadioGroup(
                         .padding(4.dp)
                 ) {
                     drawCircle(
-                        color = if (value == selectedValue) Color.Blue else Color.Gray,
-                        style = if (value == selectedValue) Fill else Stroke(2.dp.toPx())
+                        color = if (option == selectedValue) Color.Blue else Color.Gray,
+                        style = if (option == selectedValue) Fill else Stroke(2.dp.toPx())
                     )
                 }
                 Spacer(Modifier.width(8.dp))
@@ -52,7 +52,12 @@ fun <T> RadioGroup(
     }
 }
 
-data class RadioOption<T>(
-    val value: T,
+data class RadioContent<T>(
+    val option: RadioOption<T>,
     val content: @Composable () -> Unit,
+)
+
+data class RadioOption<T>(
+    val label: String,
+    val value: T
 )

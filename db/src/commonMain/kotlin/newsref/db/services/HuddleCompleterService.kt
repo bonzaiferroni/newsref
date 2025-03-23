@@ -4,12 +4,15 @@ import kotlinx.datetime.Clock
 import kotlinx.datetime.Instant
 import newsref.db.DbService
 import newsref.db.core.HuddleStatus
+import newsref.db.model.Huddle
 import newsref.db.utils.*
 import newsref.db.tables.*
 import org.jetbrains.exposed.sql.*
 import org.jetbrains.exposed.sql.SqlExpressionBuilder.eq
 
-class HuddleRunnerService : DbService() {
+class HuddleCompleterService(
+    private val huddleAdapters: HuddleAdapterMap = globalHuddleAdapters
+) : DbService() {
 
     suspend fun readActiveHuddles() = dbQuery {
         HuddleAspect.read { it.status.eq(HuddleStatus.Proposed) or it.status.eq(HuddleStatus.Extended) }
@@ -34,8 +37,13 @@ class HuddleRunnerService : DbService() {
         }
     }
 
-    suspend fun completeHuddle(huddleId: Long, consensus: Int?) = dbQuery {
-        HuddleTable.update({ HuddleTable.id.eq(huddleId)}) {
+    suspend fun completeHuddle(consensus: String?, huddle: Huddle) = dbQuery {
+        val adapter = huddleAdapters.getValue(huddle.huddleType)
+        consensus?.let {
+            adapter.updateDatabase(it, huddle)
+        }
+
+        HuddleTable.update({ HuddleTable.id.eq(huddle.id)}) {
             it[HuddleTable.consensus] = consensus
             it[recordedAt] = Clock.System.now().toLocalDateTimeUtc()
             it[status] = when {

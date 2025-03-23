@@ -6,7 +6,6 @@ import newsref.db.model.Huddle
 import newsref.db.services.*
 import newsref.krawly.clients.GeminiClient
 import newsref.model.core.ArticleType
-import newsref.model.core.HuddleType
 import newsref.model.core.HuddleType.*
 import kotlin.time.Duration.Companion.hours
 
@@ -14,7 +13,7 @@ private val console = globalConsole.getHandle("HuddleRunner")
 
 class HuddleCompleter(
     private val client: GeminiClient,
-    private val service: HuddleRunnerService = HuddleRunnerService(),
+    private val service: HuddleCompleterService = HuddleCompleterService(),
     private val articleService: NewsArticleService = NewsArticleService(),
 ) {
     fun start() {
@@ -43,7 +42,7 @@ class HuddleCompleter(
                 continue
             }
 
-            data class ResponseGroup(val index: Int, val count: Int)
+            data class ResponseGroup(val value: String, val count: Int)
             val responseCounts = responses.groupingBy { it.response }
                 .eachCount()
                 .entries
@@ -52,28 +51,14 @@ class HuddleCompleter(
 
             val consensus = responseCounts[0]
             val runnerUp = responseCounts.getOrNull(1)
-            if (runnerUp != null && consensus.index == runnerUp.index) {
+            if (runnerUp != null && consensus.count == runnerUp.count) {
                 service.updateFinishedAt(huddle.id, huddle.finishedAt + 1.hours)
                 console.logInfo("Tie vote for huddleId: ${huddle.id}")
                 continue
             }
 
-            val (label, stringValue) = huddle.options[consensus.index]
-
-            if (huddle.huddleType != EditArticleType) continue
-
-            when (huddle.huddleType) {
-                ChapterSourceRelevance -> TODO()
-                CreateChapter -> TODO()
-                EditArticleType -> completeArticleType(huddle, stringValue)
-            }
-
-            service.completeHuddle(huddle.id, consensus.index)
+            service.completeHuddle(consensus.value, huddle)
+            console.log("Completed huddle #${huddle.id}, result: ${consensus.value}")
         }
-    }
-
-    private suspend fun completeArticleType(huddle: Huddle, stringValue: String) {
-        val value = ArticleType.valueOf(stringValue)
-        articleService.updateArticleType(huddle.pageId, huddle.id, value)
     }
 }
