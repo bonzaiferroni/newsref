@@ -44,10 +44,10 @@ fun ChapterSourceScreen(
             state.page,
             viewModel::onChangePage,
         ) {
-            Tab("Details", false) { ArticlePropertiesColumn(article) }
-            Tab("Summary", false, article.summary != null) { Text(article.summary!!) }
-            Tab("Embed", false, article.embed != null) { Text(article.embed!!) }
-            Tab("Publisher", false) { HostProperties(host) }
+            Tab("Details") { ArticlePropertiesColumn(article) }
+            Tab("Summary", isVisible = article.summary != null) { Text(article.summary!!) }
+            Tab("Embed", isVisible = article.embed != null) { Text(article.embed!!) }
+            Tab("Publisher") { HostProperties(host) }
         }
     }
 }

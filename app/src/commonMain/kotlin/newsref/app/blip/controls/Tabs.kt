@@ -7,6 +7,7 @@ import androidx.compose.ui.*
 import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.unit.dp
 import newsref.app.blip.theme.Blip
+import newsref.app.utils.modifyIfNotNull
 import newsref.app.utils.modifyIfTrue
 
 @Composable
@@ -29,7 +30,7 @@ fun Tabs(
     }
 
     Column(
-        modifier = modifier
+        modifier = modifier.fillMaxWidth()
     ) {
         Row {
             for (tab in tabs) {
@@ -53,12 +54,20 @@ fun Tabs(
                 }
             }
         }
-        if (currentTab.scrollbar) {
-            Text("Scrollbar not supported")
-        } else {
-            Surface() {
+        Surface(
+            modifier = Modifier.fillMaxWidth()
+        ) {
+            val scrollState = when {
+                currentTab.scrollable -> rememberScrollState()
+                else -> null
+            }
+
+            Box(
+                modifier = Modifier.modifyIfNotNull(scrollState) { verticalScroll(it) }
+            ) {
                 Column(
                     modifier = Modifier.padding(Blip.ruler.innerPadding)
+                        .fillMaxWidth()
                 ) {
                     currentTab.content()
                 }
@@ -70,13 +79,13 @@ fun Tabs(
 @Composable
 fun TabScope.Tab(
     name: String,
-    scrollbar: Boolean = true,
+    scrollable: Boolean = true,
     isVisible: Boolean = true,
     content: @Composable () -> Unit,
 ) {
     this.tabs.add(TabItem(
         name = name,
-        scrollbar = scrollbar,
+        scrollable = scrollable,
         isVisible = isVisible,
         content = content
     ))
@@ -84,7 +93,7 @@ fun TabScope.Tab(
 
 internal data class TabItem(
     val name: String,
-    val scrollbar: Boolean = true,
+    val scrollable: Boolean = true,
     val isVisible: Boolean = true,
     val content: @Composable () -> Unit,
 )

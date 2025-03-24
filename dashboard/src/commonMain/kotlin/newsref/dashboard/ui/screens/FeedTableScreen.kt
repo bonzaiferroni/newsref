@@ -33,7 +33,7 @@ fun FeedTableScreen(
         currentPageName = state.page,
         onChangePage = viewModel::changePage
     ) {
-        Tab(name = "Feeds", scrollbar = false) {
+        Tab(name = "Feeds", scrollable = false) {
             FlowRow(
                 horizontalArrangement = Arrangement.SpaceEvenly,
                 modifier = Modifier.fillMaxWidth()

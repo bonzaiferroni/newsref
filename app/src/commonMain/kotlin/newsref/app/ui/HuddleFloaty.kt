@@ -3,9 +3,11 @@ package newsref.app.ui
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.sizeIn
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.mikepenz.markdown.compose.Markdown
 import newsref.app.blip.controls.Button
@@ -40,12 +42,13 @@ fun HuddleFloaty(
         TabCard(
             currentTab = state.tab,
             onChangePage = viewModel::changeTab,
-            shape = Blip.ruler.rounded
+            shape = Blip.ruler.rounded,
+            modifier = Modifier.fillMaxWidth()
         ) {
-            Tab(name = "Guide", scrollbar = false) {
+            Tab(name = "Guide") {
                 Markdown(state.guide, mdColors, mdTypography, Modifier)
             }
-            Tab(name = EDIT_TAB_NAME, scrollbar = false) {
+            Tab(name = EDIT_TAB_NAME) {
                 Column(
                     modifier = Modifier.clip(Blip.ruler.roundBottom)
                 ) {
@@ -77,6 +80,9 @@ fun HuddleFloaty(
                         ) { Text("Send") }
                     }
                 }
+            }
+            Tab(name = "Huddle") {
+                Text("Huddle content")
             }
         }
     }

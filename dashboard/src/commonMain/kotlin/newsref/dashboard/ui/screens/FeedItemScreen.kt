@@ -8,7 +8,6 @@ import androidx.compose.ui.*
 import androidx.compose.material3.*
 import newsref.app.blip.controls.Tab
 import newsref.app.blip.controls.Tabs
-import newsref.app.blip.controls.rememberTabs
 import newsref.dashboard.*
 import newsref.dashboard.FeedItemRoute
 import newsref.dashboard.LocalNavigator
@@ -60,12 +59,12 @@ fun FeedItemScreen(
         currentPageName = state.page,
         onChangePage = viewModel::changePage,
     ) {
-        Tab(name = "Sources", scrollbar = false) {
+        Tab(name = "Sources", scrollable = false) {
             SourceTable(
                 sources = state.sourceInfos
             )
         }
-        Tab(name = "Leads", scrollbar = false) {
+        Tab(name = "Leads", scrollable = false) {
             DataTable(
                 name = "LeadInfos",
                 items = state.leadInfos,

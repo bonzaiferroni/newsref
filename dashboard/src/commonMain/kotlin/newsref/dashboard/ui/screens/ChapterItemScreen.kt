@@ -7,7 +7,6 @@ import androidx.compose.ui.platform.LocalUriHandler
 import androidx.lifecycle.viewmodel.compose.viewModel
 import newsref.app.blip.controls.Tab
 import newsref.app.blip.controls.Tabs
-import newsref.app.blip.controls.rememberTabs
 import newsref.dashboard.*
 import newsref.dashboard.ChapterItemRoute
 import newsref.dashboard.LocalNavigator
@@ -69,13 +68,13 @@ fun ChapterItemScreen(
             currentPageName = state.page,
             onChangePage = viewModel::changePage,
         ) {
-            Tab(name = "Secondary", scrollbar = false) {
+            Tab(name = "Secondary", scrollable = false) {
                 ChapterTable("Secondary Sources", state.secondaries, viewModel::sortSources)
             }
-            Tab(name = "Primary", scrollbar = false) {
+            Tab(name = "Primary", scrollable = false) {
                 ChapterTable("Primary Sources", state.primaries, viewModel::sortSources)
             }
-            Tab(name = "Children", scrollbar = false) {
+            Tab(name = "Children", scrollable = false) {
                 ChapterDataTable(state.children, { })
             }
         }

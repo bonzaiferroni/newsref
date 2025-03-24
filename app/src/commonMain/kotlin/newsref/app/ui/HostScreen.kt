@@ -23,14 +23,14 @@ fun HostScreen(
         currentTab = state.tab,
         onChangePage = viewModel::changeTab,
     ) {
-        Tab(name = "Sources", scrollbar = false) {
+        Tab(name = "Sources", scrollable = false) {
             LazyColumn {
                 items(state.sources) {
                     SourceBitItem(it)
                 }
             }
         }
-        Tab(name = "Feeds", scrollbar = false, isVisible = state.feeds.isNotEmpty()) {
+        Tab(name = "Feeds", scrollable = false, isVisible = state.feeds.isNotEmpty()) {
             val uriHandler = LocalUriHandler.current
             Column {
                 for (feed in state.feeds) {
