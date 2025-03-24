@@ -91,7 +91,7 @@ fun BalloonChart(
         // val sizeScale = size.height / (space.sizeMax * 4)
 
         if (xTicks != null) {
-            AxisTickBox(xTicks, density.density * xScale, space)
+            AxisTickBox(xTicks, xScale, space)
         }
 
         for (point in points) {

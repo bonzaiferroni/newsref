@@ -63,7 +63,7 @@ fun ChapterPack.toBalloonsData(): BalloonsData {
     val endTime = startTime + dayRange.days
     val balloonPoints = this.sources.mapNotNull {
         if (it.existedAt > endTime || it.existedAt < startTime) return@mapNotNull null
-        val x = (Clock.System.now() - it.existedAt).inWholeHours / 24f
+        val x = (now - it.existedAt).inWholeHours / 24f
         BalloonPoint(
             id = it.id,
             x = -x,
@@ -74,7 +74,7 @@ fun ChapterPack.toBalloonsData(): BalloonsData {
             it.imageUrl
         )
     }.toImmutableList()
-    val xTicks = generateAxisTicks(startTime)
+    val xTicks = generateAxisTicks(startTime, endTime)
     return BalloonsData(
         points = balloonPoints,
         xTicks = xTicks,
