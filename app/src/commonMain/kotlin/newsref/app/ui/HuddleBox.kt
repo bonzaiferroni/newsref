@@ -21,12 +21,12 @@ import newsref.app.blip.theme.Blip
 import newsref.model.data.HuddleKey
 
 @Composable
-fun HuddleCreatorBox(
+fun HuddleBox(
     huddleName: String,
     showBox: Boolean,
     key: HuddleKey,
     onDismiss: () -> Unit,
-    viewModel: HuddleCreatorModel = viewModel { HuddleCreatorModel(key) }
+    viewModel: HuddleModel = viewModel { HuddleModel(key) }
 ) {
     val state by viewModel.state.collectAsState()
 
@@ -36,7 +36,10 @@ fun HuddleCreatorBox(
 
     FloatyBox(showBox, onDismiss) {
         Tabs(state.tab, viewModel::changeTab) {
-            Tab(name = "Edit", scrollbar = false) {
+            Tab(name = "Guide", scrollbar = false) {
+                Markdown(state.guide, mdColors, mdTypography, Modifier)
+            }
+            Tab(name = EDIT_TAB_NAME, scrollbar = false) {
                 Column(
                     modifier = Modifier.clip(Blip.ruler.roundBottom)
                 ) {

@@ -11,7 +11,7 @@ import newsref.app.io.HuddleStore
 import newsref.model.data.HuddleKey
 import newsref.model.data.HuddleSeed
 
-class HuddleCreatorModel(
+class HuddleModel(
     private val key: HuddleKey,
     private val store: HuddleStore = HuddleStore()
 ): StateModel<HuddleCreatorState>(HuddleCreatorState()) {
@@ -23,7 +23,8 @@ class HuddleCreatorModel(
             setState { it.copy(
                 options = prompt.options.map { RadioOption(it.label, it.value) }.toImmutableList(),
                 selectedValue = prompt.cachedValue,
-                cachedValue = prompt.cachedValue
+                cachedValue = prompt.cachedValue,
+                guide = prompt.guide,
             )}
         }
     }
@@ -57,9 +58,12 @@ data class HuddleCreatorState(
     val selectedValue: String = "",
     val cachedValue: String = "",
     val commentText: String = "",
+    val guide: String = "",
     val options: ImmutableList<RadioOption<String>> = persistentListOf(),
     val completed: Boolean = false,
-    val tab: String? = null,
+    val tab: String? = EDIT_TAB_NAME,
 ) {
     val canSubmit get() = selectedValue != cachedValue && commentText.isNotBlank()
 }
+
+const val EDIT_TAB_NAME = "Edit"
