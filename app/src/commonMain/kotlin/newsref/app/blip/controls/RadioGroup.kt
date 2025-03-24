@@ -6,11 +6,11 @@ import androidx.compose.foundation.selection.selectable
 import androidx.compose.foundation.selection.selectableGroup
 import androidx.compose.runtime.*
 import androidx.compose.ui.*
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.drawscope.Fill
 import androidx.compose.ui.graphics.drawscope.Stroke
 import androidx.compose.ui.unit.dp
-import kotlinx.collections.immutable.ImmutableList
+import newsref.app.blip.behavior.animateFloat
+import newsref.app.blip.theme.Blip
 
 
 @Composable
@@ -33,14 +33,29 @@ fun <T> RadioGroup(
                     .padding(8.dp),
                 verticalAlignment = Alignment.CenterVertically
             ) {
+                val circleColor = Blip.localColors.content.copy(.8f)
+                val indicatorColor = Blip.colors.accent
+                val size = 16
+                val padding = 4
+                val targetIndicatorSize = when {
+                    option.value == selectedValue -> (size / 2f) - 3
+                    else -> 0f
+                }
+                val indicatorSize = animateFloat(targetIndicatorSize)
+
                 Canvas(
                     Modifier
-                        .size(24.dp)
-                        .padding(4.dp)
+                        .size((size + padding * 2).dp)
+                        .padding(padding.dp)
                 ) {
                     drawCircle(
-                        color = if (option.value == selectedValue) Color.Blue else Color.Gray,
-                        style = if (option.value == selectedValue) Fill else Stroke(2.dp.toPx())
+                        color = circleColor,
+                        style = Stroke(2.dp.toPx())
+                    )
+                    drawCircle(
+                        radius = indicatorSize,
+                        color = indicatorColor,
+                        style = Fill
                     )
                 }
                 Spacer(Modifier.width(8.dp))

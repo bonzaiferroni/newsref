@@ -54,23 +54,19 @@ fun Tabs(
                 }
             }
         }
+        val scrollState = when {
+            currentTab.scrollable -> rememberScrollState()
+            else -> null
+        }
         Surface(
             modifier = Modifier.fillMaxWidth()
+                .modifyIfNotNull(scrollState) { verticalScroll(it) }
         ) {
-            val scrollState = when {
-                currentTab.scrollable -> rememberScrollState()
-                else -> null
-            }
-
-            Box(
-                modifier = Modifier.modifyIfNotNull(scrollState) { verticalScroll(it) }
+            Column(
+                modifier = Modifier.padding(Blip.ruler.innerPadding)
+                    .fillMaxWidth()
             ) {
-                Column(
-                    modifier = Modifier.padding(Blip.ruler.innerPadding)
-                        .fillMaxWidth()
-                ) {
-                    currentTab.content()
-                }
+                currentTab.content()
             }
         }
     }
