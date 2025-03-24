@@ -4,18 +4,18 @@ import io.ktor.server.application.*
 import io.ktor.server.response.*
 import io.ktor.server.routing.*
 import newsref.model.Api
-import newsref.model.apiPrefix
+import newsref.model.apiPrefixV1
 import newsref.server.db.authorize
 import newsref.server.db.services.UserDtoService
 import newsref.server.routes.*
 
 fun Application.configureApiRoutes() {
     routing {
-        get(apiPrefix) {
+        get(apiPrefixV1) {
             call.respondText("Hello World!")
         }
 
-        post(Api.loginEndpoint.path) {
+        post(Api.Login.path) {
             call.authorize()
         }
 

@@ -10,35 +10,57 @@ import io.ktor.server.routing.get
 import io.ktor.server.routing.post
 import newsref.model.Endpoint
 import newsref.model.EndpointParam
+import newsref.model.GetByIdEndpoint
 import newsref.model.PostEndpoint
 import newsref.server.extensions.getIdOrThrow
 
-fun <T: Endpoint> Routing.getByPath(endpoint: T, block: suspend RoutingContext.(T) -> Unit) =
+fun <Returned, E: Endpoint<Returned>> Routing.getEndpoint(
+    endpoint: E,
+    block: suspend RoutingContext.(E) -> Returned?
+) =
     get(endpoint.path) {
         try {
-            block(endpoint)
+            val value = block(endpoint)
+            if (value != null) {
+                call.respond(HttpStatusCode.OK, value)
+            } else {
+                call.respond(HttpStatusCode.NotFound)
+            }
         } catch (e: MissingParameterException) {
             call.respond(HttpStatusCode.BadRequest, "Missing required parameter: ${e.param}")
         }
     }
 
-fun <T: Endpoint> Routing.getById(endpoint: T, block: suspend RoutingContext.(Long, T) -> Unit) =
+fun <Returned, E: GetByIdEndpoint<Returned>> Routing.getIdEndpoint(
+    endpoint: E,
+    block: suspend RoutingContext.(Long, E) -> Returned?
+) =
     get(endpoint.serverIdTemplate) {
         val id = call.getIdOrThrow { it.toLongOrNull() }
         try {
-            block(id, endpoint)
+            val value = block(id, endpoint)
+            if (value != null) {
+                call.respond(HttpStatusCode.OK, value)
+            } else {
+                call.respond(HttpStatusCode.NotFound)
+            }
         } catch (e: MissingParameterException) {
             call.respond(HttpStatusCode.BadRequest, "Missing required parameter: ${e.param}")
         }
     }
 
-inline fun <reified Sent: Any, E: PostEndpoint<Sent>> Routing.postApi(
+inline fun <Returned, reified Sent: Any, E: PostEndpoint<Sent, Returned>> Routing.postEndpoint(
     endpoint: E,
-    crossinline block: suspend RoutingContext.(Sent, E) -> Unit
+    noinline block: suspend RoutingContext.(Sent, E) -> Returned?
 ) =
     post(endpoint.path) {
         val sentValue = call.receive<Sent>()
-        block(sentValue, endpoint)
+        val value = block(sentValue, endpoint)
+        if (value != null) {
+            call.respond(HttpStatusCode.OK, value)
+        } else {
+            call.respond(HttpStatusCode.NotFound)
+        }
     }
 
 fun <T> EndpointParam<T>.readFromCallOrNull(call: RoutingCall): T? {

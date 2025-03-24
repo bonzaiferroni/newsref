@@ -9,5 +9,4 @@ class ArticleDtoService: DbService() {
         ArticleDtoAspect.readFirst { it.pageId.eq(pageId) }
     }
 
-
 }

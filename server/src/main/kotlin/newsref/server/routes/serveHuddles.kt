@@ -11,26 +11,25 @@ import newsref.server.db.services.UserDtoService
 import newsref.server.extensions.getClaim
 import newsref.server.plugins.CLAIM_USERNAME
 import newsref.server.plugins.authenticateJwt
-import newsref.server.utilities.postApi
+import newsref.server.utilities.postEndpoint
 
 fun Routing.serveHuddles(
     service: HuddleService = HuddleService(),
     userService: UserDtoService = UserDtoService()
 ) {
-    postApi(Api.Huddles.Options) { sent, endpoint ->
-        val prompt = service.readPrompt(sent)
-        call.respond(HttpStatusCode.OK, prompt)
+    postEndpoint(Api.ReadHuddlePrompt) { sent, endpoint ->
+        service.readPrompt(sent)
     }
 
     authenticateJwt {
-//        postApi(Api.Huddles) { sent, endpoint ->
+//        postEndpoint(Api.Huddles) { sent, endpoint ->
 //            val username = call.getClaim(CLAIM_USERNAME)
 //            println("username: $username")
 //            val user = userService.findByUsernameOrEmail(username) ?: error("User not found")
 //            val huddleId = service.createHuddle(sent, user.id)
 //            call.respond(HttpStatusCode.OK, huddleId)
 //        }
-        post(Api.Huddles.path) {
+        post(Api.CreateHuddle.path) {
             val sent = call.receive<HuddleSeed>()
             val username = call.getClaim(CLAIM_USERNAME)
             val user = userService.findByUsernameOrEmail(username) ?: error("User not found")

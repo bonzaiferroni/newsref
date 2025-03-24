@@ -13,7 +13,9 @@ import io.ktor.http.HttpStatusCode
 import io.ktor.http.contentType
 import newsref.app.model.Auth
 import newsref.model.Api
-import newsref.model.Endpoint
+import newsref.model.GetByIdEndpoint
+import newsref.model.GetEndpoint
+import newsref.model.PostEndpoint
 import newsref.model.data.LoginRequest
 
 class ApiClient(
@@ -25,42 +27,64 @@ class ApiClient(
         var loginRequest: LoginRequest? = null
     }
 
-    suspend inline fun <reified Received> getById(
+    suspend inline fun <reified Returned> get(
+        endpoint: GetByIdEndpoint<Returned>,
         id: Int,
-        endpoint: Endpoint,
         vararg params: Pair<String, String>
-    ): Received = getById(id.toLong(), endpoint, *params)
+    ): Returned = get(endpoint, id.toLong(), *params)
 
-    suspend inline fun <reified Received> getById(
+    suspend inline fun <reified Returned> get(
+        endpoint: GetByIdEndpoint<Returned>,
         id: Long,
-        endpoint: Endpoint,
         vararg params: Pair<String, String>
-    ): Received = request(
+    ): Returned = request(
         method = HttpMethod.Get,
         url = "$baseUrl${endpoint.clientIdTemplate.replace(":id", id.toString())}",
         body = null,
         params = params
     )
 
-    suspend inline fun <reified Received> get(
-        endpoint: Endpoint,
+    suspend inline fun <reified Returned> getSameData(
+        endpoint: GetByIdEndpoint<*>,
+        id: Int,
         vararg params: Pair<String, String>
-    ): Received = request(HttpMethod.Get, "$baseUrl${endpoint.path}", null, *params)
+    ): Returned = getSameData(endpoint, id.toLong(), *params)
 
-    suspend inline fun <reified Received, reified Sent> post(
-        endpoint: Endpoint,
+    suspend inline fun <reified Returned> getSameData(
+        endpoint: GetByIdEndpoint<*>,
+        id: Long,
+        vararg params: Pair<String, String>
+    ): Returned = request(
+        method = HttpMethod.Get,
+        url = "$baseUrl${endpoint.clientIdTemplate.replace(":id", id.toString())}",
+        body = null,
+        params = params
+    )
+
+    suspend inline fun <reified Returned> get(
+        endpoint: GetEndpoint<Returned>,
+        vararg params: Pair<String, String>
+    ): Returned = request(HttpMethod.Get, "$baseUrl${endpoint.path}", null, *params)
+
+    suspend inline fun <reified Returned> getSameData(
+        endpoint: GetEndpoint<*>,
+        vararg params: Pair<String, String>
+    ): Returned = request(HttpMethod.Get, "$baseUrl${endpoint.path}", null, *params)
+
+    suspend inline fun <reified Sent, reified Returned> post(
+        endpoint: PostEndpoint<Sent, Returned>,
         value: Sent,
         vararg params: Pair<String, String>
-    ): Received = request(HttpMethod.Post, "$baseUrl${endpoint.path}", value, *params)
+    ): Returned = request(HttpMethod.Post, "$baseUrl${endpoint.path}", value, *params)
 
-    suspend inline fun <reified Received, reified Sent> request(
+    suspend inline fun <reified Sent, reified Received> request(
         method: HttpMethod,
         url: String,
         body: Sent,
         vararg params: Pair<String, String>
     ): Received = requestOrNull(method, url, body, *params) ?: error("Request result is null")
 
-    suspend inline fun <reified Received, reified Sent> requestOrNull(
+    suspend inline fun <reified Sent, reified Received> requestOrNull(
         method: HttpMethod,
         url: String,
         body: Sent,
@@ -79,7 +103,7 @@ class ApiClient(
 
     suspend fun login(request: LoginRequest? = null): Auth? {
         request?.let { loginRequest = it }
-        val response = client.post("$baseUrl${Api.loginEndpoint.path}") {
+        val response = client.post("$baseUrl${Api.Login.path}") {
             setBody(loginRequest)
         }
         if (response.status != HttpStatusCode.OK) {

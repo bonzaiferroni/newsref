@@ -10,10 +10,11 @@ import newsref.server.db.services.UserDtoService
 import newsref.server.extensions.getClaim
 import newsref.server.plugins.CLAIM_USERNAME
 import newsref.server.plugins.authenticateJwt
+import newsref.server.utilities.getEndpoint
 
 fun Routing.serveUsers(service: UserDtoService = UserDtoService()) {
 
-    post(Api.userEndpoint.path) {
+    post(Api.GetUser.path) {
         val info = call.receive<SignUpRequest>()
         try {
             service.createUser(info)
@@ -26,19 +27,18 @@ fun Routing.serveUsers(service: UserDtoService = UserDtoService()) {
     }
 
     authenticateJwt {
-        get(Api.userEndpoint.path) {
+        get(Api.GetUser.path) {
             val username = call.getClaim(CLAIM_USERNAME)
             val userInfo = service.getUserInfo(username)
             call.respond(userInfo)
         }
 
-        get(Api.privateEndpoint.path) {
+        getEndpoint(Api.GetPrivateInfo) {
             val username = call.getClaim(CLAIM_USERNAME)
-            val privateInfo = service.getPrivateInfo(username)
-            call.respond(privateInfo)
+            service.getPrivateInfo(username)
         }
 
-        put(Api.userEndpoint.path) {
+        put(Api.GetUser.path) {
             val username = call.getClaim(CLAIM_USERNAME)
             val info = call.receive<EditUserRequest>()
             service.updateUser(username, info)

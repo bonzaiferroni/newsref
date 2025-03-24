@@ -8,7 +8,7 @@ class UserStore : ApiStore() {
 
     suspend fun login(request: LoginRequest): Auth? = client.login(request)
 
-    suspend fun readUser(): User = client.get(Api.userEndpoint)
+    suspend fun readUser(): User = client.getSameData(Api.GetUser)
 
     // returns null if successful, otherwise returns an error message
     // suspend fun createUser(info: SignUpRequest): SignUpResult = client.post(Api.user, info)

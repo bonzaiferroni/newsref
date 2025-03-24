@@ -2,19 +2,14 @@ package newsref.model
 
 import kotlinx.datetime.Instant
 
-open class Endpoint(
+sealed class Endpoint<Received>(
     val base: String,
-    val parent: Endpoint? = null,
+    val parent: Endpoint<*>?
 ) {
-    val baseWithParent: String = when {
-        parent != null -> "${parent.baseWithParent}$base"
-        else -> base
-    }
+    val baseWithParent: String = parent?.let { "${it.baseWithParent}$base" } ?: base
 
-    val path = "$apiPrefix$baseWithParent"
-    val clientIdTemplate: String get() = "$path/:id"
-    val serverIdTemplate: String get() = "$path/{id}"
-    fun replaceClientId(id: Any) = this.clientIdTemplate.replace(":id", id.toString())
+    val path = "$apiPrefixV1$baseWithParent"
+
     fun <T> addParam(key: String, toValue: (String) -> T, toString: (T) -> String, ) =
         EndpointParam<T>(key, toValue, toString)
 
@@ -51,10 +46,29 @@ open class Endpoint(
     )
 }
 
-open class PostEndpoint<T>(
+open class ParentEndpoint(
     base: String,
-    parent: Endpoint? = null,
-): Endpoint(base, parent)
+    parent: Endpoint<*>? = null,
+): Endpoint<Unit>(base, parent)
+
+open class GetEndpoint<Returned>(
+    base: String = "",
+    parent: Endpoint<*>? = null,
+): Endpoint<Returned>(base, parent)
+
+open class PostEndpoint<Sent, Returned>(
+    base: String = "",
+    parent: Endpoint<*>? = null,
+): Endpoint<Returned>(base, parent)
+
+open class GetByIdEndpoint<Returned>(
+    base: String = "",
+    parent: Endpoint<*>? = null,
+) : Endpoint<Returned>(base, parent) {
+    val clientIdTemplate: String get() = "$path/:id"
+    val serverIdTemplate: String get() = "$path/{id}"
+    fun replaceClientId(id: Any) = this.clientIdTemplate.replace(":id", id.toString())
+}
 
 class EndpointParam<T>(
     val key: String,

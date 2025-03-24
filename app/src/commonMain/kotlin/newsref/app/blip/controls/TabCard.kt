@@ -11,8 +11,8 @@ import newsref.app.blip.theme.ProvideBookColors
 fun TabCard(
     currentTab: String?,
     onChangePage: (String) -> Unit,
-    shape: Shape = RectangleShape,
-    modifier: Modifier = Modifier,
+    shape: Shape = RectangleShape, // todo: implement shape
+    modifier: Modifier = Modifier, // todo: implement modifier
     content: @Composable TabScope.() -> Unit
 ) {
     ProvideBookColors {
