@@ -18,19 +18,33 @@ fun FloatyBox(
     onDismiss: () -> Unit,
     content: @Composable () -> Unit
 ) {
+    FloatyContent(
+        isVisible = isVisible,
+        onDismiss = onDismiss,
+    ) {
+        Box(
+            modifier = Modifier
+                .sizeIn(minWidth = 200.dp, maxWidth = 400.dp, minHeight = 100.dp)
+                .background(Blip.localColors.surface, shape = Blip.ruler.rounded)
+                .padding(Blip.ruler.halfPadding)
+        ) {
+            content()
+        }
+    }
+}
+
+@Composable
+fun FloatyContent(
+    isVisible: Boolean,
+    onDismiss: () -> Unit,
+    content: @Composable () -> Unit
+) {
     if (isVisible) {
         Dialog(
             onDismissRequest = onDismiss,
         ) {
             ProvideBookColors {
-                Box(
-                    modifier = Modifier
-                        .sizeIn(minWidth = 200.dp, maxWidth = 400.dp, minHeight = 100.dp)
-                        .background(Color.White, shape = Blip.ruler.rounded)
-                        .padding(Blip.ruler.halfPadding)
-                ) {
-                    content()
-                }
+                content()
             }
         }
     }

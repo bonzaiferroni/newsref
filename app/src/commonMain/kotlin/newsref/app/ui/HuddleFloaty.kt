@@ -10,10 +10,12 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import com.mikepenz.markdown.compose.Markdown
 import newsref.app.blip.controls.Button
 import newsref.app.blip.controls.FloatyBox
+import newsref.app.blip.controls.FloatyContent
 import newsref.app.blip.controls.H2
 import newsref.app.blip.controls.RadioContent
 import newsref.app.blip.controls.RadioGroup
 import newsref.app.blip.controls.Tab
+import newsref.app.blip.controls.TabCard
 import newsref.app.blip.controls.Tabs
 import newsref.app.blip.controls.Text
 import newsref.app.blip.controls.TextField
@@ -21,7 +23,7 @@ import newsref.app.blip.theme.Blip
 import newsref.model.data.HuddleKey
 
 @Composable
-fun HuddleBox(
+fun HuddleFloaty(
     huddleName: String,
     showBox: Boolean,
     key: HuddleKey,
@@ -34,8 +36,12 @@ fun HuddleBox(
         if (state.completed) onDismiss()
     }
 
-    FloatyBox(showBox, onDismiss) {
-        Tabs(state.tab, viewModel::changeTab) {
+    FloatyContent(showBox, onDismiss) {
+        TabCard(
+            currentTab = state.tab,
+            onChangePage = viewModel::changeTab,
+            shape = Blip.ruler.rounded
+        ) {
             Tab(name = "Guide", scrollbar = false) {
                 Markdown(state.guide, mdColors, mdTypography, Modifier)
             }

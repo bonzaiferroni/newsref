@@ -23,7 +23,7 @@ fun ArticlePropertiesColumn(
     val userState by LocalUserContext.current.state.collectAsState()
     val state by viewModel.state.collectAsState()
 
-    HuddleBox(
+    HuddleFloaty(
         huddleName = "Edit Article Type",
         showBox = state.editingArticleType,
         key = HuddleKey(
