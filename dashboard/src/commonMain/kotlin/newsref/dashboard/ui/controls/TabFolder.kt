@@ -6,14 +6,14 @@ import androidx.compose.foundation.layout.*
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.*
-import newsref.app.blip.controls.TabPage
+import newsref.app.blip.controls.Tab
 import newsref.dashboard.*
 
 @Composable
 fun TabPages(
     currentPageName: String?,
     onChangePage: (String) -> Unit,
-    pages: ImmutableList<TabPage>,
+    pages: ImmutableList<Tab>,
     modifier: Modifier = Modifier
 ) {
     if (pages.isEmpty()) return

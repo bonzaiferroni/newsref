@@ -1,6 +1,5 @@
 package newsref.app.blip.controls
 
-import kotlinx.collections.immutable.*
 import androidx.compose.foundation.*
 import androidx.compose.foundation.layout.*
 import androidx.compose.runtime.*
@@ -11,19 +10,21 @@ import newsref.app.blip.theme.Blip
 import newsref.app.utils.modifyIfTrue
 
 @Composable
-fun TabPages(
+fun Tabs(
     currentPageName: String?,
     onChangePage: (String) -> Unit,
     modifier: Modifier = Modifier,
-    pageContents: @Composable () -> ImmutableList<TabPage>
+    content: @Composable TabScope.() -> Unit
 ) {
-    val pages = pageContents()
-    if (pages.isEmpty()) return
+    val scope = TabScope()
+    scope.content()
+    val tabs: List<TabItem> = scope.tabs
+    if (tabs.isEmpty()) return
 
-    val currentPage = pages.firstOrNull() { it.name == currentPageName }
+    val currentTab = tabs.firstOrNull() { it.name == currentPageName }
 
-    if (currentPage == null) {
-        onChangePage(pages.first().name)
+    if (currentTab == null) {
+        onChangePage(tabs.first().name)
         return
     }
 
@@ -32,28 +33,28 @@ fun TabPages(
             .fillMaxSize()
     ) {
         Row {
-            for (page in pages) {
-                if (!page.isVisible) continue
+            for (tab in tabs) {
+                if (!tab.isVisible) continue
                 val (background, elevation) = when {
-                    currentPage.name == page.name -> Blip.localColors.surface to Blip.ruler.shadowElevation
+                    currentTab.name == tab.name -> Blip.localColors.surface to Blip.ruler.shadowElevation
                     else -> Blip.localColors.surface.copy(.8f) to 0.dp
                 }
                 Box(
                     modifier = Modifier
-                        .modifyIfTrue(currentPage.name != page.name) { Modifier.clickable { onChangePage(page.name) } }
+                        .modifyIfTrue(currentTab.name != tab.name) { Modifier.clickable { onChangePage(tab.name) } }
                         .shadow(elevation)
                         .background(background)
                         .padding(Blip.ruler.basePadding)
                         .weight(1f)
                 ) {
                     Text(
-                        text = page.name,
+                        text = tab.name,
                         modifier = Modifier.align(Alignment.Center)
                     )
                 }
             }
         }
-        if (currentPage.scrollbar) {
+        if (currentTab.scrollbar) {
             Text("Scrollbar not supported")
         } else {
             Surface() {
@@ -61,21 +62,36 @@ fun TabPages(
                     modifier = Modifier.fillMaxSize()
                         .padding(Blip.ruler.innerPadding)
                 ) {
-                    currentPage.content()
+                    currentTab.content()
                 }
             }
         }
     }
 }
 
-data class TabPage(
+@Composable
+fun TabScope.Tab(
+    name: String,
+    scrollbar: Boolean = true,
+    isVisible: Boolean = true,
+    content: @Composable () -> Unit,
+) {
+    this.tabs.add(TabItem(
+        name = name,
+        scrollbar = scrollbar,
+        isVisible = isVisible,
+        content = content
+    ))
+}
+
+internal data class TabItem(
     val name: String,
     val scrollbar: Boolean = true,
     val isVisible: Boolean = true,
     val content: @Composable () -> Unit,
 )
 
-@Composable
-fun rememberPages(vararg elements: TabPage) = remember { pages(*elements) }
-
-fun pages(vararg elements: TabPage) = elements.toImmutableList()
+@Stable
+class TabScope internal constructor() {
+    internal val tabs = mutableListOf<TabItem>()
+}

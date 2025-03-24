@@ -44,7 +44,12 @@ class HuddleCreatorModel(
                 value = stateNow.selectedValue,
                 comment = stateNow.commentText
             ))
+            setState { it.copy(completed = result != null)}
         }
+    }
+
+    fun changeTab(tab: String?) {
+        setState { it.copy(tab = tab) }
     }
 }
 
@@ -52,7 +57,9 @@ data class HuddleCreatorState(
     val selectedValue: String = "",
     val cachedValue: String = "",
     val commentText: String = "",
-    val options: ImmutableList<RadioOption<String>> = persistentListOf()
+    val options: ImmutableList<RadioOption<String>> = persistentListOf(),
+    val completed: Boolean = false,
+    val tab: String? = null,
 ) {
     val canSubmit get() = selectedValue != cachedValue && commentText.isNotBlank()
 }

@@ -9,9 +9,8 @@ import androidx.compose.ui.*
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import coil3.compose.AsyncImage
-import newsref.app.blip.controls.TabPage
-import newsref.app.blip.controls.TabPages
-import newsref.app.blip.controls.rememberPages
+import newsref.app.blip.controls.Tab
+import newsref.app.blip.controls.Tabs
 import newsref.dashboard.*
 import newsref.dashboard.LocalNavigator
 import newsref.dashboard.SourceItemRoute
@@ -35,30 +34,29 @@ fun SourceItemScreen(
         verticalArrangement = Arrangement.spacedBy(baseSpacing)
     ) {
         ItemHeader(source)
-        TabPages(
+        Tabs(
             currentPageName = state.page,
             onChangePage = {
                 viewModel.changePage(it)
                 nav.setRoute(route.copy(pageName = it))
-            },
-            pageContents = rememberPages(
-                TabPage("Data") {
-                    SourceDataView(viewModel)
-                },
-                TabPage("Content", false) {
-                    SourceContentView(source, state.contents, route)
-                },
-                TabPage("Inbound", false, state.inbound.isNotEmpty()) {
-                    LinkInfoView("Inbound Links", state.inbound)
-                },
-                TabPage("Outbound", false, state.outbound.isNotEmpty()) {
-                    LinkInfoView("Outbound Links", state.outbound)
-                },
-                TabPage("Distances", false, state.distances.isNotEmpty()) {
-                    SourceDistanceView(state.distances)
-                }
-            )
-        )
+            }
+        ) {
+            Tab("Data") {
+                SourceDataView(viewModel)
+            }
+            Tab("Content", false) {
+                SourceContentView(source, state.contents, route)
+            }
+            Tab("Inbound", false, state.inbound.isNotEmpty()) {
+                LinkInfoView("Inbound Links", state.inbound)
+            }
+            Tab("Outbound", false, state.outbound.isNotEmpty()) {
+                LinkInfoView("Outbound Links", state.outbound)
+            }
+            Tab("Distances", false, state.distances.isNotEmpty()) {
+                SourceDistanceView(state.distances)
+            }
+        }
     }
 }
 

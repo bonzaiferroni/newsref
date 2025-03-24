@@ -5,9 +5,9 @@ import androidx.compose.runtime.*
 import androidx.compose.material3.*
 import androidx.compose.ui.platform.LocalUriHandler
 import androidx.lifecycle.viewmodel.compose.viewModel
-import newsref.app.blip.controls.TabPage
-import newsref.app.blip.controls.TabPages
-import newsref.app.blip.controls.rememberPages
+import newsref.app.blip.controls.Tab
+import newsref.app.blip.controls.Tabs
+import newsref.app.blip.controls.rememberTabs
 import newsref.dashboard.*
 import newsref.dashboard.ChapterItemRoute
 import newsref.dashboard.LocalNavigator
@@ -65,21 +65,19 @@ fun ChapterItemScreen(
                 Button(onClick = { nav.go(ChapterItemRoute(it))}) { Text("Next")}
             }
         }
-        TabPages(
+        Tabs(
             currentPageName = state.page,
             onChangePage = viewModel::changePage,
         ) {
-            rememberPages(
-                TabPage(name = "Secondary", scrollbar = false) {
-                    ChapterTable("Secondary Sources", state.secondaries, viewModel::sortSources)
-                },
-                TabPage(name = "Primary", scrollbar = false) {
-                    ChapterTable("Primary Sources", state.primaries, viewModel::sortSources)
-                },
-                TabPage(name = "Children", scrollbar = false) {
-                    ChapterDataTable(state.children, { })
-                }
-            )
+            Tab(name = "Secondary", scrollbar = false) {
+                ChapterTable("Secondary Sources", state.secondaries, viewModel::sortSources)
+            }
+            Tab(name = "Primary", scrollbar = false) {
+                ChapterTable("Primary Sources", state.primaries, viewModel::sortSources)
+            }
+            Tab(name = "Children", scrollbar = false) {
+                ChapterDataTable(state.children, { })
+            }
         }
 
     }

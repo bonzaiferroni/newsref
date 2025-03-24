@@ -33,24 +33,22 @@ fun ChapterScreen(
             currentTab = state.tab,
             onChangePage = viewModel::changeTab,
         ) {
-            rememberPages(
-                TabPage("Articles", false) {
-                    LazyColumn(
-                    ) {
-                        items(state.articles) {
-                            SourceBitItem(it, chapter.id)
-                        }
-                    }
-                },
-                TabPage("Other Sources", false) {
-                    LazyColumn(
-                    ) {
-                        items(state.references) {
-                            SourceBitItem(it, chapter.id)
-                        }
+            Tab("Articles", false) {
+                LazyColumn(
+                ) {
+                    items(state.articles) {
+                        SourceBitItem(it, chapter.id)
                     }
                 }
-            )
+            }
+            Tab("Other Sources", false) {
+                LazyColumn(
+                ) {
+                    items(state.references) {
+                        SourceBitItem(it, chapter.id)
+                    }
+                }
+            }
         }
     }
 }

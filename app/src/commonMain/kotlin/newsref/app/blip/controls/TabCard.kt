@@ -13,13 +13,13 @@ fun TabCard(
     onChangePage: (String) -> Unit,
     shape: Shape = RectangleShape,
     modifier: Modifier = Modifier,
-    pageContents: @Composable () -> ImmutableList<TabPage>
+    content: @Composable TabScope.() -> Unit
 ) {
     ProvideBookColors {
-        TabPages(
+        Tabs(
             currentPageName = currentTab,
             onChangePage = onChangePage,
-            pageContents = pageContents
+            content = content
         )
     }
 }

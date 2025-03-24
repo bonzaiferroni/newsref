@@ -17,7 +17,7 @@ import kotlinx.collections.immutable.ImmutableList
 fun <T> RadioGroup(
     selectedValue: T,
     onOptionSelected: (T) -> Unit,
-    composeOptions: () -> ImmutableList<RadioContent<T>>
+    composeOptions: () -> List<RadioContent<T>>
 ) {
     val options = remember { composeOptions() }
 

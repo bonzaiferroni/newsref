@@ -7,9 +7,8 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
-import newsref.app.blip.controls.TabPage
-import newsref.app.blip.controls.TabPages
-import newsref.app.blip.controls.rememberPages
+import newsref.app.blip.controls.Tab
+import newsref.app.blip.controls.Tabs
 import newsref.dashboard.HostItemRoute
 import newsref.dashboard.LocalNavigator
 import newsref.dashboard.ui.controls.*
@@ -28,47 +27,45 @@ fun HostItemScreen(
         return
     }
     val nav = LocalNavigator.current
-    TabPages(
+    Tabs(
         currentPageName = state.page,
         onChangePage = {
             nav.setRoute(route.copy(page = it))
             viewModel.changePage(it)
         },
     ) {
-        rememberPages(
-            TabPage("Properties") {
-                PropertyTable(
-                    name = host.core,
-                    item = host,
-                    properties = listOf(
-                        textRow("Core", host.core),
-                        textRow("Name", host.name),
-                        textRow("Score", host.score.shortFormat())
-                    )
+        Tab("Properties") {
+            PropertyTable(
+                name = host.core,
+                item = host,
+                properties = listOf(
+                    textRow("Core", host.core),
+                    textRow("Name", host.name),
+                    textRow("Score", host.score.shortFormat())
                 )
-            },
-            TabPage("Sources", false) {
-                CloudChart(
-                    state.clouds,
-                    300.dp,
-                    viewModel::changeSelected
-                )
-                Row(
-                    horizontalArrangement = Arrangement.SpaceBetween,
-                    verticalAlignment = Alignment.CenterVertically,
-                    modifier = Modifier.fillMaxWidth()
-                ) {
-                    SinceMenu(state.since, viewModel::changeSince)
-                    Button(onClick = { state.sources.toSpeakRoute()?.let { nav.go(it) } }) { Text("Speak") }
-                }
-                SourceTable(
-                    sources = state.sources,
-                    searchText = state.searchText,
-                    scrollId = state.selectedId,
-                    onSearch = viewModel::onSearch,
-                    onSorting = viewModel::changeSorting,
-                )
+            )
+        }
+        Tab("Sources", false) {
+            CloudChart(
+                state.clouds,
+                300.dp,
+                viewModel::changeSelected
+            )
+            Row(
+                horizontalArrangement = Arrangement.SpaceBetween,
+                verticalAlignment = Alignment.CenterVertically,
+                modifier = Modifier.fillMaxWidth()
+            ) {
+                SinceMenu(state.since, viewModel::changeSince)
+                Button(onClick = { state.sources.toSpeakRoute()?.let { nav.go(it) } }) { Text("Speak") }
             }
-        )
+            SourceTable(
+                sources = state.sources,
+                searchText = state.searchText,
+                scrollId = state.selectedId,
+                onSearch = viewModel::onSearch,
+                onSorting = viewModel::changeSorting,
+            )
+        }
     }
 }

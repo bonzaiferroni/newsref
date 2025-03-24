@@ -6,9 +6,9 @@ import androidx.compose.ui.platform.LocalUriHandler
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.compose.ui.*
 import androidx.compose.material3.*
-import newsref.app.blip.controls.TabPage
-import newsref.app.blip.controls.TabPages
-import newsref.app.blip.controls.rememberPages
+import newsref.app.blip.controls.Tab
+import newsref.app.blip.controls.Tabs
+import newsref.app.blip.controls.rememberTabs
 import newsref.dashboard.*
 import newsref.dashboard.FeedItemRoute
 import newsref.dashboard.LocalNavigator
@@ -56,37 +56,35 @@ fun FeedItemScreen(
         }
         Countdown(state.nextRefresh)
     }
-    TabPages(
+    Tabs(
         currentPageName = state.page,
         onChangePage = viewModel::changePage,
     ) {
-        rememberPages(
-            TabPage(name = "Sources", scrollbar = false) {
-                SourceTable(
-                    sources = state.sourceInfos
-                )
-            },
-            TabPage(name = "Leads", scrollbar = false) {
-                DataTable(
-                    name = "LeadInfos",
-                    items = state.leadInfos,
-                    glowFunction = { glowOverHour(it.freshAt) },
-                    columnGroups = listOf(
-                        columns(
-                            TableColumn("Headline") { TextCell(it.feedHeadline) { uriHandler.openUri(it.url.href) } },
-                        ),
-                        columns(
-                            TableColumn("Fresh", 100, AlignCell.Right) { DurationAgoCell(it.freshAt) },
-                            TableColumn("Attempt", 100, AlignCell.Right) { DurationAgoCell(it.lastAttemptAt) },
-                            TableColumn("Ext", 50) { BooleanCell(it.isExternal) },
-                            TableColumn("Links", 50, AlignCell.Right) { TextCell(it.linkCount.toString()) },
-                            TableColumn("Src", 50) { NullableIdCell(it.targetId) { nav.go(SourceItemRoute(it)) } },
-                            TableColumn("Pos", 50, AlignCell.Right) { TextCell(it.feedPosition) }
-                        )
+        Tab(name = "Sources", scrollbar = false) {
+            SourceTable(
+                sources = state.sourceInfos
+            )
+        }
+        Tab(name = "Leads", scrollbar = false) {
+            DataTable(
+                name = "LeadInfos",
+                items = state.leadInfos,
+                glowFunction = { glowOverHour(it.freshAt) },
+                columnGroups = listOf(
+                    columns(
+                        TableColumn("Headline") { TextCell(it.feedHeadline) { uriHandler.openUri(it.url.href) } },
+                    ),
+                    columns(
+                        TableColumn("Fresh", 100, AlignCell.Right) { DurationAgoCell(it.freshAt) },
+                        TableColumn("Attempt", 100, AlignCell.Right) { DurationAgoCell(it.lastAttemptAt) },
+                        TableColumn("Ext", 50) { BooleanCell(it.isExternal) },
+                        TableColumn("Links", 50, AlignCell.Right) { TextCell(it.linkCount.toString()) },
+                        TableColumn("Src", 50) { NullableIdCell(it.targetId) { nav.go(SourceItemRoute(it)) } },
+                        TableColumn("Pos", 50, AlignCell.Right) { TextCell(it.feedPosition) }
                     )
                 )
-            }
-        )
+            )
+        }
     }
 }
 
