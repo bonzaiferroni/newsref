@@ -1,11 +1,11 @@
 package newsref.db.services
 
 import newsref.db.model.Huddle
-import newsref.db.model.HuddleOption
 import newsref.db.tables.NewsArticleTable
 import newsref.model.core.ArticleType
 import newsref.model.core.HuddleType
 import newsref.model.data.HuddleKey
+import newsref.model.data.HuddleOption
 import org.jetbrains.exposed.sql.update
 import kotlin.time.Duration.Companion.minutes
 

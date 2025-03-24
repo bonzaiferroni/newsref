@@ -9,6 +9,7 @@ import newsref.app.blip.controls.RadioOption
 import newsref.app.blip.core.StateModel
 import newsref.app.io.HuddleStore
 import newsref.model.data.HuddleKey
+import newsref.model.data.HuddleSeed
 
 class HuddleCreatorModel(
     private val key: HuddleKey,
@@ -36,8 +37,13 @@ class HuddleCreatorModel(
     }
 
     fun submit() {
+        if (!stateNow.canSubmit) return
         viewModelScope.launch {
-
+            val result = store.createHuddle(HuddleSeed(
+                key = key,
+                value = stateNow.selectedValue,
+                comment = stateNow.commentText
+            ))
         }
     }
 }

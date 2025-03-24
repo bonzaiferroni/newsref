@@ -6,6 +6,7 @@ import newsref.db.core.HuddleStatus
 import newsref.db.model.*
 import newsref.db.utils.toInstantUtc
 import newsref.model.core.HuddleType
+import newsref.model.data.HuddleOption
 import org.jetbrains.exposed.dao.id.LongIdTable
 import org.jetbrains.exposed.sql.*
 import org.jetbrains.exposed.sql.json.jsonb

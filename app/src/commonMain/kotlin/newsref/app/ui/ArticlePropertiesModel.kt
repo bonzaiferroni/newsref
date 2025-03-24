@@ -23,16 +23,16 @@ class ArticlePropertiesModel(
     }
 
     fun sendArticleTypeEdit() {
-        if (!stateNow.isValidArticleType) return
-        viewModelScope.launch {
-            val id = huddleStore.createHuddle(HuddleSeed(
-                pageId = article.pageId,
-                type = HuddleType.EditArticleType,
-                value = stateNow.articleType.name,
-                comment = stateNow.comment
-            ))
-            println(id)
-        }
+//        if (!stateNow.isValidArticleType) return
+//        viewModelScope.launch {
+//            val id = huddleStore.createHuddle(HuddleSeed(
+//                pageId = article.pageId,
+//                type = HuddleType.EditArticleType,
+//                value = stateNow.articleType.name,
+//                comment = stateNow.comment
+//            ))
+//            println(id)
+//        }
     }
 
     fun setComment(comment: String) {

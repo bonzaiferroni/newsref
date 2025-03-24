@@ -4,10 +4,8 @@ import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.selection.selectable
 import androidx.compose.foundation.selection.selectableGroup
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.remember
-import androidx.compose.ui.Alignment
-import androidx.compose.ui.Modifier
+import androidx.compose.runtime.*
+import androidx.compose.ui.*
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.drawscope.Fill
 import androidx.compose.ui.graphics.drawscope.Stroke
@@ -41,8 +39,8 @@ fun <T> RadioGroup(
                         .padding(4.dp)
                 ) {
                     drawCircle(
-                        color = if (option == selectedValue) Color.Blue else Color.Gray,
-                        style = if (option == selectedValue) Fill else Stroke(2.dp.toPx())
+                        color = if (option.value == selectedValue) Color.Blue else Color.Gray,
+                        style = if (option.value == selectedValue) Fill else Stroke(2.dp.toPx())
                     )
                 }
                 Spacer(Modifier.width(8.dp))

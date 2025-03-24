@@ -1,10 +1,12 @@
 package newsref.server.routes
 
 import io.ktor.http.*
+import io.ktor.server.request.receive
 import io.ktor.server.response.*
 import io.ktor.server.routing.*
 import newsref.db.services.*
 import newsref.model.Api
+import newsref.model.data.HuddleSeed
 import newsref.server.db.services.UserDtoService
 import newsref.server.extensions.getClaim
 import newsref.server.plugins.CLAIM_USERNAME
@@ -21,7 +23,15 @@ fun Routing.serveHuddles(
     }
 
     authenticateJwt {
-        postApi(Api.Huddles) { sent, endpoint ->
+//        postApi(Api.Huddles) { sent, endpoint ->
+//            val username = call.getClaim(CLAIM_USERNAME)
+//            println("username: $username")
+//            val user = userService.findByUsernameOrEmail(username) ?: error("User not found")
+//            val huddleId = service.createHuddle(sent, user.id)
+//            call.respond(HttpStatusCode.OK, huddleId)
+//        }
+        post(Api.Huddles.path) {
+            val sent = call.receive<HuddleSeed>()
             val username = call.getClaim(CLAIM_USERNAME)
             val user = userService.findByUsernameOrEmail(username) ?: error("User not found")
             val huddleId = service.createHuddle(sent, user.id)
