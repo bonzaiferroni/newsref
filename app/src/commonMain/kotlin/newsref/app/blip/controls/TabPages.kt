@@ -30,7 +30,6 @@ fun Tabs(
 
     Column(
         modifier = modifier
-            .fillMaxSize()
     ) {
         Row {
             for (tab in tabs) {
@@ -59,8 +58,7 @@ fun Tabs(
         } else {
             Surface() {
                 Column(
-                    modifier = Modifier.fillMaxSize()
-                        .padding(Blip.ruler.innerPadding)
+                    modifier = Modifier.padding(Blip.ruler.innerPadding)
                 ) {
                     currentTab.content()
                 }
