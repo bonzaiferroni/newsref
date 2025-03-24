@@ -10,26 +10,18 @@ import newsref.server.utilities.*
 import kotlin.time.Duration.Companion.days
 
 fun Routing.serveChapters(service: ChapterDtoService = ChapterDtoService()) {
-    getIdEndpoint(Api.GetChapterById) { id, endpoint ->
+    getId(Api.GetChapterById) { id, endpoint ->
         service.readChapter(id)
     }
 
-    getEndpoint(Api.Chapters) {
+    get(Api.Chapters) {
         val startInstant = it.start.readFromCallOrNull(call) ?: (Clock.System.now() - 7.days)
         service.readTopChapters(startInstant)
     }
 
-    getEndpoint(Api.ChapterSources) {
+    get(Api.ChapterSources) {
         val pageId = it.pageId.readFromCallOrNull(call) ?: error("missing page id")
         val chapterId = it.chapterId.readFromCallOrNull(call) ?: error("missing chapter id")
         service.readChapterSource(chapterId, pageId)
-    }
-}
-
-suspend fun <T> RoutingCall.respondOrNotFound(value: T?) {
-    if (value != null) {
-        respond(value)
-    } else {
-        respond(HttpStatusCode.NotFound)
     }
 }

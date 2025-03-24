@@ -3,13 +3,13 @@ package newsref.server.routes
 import io.ktor.server.routing.*
 import newsref.db.services.ArticleDtoService
 import newsref.model.Api
-import newsref.server.utilities.getIdEndpoint
+import newsref.server.utilities.getId
 
 fun Routing.serveArticles(
     service: ArticleDtoService = ArticleDtoService()
 ) {
 
-//    getEndpoint(Api.TopSources) {
+//    get(Api.TopSources) {
 //        val span = it.spanOrdinal.readFromCall(call).let { ordinal ->
 //            NewsSpan.entries.firstOrNull { it.ordinal == ordinal }
 //        } ?: NewsSpan.WEEK
@@ -17,7 +17,7 @@ fun Routing.serveArticles(
 //        call.respond(sources)
 //    }
 
-    getIdEndpoint(Api.GetArticleById) { id, endpoint ->
+    getId(Api.GetArticleById) { id, endpoint ->
         service.readArticle(id)
     }
 }

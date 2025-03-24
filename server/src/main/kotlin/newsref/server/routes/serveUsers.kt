@@ -10,7 +10,7 @@ import newsref.server.db.services.UserDtoService
 import newsref.server.extensions.getClaim
 import newsref.server.plugins.CLAIM_USERNAME
 import newsref.server.plugins.authenticateJwt
-import newsref.server.utilities.getEndpoint
+import newsref.server.utilities.get
 
 fun Routing.serveUsers(service: UserDtoService = UserDtoService()) {
 
@@ -33,7 +33,7 @@ fun Routing.serveUsers(service: UserDtoService = UserDtoService()) {
             call.respond(userInfo)
         }
 
-        getEndpoint(Api.GetPrivateInfo) {
+        get(Api.GetPrivateInfo) {
             val username = call.getClaim(CLAIM_USERNAME)
             service.getPrivateInfo(username)
         }
