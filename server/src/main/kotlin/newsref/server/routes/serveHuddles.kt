@@ -22,19 +22,10 @@ fun Routing.serveHuddles(
     }
 
     authenticateJwt {
-//        postEndpoint(Api.Huddles) { sent, endpoint ->
-//            val username = call.getClaim(CLAIM_USERNAME)
-//            println("username: $username")
-//            val user = userService.findByUsernameOrEmail(username) ?: error("User not found")
-//            val huddleId = service.createHuddle(sent, user.id)
-//            call.respond(HttpStatusCode.OK, huddleId)
-//        }
-        post(Api.CreateHuddle.path) {
-            val sent = call.receive<HuddleSeed>()
+        postEndpoint(Api.CreateHuddle) { sent, endpoint ->
             val username = call.getClaim(CLAIM_USERNAME)
             val user = userService.findByUsernameOrEmail(username) ?: error("User not found")
-            val huddleId = service.createHuddle(sent, user.id)
-            call.respond(HttpStatusCode.OK, huddleId)
+            service.createHuddle(sent, user.id)
         }
     }
 

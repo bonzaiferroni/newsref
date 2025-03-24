@@ -8,7 +8,6 @@ import newsref.server.utilities.*
 import kotlin.time.Duration.Companion.days
 
 fun Routing.serveHosts(service: HostDtoService = HostDtoService()) {
-
     getEndpoint(Api.Hosts) {
         val ids = it.ids.readFromCallOrNull(call)
         val search = it.search.readFromCallOrNull(call)
