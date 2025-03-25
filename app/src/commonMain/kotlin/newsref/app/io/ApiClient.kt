@@ -38,6 +38,17 @@ class ApiClient(
         params = params
     )
 
+    suspend inline fun <reified Returned> getOrNull(
+        endpoint: GetByIdEndpoint<Returned>,
+        id: Any,
+        vararg params: Pair<String, String>
+    ): Returned? = requestOrNull(
+        method = HttpMethod.Get,
+        path = endpoint.replaceClientId(id),
+        body = null,
+        params = params
+    )
+
     suspend inline fun <reified Returned> getSameData(
         endpoint: GetByIdEndpoint<*>,
         id: Any,

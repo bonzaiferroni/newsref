@@ -17,18 +17,24 @@ import org.jetbrains.exposed.sql.*
 
 class UserDtoService : DbService() {
 
-    private fun findByUsername(username: String): User? =
+    private fun readByUsername(username: String): User? =
         UserAspect.readFirst { UserTable.username.lowerCase() eq username.lowercase() }
 
-    suspend fun findByUsernameOrEmail(usernameOrEmail: String): User? = dbQuery {
+    suspend fun readByUsernameOrEmail(usernameOrEmail: String): User? = dbQuery {
         UserAspect.readFirst {
             (UserTable.username.lowerCase() eq usernameOrEmail.lowercase()) or
                     (UserTable.email.lowerCase() eq usernameOrEmail.lowercase())
         }
     }
 
-    suspend fun getUserInfo(username: String): UserDto {
-        val user = findByUsernameOrEmail(username) ?: throw IllegalArgumentException("User not found")
+    suspend fun readIdByUsername(username: String) = dbQuery {
+        UserTable.select(UserTable.id)
+            .where { UserTable.username.eq(username) }
+            .first()[UserTable.id].value
+    }
+
+    suspend fun readUserDto(username: String): UserDto {
+        val user = readByUsernameOrEmail(username) ?: throw IllegalArgumentException("User not found")
         return UserDto(
             username = user.username,
             roles = user.roles,
@@ -78,7 +84,7 @@ class UserDtoService : DbService() {
     }
 
     suspend fun getPrivateInfo(username: String) = dbQuery {
-        val user = findByUsername(username) ?: throw IllegalArgumentException("User not found")
+        val user = readByUsername(username) ?: throw IllegalArgumentException("User not found")
         user.toPrivateInfo()
     }
 

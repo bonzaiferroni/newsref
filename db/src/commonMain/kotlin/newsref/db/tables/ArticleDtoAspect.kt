@@ -22,6 +22,7 @@ object ArticleDtoAspect : Aspect<ArticleDtoAspect, ArticleDto>(
     val wordCount = add(ArticleTable.wordCount)
     val summary = add(NewsArticleTable.summary)
     val newsType = add(NewsArticleTable.articleType)
+    val articleTypeHuddleId = add(NewsArticleTable.articleTypeHuddleId)
     val seenAt = add(PageTable.seenAt)
     val accessedAt = add(PageTable.accessedAt)
     val publishedAt = add(PageTable.publishedAt)
@@ -40,6 +41,7 @@ internal fun ResultRow.toSourceDto() = ArticleDto(
     wordCount = this[ArticleDtoAspect.wordCount],
     summary = this[ArticleDtoAspect.summary],
     articleType = this[ArticleDtoAspect.newsType],
+    articleTypeHuddleId = this[ArticleDtoAspect.articleTypeHuddleId]?.value,
     seenAt = this[ArticleDtoAspect.seenAt].toInstantUtc(),
     accessedAt = this[ArticleDtoAspect.accessedAt]?.toInstantUtc(),
     publishedAt = this[ArticleDtoAspect.publishedAt]?.toInstantUtc(),

@@ -2,7 +2,7 @@ package newsref.model
 
 import newsref.model.data.HuddleKey
 import newsref.model.data.HuddlePrompt
-import newsref.model.data.HuddleSeed
+import newsref.model.data.HuddleResponseSeed
 import newsref.model.dto.ArticleDto
 import newsref.model.dto.AuthDto
 import newsref.model.dto.ChapterPackDto
@@ -10,6 +10,7 @@ import newsref.model.dto.ChapterSourceDto
 import newsref.model.dto.FeedDto
 import newsref.model.dto.HostDto
 import newsref.model.dto.HuddleContentDto
+import newsref.model.dto.HuddleResponseDto
 import newsref.model.dto.PrivateInfo
 import newsref.model.dto.SourceBitDto
 import newsref.model.dto.UserDto
@@ -40,10 +41,11 @@ object Api : ParentEndpoint(null, "/api/v1") {
     }
 
     object Huddles : ParentEndpoint(this, "/huddles") {
-        object CreateHuddle : PostEndpoint<HuddleSeed, Long>(this)
+        object SubmitHuddleResponse : PostEndpoint<HuddleResponseSeed, HuddleResponseDto>(this)
         object ReadHuddlePrompt : PostEndpoint<HuddleKey, HuddlePrompt>(this, "/prompt")
-        object GetHuddleContentById : GetByIdEndpoint<HuddleContentDto>(this)
-        object GetHuddleResponsesById : GetByIdEndpoint<HuddleContentDto>(this)
+        object GetHuddleContentById : GetByIdEndpoint<HuddleContentDto>(this, "/content")
+        object GetHuddleResponsesById : GetByIdEndpoint<List<HuddleResponseDto>>(this, "/responses")
+        object GetUserResponseId : GetByIdEndpoint<Long?>(this, "/response_id")
     }
 
     // user

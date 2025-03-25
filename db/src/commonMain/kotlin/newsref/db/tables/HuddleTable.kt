@@ -15,6 +15,7 @@ import org.jetbrains.exposed.sql.kotlin.datetime.datetime
 object HuddleTable : LongIdTable("huddle") {
     val chapterId = reference("chapter_id", ChapterTable, ReferenceOption.CASCADE).nullable().index()
     val pageId = reference("source_id", PageTable, ReferenceOption.CASCADE).nullable().index()
+    val targetId = reference("target_id", HuddleTable, ReferenceOption.CASCADE).nullable().index()
     val initiatorId = reference("initiator_id", UserTable, ReferenceOption.CASCADE).index()
     val huddleType = enumeration<HuddleType>("huddle_type")
     val guide = text("guide")
@@ -59,9 +60,7 @@ object HuddleAspect : Aspect<HuddleAspect, Huddle>(
     val recordedAt = add(HuddleTable.recordedAt)
 }
 
-object HuddleCommentTable : Table("huddle_comment") {
+object HuddleCommentTable : LongIdTable("huddle_comment") {
     val huddleId = reference("huddle_id", HuddleTable, ReferenceOption.CASCADE).index()
     val commentId = reference("comment_id", CommentTable, ReferenceOption.CASCADE).index()
-
-    override val primaryKey = PrimaryKey(huddleId, commentId)
 }

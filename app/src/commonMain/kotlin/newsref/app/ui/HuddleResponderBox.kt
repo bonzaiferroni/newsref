@@ -3,40 +3,32 @@ package newsref.app.ui
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.sizeIn
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.mikepenz.markdown.compose.Markdown
 import newsref.app.blip.controls.Button
-import newsref.app.blip.controls.FloatyBox
 import newsref.app.blip.controls.FloatyContent
 import newsref.app.blip.controls.H2
 import newsref.app.blip.controls.RadioContent
 import newsref.app.blip.controls.RadioGroup
 import newsref.app.blip.controls.Tab
 import newsref.app.blip.controls.TabCard
-import newsref.app.blip.controls.Tabs
 import newsref.app.blip.controls.Text
 import newsref.app.blip.controls.TextField
 import newsref.app.blip.theme.Blip
 import newsref.model.data.HuddleKey
 
 @Composable
-fun HuddleFloaty(
+fun HuddleResponderBox(
     huddleName: String,
     showBox: Boolean,
     key: HuddleKey,
     onDismiss: () -> Unit,
-    viewModel: HuddleModel = viewModel { HuddleModel(key) }
+    viewModel: HuddleResponderModel = viewModel { HuddleResponderModel(key) }
 ) {
     val state by viewModel.state.collectAsState()
-
-    LaunchedEffect(state.completed) {
-        if (state.completed) onDismiss()
-    }
 
     FloatyContent(showBox, onDismiss) {
         TabCard(
@@ -81,8 +73,12 @@ fun HuddleFloaty(
                     }
                 }
             }
-            Tab(name = "Huddle") {
-                Text("Huddle content")
+            Tab(name = HUDDLE_TAB_NAME, scrollable = false, isVisible = state.activeId != null) {
+                ActiveHuddleView(
+                    huddleName,
+                    state.activeId!!,
+                    state.userResponseId
+                )
             }
         }
     }

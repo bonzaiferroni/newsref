@@ -29,7 +29,7 @@ fun Routing.serveUsers(service: UserDtoService = UserDtoService()) {
     authenticateJwt {
         get(Api.Users.GetUser.path) {
             val username = call.getClaim(CLAIM_USERNAME)
-            val userInfo = service.getUserInfo(username)
+            val userInfo = service.readUserDto(username)
             call.respond(userInfo)
         }
 

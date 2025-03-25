@@ -1,5 +1,6 @@
 package newsref.db.core
 
+import newsref.db.utils.toSqlString
 import org.jetbrains.exposed.sql.*
 
 open class Aspect<Self: Aspect<Self, Data>, Data>(

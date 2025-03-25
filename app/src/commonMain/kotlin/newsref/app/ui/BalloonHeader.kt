@@ -12,15 +12,12 @@ import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.unit.dp
 import coil3.compose.AsyncImage
 import kotlinx.collections.immutable.ImmutableList
-import kotlinx.datetime.Clock
 import kotlinx.datetime.Instant
 import newsref.app.blip.controls.*
 import newsref.app.blip.theme.Blip
 import newsref.app.blip.theme.ProvideSkyColors
 import newsref.app.model.SourceBit
-import kotlin.time.Duration.Companion.days
-import kotlin.time.Duration.Companion.hours
-import kotlin.time.Duration.Companion.minutes
+import newsref.model.utils.formatSpanLong
 
 @Composable
 fun BalloonHeader(
@@ -108,7 +105,7 @@ fun RowScope.HeaderMiddle(
                 modifier = Modifier.fillMaxHeight()
             ) {
                 storyCount?.let { Text("$it sources") }
-                Text("${time.agoLongFormat()} ago")
+                Text(time.formatSpanLong())
             }
             if (sources != null) {
                 SourceArray(sources, color)
@@ -143,18 +140,5 @@ fun HeaderBalloon(
         ProvideSkyColors {
             H2(score.toString())
         }
-    }
-}
-
-fun Instant.agoLongFormat() = (Clock.System.now() - this).let {
-    when {
-        it > 365.days -> "${it.inWholeDays / 365} years"
-        it > 2.days -> "${it.inWholeDays} days"
-        it > 1.days -> "1 day"
-        it > 2.hours -> "${it.inWholeHours} hours"
-        it > 1.hours -> "1 hour"
-        it > 2.minutes -> "${it.inWholeMinutes} minutes"
-        it > 1.minutes -> "1 minute"
-        else -> "${it.inWholeSeconds} seconds"
     }
 }

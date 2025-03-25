@@ -13,6 +13,7 @@ import newsref.app.blip.controls.*
 import newsref.app.blip.nav.LocalNav
 import newsref.app.blip.theme.Blip
 import newsref.app.model.SourceBit
+import newsref.model.utils.formatSpanLong
 
 @Composable
 fun ChapterScreen(
@@ -28,7 +29,7 @@ fun ChapterScreen(
     ) {
         BalloonChart(0, state.balloons, 400.dp, { })
         H1(chapter.title ?: "Chapter: ${chapter.id}")
-        Text("${chapter.size} sources, ${chapter.averageAt.agoLongFormat()} ago")
+        Text("${chapter.size} sources, ${chapter.averageAt.formatSpanLong()}")
         TabCard(
             currentTab = state.tab,
             onChangePage = viewModel::changeTab,
@@ -88,7 +89,7 @@ fun SourceBitItem(source: SourceBit, chapterId: Long? = null) {
                 horizontalArrangement = Arrangement.SpaceBetween,
                 modifier = Modifier.fillMaxWidth()
             ) {
-                Label("${source.existedAt.agoLongFormat()} ago, visibility: ${source.score}")
+                Label("${source.existedAt.formatSpanLong()}, visibility: ${source.score}")
                 Label(source.hostCore)
             }
         }

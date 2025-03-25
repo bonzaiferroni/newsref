@@ -11,7 +11,7 @@ import newsref.db.console.midnightGreenBg
 import newsref.db.model.ChapterFinderLog
 import newsref.db.model.ChapterFinderState
 import newsref.db.services.DataLogService
-import newsref.model.utils.agoFormat
+import newsref.model.utils.formatSpanBrief
 import kotlin.time.Duration.Companion.minutes
 
 data class ConsoleReporter(
@@ -76,12 +76,12 @@ sealed class DeltaColumn<T> {
 
     fun getNew(new: T) = when (this) {
         is IntColumn<T> -> this.getter(new).toString()
-        is TimeColumn<T> -> this.getter(new).agoFormat()
+        is TimeColumn<T> -> this.getter(new).formatSpanBrief()
     }
 
     fun getDelta(new: T, old: T) = when (this) {
         is IntColumn<T> -> (this.getter(new) - this.getter(old)).let { "${if (it > 0) "+" else ""}$it" }
-        is TimeColumn<T> -> (this.getter(new) - this.getter(old)).agoFormat()
+        is TimeColumn<T> -> (this.getter(new) - this.getter(old)).formatSpanBrief()
     }
 
     fun getWidth(new: T, old: T) = maxOf(this.getNew(new).length, this.getDelta(new, old).length, 3)

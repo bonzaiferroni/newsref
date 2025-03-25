@@ -76,3 +76,13 @@ class EndpointParam<T>(
     fun write(value: T) = key to toString(value)
     fun read(str: String) = toValue(str)
 }
+
+class ApiRequestBuilder<E: Endpoint<*>>(
+    val endpoint: E
+) {
+    var params: List<Pair<String, String>>? = null
+
+    fun setParams(vararg params: Pair<String, String>) {
+        this.params = params.asList()
+    }
+}

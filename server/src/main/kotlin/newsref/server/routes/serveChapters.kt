@@ -1,7 +1,5 @@
 package newsref.server.routes
 
-import io.ktor.http.HttpStatusCode
-import io.ktor.server.response.*
 import io.ktor.server.routing.*
 import kotlinx.datetime.Clock
 import newsref.db.services.*
@@ -10,7 +8,7 @@ import newsref.server.utilities.*
 import kotlin.time.Duration.Companion.days
 
 fun Routing.serveChapters(service: ChapterDtoService = ChapterDtoService()) {
-    getId(Api.Chapters.GetChapterById) { id, endpoint ->
+    getById(Api.Chapters.GetChapterById) { id, endpoint ->
         service.readChapter(id)
     }
 

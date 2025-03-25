@@ -18,6 +18,7 @@ data class ArticleDto(
     val wordCount: Int?,
     val summary: String?,
     val articleType: ArticleType?,
+    val articleTypeHuddleId: Long?,
     val seenAt: Instant,
     val accessedAt: Instant?,
     val publishedAt: Instant?,

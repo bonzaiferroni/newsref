@@ -1,13 +1,13 @@
 package newsref.model.dto
 
 import kotlinx.datetime.Instant
+import kotlinx.serialization.Serializable
 import newsref.model.core.HuddleStatus
 import newsref.model.core.HuddleType
-import newsref.model.data.HuddleOption
 
+@Serializable
 data class HuddleContentDto(
-    val id: Long,
-    val initiatorId: Long,
+    val huddleId: Long,
     val huddleType: HuddleType,
     val consensus: String?,
     val status: HuddleStatus,
@@ -16,9 +16,12 @@ data class HuddleContentDto(
     val recordedAt: Instant?,
 )
 
+@Serializable
 data class HuddleResponseDto(
-    val userId: Long,
+    val huddleId: Long,
+    val responseId: Long,
+    val username: String,
     val response: String,
-    val comment: String,
+    val comment: String?,
     val time: Instant,
 )

@@ -43,7 +43,7 @@ fun ChapterItemScreen(
                 textRow("Score", item.score.toString()),
                 textRow("Size", item.size.toString()),
                 textRow("cohesion", item.cohesion.format(2)),
-                textRow("Happened", item.averageAt.agoFormat()),
+                textRow("Happened", item.averageAt.formatSpanBrief()),
                 textRow("Primaries", state.primaries.size.toString()),
                 textRow("Secondaries", state.secondaries.size.toString())
             )
@@ -106,7 +106,7 @@ fun ChapterTable(
                 ) { TextCell(it.source.title) },
                 TableColumn(
                     name = "Exst", width = 60, align = AlignCell.Right
-                ) { TextCell(it.source.existedAt.agoFormat()) },
+                ) { TextCell(it.source.existedAt.formatSpanBrief()) },
             ),
             columns(
                 TableColumn(

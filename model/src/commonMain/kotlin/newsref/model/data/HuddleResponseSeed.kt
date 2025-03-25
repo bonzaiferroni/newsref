@@ -4,7 +4,7 @@ import kotlinx.serialization.Serializable
 import newsref.model.core.HuddleType
 
 @Serializable
-data class HuddleSeed(
+data class HuddleResponseSeed(
     val key: HuddleKey,
     val value: String,
     val comment: String,
@@ -14,7 +14,7 @@ data class HuddleSeed(
 data class HuddleKey(
     val chapterId: Long? = null,
     val pageId: Long? = null,
-    val huddleId: Long? = null,
+    val targetId: Long? = null,
     val type: HuddleType,
 )
 
@@ -23,6 +23,7 @@ data class HuddlePrompt(
     val guide: String,
     val options: List<HuddleOption>,
     val cachedValue: String,
+    val activeId: Long?,
 )
 
 @Serializable

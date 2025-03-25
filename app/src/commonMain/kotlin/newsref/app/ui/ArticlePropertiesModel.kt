@@ -1,13 +1,9 @@
 package newsref.app.ui
 
-import androidx.lifecycle.*
-import kotlinx.coroutines.launch
 import newsref.app.blip.core.StateModel
 import newsref.app.io.HuddleStore
 import newsref.app.model.Article
 import newsref.model.core.ArticleType
-import newsref.model.core.HuddleType
-import newsref.model.data.HuddleSeed
 
 class ArticlePropertiesModel(
     val article: Article,

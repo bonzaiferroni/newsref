@@ -20,7 +20,7 @@ import javax.crypto.spec.PBEKeySpec
 
 suspend fun ApplicationCall.authorize(service: UserDtoService = UserDtoService()) {
     val loginRequest = this.receiveNullable<LoginRequest>() ?: return
-    val claimedUser = service.findByUsernameOrEmail(loginRequest.usernameOrEmail)
+    val claimedUser = service.readByUsernameOrEmail(loginRequest.usernameOrEmail)
     if (claimedUser == null) {
         serverLog.logInfo("authorize: Invalid username from ${loginRequest.usernameOrEmail}")
         this.respond(HttpStatusCode.Unauthorized, "Invalid username")

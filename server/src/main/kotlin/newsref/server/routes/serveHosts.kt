@@ -20,11 +20,11 @@ fun Routing.serveHosts(service: HostDtoService = HostDtoService()) {
         }
     }
 
-    getId(Api.Hosts.GetHostById) { id, endpoint ->
+    getById(Api.Hosts.GetHostById) { id, endpoint ->
         service.readHost(id.toInt())
     }
 
-    getId(Api.Hosts.GetHostSources) { id, endpoint ->
+    getById(Api.Hosts.GetHostSources) { id, endpoint ->
         val start = endpoint.start.readFromCallOrNull(call) ?: (Clock.System.now() - 1.days)
         service.readSources(id.toInt(), start)
     }

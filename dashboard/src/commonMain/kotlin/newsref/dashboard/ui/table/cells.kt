@@ -17,7 +17,7 @@ import newsref.dashboard.emptyEmoji
 import newsref.app.utils.changeFocusWithTab
 import newsref.app.utils.modifyIfNotNull
 import newsref.dashboard.utils.formatDecimals
-import newsref.model.utils.agoFormat
+import newsref.model.utils.formatSpanBrief
 
 @Composable
 fun TextCell(
@@ -53,7 +53,7 @@ fun DurationAgoCell(
         Text(emptyEmoji)
     } else {
         val duration = Clock.System.now() - instant
-        Text(text = duration.agoFormat())
+        Text(text = duration.formatSpanBrief())
     }
 }
 
@@ -65,7 +65,7 @@ fun DurationUntilCell(
         Text(emptyEmoji)
     } else {
         val duration = instant - Clock.System.now()
-        Text(text = duration.agoFormat())
+        Text(text = duration.formatSpanBrief())
     }
 }
 

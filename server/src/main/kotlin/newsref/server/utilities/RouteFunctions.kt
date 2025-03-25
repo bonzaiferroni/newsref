@@ -21,7 +21,7 @@ fun <Returned, E : Endpoint<Returned>> Route.get(
     standardResponse { block(endpoint) }
 }
 
-fun <Returned, E : GetByIdEndpoint<Returned>> Route.getId(
+fun <Returned, E : GetByIdEndpoint<Returned>> Route.getById(
     endpoint: E,
     block: suspend RoutingContext.(Long, E) -> Returned?
 ) = get(endpoint.serverIdTemplate) {
