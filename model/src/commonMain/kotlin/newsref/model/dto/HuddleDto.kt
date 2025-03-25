@@ -1,31 +1,24 @@
-package newsref.db.model
+package newsref.model.dto
 
 import kotlinx.datetime.Instant
 import newsref.model.core.HuddleStatus
 import newsref.model.core.HuddleType
 import newsref.model.data.HuddleOption
 
-data class Huddle(
+data class HuddleContentDto(
     val id: Long,
-    val chapterId: Long,
-    val pageId: Long,
     val initiatorId: Long,
     val huddleType: HuddleType,
-    val guide: String,
-    val options: List<HuddleOption>,
     val consensus: String?,
     val status: HuddleStatus,
     val startedAt: Instant,
     val finishedAt: Instant,
     val recordedAt: Instant?,
-) {
-}
+)
 
-data class HuddleResponse(
-    val id: Long,
-    val huddleId: Long,
+data class HuddleResponseDto(
     val userId: Long,
-    val commentId: Long?,
     val response: String,
+    val comment: String,
     val time: Instant,
 )

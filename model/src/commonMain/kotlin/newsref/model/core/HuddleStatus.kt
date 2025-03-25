@@ -1,4 +1,4 @@
-package newsref.db.core
+package newsref.model.core
 
 enum class HuddleStatus {
     Proposed,
