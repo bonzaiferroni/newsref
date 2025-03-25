@@ -24,6 +24,10 @@ fun ActiveHuddleView(
     val state by viewModel.state.collectAsState()
     val content = state.content
 
+    LaunchedEffect(highlightResponseId) {
+        viewModel.refreshHuddle()
+    }
+
     Column(
         verticalArrangement = Blip.ruler.columnGrouped
     ) {

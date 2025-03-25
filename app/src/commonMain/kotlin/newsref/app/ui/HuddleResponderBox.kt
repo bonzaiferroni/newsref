@@ -19,6 +19,7 @@ import newsref.app.blip.controls.Text
 import newsref.app.blip.controls.TextField
 import newsref.app.blip.theme.Blip
 import newsref.model.data.HuddleKey
+import newsref.model.utils.formatSpanLong
 
 @Composable
 fun HuddleResponderBox(

@@ -5,6 +5,8 @@ import kotlinx.collections.immutable.ImmutableList
 import kotlinx.collections.immutable.persistentListOf
 import kotlinx.collections.immutable.toImmutableList
 import kotlinx.coroutines.launch
+import kotlinx.datetime.Clock
+import kotlinx.datetime.Instant
 import newsref.app.blip.controls.RadioOption
 import newsref.app.blip.core.StateModel
 import newsref.app.io.HuddleStore
@@ -55,8 +57,11 @@ class HuddleResponderModel(
                 value = stateNow.selectedValue,
                 comment = stateNow.commentText,
             ))
-            println("response: $response")
-            setState { it.copy(userResponseId = response.responseId, activeId = response.huddleId) }
+            setState { it.copy(
+                userResponseId = response.responseId,
+                activeId = response.huddleId,
+                tab = HUDDLE_TAB_NAME
+            ) }
         }
     }
 

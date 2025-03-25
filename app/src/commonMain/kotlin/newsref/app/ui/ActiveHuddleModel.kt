@@ -13,7 +13,8 @@ class ActiveHuddleModel(
     val huddleId: Long,
     val store: HuddleStore = HuddleStore()
 ): StateModel<ActiveHuddleState>(ActiveHuddleState()) {
-    init {
+
+    fun refreshHuddle() {
         viewModelScope.launch {
             val content = store.readHuddleContent(huddleId)
             val responses = store.readHuddleResponses(huddleId).toImmutableList()
