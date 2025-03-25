@@ -11,7 +11,7 @@ import newsref.app.model.*
 class ChapterSourceModel(
     private val route: ChapterSourceRoute,
     private val chapterStore: ChapterStore = ChapterStore(),
-    private val sourceStore: SourceStore = SourceStore(),
+    private val articleStore: ArticleStore = ArticleStore(),
     private val hostStore: HostStore = HostStore(),
 ) : StateModel<ChapterSourceState>(ChapterSourceState(route.pageId)) {
     init {
@@ -30,7 +30,7 @@ class ChapterSourceModel(
             setState { it.copy(chapterSource = chapterSource) }
         }
         viewModelScope.launch {
-            val source = sourceStore.readSource(pageId)
+            val source = articleStore.readSource(pageId)
             val host = hostStore.readHost(source.hostId)
             setState { it.copy(article = source, host = host) }
         }

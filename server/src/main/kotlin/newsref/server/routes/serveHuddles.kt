@@ -14,13 +14,13 @@ fun Routing.serveHuddles(
     userService: UserDtoService = UserDtoService()
 ) {
     authenticateJwt {
-        post(Api.ReadHuddlePrompt) { sent, endpoint ->
+        post(Api.Huddles.ReadHuddlePrompt) { sent, endpoint ->
             // val username = call.getClaim(CLAIM_USERNAME)
             // val user = userService.findByUsernameOrEmail(username) ?: error("User not found")
             service.readPrompt(sent)
         }
 
-        post(Api.CreateHuddle) { sent, endpoint ->
+        post(Api.Huddles.CreateHuddle) { sent, endpoint ->
             val username = call.getClaim(CLAIM_USERNAME)
             val user = userService.findByUsernameOrEmail(username) ?: error("User not found")
             service.createHuddle(sent, user.id)

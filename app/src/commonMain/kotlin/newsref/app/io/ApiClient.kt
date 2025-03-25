@@ -29,34 +29,22 @@ class ApiClient(
 
     suspend inline fun <reified Returned> get(
         endpoint: GetByIdEndpoint<Returned>,
-        id: Int,
-        vararg params: Pair<String, String>
-    ): Returned = get(endpoint, id.toLong(), *params)
-
-    suspend inline fun <reified Returned> get(
-        endpoint: GetByIdEndpoint<Returned>,
-        id: Long,
+        id: Any,
         vararg params: Pair<String, String>
     ): Returned = request(
         method = HttpMethod.Get,
-        url = "$baseUrl${endpoint.clientIdTemplate.replace(":id", id.toString())}",
+        path = endpoint.replaceClientId(id),
         body = null,
         params = params
     )
 
     suspend inline fun <reified Returned> getSameData(
         endpoint: GetByIdEndpoint<*>,
-        id: Int,
-        vararg params: Pair<String, String>
-    ): Returned = getSameData(endpoint, id.toLong(), *params)
-
-    suspend inline fun <reified Returned> getSameData(
-        endpoint: GetByIdEndpoint<*>,
-        id: Long,
+        id: Any,
         vararg params: Pair<String, String>
     ): Returned = request(
         method = HttpMethod.Get,
-        url = "$baseUrl${endpoint.clientIdTemplate.replace(":id", id.toString())}",
+        path = endpoint.replaceClientId(id),
         body = null,
         params = params
     )
@@ -64,38 +52,38 @@ class ApiClient(
     suspend inline fun <reified Returned> get(
         endpoint: GetEndpoint<Returned>,
         vararg params: Pair<String, String>
-    ): Returned = request(HttpMethod.Get, "$baseUrl${endpoint.path}", null, *params)
+    ): Returned = request(HttpMethod.Get, endpoint.path, null, *params)
 
     suspend inline fun <reified Returned> getSameData(
         endpoint: GetEndpoint<*>,
         vararg params: Pair<String, String>
-    ): Returned = request(HttpMethod.Get, "$baseUrl${endpoint.path}", null, *params)
+    ): Returned = request(HttpMethod.Get, endpoint.path, null, *params)
 
     suspend inline fun <reified Sent, reified Returned> post(
         endpoint: PostEndpoint<Sent, Returned>,
         value: Sent,
         vararg params: Pair<String, String>
-    ): Returned = request(HttpMethod.Post, "$baseUrl${endpoint.path}", value, *params)
+    ): Returned = request(HttpMethod.Post, endpoint.path, value, *params)
 
     suspend inline fun <reified Sent, reified Received> request(
         method: HttpMethod,
-        url: String,
+        path: String,
         body: Sent,
         vararg params: Pair<String, String>
-    ): Received = requestOrNull(method, url, body, *params) ?: error("Request result is null")
+    ): Received = requestOrNull(method, path, body, *params) ?: error("Request result is null")
 
     suspend inline fun <reified Sent, reified Received> requestOrNull(
         method: HttpMethod,
-        url: String,
+        path: String,
         body: Sent,
         vararg params: Pair<String, String>
     ): Received? {
-        val response = sendRequest<Sent>(method, url, body, *params)
+        val response = sendRequest<Sent>(method, "$baseUrl$path", body, *params)
         if (response.status == HttpStatusCode.OK) return response.body()
         if (response.status == HttpStatusCode.Unauthorized && loginRequest != null) {
             val auth = login()
             if (auth != null) {
-                return sendRequest<Sent>(method, url, body, *params).body()
+                return sendRequest<Sent>(method, path, body, *params).body()
             }
         }
         return null

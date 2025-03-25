@@ -14,14 +14,14 @@ class HostStore(private val client: ApiClient = globalApiClient) {
         Api.Hosts.search.write(search)
     )
     suspend fun readTopHosts(): List<Host> = client.getSameData(Api.Hosts)
-    suspend fun readHost(hostId: Int): Host = client.getSameData(Api.GetHostById, hostId)
+    suspend fun readHost(hostId: Int): Host = client.getSameData(Api.Hosts.GetHostById, hostId)
     suspend fun readHostSources(hostId: Int, start: Instant): List<SourceBit> = client.getSameData(
-        Api.GetHostSources,
+        Api.Hosts.GetHostSources,
         hostId,
-        Api.GetHostSources.start.write(start)
+        Api.Hosts.GetHostSources.start.write(start)
     )
     suspend fun readHostFeeds(core: String): List<Feed> = client.getSameData(
-        Api.GetHostFeeds,
-        Api.GetHostFeeds.core.write(core)
+        Api.Hosts.GetHostFeeds,
+        Api.Hosts.GetHostFeeds.core.write(core)
     )
 }

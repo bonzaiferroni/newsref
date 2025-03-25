@@ -10,7 +10,7 @@ import newsref.server.utilities.*
 import kotlin.time.Duration.Companion.days
 
 fun Routing.serveChapters(service: ChapterDtoService = ChapterDtoService()) {
-    getId(Api.GetChapterById) { id, endpoint ->
+    getId(Api.Chapters.GetChapterById) { id, endpoint ->
         service.readChapter(id)
     }
 

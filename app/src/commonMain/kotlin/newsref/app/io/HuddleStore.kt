@@ -6,6 +6,6 @@ import newsref.model.data.HuddlePrompt
 import newsref.model.data.HuddleSeed
 
 class HuddleStore : ApiStore() {
-    suspend fun createHuddle(seed: HuddleSeed): Long? = client.post(Api.CreateHuddle, seed)
-    suspend fun readPrompt(key: HuddleKey): HuddlePrompt = client.post(Api.ReadHuddlePrompt, key)
+    suspend fun createHuddle(seed: HuddleSeed): Long? = client.post(Api.Huddles.CreateHuddle, seed)
+    suspend fun readPrompt(key: HuddleKey): HuddlePrompt = client.post(Api.Huddles.ReadHuddlePrompt, key)
 }

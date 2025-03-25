@@ -17,7 +17,7 @@ fun Routing.serveArticles(
 //        call.respond(sources)
 //    }
 
-    getId(Api.GetArticleById) { id, endpoint ->
+    getId(Api.Articles.GetArticleById) { id, endpoint ->
         service.readArticle(id)
     }
 }

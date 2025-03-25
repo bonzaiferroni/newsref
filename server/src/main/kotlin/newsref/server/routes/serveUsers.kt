@@ -14,7 +14,7 @@ import newsref.server.utilities.get
 
 fun Routing.serveUsers(service: UserDtoService = UserDtoService()) {
 
-    post(Api.GetUser.path) {
+    post(Api.Users.GetUser.path) {
         val info = call.receive<SignUpRequest>()
         try {
             service.createUser(info)
@@ -27,18 +27,18 @@ fun Routing.serveUsers(service: UserDtoService = UserDtoService()) {
     }
 
     authenticateJwt {
-        get(Api.GetUser.path) {
+        get(Api.Users.GetUser.path) {
             val username = call.getClaim(CLAIM_USERNAME)
             val userInfo = service.getUserInfo(username)
             call.respond(userInfo)
         }
 
-        get(Api.GetPrivateInfo) {
+        get(Api.Users.GetPrivateInfo) {
             val username = call.getClaim(CLAIM_USERNAME)
             service.getPrivateInfo(username)
         }
 
-        put(Api.GetUser.path) {
+        put(Api.Users.GetUser.path) {
             val username = call.getClaim(CLAIM_USERNAME)
             val info = call.receive<EditUserRequest>()
             service.updateUser(username, info)

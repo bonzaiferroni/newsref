@@ -6,7 +6,7 @@ import newsref.model.Api
 import newsref.model.dto.*
 
 class ChapterStore(private val client: ApiClient = globalApiClient) {
-    suspend fun readChapter(id: Long) = client.get(Api.GetChapterById, id)
+    suspend fun readChapter(id: Long) = client.get(Api.Chapters.GetChapterById, id)
     suspend fun readChapters(start: Instant): List<ChapterPackDto> = client.get(
         Api.Chapters,
         Api.Chapters.start.write(start),
