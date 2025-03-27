@@ -10,6 +10,7 @@ import androidx.compose.ui.graphics.drawscope.Fill
 import androidx.compose.ui.graphics.drawscope.Stroke
 import androidx.compose.ui.unit.dp
 import newsref.app.blip.behavior.animateFloat
+import newsref.app.blip.behavior.springSpec
 import newsref.app.blip.theme.Blip
 
 
@@ -37,10 +38,12 @@ fun <T> RadioGroup(
                 val indicatorColor = Blip.colors.accent
                 val size = 16
                 val padding = 4
-                val indicatorSize = animateFloat(when {
-                    option.value == selectedValue -> (size / 2f) - 3
-                    else -> 0f
-                })
+                val indicatorSize = animateFloat(
+                    when {
+                        option.value == selectedValue -> (size / 2f) - 3
+                        else -> 0f
+                    }, springSpec
+                )
 
                 Canvas(
                     Modifier
