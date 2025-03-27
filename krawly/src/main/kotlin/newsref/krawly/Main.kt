@@ -40,6 +40,7 @@ fun crawl(args: Array<String>) {
     val distanceFinder = DistanceFinder(env)
     val feedChecker = FeedChecker(web, hostAgent, leadMaker)
     val leadFollower = LeadFollower(web = web, leadMaker = leadMaker, hostAgent = hostAgent)
+    val huddleCompleter = HuddleCompleter(aiClient)
     globalConsole.addCommand("start") {
         feedChecker.start()
         leadFollower.start()
@@ -54,6 +55,7 @@ fun crawl(args: Array<String>) {
         // storyWatcher.start()
         // noteWriter.start()
         // distanceFinder.start()
+        huddleCompleter.start()
         "Starting spider 🕷"
     }
     args.map { it.split('=') }
