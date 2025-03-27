@@ -26,7 +26,9 @@ data class BlipLocalColors(
     val mode: ColorMode,
     val content: Color,
     val surface: Color,
-)
+) {
+    val contentDim get() = content.copy(.8f)
+}
 
 object DefaultColors : BlipColors{
     override val primary = Color(0xFF57965c)

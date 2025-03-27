@@ -5,18 +5,16 @@ import kotlinx.collections.immutable.ImmutableList
 import kotlinx.collections.immutable.persistentListOf
 import kotlinx.collections.immutable.toImmutableList
 import kotlinx.coroutines.launch
-import kotlinx.datetime.Clock
-import kotlinx.datetime.Instant
 import newsref.app.blip.controls.RadioOption
 import newsref.app.blip.core.StateModel
 import newsref.app.io.HuddleStore
 import newsref.model.data.HuddleKey
 import newsref.model.data.HuddleResponseSeed
 
-class HuddleResponderModel(
+class HuddleEditorModel(
     private val key: HuddleKey,
     private val store: HuddleStore = HuddleStore()
-): StateModel<HuddleCreatorState>(HuddleCreatorState()) {
+) : StateModel<HuddleEditorState>(HuddleEditorState()) {
 
     init {
         viewModelScope.launch {
@@ -26,18 +24,20 @@ class HuddleResponderModel(
                 store.readUserResponseId(it)
             }
 
-            setState { it.copy(
-                options = prompt.options.map { RadioOption(it.label, it.value) }.toImmutableList(),
-                selectedValue = prompt.cachedValue,
-                cachedValue = prompt.cachedValue,
-                guide = prompt.guide,
-                activeId = prompt.activeId,
-                userResponseId = userResponseId,
-                tab = when {
-                    userResponseId == null -> EDIT_TAB_NAME
-                    else -> HUDDLE_TAB_NAME
-                },
-            )}
+            setState {
+                it.copy(
+                    options = prompt.options.map { RadioOption(it.label, it.value) }.toImmutableList(),
+                    selectedValue = prompt.cachedValue,
+                    cachedValue = prompt.cachedValue,
+                    guide = prompt.guide,
+                    activeId = prompt.activeId,
+                    userResponseId = userResponseId,
+                    tab = when {
+                        userResponseId == null -> EDIT_TAB_NAME
+                        else -> HUDDLE_TAB_NAME
+                    },
+                )
+            }
         }
     }
 
@@ -52,25 +52,34 @@ class HuddleResponderModel(
     fun submit() {
         if (!stateNow.canSubmit) return
         viewModelScope.launch {
-            val response = store.createHuddle(HuddleResponseSeed(
-                key = key,
-                value = stateNow.selectedValue,
-                comment = stateNow.commentText,
-            ))
-            setState { it.copy(
-                userResponseId = response.responseId,
-                activeId = response.huddleId,
-                tab = HUDDLE_TAB_NAME
-            ) }
+            val response = store.createHuddle(
+                HuddleResponseSeed(
+                    key = key,
+                    value = stateNow.selectedValue,
+                    comment = stateNow.commentText,
+                )
+            )
+            setState {
+                it.copy(
+                    userResponseId = response.responseId,
+                    activeId = response.huddleId,
+                    tab = HUDDLE_TAB_NAME
+                )
+            }
         }
     }
 
     fun changeTab(tab: String?) {
         setState { it.copy(tab = tab) }
     }
+
+    fun toggleIsOpen() {
+        setState { it.copy(isOpen = !it.isOpen) }
+    }
 }
 
-data class HuddleCreatorState(
+data class HuddleEditorState(
+    val isOpen: Boolean = false,
     val selectedValue: String = "",
     val cachedValue: String = "",
     val commentText: String = "",

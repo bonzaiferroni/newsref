@@ -6,6 +6,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.sizeIn
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Dialog
@@ -25,7 +26,8 @@ fun FloatyBox(
         Box(
             modifier = Modifier
                 .sizeIn(minWidth = 200.dp, maxWidth = 400.dp, minHeight = 100.dp)
-                .background(Blip.localColors.surface, shape = Blip.ruler.rounded)
+                .shadow(Blip.ruler.shadowElevation, shape = Blip.ruler.rounded)
+                .background(Blip.localColors.surface)
                 .padding(Blip.ruler.halfPadding)
         ) {
             content()

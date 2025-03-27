@@ -36,11 +36,11 @@ fun Text(
 @Composable
 fun Label(
     text: String,
-    color: Color = Blip.localColors.content,
+    color: Color = Blip.localColors.contentDim,
     modifier: Modifier = Modifier
 ) = BasicText(
     text = text,
-    color = { color.copy(.75f) },
+    color = { color },
     modifier = modifier,
 )
 

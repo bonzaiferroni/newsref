@@ -8,10 +8,12 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.mikepenz.markdown.compose.Markdown
-import newsref.app.blip.behavior.animateString
+import compose.icons.TablerIcons
+import compose.icons.tablericons.Edit
 import newsref.app.blip.controls.Button
 import newsref.app.blip.controls.FloatyContent
 import newsref.app.blip.controls.H2
+import newsref.app.blip.controls.IconButton
 import newsref.app.blip.controls.RadioContent
 import newsref.app.blip.controls.RadioGroup
 import newsref.app.blip.controls.Tab
@@ -20,19 +22,18 @@ import newsref.app.blip.controls.Text
 import newsref.app.blip.controls.TextField
 import newsref.app.blip.theme.Blip
 import newsref.model.data.HuddleKey
-import newsref.model.utils.formatSpanLong
 
 @Composable
-fun HuddleResponderBox(
+fun HuddleEditorControl(
     huddleName: String,
-    showBox: Boolean,
     key: HuddleKey,
-    onDismiss: () -> Unit,
-    viewModel: HuddleResponderModel = viewModel { HuddleResponderModel(key) }
+    viewModel: HuddleEditorModel = viewModel { HuddleEditorModel(key) }
 ) {
     val state by viewModel.state.collectAsState()
 
-    FloatyContent(showBox, onDismiss) {
+    IconButton(TablerIcons.Edit) { viewModel.toggleIsOpen() }
+
+    FloatyContent(state.isOpen, viewModel::toggleIsOpen) {
         TabCard(
             currentTab = state.tab,
             onChangePage = viewModel::changeTab,
@@ -64,7 +65,7 @@ fun HuddleResponderBox(
                         modifier = Modifier.fillMaxWidth()
                     ) {
                         Button(
-                            onClick = onDismiss,
+                            onClick = viewModel::toggleIsOpen,
                             modifier = Modifier.weight(1f)
                         ) { Text("Cancel") }
                         Button(

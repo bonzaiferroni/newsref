@@ -18,25 +18,21 @@ fun ArticlePropertiesColumn(
     val userState by LocalUserContext.current.state.collectAsState()
     val state by viewModel.state.collectAsState()
 
-    HuddleResponderBox(
-        huddleName = "Edit Article Type",
-        showBox = state.editingArticleType,
-        key = HuddleKey(
-            pageId = state.article.pageId,
-            type = HuddleType.EditArticleType
-        ),
-        onDismiss = viewModel::toggleEditingArticleType
-    )
-
     Column {
         H2(article.bestTitle)
         Text(article.url)
         article.articleType?.let {
-            val label = "Type: ${it.title}"
-            if (userState.isLoggedIn) {
-                Button(viewModel::toggleEditingArticleType) { Text(label) }
-            } else {
-                Text(label)
+            PropertyTile("Type") {
+                Text(it.title)
+                if (userState.isLoggedIn) {
+                    HuddleEditorControl(
+                        huddleName = "Edit Article Type",
+                        key = HuddleKey(
+                            pageId = state.article.pageId,
+                            type = HuddleType.EditArticleType
+                        ),
+                    )
+                }
             }
         }
 
