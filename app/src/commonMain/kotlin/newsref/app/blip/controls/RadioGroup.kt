@@ -10,6 +10,7 @@ import androidx.compose.ui.graphics.drawscope.Fill
 import androidx.compose.ui.graphics.drawscope.Stroke
 import androidx.compose.ui.unit.dp
 import newsref.app.blip.behavior.animateFloat
+import newsref.app.blip.behavior.animateInitialOffsetX
 import newsref.app.blip.behavior.springSpec
 import newsref.app.blip.theme.Blip
 
@@ -23,16 +24,17 @@ fun <T> RadioGroup(
     val options = remember { composeOptions() }
 
     Column(Modifier.selectableGroup()) {
-        options.forEach { (option, content) ->
+        options.forEachIndexed { index, (option, content) ->
             Row(
-                Modifier
+                verticalAlignment = Alignment.CenterVertically,
+                modifier = Modifier
                     .fillMaxWidth()
                     .selectable(
                         selected = option.value == selectedValue,
                         onClick = { onOptionSelected(option.value) }
                     )
-                    .padding(8.dp),
-                verticalAlignment = Alignment.CenterVertically
+                    .padding(8.dp)
+                    .animateInitialOffsetX(index),
             ) {
                 val circleColor = Blip.localColors.content.copy(.8f)
                 val indicatorColor = Blip.colors.accent
@@ -42,7 +44,7 @@ fun <T> RadioGroup(
                     when {
                         option.value == selectedValue -> (size / 2f) - 3
                         else -> 0f
-                    }, springSpec
+                    }, spec = springSpec
                 )
 
                 Canvas(
