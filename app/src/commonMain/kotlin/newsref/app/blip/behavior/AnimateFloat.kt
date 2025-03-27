@@ -1,27 +1,21 @@
 package newsref.app.blip.behavior
 
-import androidx.compose.animation.core.AnimationSpec
-import androidx.compose.animation.core.EaseInOut
-import androidx.compose.animation.core.Spring
-import androidx.compose.animation.core.animateFloatAsState
-import androidx.compose.animation.core.spring
-import androidx.compose.animation.core.tween
+import androidx.compose.animation.core.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.graphicsLayer
 import kotlin.math.abs
 
 @Composable
-fun animateFloat(
-    targetValue: Float,
-    initialValue: Float = targetValue,
+fun Float.animateFloat(
+    initialValue: Float = this,
     duration: Int = 200,
     spec: AnimationSpec<Float> = tween(durationMillis = duration, easing = EaseInOut),
 ): Float {
     var currentValue by remember { mutableStateOf(initialValue) }
 
-    LaunchedEffect(targetValue) {
-        currentValue = targetValue
+    LaunchedEffect(this) {
+        currentValue = this@animateFloat
     }
 
     val returnedValue by animateFloatAsState(
@@ -37,8 +31,7 @@ val springSpec = spring<Float>(Spring.DampingRatioMediumBouncy)
 @Composable
 fun Modifier.animateInitialOffsetX(magnitude: Int): Modifier {
     val initialValue = magnitude * 10
-    val translateX = animateFloat(
-        targetValue = 0f,
+    val translateX = 0f.animateFloat(
         initialValue = initialValue.toFloat().randomFlip(),
         duration = initialValue * 20
     )

@@ -40,12 +40,10 @@ fun <T> RadioGroup(
                 val indicatorColor = Blip.colors.accent
                 val size = 16
                 val padding = 4
-                val indicatorSize = animateFloat(
-                    when {
-                        option.value == selectedValue -> (size / 2f) - 3
-                        else -> 0f
-                    }, spec = springSpec
-                )
+                val indicatorSize = when {
+                    option.value == selectedValue -> (size / 2f) - 3
+                    else -> 0f
+                }.animateFloat(spec = springSpec)
 
                 Canvas(
                     Modifier

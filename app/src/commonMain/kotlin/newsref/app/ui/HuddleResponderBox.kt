@@ -8,6 +8,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.mikepenz.markdown.compose.Markdown
+import newsref.app.blip.behavior.animateString
 import newsref.app.blip.controls.Button
 import newsref.app.blip.controls.FloatyContent
 import newsref.app.blip.controls.H2

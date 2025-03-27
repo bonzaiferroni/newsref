@@ -8,6 +8,7 @@ import androidx.compose.foundation.lazy.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
 import androidx.lifecycle.viewmodel.compose.viewModel
+import newsref.app.blip.behavior.animateString
 import newsref.app.blip.controls.H2
 import newsref.app.blip.controls.Text
 import newsref.app.blip.theme.Blip
@@ -33,11 +34,11 @@ fun ActiveHuddleView(
     ) {
         H2(title)
         if (content == null) return
-        Text("Status: ${content.status}")
-        Text("Started: ${content.startedAt.formatSpanLong()}")
-        Text("Finished: ${content.finishedAt.formatSpanLong()}")
+        Text("Status: ${content.status}".animateString())
+        Text("Started: ${content.startedAt.formatSpanLong()}".animateString())
+        Text("Finished: ${content.finishedAt.formatSpanLong()}".animateString())
         content.recordedAt?.let {
-            Text("Recorded: ${it.formatSpanLong()}")
+            Text("Recorded: ${it.formatSpanLong()}".animateString())
         }
         LazyColumn {
             items(state.responses) {
