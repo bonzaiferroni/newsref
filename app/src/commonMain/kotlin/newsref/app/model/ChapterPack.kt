@@ -8,7 +8,7 @@ import newsref.model.dto.*
 @Serializable
 data class ChapterPack(
     val chapter: Chapter,
-    val sources: ImmutableList<ArticleBit>
+    val sources: ImmutableList<SourceBit>
 ) {
     val imageUrl
         get() = sources.firstNotNullOfOrNull {

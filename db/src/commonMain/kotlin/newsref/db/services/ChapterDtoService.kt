@@ -24,7 +24,7 @@ class ChapterDtoService : DbService() {
     fun Transaction.toChapterPackDto(chapter: ChapterDto): ChapterPackDto {
         val sources = ChapterSourceTable.leftJoin(PageTable).leftJoin(HostTable).leftJoin(ArticleTable).leftJoin(NewsArticleTable)
             .select(SourceBitAspect.columns)
-            .where { ChapterSourceTable.chapterId.eq(chapter.id) and ChapterSourceTable.type.eq(SourceType.Article) }
+            .where { ChapterSourceTable.chapterId.eq(chapter.id) }
             .orderBy(PageTable.score, SortOrder.DESC_NULLS_LAST)
             .limit(30)
             .map { it.toSourceBitDto() }

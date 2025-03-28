@@ -12,22 +12,21 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.lifecycle.viewmodel.compose.viewModel
 import kotlinx.collections.immutable.ImmutableList
-import kotlinx.collections.immutable.ImmutableMap
 import kotlinx.collections.immutable.persistentListOf
-import kotlinx.collections.immutable.persistentMapOf
 import kotlinx.collections.immutable.toImmutableList
 import newsref.app.blip.controls.ButtonToggle
 import newsref.app.blip.core.StateModel
 import newsref.app.blip.theme.Blip
-import newsref.app.model.ArticleBit
+import newsref.app.model.SourceBit
 import newsref.model.core.ArticleType
 
 @OptIn(ExperimentalLayoutApi::class)
 @Composable
-fun ArticlesListView(
-    articles: ImmutableList<ArticleBit>,
+fun SourcesListView(
+    articles: ImmutableList<SourceBit>,
+    viewModelKey: String = "SourcesListView",
     chapterId: Long? = null,
-    viewModel: ArticlesListModel = viewModel { ArticlesListModel(articles) }
+    viewModel: ArticlesListModel = viewModel(key = viewModelKey) { ArticlesListModel(articles) }
 ) {
     val state by viewModel.state.collectAsState()
     FlowRow(
@@ -56,7 +55,7 @@ fun ArticlesListView(
 }
 
 class ArticlesListModel(
-    private val articles: List<ArticleBit>
+    private val articles: List<SourceBit>
 ): StateModel<ArticlesListState>(ArticlesListState()) {
 
     init {
@@ -104,5 +103,5 @@ data class ArticlesListState(
     val analysisCount: Int = 0,
     val investigationCount: Int = 0,
     val unknownCount: Int = 0,
-    val filteredArticles: ImmutableList<ArticleBit> = persistentListOf()
+    val filteredArticles: ImmutableList<SourceBit> = persistentListOf()
 )

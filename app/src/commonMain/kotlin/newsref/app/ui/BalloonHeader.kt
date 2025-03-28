@@ -16,7 +16,7 @@ import kotlinx.datetime.Instant
 import newsref.app.blip.controls.*
 import newsref.app.blip.theme.Blip
 import newsref.app.blip.theme.ProvideSkyColors
-import newsref.app.model.ArticleBit
+import newsref.app.model.SourceBit
 import newsref.model.utils.formatSpanLong
 
 @Composable
@@ -30,7 +30,7 @@ fun BalloonHeader(
     onSelect: () -> Unit,
     storyCount: Int?,
     time: Instant,
-    sources: ImmutableList<ArticleBit>?
+    sources: ImmutableList<SourceBit>?
 ) {
     Row(
         horizontalArrangement = Blip.ruler.rowTight,
@@ -77,7 +77,7 @@ fun ShapeImage(
 @Composable
 fun RowScope.HeaderMiddle(
     title: String,
-    sources: ImmutableList<ArticleBit>?,
+    sources: ImmutableList<SourceBit>?,
     color: Color,
     time: Instant,
     storyCount: Int?,

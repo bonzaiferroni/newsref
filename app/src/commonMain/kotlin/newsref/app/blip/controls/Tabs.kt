@@ -7,6 +7,7 @@ import androidx.compose.ui.*
 import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.unit.dp
 import newsref.app.blip.theme.Blip
+import newsref.app.utils.darken
 import newsref.app.utils.modifyIfNotNull
 import newsref.app.utils.modifyIfTrue
 
@@ -37,7 +38,7 @@ fun Tabs(
                 if (!tab.isVisible) continue
                 val (background, elevation) = when {
                     currentTab.name == tab.name -> Blip.localColors.surface to Blip.ruler.shadowElevation
-                    else -> Blip.localColors.surface.copy(.8f) to 0.dp
+                    else -> Blip.localColors.surface.darken() to 0.dp
                 }
                 Box(
                     modifier = Modifier

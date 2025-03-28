@@ -2,7 +2,6 @@ package newsref.app.ui
 
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
-import androidx.compose.foundation.lazy.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalUriHandler
@@ -12,7 +11,7 @@ import newsref.app.*
 import newsref.app.blip.controls.*
 import newsref.app.blip.nav.LocalNav
 import newsref.app.blip.theme.Blip
-import newsref.app.model.ArticleBit
+import newsref.app.model.SourceBit
 import newsref.model.utils.formatSpanLong
 
 @Composable
@@ -35,22 +34,17 @@ fun ChapterScreen(
             onChangePage = viewModel::changeTab,
         ) {
             Tab("Articles", false) {
-                ArticlesListView(articles)
+                SourcesListView(state.articles, "articles")
             }
             Tab("Other Sources", false) {
-                LazyColumn(
-                ) {
-                    items(state.references) {
-                        SourceBitItem(it, chapter.id)
-                    }
-                }
+                SourcesListView(state.references, "references")
             }
         }
     }
 }
 
 @Composable
-fun SourceBitItem(source: ArticleBit, chapterId: Long? = null) {
+fun SourceBitItem(source: SourceBit, chapterId: Long? = null) {
     val nav = LocalNav.current
     Row(
         horizontalArrangement = Blip.ruler.rowTight,

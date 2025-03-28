@@ -5,7 +5,7 @@ import kotlinx.serialization.*
 import newsref.model.core.*
 import newsref.model.dto.*
 
-fun SourceBitDto.toSourceBit() = ArticleBit(
+fun SourceBitDto.toSourceBit() = SourceBit(
     id = this.id,
     hostId = this.hostId,
     url = this.url,
@@ -21,7 +21,7 @@ fun SourceBitDto.toSourceBit() = ArticleBit(
 )
 
 @Serializable
-data class ArticleBit(
+data class SourceBit(
     val id: Long,
     val hostId: Int,
     val url: String,

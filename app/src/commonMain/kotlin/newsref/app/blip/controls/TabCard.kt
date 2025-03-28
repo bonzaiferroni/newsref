@@ -1,6 +1,7 @@
 package newsref.app.blip.controls
 
 import androidx.compose.animation.animateContentSize
+import androidx.compose.foundation.background
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.shadow
@@ -23,8 +24,10 @@ fun TabCard(
             currentPageName = currentTab,
             onChangePage = onChangePage,
             content = content,
-            modifier = modifier.animateContentSize()
+            modifier = modifier
+                .background(Blip.colors.surfaceBook)
                 .shadow(Blip.ruler.shadowElevation, shape)
+                .animateContentSize()
         )
     }
 }

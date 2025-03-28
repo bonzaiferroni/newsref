@@ -13,7 +13,7 @@ import newsref.app.blip.controls.generateAxisTicks
 import newsref.app.blip.core.StateModel
 import newsref.app.io.ChapterStore
 import newsref.app.model.ChapterPack
-import newsref.app.model.ArticleBit
+import newsref.app.model.SourceBit
 import newsref.app.model.toModel
 import newsref.model.core.PageType
 import newsref.model.utils.toDaysFromNow
@@ -46,8 +46,8 @@ class ChapterModel(
 data class ChapterState(
     val balloons: BalloonsData = BalloonsData(),
     val pack: ChapterPack? = null,
-    val articles: ImmutableList<ArticleBit> = persistentListOf(),
-    val references: ImmutableList<ArticleBit> = persistentListOf(),
+    val articles: ImmutableList<SourceBit> = persistentListOf(),
+    val references: ImmutableList<SourceBit> = persistentListOf(),
     val tab: String? = null,
 )
 
