@@ -14,7 +14,7 @@ import newsref.app.blip.theme.Blip
 import newsref.app.model.*
 
 @Composable
-fun SourceArray(sources: ImmutableList<SourceBit>, color: Color) {
+fun SourceArray(sources: ImmutableList<ArticleBit>, color: Color) {
     val ruler = Blip.ruler
     Row(
         horizontalArrangement = ruler.rowTight

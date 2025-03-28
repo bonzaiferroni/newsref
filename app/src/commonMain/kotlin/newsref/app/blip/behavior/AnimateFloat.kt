@@ -7,7 +7,7 @@ import androidx.compose.ui.graphics.graphicsLayer
 import kotlin.math.abs
 
 @Composable
-fun Float.animateFloat(
+fun Float.animate(
     initialValue: Float = this,
     duration: Int = 200,
     spec: AnimationSpec<Float> = tween(durationMillis = duration, easing = EaseInOut),
@@ -15,7 +15,7 @@ fun Float.animateFloat(
     var currentValue by remember { mutableStateOf(initialValue) }
 
     LaunchedEffect(this) {
-        currentValue = this@animateFloat
+        currentValue = this@animate
     }
 
     val returnedValue by animateFloatAsState(
@@ -31,7 +31,7 @@ val springSpec = spring<Float>(Spring.DampingRatioMediumBouncy)
 @Composable
 fun Modifier.animateInitialOffsetX(magnitude: Int): Modifier {
     val initialValue = magnitude * 10
-    val translateX = 0f.animateFloat(
+    val translateX = 0f.animate(
         initialValue = initialValue.toFloat().randomFlip(),
         duration = initialValue * 20
     )
@@ -39,3 +39,4 @@ fun Modifier.animateInitialOffsetX(magnitude: Int): Modifier {
 }
 
 fun Float.randomFlip(): Float = if ((0..1).random() == 0) -this else this
+

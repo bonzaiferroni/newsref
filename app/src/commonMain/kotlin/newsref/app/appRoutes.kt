@@ -2,7 +2,6 @@ package newsref.app
 
 import kotlinx.serialization.Serializable
 import newsref.app.blip.nav.NavRoute
-import newsref.app.model.SourceBit
 import newsref.app.ui.FeedSpan
 
 @Serializable

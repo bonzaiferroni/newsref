@@ -19,7 +19,7 @@ fun IconToggle(
     tint: Color = Blip.localColors.content,
     enabled: Boolean = true,
     modifier: Modifier = Modifier,
-    action: (Boolean) -> Unit,
+    onToggle: (Boolean) -> Unit,
 ) {
     val shadowColor = when {
         !enabled -> Color.Transparent
@@ -33,7 +33,7 @@ fun IconToggle(
         modifier = modifier
             .shadow(15.dp, shape = Blip.ruler.round, ambientColor = shadowColor, spotColor = shadowColor)
             .background(Blip.localColors.content.copy(alpha = .2f))
-            .modifyIfTrue(enabled) { clickable { action(!value) } }
+            .modifyIfTrue(enabled) { clickable { onToggle(!value) } }
             .padding(Blip.ruler.halfPadding),
         tint = when {
             !enabled -> tint.copy(.5f)
