@@ -3,6 +3,7 @@ package newsref.app.ui
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.text.selection.SelectionContainer
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -44,7 +45,9 @@ fun HuddleEditorControl(
             modifier = Modifier.fillMaxWidth()
         ) {
             Tab(name = "Guide") {
-                Markdown(state.guide, mdColors, mdTypography, Modifier)
+                SelectionContainer {
+                    Markdown(state.guide, mdColors, mdTypography, Modifier)
+                }
             }
             Tab(name = EDIT_TAB_NAME, isVisible = userState.isLoggedIn) {
                 Column(
@@ -54,7 +57,9 @@ fun HuddleEditorControl(
                     RadioGroup(state.selectedValue, viewModel::selectValue) {
                         val options = state.options.map { option ->
                             RadioContent(option) {
-                                Markdown(option.labelOrValue, mdColors, mdTypography, Modifier)
+                                SelectionContainer {
+                                    Markdown(option.labelOrValue, mdColors, mdTypography, Modifier)
+                                }
                             }
                         }
                         when (state.allowSuggestion) {

@@ -47,7 +47,7 @@ fun <T> PropertyTile(
         Row(
             verticalAlignment = Alignment.CenterVertically,
             horizontalArrangement = Arrangement.spacedBy(Blip.ruler.halfSpacing, Alignment.CenterHorizontally),
-            modifier = Modifier.sizeIn(minHeight = 50.dp)
+            modifier = Modifier.sizeIn(minHeight = 40.dp)
                 .fillMaxWidth()
                 .background(color = Blip.localColors.surface.brighten())
                 .padding(Blip.ruler.innerPadding)

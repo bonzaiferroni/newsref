@@ -37,10 +37,10 @@ fun ChapterScreen(
                 ChapterPropertyRow(chapter)
             }
             Tab("Articles", false) {
-                SourcesListView(state.articles, "articles")
+                SourcesListView(state.articles, "articles", chapter.id)
             }
             Tab("References", false) {
-                SourcesListView(state.references, "references")
+                SourcesListView(state.references, "references", chapter.id)
             }
         }
     }

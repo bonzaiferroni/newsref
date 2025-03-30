@@ -15,8 +15,8 @@ fun PropertyRow(
 ) {
     FlowRow(
         modifier = Modifier.fillMaxWidth(),
-        horizontalArrangement = Blip.ruler.rowSpaced,
-        verticalArrangement = Blip.ruler.columnSpaced,
+        horizontalArrangement = Blip.ruler.rowTight,
+        verticalArrangement = Blip.ruler.columnTight,
     ) {
         content()
     }
