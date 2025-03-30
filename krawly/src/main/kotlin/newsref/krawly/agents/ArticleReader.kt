@@ -35,8 +35,12 @@ class ArticleReader(
         }
     }
 
-    private suspend fun readNextArticle() {
-        val source = service.readNext() ?: return
+    internal suspend fun readNextArticle() {
+        val source = service.readNext()
+        if (source == null) {
+            console.log("No articles found")
+            return
+        }
         val title = source.title ?: error("Article title missing")
         val content = contentService.readSourceContentText(sourceId = source.id)
         if (content.length < READER_MIN_WORDS) error("Page content unexpectedly short: ${content.length}")

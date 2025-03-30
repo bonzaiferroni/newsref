@@ -16,7 +16,7 @@ data class GeminiResponse(
 data class GeminiResponseCandidate(
     val content: GeminiContent,
     val finishReason: String,
-    val avgLogprobs: Float
+    val avgLogprobs: Float? = null,
 )
 
 @Serializable
@@ -36,7 +36,9 @@ data class PromptTokenDetails(
 @Serializable
 data class GenerationConfig(
     val stopSequences: List<String>? = null,
+    @SerialName("response_mime_type")
     val responseMimeType: String,
+    @SerialName("response_schema")
     val responseSchema: JsonElement? = null,
     val responseModalities: List<Modality>? = null,
     val candidateCount: Int? = null,
