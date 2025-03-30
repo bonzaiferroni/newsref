@@ -25,8 +25,8 @@ fun TabCard(
             onChangePage = onChangePage,
             content = content,
             modifier = modifier
-                .background(Blip.colors.surfaceBook)
                 .shadow(Blip.ruler.shadowElevation, shape)
+                .background(Blip.colors.surfaceBook)
                 .animateContentSize()
         )
     }

@@ -49,7 +49,11 @@ fun SourcesListView(
     LazyColumn(
     ) {
         items(state.filteredArticles) {
-            SourceBitItem(it, chapterId)
+            SourceBitItem(
+                source = it,
+                chapterId = chapterId,
+                modifier = Modifier.animateItem()
+            )
         }
     }
 }

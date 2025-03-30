@@ -7,6 +7,7 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import newsref.app.*
 import newsref.app.blip.controls.*
 import newsref.app.blip.theme.Blip
+import newsref.app.io.LocalUserContext
 import newsref.app.model.*
 
 @Composable
@@ -44,7 +45,9 @@ fun ChapterSourceScreen(
             state.page,
             viewModel::onChangePage,
         ) {
-            Tab("Details") { ArticlePropertiesColumn(article) }
+            Tab("Details") {
+                ArticlePropertyRow(article)
+            }
             Tab("Summary", isVisible = article.summary != null) { Text(article.summary!!) }
             Tab("Embed", isVisible = article.embed != null) { Text(article.embed!!) }
             Tab("Publisher") { HostProperties(host) }

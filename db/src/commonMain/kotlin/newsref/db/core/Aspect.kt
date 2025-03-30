@@ -9,6 +9,7 @@ open class Aspect<Self: Aspect<Self, Data>, Data>(
 ) {
     private val _expressions = mutableListOf<ExpressionWithColumnType<*>>()
     val columns: List<ExpressionWithColumnType<*>> = _expressions
+    val query get () = columnSet.select(columns)
 
     fun <T, E: ExpressionWithColumnType<T>> add(expression: E): E {
         _expressions.add(expression)
@@ -17,8 +18,7 @@ open class Aspect<Self: Aspect<Self, Data>, Data>(
 
     @Suppress("UNCHECKED_CAST")
     fun where(predicate: SqlExpressionBuilder.(Self) -> Op<Boolean>) =
-        columnSet.select(columns)
-            .where { predicate(this, this@Aspect as Self) }
+        query.where { predicate(this, this@Aspect as Self) }
 
     fun readFirst(predicate: SqlExpressionBuilder.(Self) -> Op<Boolean>) = where(predicate)
         .firstOrNull()?.let { toData(it) }

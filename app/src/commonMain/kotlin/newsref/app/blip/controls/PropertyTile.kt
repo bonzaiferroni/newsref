@@ -23,10 +23,13 @@ import newsref.app.utils.brighten
 import newsref.app.utils.darken
 
 @Composable
-fun PropertyTile(
+fun <T> PropertyTile(
     title: String,
-    content: @Composable () -> Unit
+    value: T?,
+    content: (@Composable (T) -> Unit) = { Text(it.toString()) }
 ) {
+    if (value == null) return
+
     Column(
         horizontalAlignment = Alignment.CenterHorizontally,
         modifier = Modifier.width(IntrinsicSize.Max)
@@ -49,17 +52,7 @@ fun PropertyTile(
                 .background(color = Blip.localColors.surface.brighten())
                 .padding(Blip.ruler.innerPadding)
         ) {
-            content()
+            content(value)
         }
-    }
-}
-
-@Composable
-fun PropertyTile(
-    title: String,
-    content: Any
-) {
-    PropertyTile(title) {
-        Text(content.toString())
     }
 }

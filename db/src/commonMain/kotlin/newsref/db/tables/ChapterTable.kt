@@ -12,6 +12,7 @@ object ChapterTable : LongIdTable("chapter") {
     val storyId = reference("story_id", StoryTable, ReferenceOption.SET_NULL).nullable().index()
     val parentId = reference("parent_id", ChapterTable, ReferenceOption.SET_NULL).nullable().index()
     val title = text("title").nullable()
+    val titleHuddleId = reference("title_huddle_id", HuddleTable, ReferenceOption.SET_NULL).nullable()
     val summary = text("summary").nullable()
     val score = integer("score")
     val size = integer("size")

@@ -16,11 +16,13 @@ import newsref.app.blip.controls.H2
 import newsref.app.blip.controls.IconButton
 import newsref.app.blip.controls.RadioContent
 import newsref.app.blip.controls.RadioGroup
+import newsref.app.blip.controls.RadioOption
 import newsref.app.blip.controls.Tab
 import newsref.app.blip.controls.TabCard
 import newsref.app.blip.controls.Text
 import newsref.app.blip.controls.TextField
 import newsref.app.blip.theme.Blip
+import newsref.app.io.LocalUserContext
 import newsref.model.data.HuddleKey
 
 @Composable
@@ -30,6 +32,7 @@ fun HuddleEditorControl(
     viewModel: HuddleEditorModel = viewModel { HuddleEditorModel(key) }
 ) {
     val state by viewModel.state.collectAsState()
+    val userState by LocalUserContext.current.state.collectAsState()
 
     IconButton(TablerIcons.Edit) { viewModel.toggleIsOpen() }
 
@@ -43,16 +46,22 @@ fun HuddleEditorControl(
             Tab(name = "Guide") {
                 Markdown(state.guide, mdColors, mdTypography, Modifier)
             }
-            Tab(name = EDIT_TAB_NAME) {
+            Tab(name = EDIT_TAB_NAME, isVisible = userState.isLoggedIn) {
                 Column(
                     modifier = Modifier.clip(Blip.ruler.roundBottom)
                 ) {
                     H2(huddleName)
                     RadioGroup(state.selectedValue, viewModel::selectValue) {
-                        state.options.map { option ->
+                        val options = state.options.map { option ->
                             RadioContent(option) {
-                                Markdown(option.label, mdColors, mdTypography, Modifier)
+                                Markdown(option.labelOrValue, mdColors, mdTypography, Modifier)
                             }
+                        }
+                        when (state.allowSuggestion) {
+                            true -> options + RadioContent(RadioOption(null, state.suggestion)) {
+                                TextField(state.suggestion, viewModel::setSuggestion)
+                            }
+                            false -> options
                         }
                     }
                     TextField(

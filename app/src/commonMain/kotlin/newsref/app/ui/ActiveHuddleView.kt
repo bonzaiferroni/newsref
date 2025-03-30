@@ -1,11 +1,13 @@
 package newsref.app.ui
 
 import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.lazy.*
 import androidx.compose.runtime.*
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.lifecycle.viewmodel.compose.viewModel
 import newsref.app.blip.behavior.animateString
@@ -49,7 +51,9 @@ fun ActiveHuddleView(
                 Column(
                     modifier = Modifier.modifyIfNotNull(highlightColor) { background(it) }
                 ) {
-                    Row {
+                    Row(
+                        horizontalArrangement = Arrangement.spacedBy(Blip.ruler.halfSpacing),
+                    ) {
                         Text("${it.username}: ${it.response}")
                         Spacer(modifier = Modifier.weight(1f))
                         Text(it.time.formatSpanLong())

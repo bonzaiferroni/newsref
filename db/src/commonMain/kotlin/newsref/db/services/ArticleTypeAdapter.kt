@@ -7,12 +7,14 @@ import newsref.model.core.HuddleType
 import newsref.model.data.HuddleKey
 import newsref.model.data.HuddleOption
 import org.jetbrains.exposed.sql.update
-import kotlin.time.Duration.Companion.minutes
 
-object ArticleTypeAdapter : HuddleAdapter(
-    type = HuddleType.EditArticleType,
-    duration = 60.minutes
-) {
+object ArticleTypeAdapter : HuddleAdapter(HuddleType.EditArticleType) {
+
+    fun getKey(pageId: Long) = HuddleKey(
+        type = HuddleType.EditArticleType,
+        pageId = pageId
+    )
+
     override suspend fun readOptions(key: HuddleKey): List<HuddleOption> = listOf(
         HuddleOption(DESCRIPTION_REPORT, ArticleType.Report.name),
         HuddleOption(DESCRIPTION_PERSPECTIVE, ArticleType.Perspective.name),

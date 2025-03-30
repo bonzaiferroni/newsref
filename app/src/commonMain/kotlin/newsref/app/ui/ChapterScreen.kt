@@ -33,10 +33,13 @@ fun ChapterScreen(
             currentTab = state.tab,
             onChangePage = viewModel::changeTab,
         ) {
+            Tab("Data") {
+                ChapterPropertyRow(chapter)
+            }
             Tab("Articles", false) {
                 SourcesListView(state.articles, "articles")
             }
-            Tab("Other Sources", false) {
+            Tab("References", false) {
                 SourcesListView(state.references, "references")
             }
         }
@@ -44,11 +47,15 @@ fun ChapterScreen(
 }
 
 @Composable
-fun SourceBitItem(source: SourceBit, chapterId: Long? = null) {
+fun SourceBitItem(
+    source: SourceBit,
+    chapterId: Long? = null,
+    modifier: Modifier = Modifier,
+) {
     val nav = LocalNav.current
     Row(
         horizontalArrangement = Blip.ruler.rowTight,
-        modifier = Modifier
+        modifier = modifier
             .clickable {
                 if (chapterId != null)
                     nav.go(ChapterSourceRoute(chapterId, source.id, source.headline))

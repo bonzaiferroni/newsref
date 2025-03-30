@@ -10,6 +10,7 @@ import org.jetbrains.exposed.sql.SortOrder
 import org.jetbrains.exposed.sql.and
 import org.jetbrains.exposed.sql.insert
 import org.jetbrains.exposed.sql.insertAndGetId
+import org.jetbrains.exposed.sql.update
 
 class HuddleService(
     val huddleAdapterMap: HuddleAdapterMap = globalHuddleAdapters
@@ -26,6 +27,7 @@ class HuddleService(
             options = huddleOptions,
             cachedValue = currentValue,
             activeId = latestId,
+            allowSuggestion = true
         )
     }
 
@@ -68,6 +70,12 @@ class HuddleService(
             it[startedAt] = Clock.nowToLocalDateTimeUtc()
             it[finishedAt] = (Clock.System.now() + duration).toLocalDateTimeUtc()
         }.value
+
+        if (seed.createOption && huddleOptions.all { it.value != seed.value }) {
+            HuddleTable.update({ HuddleTable.id.eq(readHuddleId)}) {
+                it[options] = huddleOptions + HuddleOption(null, seed.value)
+            }
+        }
 
         val newCommentId = CommentTable.insertAndGetId {
             it[userId] = sendingUserId

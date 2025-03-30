@@ -6,6 +6,7 @@ import newsref.model.core.HuddleStatus
 import newsref.db.model.*
 import newsref.db.utils.toInstantUtc
 import newsref.model.core.HuddleType
+import newsref.model.data.HuddleKey
 import newsref.model.data.HuddleOption
 import org.jetbrains.exposed.dao.id.LongIdTable
 import org.jetbrains.exposed.sql.*
@@ -48,7 +49,8 @@ object HuddleAspect : Aspect<HuddleAspect, Huddle>(
 ) {
     val id = add(HuddleTable.id)
     val chapterId = add(HuddleTable.chapterId)
-    val sourceId = add(HuddleTable.pageId)
+    val pageId = add(HuddleTable.pageId)
+    val targetId = add(HuddleTable.targetId)
     val initiatorId = add(HuddleTable.initiatorId)
     val huddleType = add(HuddleTable.huddleType)
     val guide = add(HuddleTable.guide)
@@ -58,9 +60,24 @@ object HuddleAspect : Aspect<HuddleAspect, Huddle>(
     val startedAt = add(HuddleTable.startedAt)
     val finishedAt = add(HuddleTable.finishedAt)
     val recordedAt = add(HuddleTable.recordedAt)
+
+    fun queryHuddles(key: HuddleKey) = query.where {
+        chapterId.eq(key.chapterId) and pageId.eq(key.pageId) and targetId.eq(key.targetId) and
+                huddleType.eq(key.type)
+    }
+
+    fun readLatestOrNull(key: HuddleKey) = queryHuddles(key)
+        .orderBy(HuddleTable.startedAt, SortOrder.DESC)
+        .firstOrNull()?.toHuddle()
 }
 
 object HuddleCommentTable : LongIdTable("huddle_comment") {
     val huddleId = reference("huddle_id", HuddleTable, ReferenceOption.CASCADE).index()
     val commentId = reference("comment_id", CommentTable, ReferenceOption.CASCADE).index()
+}
+
+object HuddleOptionTable : LongIdTable("huddle_option") {
+    val huddleId = reference("huddle_id", HuddleTable, ReferenceOption.CASCADE).index()
+    val value = text("value")
+    val label = text("label").nullable()
 }

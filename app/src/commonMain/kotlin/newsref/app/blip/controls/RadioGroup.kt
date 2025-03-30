@@ -19,9 +19,9 @@ import newsref.app.blip.theme.Blip
 fun <T> RadioGroup(
     selectedValue: T,
     onOptionSelected: (T) -> Unit,
-    composeOptions: () -> List<RadioContent<T>>
+    composeOptions: @Composable () -> List<RadioContent<T>>
 ) {
-    val options = remember { composeOptions() }
+    val options = composeOptions()
 
     Column(Modifier.selectableGroup()) {
         options.forEachIndexed { index, (option, content) ->
@@ -73,6 +73,8 @@ data class RadioContent<T>(
 )
 
 data class RadioOption<T>(
-    val label: String,
+    val label: String?,
     val value: T
-)
+) {
+    val labelOrValue get() = label ?: value.toString()
+}
