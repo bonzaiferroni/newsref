@@ -1,5 +1,6 @@
 package newsref.app.utils
 
+import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.FocusDirection
 import androidx.compose.ui.focus.FocusManager
@@ -9,6 +10,7 @@ import androidx.compose.ui.input.key.isShiftPressed
 import androidx.compose.ui.input.key.key
 import androidx.compose.ui.input.key.onPreviewKeyEvent
 import androidx.compose.ui.input.key.type
+import androidx.compose.ui.platform.LocalFocusManager
 
 inline fun <V> Modifier.modifyIfNotNull(
     value: V?,
@@ -23,7 +25,10 @@ inline fun Modifier.modifyIfTrue(value: Boolean, block: Modifier.() -> Modifier)
     else -> this
 }
 
-fun Modifier.changeFocusWithTab(focusManager: FocusManager) = this.onPreviewKeyEvent {
+@Composable
+fun Modifier.changeFocusWithTab(
+    focusManager: FocusManager = LocalFocusManager.current
+) = this.onPreviewKeyEvent {
     if (it.type == KeyEventType.KeyDown && it.key == Key.Tab) {
         if (it.isShiftPressed) {
             focusManager.moveFocus(FocusDirection.Previous)

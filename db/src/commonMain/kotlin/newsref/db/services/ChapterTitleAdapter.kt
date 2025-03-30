@@ -3,8 +3,6 @@ package newsref.db.services
 import newsref.db.model.Huddle
 import newsref.db.tables.ChapterTable
 import newsref.db.tables.HuddleAspect
-import newsref.db.tables.HuddleOptionTable
-import newsref.db.tables.HuddleTable
 import newsref.model.core.HuddleType
 import newsref.model.data.HuddleKey
 import newsref.model.data.HuddleOption
@@ -18,7 +16,7 @@ object ChapterTitleAdapter : HuddleAdapter(HuddleType.EditChapterTitle) {
     )
 
     override suspend fun readOptions(key: HuddleKey): List<HuddleOption> =
-        HuddleAspect.readLatestOrNull(key)?.options?.takeIf { it.isNotEmpty() }
+        HuddleAspect.readActiveOrNull(key)?.options?.takeIf { it.isNotEmpty() }
             ?: readCurrentValue(key)?.let { listOf(HuddleOption(null, it)) }
             ?: emptyList()
 

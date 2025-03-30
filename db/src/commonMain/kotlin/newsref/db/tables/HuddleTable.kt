@@ -61,14 +61,10 @@ object HuddleAspect : Aspect<HuddleAspect, Huddle>(
     val finishedAt = add(HuddleTable.finishedAt)
     val recordedAt = add(HuddleTable.recordedAt)
 
-    fun queryHuddles(key: HuddleKey) = query.where {
+    fun readActiveOrNull(key: HuddleKey) = readFirst {
         chapterId.eq(key.chapterId) and pageId.eq(key.pageId) and targetId.eq(key.targetId) and
-                huddleType.eq(key.type)
+                huddleType.eq(key.type) and recordedAt.isNull()
     }
-
-    fun readLatestOrNull(key: HuddleKey) = queryHuddles(key)
-        .orderBy(HuddleTable.startedAt, SortOrder.DESC)
-        .firstOrNull()?.toHuddle()
 }
 
 object HuddleCommentTable : LongIdTable("huddle_comment") {

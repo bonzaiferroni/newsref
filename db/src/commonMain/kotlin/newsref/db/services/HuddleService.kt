@@ -21,22 +21,23 @@ class HuddleService(
         val huddleOptions = adapter.readOptions(key)
         val huddleGuide = adapter.readGuide(key)
         val currentValue = adapter.readCurrentValue(key)
-        val latestId = readLatestHuddleByKey(key)
+        val activeId = readActiveHuddleId(key)
         HuddlePrompt(
             guide = huddleGuide,
             options = huddleOptions,
             cachedValue = currentValue,
-            activeId = latestId,
+            activeId = activeId,
             allowSuggestion = true
         )
     }
 
-    fun readLatestHuddleByKey(key: HuddleKey) = HuddleTable.select(HuddleTable.id)
+    fun readActiveHuddleId(key: HuddleKey) = HuddleTable.select(HuddleTable.id)
         .where {
             HuddleTable.targetId.eq(key.targetId) and
                     HuddleTable.chapterId.eq(key.chapterId) and
                     HuddleTable.pageId.eq(key.pageId) and
-                    HuddleTable.huddleType.eq(key.type)
+                    HuddleTable.huddleType.eq(key.type) and
+                    HuddleTable.recordedAt.isNull()
         }
         .orderBy(HuddleTable.startedAt, SortOrder.DESC)
         .firstOrNull()?.let { it[HuddleTable.id].value }
@@ -55,11 +56,7 @@ class HuddleService(
         val huddleGuide = adapter.readGuide(seed.key)
         val duration = adapter.duration
 
-        val readHuddleId = readLatestHuddleByKey(seed.key)?.takeIf {
-            HuddleTable.select(HuddleTable.status)
-                .where { HuddleTable.id.eq(it) }
-                .first()[HuddleTable.status] < HuddleStatus.ConsensusReached
-        } ?: HuddleTable.insertAndGetId {
+        val readHuddleId = readActiveHuddleId(seed.key) ?: HuddleTable.insertAndGetId {
             it[chapterId] = seed.key.chapterId
             it[pageId] = seed.key.pageId
             it[initiatorId] = sendingUserId
