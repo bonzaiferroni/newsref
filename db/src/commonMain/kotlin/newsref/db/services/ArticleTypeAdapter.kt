@@ -17,7 +17,7 @@ object ArticleTypeAdapter : HuddleAdapter(HuddleType.EditArticleType) {
 
     override suspend fun readOptions(key: HuddleKey): List<HuddleOption> = listOf(
         HuddleOption(DESCRIPTION_REPORT, ArticleType.Report.name),
-        HuddleOption(DESCRIPTION_PERSPECTIVE, ArticleType.Perspective.name),
+        HuddleOption(DESCRIPTION_PERSPECTIVE, ArticleType.Opinion.name),
         HuddleOption(DESCRIPTION_ANALYSIS, ArticleType.Analysis.name),
         HuddleOption(DESCRIPTION_INVESTIGATION, ArticleType.Investigation.name)
     )

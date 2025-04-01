@@ -37,8 +37,8 @@ fun SourcesListView(
     ) {
         if (state.reportCount > 0)
             ButtonToggle(state.showReports, "Reports: ${state.reportCount}", onToggle = { viewModel.toggleType(ArticleType.Report)})
-        if (state.perspectiveCount > 0)
-            ButtonToggle(state.showPerspectives, "Perspectives: ${state.perspectiveCount}", onToggle = { viewModel.toggleType(ArticleType.Perspective)})
+        if (state.opinionCount > 0)
+            ButtonToggle(state.showPerspectives, "Opinions: ${state.opinionCount}", onToggle = { viewModel.toggleType(ArticleType.Opinion)})
         if (state.analysisCount > 0)
             ButtonToggle(state.showAnalysis, "Analyses: ${state.analysisCount}", onToggle = { viewModel.toggleType(ArticleType.Analysis)})
         if (state.investigationCount > 0)
@@ -66,7 +66,7 @@ class ArticlesListModel(
         setState { it.copy(
             reportCount = articles.count { it.articleType == ArticleType.Report },
             analysisCount = articles.count { it.articleType == ArticleType.Analysis },
-            perspectiveCount = articles.count { it.articleType == ArticleType.Perspective },
+            opinionCount = articles.count { it.articleType == ArticleType.Opinion },
             investigationCount = articles.count { it.articleType == ArticleType.Investigation },
             unknownCount = articles.count { it.articleType == ArticleType.Unknown }
         ) }
@@ -76,7 +76,7 @@ class ArticlesListModel(
     fun toggleType(articleType: ArticleType) {
         when (articleType) {
             ArticleType.Report -> setState { it.copy(showReports = !it.showReports) }
-            ArticleType.Perspective -> setState { it.copy(showPerspectives = !it.showPerspectives) }
+            ArticleType.Opinion -> setState { it.copy(showPerspectives = !it.showPerspectives) }
             ArticleType.Analysis -> setState { it.copy(showAnalysis = !it.showAnalysis) }
             ArticleType.Investigation -> setState { it.copy(showInvestigations = !it.showInvestigations) }
             ArticleType.Unknown -> setState { it.copy(showUnknown = !it.showUnknown) }
@@ -87,7 +87,7 @@ class ArticlesListModel(
     fun filterArticles() {
         val filteredArticles = articles.filter {
             it.articleType == ArticleType.Report && stateNow.showReports ||
-                    it.articleType == ArticleType.Perspective && stateNow.showPerspectives ||
+                    it.articleType == ArticleType.Opinion && stateNow.showPerspectives ||
                     it.articleType == ArticleType.Analysis && stateNow.showAnalysis ||
                     it.articleType == ArticleType.Investigation && stateNow.showInvestigations ||
                     it.articleType == ArticleType.Unknown && stateNow.showUnknown
@@ -103,7 +103,7 @@ data class ArticlesListState(
     val showInvestigations: Boolean = true,
     val showUnknown: Boolean = true,
     val reportCount: Int = 0,
-    val perspectiveCount: Int = 0,
+    val opinionCount: Int = 0,
     val analysisCount: Int = 0,
     val investigationCount: Int = 0,
     val unknownCount: Int = 0,

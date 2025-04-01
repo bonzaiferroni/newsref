@@ -38,7 +38,7 @@ class ArticleReader(
     internal suspend fun readNextArticle() {
         val source = service.readNext()
         if (source == null) {
-            console.log("No articles found")
+            // console.log("No articles found")
             return
         }
         val title = source.title ?: error("Article title missing")
