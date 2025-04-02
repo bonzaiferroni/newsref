@@ -36,14 +36,14 @@ class LeadMaker(
 		val page = crawl.page ?: return resultMap
 		val links = crawl.page?.links ?: return resultMap
 		for (link in links) {
-			val publishedAt = page.source.publishedAt
+			val publishedAt = page.page.publishedAt
 			val freshSource = publishedAt != null && publishedAt > (Clock.System.now() - 30.days)
 			val createIfFresh = crawl.fetchResult == FetchResult.RELEVANT && freshSource
 			if (!createIfFresh && !link.isExternal) continue
 			val job = LeadJob(
 				isExternal = link.isExternal,
-				freshAt = crawl.page?.source?.publishedAt
-					?: crawl.page?.source?.seenAt
+				freshAt = crawl.page?.page?.publishedAt
+					?: crawl.page?.page?.seenAt
 					?: crawl.fetch.lead.freshAt
 			)
 			val result = makeLead(link.url, job, createIfFresh)

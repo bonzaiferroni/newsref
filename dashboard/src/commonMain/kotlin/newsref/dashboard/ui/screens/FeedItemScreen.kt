@@ -11,7 +11,7 @@ import newsref.app.blip.controls.Tabs
 import newsref.dashboard.*
 import newsref.dashboard.FeedItemRoute
 import newsref.dashboard.LocalNavigator
-import newsref.dashboard.SourceItemRoute
+import newsref.dashboard.PageItemRoute
 import newsref.dashboard.ui.controls.*
 import newsref.dashboard.ui.table.*
 import newsref.db.model.Feed
@@ -60,8 +60,8 @@ fun FeedItemScreen(
         onChangePage = viewModel::changePage,
     ) {
         Tab(name = "Sources", scrollable = false) {
-            SourceTable(
-                sources = state.sourceInfos
+            PageTable(
+                pages = state.pageInfos
             )
         }
         Tab(name = "Leads", scrollable = false) {
@@ -78,7 +78,7 @@ fun FeedItemScreen(
                         TableColumn("Attempt", 100, AlignCell.Right) { DurationAgoCell(it.lastAttemptAt) },
                         TableColumn("Ext", 50) { BooleanCell(it.isExternal) },
                         TableColumn("Links", 50, AlignCell.Right) { TextCell(it.linkCount.toString()) },
-                        TableColumn("Src", 50) { NullableIdCell(it.targetId) { nav.go(SourceItemRoute(it)) } },
+                        TableColumn("Src", 50) { NullableIdCell(it.targetId) { nav.go(PageItemRoute(it)) } },
                         TableColumn("Pos", 50, AlignCell.Right) { TextCell(it.feedPosition) }
                     )
                 )

@@ -26,7 +26,7 @@ import kotlinx.datetime.atStartOfDayIn
 import kotlinx.datetime.toLocalDateTime
 import newsref.dashboard.halfPadding
 import newsref.dashboard.roundedCorners
-import newsref.db.model.SourceScore
+import newsref.db.model.PageScore
 import kotlin.time.Duration
 import kotlin.time.Duration.Companion.days
 import kotlin.time.Duration.Companion.hours
@@ -35,7 +35,7 @@ import kotlin.time.Duration.Companion.hours
 @OptIn(ExperimentalKoalaPlotApi::class)
 @Composable
 fun ScoreChart(
-    scores: List<SourceScore>
+    scores: List<PageScore>
 ) {
     if (scores.isEmpty()) {
         Text("No scores")

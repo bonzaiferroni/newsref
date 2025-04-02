@@ -7,7 +7,7 @@ data class Lead(
 	val id: Long = 0,
 	val url: CheckedUrl,
 	val hostId: Int = 0,
-	val sourceId: Long? = null,
+	val pageId: Long? = null,
 )
 
 data class LeadResult(

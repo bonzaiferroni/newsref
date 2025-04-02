@@ -11,13 +11,13 @@ class HostTableTest : DbTest() {
 		transaction {
 			HostTable.insert {
 				it[name] = "Axios"
-				it[disallowed] = emptyList()
+				it[bannedPaths] = emptyList()
 				it[junkParams] = emptyList()
 				it[domains] = listOf("www.axios.com")
 			}
 			HostTable.insert {
 				it[name] = "The Atlantic"
-				it[disallowed] = emptyList()
+				it[bannedPaths] = emptyList()
 				it[junkParams] = emptyList()
 				it[domains] = listOf("theatlantic.com")
 			}

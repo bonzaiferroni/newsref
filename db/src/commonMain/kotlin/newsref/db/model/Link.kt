@@ -4,7 +4,7 @@ import newsref.db.core.CheckedUrl
 
 data class Link(
     val id: Long = 0,
-    val sourceId: Long = 0,
+    val pageId: Long = 0,
     val contentId: Long? = null,
     val leadId: Long? = null,
     val url: CheckedUrl,

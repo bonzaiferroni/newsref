@@ -59,8 +59,8 @@ fun HostItemScreen(
                 SinceMenu(state.since, viewModel::changeSince)
                 Button(onClick = { state.sources.toSpeakRoute()?.let { nav.go(it) } }) { Text("Speak") }
             }
-            SourceTable(
-                sources = state.sources,
+            PageTable(
+                pages = state.sources,
                 searchText = state.searchText,
                 scrollId = state.selectedId,
                 onSearch = viewModel::onSearch,

@@ -13,9 +13,9 @@ import newsref.app.blip.controls.generateAxisTicks
 import newsref.app.blip.core.StateModel
 import newsref.app.io.ChapterStore
 import newsref.app.model.ChapterPack
-import newsref.app.model.SourceBit
+import newsref.app.model.PageBit
 import newsref.app.model.toModel
-import newsref.model.core.PageType
+import newsref.model.core.ContentType
 import newsref.model.utils.toDaysFromNow
 import kotlin.time.Duration.Companion.days
 
@@ -26,8 +26,8 @@ class ChapterModel(
     init {
         viewModelScope.launch {
             val pack = chapterStore.readChapter(route.id).toModel()
-            val articles = pack.sources.filter { it.pageType == PageType.NewsArticle }.toImmutableList()
-            val references = pack.sources.filter { it.pageType != PageType.NewsArticle }.toImmutableList()
+            val articles = pack.sources.filter { it.contentType == ContentType.NewsArticle }.toImmutableList()
+            val references = pack.sources.filter { it.contentType != ContentType.NewsArticle }.toImmutableList()
             val data = pack.toBalloonsData()
             setState { it.copy(
                 pack = pack,
@@ -46,8 +46,8 @@ class ChapterModel(
 data class ChapterState(
     val balloons: BalloonsData = BalloonsData(),
     val pack: ChapterPack? = null,
-    val articles: ImmutableList<SourceBit> = persistentListOf(),
-    val references: ImmutableList<SourceBit> = persistentListOf(),
+    val articles: ImmutableList<PageBit> = persistentListOf(),
+    val references: ImmutableList<PageBit> = persistentListOf(),
     val tab: String? = null,
 )
 

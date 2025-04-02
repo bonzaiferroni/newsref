@@ -15,7 +15,7 @@ import org.jetbrains.exposed.sql.kotlin.datetime.datetime
 
 object HuddleTable : LongIdTable("huddle") {
     val chapterId = reference("chapter_id", ChapterTable, ReferenceOption.CASCADE).nullable().index()
-    val pageId = reference("source_id", PageTable, ReferenceOption.CASCADE).nullable().index()
+    val pageId = reference("page_id", PageTable, ReferenceOption.CASCADE).nullable().index()
     val targetId = reference("target_id", HuddleTable, ReferenceOption.CASCADE).nullable().index()
     val initiatorId = reference("initiator_id", UserTable, ReferenceOption.CASCADE).index()
     val huddleType = enumeration<HuddleType>("huddle_type")

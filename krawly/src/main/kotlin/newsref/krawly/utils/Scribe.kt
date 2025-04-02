@@ -7,9 +7,9 @@ fun CrawlInfo.toMarkdown(): String? {
     val sb = StringBuilder()
     val contents = page.contents.joinToString("\n\n") { it }
     val externalLinksCount = page.links.count { it.isExternal }
-    sb.append("# ${page.article?.headline}\n${page.source.url}")
+    sb.append("# ${page.article?.headline}\n${page.page.url}")
     sb.append("\nby ${page.authors?.joinToString(", ")}")
-    sb.append("\n${page.source.type} - ${page.articleCategory} - $externalLinksCount/${page.links.size} links")
+    sb.append("\n${page.page.type} - ${page.articleCategory} - $externalLinksCount/${page.links.size} links")
     sb.append(" - ${page.article?.wordCount}")
     sb.append("\n\n$contents")
     var content = sb.toString()

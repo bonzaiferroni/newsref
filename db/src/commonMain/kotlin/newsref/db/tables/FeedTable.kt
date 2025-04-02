@@ -3,10 +3,7 @@ package newsref.db.tables
 import newsref.db.utils.toInstantUtc
 import newsref.db.core.toUrl
 import newsref.db.model.Feed
-import newsref.db.model.FeedSource
-import org.jetbrains.exposed.dao.EntityClass
-import org.jetbrains.exposed.dao.IntEntity
-import org.jetbrains.exposed.dao.id.EntityID
+import newsref.db.model.FeedPage
 import org.jetbrains.exposed.dao.id.IntIdTable
 import org.jetbrains.exposed.dao.id.LongIdTable
 import org.jetbrains.exposed.sql.ReferenceOption
@@ -27,35 +24,6 @@ internal object FeedTable : IntIdTable("feed") {
     val checkAt = datetime("check_at").defaultExpression(CurrentDateTime)
 }
 
-class FeedRow(id: EntityID<Int>): IntEntity(id) {
-    companion object : EntityClass<Int, FeedRow>(FeedTable)
-
-    var url by FeedTable.url
-    var selector by FeedTable.selector
-    var external by FeedTable.external
-    var trackPosition by FeedTable.trackPosition
-    var linkCount by FeedTable.linkCount
-    var debug by FeedTable.debug
-    var disabled by FeedTable.disabled
-    var note by FeedTable.note
-    var createdAt by FeedTable.createdAt
-    var checkAt by FeedTable.checkAt
-}
-
-fun FeedRow.toModel() = Feed(
-    id = this.id.value,
-    url = this.url.toUrl(),
-    selector = this.selector,
-    external = this.external,
-    trackPosition = this.trackPosition,
-    linkCount = this.linkCount,
-    debug = this.debug,
-    disabled = this.disabled,
-    note = this.note,
-    createdAt = this.createdAt.toInstantUtc(),
-    checkAt = this.checkAt.toInstantUtc()
-)
-
 fun ResultRow.toFeed() = Feed(
     id = this[FeedTable.id].value,
     url = this[FeedTable.url].toUrl(),
@@ -70,22 +38,15 @@ fun ResultRow.toFeed() = Feed(
     checkAt = this[FeedTable.checkAt].toInstantUtc()
 )
 
-fun FeedRow.fromModel(feed: Feed) {
-    url = feed.url.toString()
-    selector = feed.selector
-    external = feed.external
-    trackPosition = feed.trackPosition
-}
-
-object FeedSourceTable : LongIdTable("feed_source") {
+object FeedPageTable : LongIdTable("feed_page") {
     val feedId = reference("feed_id", FeedTable, onDelete = ReferenceOption.CASCADE)
-    val sourceId = reference("source_id", PageTable, onDelete = ReferenceOption.CASCADE)
+    val pageId = reference("page_id", PageTable, onDelete = ReferenceOption.CASCADE)
     val position = integer("position")
 }
 
-fun ResultRow.toFeedPosition() = FeedSource(
-    id = this[FeedSourceTable.id].value,
-    feedId = this[FeedSourceTable.feedId].value,
-    sourceId = this[FeedSourceTable.sourceId].value,
-    position = this[FeedSourceTable.position]
+fun ResultRow.toFeedPosition() = FeedPage(
+    id = this[FeedPageTable.id].value,
+    feedId = this[FeedPageTable.feedId].value,
+    pageId = this[FeedPageTable.pageId].value,
+    position = this[FeedPageTable.position]
 )

@@ -5,5 +5,5 @@ import kotlinx.serialization.Serializable
 @Serializable
 data class ChapterPackDto(
     val chapter: ChapterDto,
-    val sourceBits: List<SourceBitDto>
+    val pageBits: List<PageBitDto>
 )

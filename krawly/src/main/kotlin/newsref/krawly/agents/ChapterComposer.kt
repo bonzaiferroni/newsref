@@ -6,23 +6,20 @@ import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import kotlinx.datetime.Clock
 import kotlinx.datetime.Instant
-import newsref.db.Environment
-import newsref.db.core.VectorModel
+import newsref.db.core.EmbeddingFamily
 import newsref.db.globalConsole
 import newsref.db.model.Chapter
 import newsref.db.model.ChapterFinderLog
 import newsref.db.model.ChapterFinderState
-import newsref.db.model.Source
+import newsref.db.model.Page
 import newsref.db.services.CHAPTER_MAX_DISTANCE
 import newsref.db.services.ChapterComposerService
-import newsref.db.services.ChapterSourceSignal
+import newsref.db.services.ChapterPageSignal
 import newsref.db.services.ContentService
 import newsref.db.services.DataLogService
-import newsref.db.services.EMBEDDING_MAX_CHARACTERS
-import newsref.db.services.EMBEDDING_MIN_CHARACTERS
-import newsref.db.services.EMBEDDING_MIN_WORDS
-import newsref.db.services.SourceVectorService
-import newsref.model.core.PageType
+import newsref.db.services.EmbeddingService
+import newsref.krawly.clients.GeminiClient
+import newsref.model.core.ContentType
 import kotlin.time.Duration
 import kotlin.time.Duration.Companion.hours
 import kotlin.time.Duration.Companion.minutes
@@ -30,9 +27,9 @@ import kotlin.time.Duration.Companion.minutes
 private val console = globalConsole.getHandle("ChapterComposer")
 
 class ChapterComposer(
-    env: Environment,
-    private val vectorClient: VectorClient = VectorClient(env),
-    private val sourceVectorService: SourceVectorService = SourceVectorService(),
+    aiClient: GeminiClient,
+    private val embeddingClient: EmbeddingClient = EmbeddingClient(aiClient),
+    private val embeddingService: EmbeddingService = EmbeddingService(),
     private val service: ChapterComposerService = ChapterComposerService(),
     private val contentService: ContentService = ContentService(),
     private val dataLogService: DataLogService = DataLogService(),
@@ -50,7 +47,7 @@ class ChapterComposer(
             }
         }
         coroutineScope.launch {
-            val model = sourceVectorService.readOrCreateModel(defaultModelName)
+            val model = embeddingService.readOrCreateModel("text-embedding-004", "Article Summary")
             while (true) {
                 readNextSignal(model)
                 delay(10)
@@ -58,10 +55,10 @@ class ChapterComposer(
         }
     }
 
-    private fun excludeUntil(sourceId: Long, duration: Duration) =
-        excludedIds.add(sourceId to Clock.System.now() + duration)
+    private fun excludeUntil(pageId: Long, duration: Duration) =
+        excludedIds.add(pageId to Clock.System.now() + duration)
 
-    private suspend fun readNextSignal(model: VectorModel) {
+    private suspend fun readNextSignal(model: EmbeddingFamily) {
         val now = Clock.System.now()
         val excludedIds = this.excludedIds.filter { it.second > now }.map { it.first }
         setState { it.copy(exclusions = excludedIds.size) }
@@ -73,8 +70,8 @@ class ChapterComposer(
             return
         }
 
-        setState { it.copy(signalDate = origin.source.seenAt) }
-        if (origin.source.type == PageType.NewsArticle) {
+        setState { it.copy(signalDate = origin.page.seenAt) }
+        if (origin.page.type == ContentType.NewsArticle) {
             // console.log("found secondary signal ${origin.source.id}")
             setState { it.copy(secondarySignals = it.secondarySignals + 1) }
             findSecondaryBucket(origin, model)
@@ -85,18 +82,18 @@ class ChapterComposer(
         }
     }
 
-    private suspend fun findPrimaryBucket(origin: ChapterSourceSignal, model: VectorModel) {
-        excludeUntil(origin.source.id, 1.hours)
-        val signals = service.readInboundSignals(origin.source.id)
+    private suspend fun findPrimaryBucket(origin: ChapterPageSignal, model: EmbeddingFamily) {
+        excludeUntil(origin.page.id, 1.hours)
+        val signals = service.readInboundSignals(origin.page.id)
         if (signals.isEmpty()) {
             // console.log("primary bucket empty")
             return
         }
         val bucket = ChapterBucket()
         for (signal in signals) {
-            if (signal.source.type != PageType.NewsArticle) continue
-            if (bucket.contains(signal.source.id)) continue
-            val vector = readOrFetchVector(signal.source, model) ?: continue
+            if (signal.page.type != ContentType.NewsArticle) continue
+            if (bucket.contains(signal.page.id)) continue
+            val vector = readOrFetchVector(signal.page, model) ?: continue
             bucket.add(signal, vector)
         }
         bucket.shake()
@@ -112,15 +109,15 @@ class ChapterComposer(
         createChapter(bucket)
     }
 
-    private suspend fun findSecondaryBucket(signal: ChapterSourceSignal, model: VectorModel) {
-        val vector = readOrFetchVector(signal.source, model)
+    private suspend fun findSecondaryBucket(signal: ChapterPageSignal, model: EmbeddingFamily) {
+        val vector = readOrFetchVector(signal.page, model)
         if (vector == null) {
-            excludeUntil(signal.source.id, Duration.INFINITE)
+            excludeUntil(signal.page.id, Duration.INFINITE)
              console.log("vector unavailable")
             return
         }
 
-        val buckets = findBuckets(listOf(signal), 0, vector, signal.source.existedAt, CHAPTER_MAX_DISTANCE, model)
+        val buckets = findBuckets(listOf(signal), 0, vector, signal.page.existedAt, CHAPTER_MAX_DISTANCE, model)
         if (buckets.isEmpty()) {
             // create chapter
             val bucket = ChapterBucket()
@@ -138,7 +135,7 @@ class ChapterComposer(
         updateChapter(bucket)
     }
 
-    private suspend fun findRelatedBucketAndMerge(bucket: ChapterBucket, model: VectorModel): Boolean {
+    private suspend fun findRelatedBucketAndMerge(bucket: ChapterBucket, model: EmbeddingFamily): Boolean {
         val buckets = findBuckets(
             originSignals = bucket.signals,
             chapterId = bucket.chapterId ?: 0,
@@ -208,15 +205,15 @@ class ChapterComposer(
     }
 
     private suspend fun findBuckets(
-        originSignals: List<ChapterSourceSignal>,
+        originSignals: List<ChapterPageSignal>,
         chapterId: Long,
         vector: FloatArray,
         happenedAt: Instant,
         maxDistance: Float,
-        model: VectorModel
+        model: EmbeddingFamily
     ): List<ChapterBucket> {
-        val sourceIds = originSignals.map { it.source.id }
-        val chapterSignals = service.findTextRelatedChapters(chapterId, sourceIds, vector)
+        val pageIds = originSignals.map { it.page.id }
+        val chapterSignals = service.findTextRelatedChapters(chapterId, pageIds, vector)
         return chapterSignals.mapNotNull { (chapter, textDistance) ->
             val timeDistance = happenedAt.chapterDistanceTo(chapter.averageAt)
             val bucketDistance = BucketDistance(textDistance, timeDistance, 0f, 0f)
@@ -224,31 +221,28 @@ class ChapterComposer(
             val bucket = ChapterBucket(chapter)
             val sourceSignals = service.readChapterSourceSignals(chapter.id)
             for (signal in sourceSignals) {
-                val vector = readOrFetchVector(signal.source, model) ?: error("unable to find expected vector")
+                val vector = readOrFetchVector(signal.page, model) ?: error("unable to find expected vector")
                 bucket.add(signal, vector)
             }
             bucket
         }
     }
 
-    private suspend fun readOrFetchVector(source: Source, model: VectorModel): FloatArray? {
-        val cachedVector = sourceVectorService.readVector(source.id, model.id)
+    private suspend fun readOrFetchVector(page: Page, model: EmbeddingFamily): FloatArray? {
+        val cachedVector = embeddingService.readEmbedding(page.id, model.id)
         if (cachedVector != null) {
             return cachedVector
         }
-        val wordCount = source.contentCount
-        val content = contentService.readSourceContentText(source.id).take(EMBEDDING_MAX_CHARACTERS)
-        if (content.length < EMBEDDING_MIN_CHARACTERS || wordCount == null || wordCount < EMBEDDING_MIN_WORDS) {
+        val summary = contentService.readSummaryContent(page.id)
+        if (summary == null) {
             setState { it.copy(contentsMissing = it.contentsMissing + 1) }
-            console.log("content missing")
+            console.log("Article summary missing")
             return null
         }
         // console.log("fetching vector")
         setState { it.copy(vectorsFetched = it.vectorsFetched + 1) }
-        val vector = vectorClient.fetchVector(source, model.name, content) ?: error("unable to fetch vector")
-        sourceVectorService.insertVector(source.id, model.name, vector)
+        val vector = embeddingClient.fetchVector(page, model.model, summary) ?: error("unable to fetch vector")
+        embeddingService.insertEmbedding(page.id, model.id, vector)
         return vector
     }
 }
-
-const val defaultModelName = "text-embedding-3-small"

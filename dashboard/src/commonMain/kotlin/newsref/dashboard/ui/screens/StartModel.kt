@@ -4,15 +4,15 @@ import androidx.lifecycle.viewModelScope
 import kotlinx.coroutines.launch
 import newsref.app.blip.core.StateModel
 import newsref.dashboard.StartRoute
-import newsref.db.services.SourceService
-import newsref.model.dto.SourceInfo
+import newsref.db.services.PageService
+import newsref.model.dto.PageInfo
 import kotlin.time.Duration
 import kotlin.time.Duration.Companion.days
 
 
 class StartModel(
     route: StartRoute,
-    private val sourceService: SourceService = SourceService()
+    private val pageService: PageService = PageService()
 ) : StateModel<StartState>(StartState(route.days.days)) {
 
     init {
@@ -26,7 +26,7 @@ class StartModel(
 
     private fun refreshItems() {
         viewModelScope.launch {
-            val sources = sourceService.getTopSourceInfos(stateNow.since)
+            val sources = pageService.getTopSourceInfos(stateNow.since)
             setState { it.copy(sources = sources) }
         }
     }
@@ -34,5 +34,5 @@ class StartModel(
 
 data class StartState(
     val since: Duration,
-    val sources: List<SourceInfo> = emptyList(),
+    val sources: List<PageInfo> = emptyList(),
 )

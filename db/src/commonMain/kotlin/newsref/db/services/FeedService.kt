@@ -3,18 +3,17 @@ package newsref.db.services
 import kotlinx.datetime.Clock
 import kotlinx.datetime.Instant
 import newsref.db.DbService
-import newsref.db.tables.ArticleTable
-import newsref.db.tables.FeedSourceTable
+import newsref.db.tables.FeedPageTable
 import newsref.db.tables.FeedTable
 import newsref.db.tables.HostTable
 import newsref.db.tables.NoteTable
 import newsref.db.tables.PageTable
-import newsref.db.tables.sourceInfoColumns
+import newsref.db.tables.pageInfoColumns
 import newsref.db.tables.toFeed
-import newsref.db.tables.toSourceInfo
+import newsref.db.tables.toPageInfo
 import newsref.db.utils.toLocalDateTimeUtc
 import newsref.db.model.Feed
-import newsref.db.model.FeedSource
+import newsref.db.model.FeedPage
 import org.jetbrains.exposed.sql.SortOrder
 import org.jetbrains.exposed.sql.deleteWhere
 import org.jetbrains.exposed.sql.insertAndGetId
@@ -77,7 +76,7 @@ class FeedService : DbService() {
         feed: Feed,
         checkAt: Instant,
         linkCount: Int,
-        feedSources: List<FeedSource>
+        feedPages: List<FeedPage>
     ) = dbQuery {
         FeedTable.update({ FeedTable.id eq feed.id }) {
             it[FeedTable.linkCount] = linkCount
@@ -86,17 +85,17 @@ class FeedService : DbService() {
 
         if (!feed.trackPosition) return@dbQuery
 
-        FeedSourceTable.deleteWhere { FeedSourceTable.feedId eq feedId }
-        FeedSourceTable.batchInsert(feedSources) {
-            this[FeedSourceTable.feedId] = feed.id
-            this[FeedSourceTable.sourceId] = it.sourceId
-            this[FeedSourceTable.position] = it.position
+        FeedPageTable.deleteWhere { FeedPageTable.feedId eq feedId }
+        FeedPageTable.batchInsert(feedPages) {
+            this[FeedPageTable.feedId] = feed.id
+            this[FeedPageTable.pageId] = it.pageId
+            this[FeedPageTable.position] = it.position
         }
 
         if (!feed.external) {
-            for (feedSource in feedSources) {
+            for (feedSource in feedPages) {
                 PageTable.update({
-                    PageTable.id.eq(feedSource.sourceId) and
+                    PageTable.id.eq(feedSource.pageId) and
                             (PageTable.feedPosition.isNull() or PageTable.feedPosition.greater(feedSource.position))
                 }) {
                     it[PageTable.feedPosition] = feedSource.position
@@ -106,11 +105,11 @@ class FeedService : DbService() {
     }
 
     suspend fun readFeedSources(feedId: Int, limit: Int = 100) = dbQuery {
-        FeedSourceTable.leftJoin(PageTable).leftJoin(ArticleTable).leftJoin(HostTable).leftJoin(NoteTable)
-            .select(sourceInfoColumns + FeedSourceTable.position)
-            .where { FeedSourceTable.feedId.eq(feedId) }
-            .orderBy(FeedSourceTable.position, SortOrder.ASC)
+        FeedPageTable.leftJoin(PageTable).leftJoin(HostTable).leftJoin(NoteTable)
+            .select(pageInfoColumns + FeedPageTable.position)
+            .where { FeedPageTable.feedId.eq(feedId) }
+            .orderBy(FeedPageTable.position, SortOrder.ASC)
             .limit(limit)
-            .map { Pair(it[FeedSourceTable.position], it.toSourceInfo()) }
+            .map { Pair(it[FeedPageTable.position], it.toPageInfo()) }
     }
 }

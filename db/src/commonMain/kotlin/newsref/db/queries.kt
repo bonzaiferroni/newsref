@@ -1,10 +1,11 @@
 package newsref.db
 
 import org.jetbrains.exposed.sql.Transaction
-import newsref.db.tables.UserRow
 import newsref.db.tables.UserTable
+import newsref.db.tables.toUser
+import newsref.db.utils.readFirstOrNull
 
-internal fun Transaction.findUser(username: String) = UserRow.find { UserTable.username eq username }.firstOrNull()
+internal fun Transaction.findUser(username: String) = UserTable.readFirstOrNull { it.username.eq(username) }?.toUser()
 
 internal fun Transaction.findUserIdOrThrow(username: String) = UserTable
     .select(UserTable.id)

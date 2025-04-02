@@ -23,7 +23,7 @@ class LeadTableTest : DbTest() {
 		transaction {
 			val hostRow = HostTable.insert {
 				it[name] = "Axios"
-				it[disallowed] = emptyList()
+				it[bannedPaths] = emptyList()
 				it[junkParams] = emptyList()
 				it[domains] = listOf("axios.com")
 			}

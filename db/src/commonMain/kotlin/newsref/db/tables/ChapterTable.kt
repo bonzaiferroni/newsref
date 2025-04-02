@@ -20,7 +20,7 @@ object ChapterTable : LongIdTable("chapter") {
     val storyDistance = float("story_distance").nullable()
     val createdAt = datetime("created_at").index()
     val happenedAt = datetime("happened_at").index()
-    val vector = vector("vector", 1536)
+    val vector = vector("vector", 768)
 }
 
 internal fun InsertStatement<*>.fromModel(chapter: Chapter) {

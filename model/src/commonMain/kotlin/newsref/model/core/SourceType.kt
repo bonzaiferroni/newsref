@@ -5,7 +5,7 @@ enum class SourceType {
     Article,
 }
 
-fun PageType.toSourceType() = when {
-    this == PageType.NewsArticle -> SourceType.Article
+fun ContentType.toSourceType() = when {
+    this == ContentType.NewsArticle -> SourceType.Article
     else -> SourceType.Reference
 }

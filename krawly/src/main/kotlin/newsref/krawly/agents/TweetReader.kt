@@ -5,23 +5,23 @@ import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 import newsref.db.model.Host
 import newsref.db.model.LeadInfo
-import newsref.db.model.PageInfo
-import newsref.db.model.Source
+import newsref.db.model.CrawledPage
+import newsref.db.model.Page
 import newsref.db.model.WebResult
 import newsref.db.utils.jsonDecoder
 import newsref.db.utils.stripParams
 import newsref.db.utils.toNewDomain
 import newsref.krawly.utils.contentToDoc
 import newsref.krawly.utils.findFirstOrNull
-import newsref.model.core.PageType
+import newsref.model.core.ContentType
 import newsref.db.core.Url
 import newsref.db.core.toUrl
-import newsref.model.dto.PageAuthor
+import newsref.model.dto.CrawledAuthor
 import java.net.URLEncoder
 import java.nio.charset.StandardCharsets
 
 class TweetReader {
-	fun read(lead: LeadInfo, url: Url, host: Host, result: WebResult?): PageInfo? {
+	fun read(lead: LeadInfo, url: Url, host: Host, result: WebResult?): CrawledPage? {
 		val now = Clock.System.now()
 		if (result == null || !result.isOk || result.content == null) return null
 		val tweetUrl = url.stripParams().toNewDomain("x.com")
@@ -30,7 +30,7 @@ class TweetReader {
 		val doc = html.contentToDoc()
 		val content = doc.findFirstOrNull("blockquote>p")?.text
 		val wordCount = content?.split(' ')?.size ?: 0
-		val author = PageAuthor(name = embedInfo.authorName, url = embedInfo.authorUrl.decodeHtmlFromJson())
+		val author = CrawledAuthor(name = embedInfo.authorName, url = embedInfo.authorUrl.decodeHtmlFromJson())
 		val title = "${author.name} on twitter".let {
 			if (content == null) return@let it
 			val snippet = StringBuilder()
@@ -49,11 +49,11 @@ class TweetReader {
 			"$it$snippet”"
 		}
 
-		return PageInfo(
-			source = Source(
+		return CrawledPage(
+			page = Page(
                 url = tweetUrl,
                 title = title,
-                type = PageType.SocialPost,
+                type = ContentType.SocialPost,
                 embed = html,
                 contentCount = wordCount,
                 accessedAt = now,

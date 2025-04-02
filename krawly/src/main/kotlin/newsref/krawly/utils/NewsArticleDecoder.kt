@@ -3,16 +3,16 @@ package newsref.krawly.utils
 import kotlinx.serialization.json.*
 import newsref.db.utils.jsonDecoder
 import newsref.krawly.models.Image
-import newsref.krawly.models.NewsArticle
+import newsref.krawly.models.MetaNewsArticle
 import newsref.krawly.models.NewsAuthor
 import newsref.krawly.models.Publisher
 
-fun String.decodeNewsArticle(): NewsArticle? {
+fun String.decodeNewsArticle(): MetaNewsArticle? {
 	val element = runCatching { jsonDecoder.decodeFromString<JsonElement>(this) }.getOrNull() ?: return null
 	return element.findNewsArticle()
 }
 
-fun JsonElement.findNewsArticle(): NewsArticle? = when (this) {
+fun JsonElement.findNewsArticle(): MetaNewsArticle? = when (this) {
 	is JsonObject -> this.findNewsArticle()
 	is JsonArray -> this.findNewsArticle()
 	else -> null
@@ -27,9 +27,9 @@ fun JsonArray.findNewsArticle() = this.firstNotNullOfOrNull { it.toNewsArticle()
 
 fun JsonElement.toNewsArticle() = if (this is JsonObject) this.toNewsArticle() else null
 
-fun JsonObject.toNewsArticle(): NewsArticle? {
+fun JsonObject.toNewsArticle(): MetaNewsArticle? {
 	if (this["@type"]?.toString()?.contains("NewsArticle") != true) return null
-	return NewsArticle(
+	return MetaNewsArticle(
 		headline = this["headline"]?.primitiveOrNull?.contentOrNull,
 		dateline = this["dateline"]?.primitiveOrNull?.contentOrNull,
 		datePublished = this["datePublished"]?.primitiveOrNull?.contentOrNull,

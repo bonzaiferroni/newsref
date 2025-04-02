@@ -9,7 +9,7 @@ import kotlinx.serialization.json.JsonObject
 import kotlinx.serialization.json.decodeFromJsonElement
 import newsref.db.globalConsole
 import newsref.db.utils.*
-import newsref.krawly.models.NewsArticle
+import newsref.krawly.models.MetaNewsArticle
 import newsref.db.core.Url
 import newsref.model.core.toSourceType
 
@@ -40,7 +40,7 @@ fun Doc.findFirstOrNull(cssSelector: String): DocElement? = try {
 }
 
 // NewsArticle parsing
-fun Doc.getNewsArticle(cacheId: Url): NewsArticle? {
+fun Doc.getNewsArticle(cacheId: Url): MetaNewsArticle? {
     val innerHtml = this.findFirstOrNull("script#json-schema")?.html ?: this.scanTagsForNewsArticle() ?: return null
     val json = innerHtml.trimCData()
 //    json.cacheResource(cacheId.core, "json", "news_article_raw")
@@ -69,7 +69,7 @@ private fun Doc.scanTagsForNewsArticle(): String? {
     return null
 }
 
-fun String.readArrayOrObject(): NewsArticle? {
+fun String.readArrayOrObject(): MetaNewsArticle? {
     try {
         // Try to decode the string as a JsonArray first
         val jsonArray = prettyPrintJson.decodeFromString<JsonArray>(this)
@@ -77,13 +77,13 @@ fun String.readArrayOrObject(): NewsArticle? {
             val jsonObject = jsonElement as? JsonObject ?: return@firstNotNullOfOrNull null
             val type = jsonObject["@type"].toString()
             if (type != "\"NewsArticle\"") return@firstNotNullOfOrNull null
-            runCatching { prettyPrintJson.decodeFromJsonElement<NewsArticle>(jsonObject) }
+            runCatching { prettyPrintJson.decodeFromJsonElement<MetaNewsArticle>(jsonObject) }
                 .getOrNull()
         } ?: throw SerializationException("No valid NewsArticle found in JSON array")
     } catch (e: SerializationException) {
         return try {
             // If it's not a JsonArray, try to decode it directly as a NewsArticle
-            prettyPrintJson.decodeFromString<NewsArticle>(this)
+            prettyPrintJson.decodeFromString<MetaNewsArticle>(this)
         } catch (e: Exception) {
             globalConsole.logError("NewsArticle", e.message.toString())
             null

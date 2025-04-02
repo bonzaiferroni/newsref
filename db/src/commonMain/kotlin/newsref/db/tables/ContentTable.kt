@@ -3,6 +3,7 @@ package newsref.db.tables
 import newsref.db.model.Content
 import org.jetbrains.exposed.dao.EntityClass
 import org.jetbrains.exposed.dao.LongEntity
+import org.jetbrains.exposed.dao.id.CompositeIdTable
 import org.jetbrains.exposed.dao.id.EntityID
 import org.jetbrains.exposed.dao.id.LongIdTable
 import org.jetbrains.exposed.sql.ReferenceOption
@@ -12,26 +13,11 @@ internal object ContentTable : LongIdTable("content") {
     val text = text("text").uniqueIndex()
 }
 
-internal class ContentRow(id: EntityID<Long>) : LongEntity(id) {
-    companion object : EntityClass<Long, ContentRow>(ContentTable)
+internal object PageContentTable : CompositeIdTable("page_content") {
+    val pageId = reference("page_id", PageTable, ReferenceOption.CASCADE).index()
+    val contentId = reference("content_id", ContentTable, ReferenceOption.CASCADE).index()
 
-    var text by ContentTable.text
-
-    val sources by SourceRow via SourceContentTable
-}
-
-internal object SourceContentTable : LongIdTable("source_content") {
-    val sourceId = reference("source_id", PageTable, ReferenceOption.CASCADE)
-    val contentId = reference("content_id", ContentTable, ReferenceOption.CASCADE)
-}
-
-internal fun ContentRow.toModel() = Content(
-    id = this.id.value,
-    text = this.text,
-)
-
-internal fun ContentRow.fromModel(content: String) {
-    text = content
+    override val primaryKey = PrimaryKey(pageId, contentId)
 }
 
 internal fun ResultRow.toContent() = Content(

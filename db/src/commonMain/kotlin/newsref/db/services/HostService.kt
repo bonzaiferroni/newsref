@@ -8,17 +8,15 @@ import newsref.db.tables.*
 import newsref.db.utils.*
 import newsref.model.core.*
 import org.jetbrains.exposed.sql.*
-import org.jetbrains.exposed.sql.SqlExpressionBuilder.eq
 import kotlin.time.Duration
 
 class HostService : DbService() {
     suspend fun findByUrl(url: Url): Host? = dbQuery {
-        HostRow.find { HostTable.core.sameAs(url.core) }.firstOrNull()?.toModel()
+        HostTable.readFirstOrNull { HostTable.core.sameAs(url.core) }?.toHost()
     }
 
     suspend fun findById(hostId: Int) = dbQuery {
-        HostRow.find(HostTable.id eq hostId).firstOrNull()?.toModel()
-            ?: throw IllegalArgumentException("Host $hostId not found")
+        HostTable.readById(hostId).toHost()
     }
 
     suspend fun createHost(
@@ -30,23 +28,28 @@ class HostService : DbService() {
         val domain = url.domain
         val domains = mutableListOf(domain)
         if (domain.startsWith("www.")) domains.add(domain.removePrefix("www."))
-        val host = Host(
-            core = url.core,
-            robotsTxt = robotsTxt,
-            isRedirect = isRedirect,
-            score = 0,
-            domains = domains.toSet(),
-            bannedPaths = bannedPaths.toSet(),
-        )
-        HostRow.new { fromModel(host) }.toModel()
+
+        val hostId = HostTable.insertAndGetId {
+            it[this.core] = url.core
+            it[this.robotsTxt] = robotsTxt
+            it[this.isRedirect] = isRedirect
+            it[this.score] = 0
+            it[this.bannedPaths] = bannedPaths.toList()
+            it[this.domains] = domains.toList()
+        }.value
+
+        HostTable.readById(hostId).toHost()
     }
 
-    suspend fun updateParameters(host: Host, junkParams: Set<String>?, navParams: Set<String>?) = dbQuery {
-        val hostRow = HostRow.find(HostTable.id eq host.id).firstOrNull()
-            ?: throw IllegalArgumentException("Host ${host.core} not found")
-        junkParams?.let { hostRow.junkParams = it.smoosh(hostRow.junkParams) }
-        navParams?.let { hostRow.navParams = it.smoosh(hostRow.navParams) }
-        hostRow.toModel()
+    suspend fun updateParameters(hostId: Int, junkParams: Set<String>?, navParams: Set<String>?) = dbQuery {
+        val host = HostTable.readById(hostId).toHost()
+        if (junkParams == null && navParams == null) return@dbQuery host
+
+        HostTable.updateById(hostId) {
+            if (junkParams != null) it[this.junkParams] = host.junkParams.smoosh(junkParams)
+            if (navParams != null) it[this.navParams] = host.navParams.smoosh(navParams)
+        }
+        HostTable.readById(hostId).toHost()
     }
 
     suspend fun readHosts(searchText: String? = null, limit: Int = 100) = dbQuery {
@@ -83,13 +86,13 @@ class HostService : DbService() {
         sourceInfoTables
             .where {
                 PageTable.hostId.eq(hostId) and PageTable.title.like("%$searchText%") and
-                        (PageTable.type.eq(PageType.NewsArticle) or PageTable.type.eq(PageType.SocialPost)) and
+                        (PageTable.contentType.eq(ContentType.NewsArticle) or PageTable.contentType.eq(ContentType.SocialPost)) and
                         PageTable.existedAfter(time)
             }
             .orderBy(orderColumn, (direction ?: SortDirection.Descending).toSortOrder())
             .limit(limit)
-            .map { it.toSourceInfo() }
+            .map { it.toPageInfo() }
     }
 }
 
-private fun <T> Set<T>.smoosh(list: List<T>) = this.toMutableSet().also { set -> set.addAll(list) }.toList()
+private fun <T> Set<T>.smoosh(list: Collection<T>) = (this + list).toSet().toList()

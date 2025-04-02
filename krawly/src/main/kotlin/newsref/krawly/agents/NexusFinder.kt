@@ -2,7 +2,7 @@ package newsref.krawly.agents
 
 import newsref.db.globalConsole
 import newsref.db.model.CrawlInfo
-import newsref.db.model.PageLink
+import newsref.db.model.CrawledLink
 import newsref.db.services.HostService
 import newsref.db.services.NexusService
 
@@ -15,7 +15,7 @@ class NexusFinder(
 	suspend fun findNexuses(crawl: CrawlInfo): CrawlInfo {
 		val page = crawl.page ?: return crawl
 		val pageHost = page.pageHost
-		val links = mutableListOf<PageLink>()
+		val links = mutableListOf<CrawledLink>()
 		for (link in page.links) {
 			if (!link.isExternal) {
 				links.add(link)

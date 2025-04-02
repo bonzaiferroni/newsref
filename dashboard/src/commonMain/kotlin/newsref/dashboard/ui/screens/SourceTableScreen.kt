@@ -10,21 +10,21 @@ import compose.icons.tablericons.Copy
 import compose.icons.tablericons.PlayerPause
 import compose.icons.tablericons.PlayerPlay
 import newsref.dashboard.LocalNavigator
-import newsref.dashboard.SourceItemRoute
-import newsref.dashboard.SourceTableRoute
+import newsref.dashboard.PageItemRoute
+import newsref.dashboard.PageTableRoute
 import newsref.dashboard.ui.table.*
 import newsref.dashboard.utils.*
 import newsref.model.core.*
 import newsref.model.dto.*
 
 @Composable
-fun SourceTableScreen(
-    route: SourceTableRoute,
-    viewModel: SourceTableModel = viewModel { SourceTableModel() }
+fun PageTableScreen(
+    route: PageTableRoute,
+    viewModel: PageTableModel = viewModel { PageTableModel() }
 ) {
     val state by viewModel.state.collectAsState()
     PropertyTable(
-        name = "Source Table",
+        name = "Page Table",
         item = state,
         properties = listOf(
             PropertyRow("count") {
@@ -46,23 +46,23 @@ fun SourceTableScreen(
             Text("Button")
         }
     }
-    SourceTable(
-        sources = state.items,
+    PageTable(
+        pages = state.items,
         searchText = state.searchText,
         onSearch = viewModel::onSearch,
-        isNew = { it.sourceId > state.previousTopId},
+        isNew = { it.pageId > state.previousTopId},
         onFirstVisibleIndex = viewModel::trackIndex,
     )
 }
 
 @Composable
-fun SourceTable(
-    sources: List<SourceInfo>,
+fun PageTable(
+    pages: List<PageInfo>,
     searchText: String = "",
     scrollId: Long? = null,
     onSearch: ((String) -> Unit)? = null,
     onSorting: ((Sorting) -> Unit)? = null,
-    isNew: ((SourceInfo) -> Boolean )? = null,
+    isNew: ((PageInfo) -> Boolean )? = null,
     onFirstVisibleIndex: ((Int) -> Unit)? = null,
 ) {
     val uriHandler = LocalUriHandler.current
@@ -70,29 +70,29 @@ fun SourceTable(
     val nav = LocalNavigator.current
     DataTable(
         name = "Sources",
-        items = sources,
+        items = pages,
         isNew = isNew,
         onSorting = onSorting,
         searchText = searchText,
         onSearch = onSearch,
         scrollId = scrollId,
-        isSelected = { index, item -> index == item.sourceId},
-        getKey = { it.sourceId },
+        isSelected = { index, item -> index == item.pageId},
+        getKey = { it.pageId },
         glowFunction = { glowOverMin(it.seenAt) },
         onFirstVisibleIndex = onFirstVisibleIndex,
         columnGroups = listOf(
             columns(
                 TableColumn("Scr", 40, alpha = .8f, sort = DataSort.Score) { TextCell(it.score) },
-                TableColumn<SourceInfo>("headline", weight = 1f) { TextCell(it.headline ?: it.pageTitle) }
-                    .onClick(ToolTip("Go to source", TipType.Action)) { nav.go(SourceItemRoute(it.sourceId)) },
+                TableColumn<PageInfo>("headline", weight = 1f) { TextCell(it.headline ?: it.pageTitle) }
+                    .onClick(ToolTip("Go to source", TipType.Action)) { nav.go(PageItemRoute(it.pageId)) },
             ),
             columns(
-                TableColumn<SourceInfo>("url", alpha = .8f) { TextCell(it.url) }
+                TableColumn<PageInfo>("url", alpha = .8f) { TextCell(it.url) }
                     .onClick(ToolTip("Open in browser", TipType.Action)) { uriHandler.openUri(it.url) }
                     .addControl(TablerIcons.Copy, ToolTip("Copy Url", TipType.Action)) { clipboardManager.setRawText(it.url) },
             ),
             columns(
-                TableColumn<SourceInfo>("Host", weight = 1f) { TextCell(it.hostName ?: it.hostCore) }
+                TableColumn<PageInfo>("Host", weight = 1f) { TextCell(it.hostName ?: it.hostCore) }
                     .onClick(ToolTip("Go to host")) { /* todo: open host */ },
                 TableColumn("Words", 60, AlignCell.Right) { NumberCell(it.wordCount) },
                 TableColumn("Ds", 30, headerTip = ToolTip("Description")) { EmojiCell("📃", it.description) },
@@ -102,7 +102,7 @@ fun SourceTable(
                 TableColumn("pub", 60, AlignCell.Right) { DurationAgoCell(it.publishedAt) },
             ),
             columns(
-                TableColumn("Section", weight = 1f, alpha = .8f) { TextCell(it.section ?: "") },
+                TableColumn("Section", weight = 1f, alpha = .8f) { TextCell(it.metaSection ?: "") },
                 TableColumn("", 60) { },
                 TableColumn("seen", 60, AlignCell.Right, .8f, sort = DataSort.Time) { DurationAgoCell(it.seenAt) }
             )

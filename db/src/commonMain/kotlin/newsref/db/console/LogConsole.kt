@@ -5,6 +5,7 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import java.util.*
+import kotlin.reflect.KClass
 
 class LogConsole {
 	var config = ConsoleConfig()
@@ -38,6 +39,9 @@ class LogConsole {
 		handles.add(handle)
 		return handle
 	}
+
+	fun <T: Any> getHandle(type: KClass<T>, showStatus: Boolean = false) =
+		getHandle(type.simpleName ?: error("Must be named type"), showStatus)
 
 	fun log(message: String) = log("", LogLevel.INFO, message)
 

@@ -33,10 +33,10 @@ class ChapterWatcher(
         if (chapter == null) return
 
         val currentSources = service.readChapterSourceInfos(chapter.id)
-            .sortedBy { it.chapterSource.textDistance }
+            .sortedBy { it.chapterPage.textDistance }
             .take(25)
 
-        val headlines = currentSources.mapNotNull { signal -> signal.source.title }.joinToString("\n")
+        val headlines = currentSources.mapNotNull { signal -> signal.page.title }.joinToString("\n")
         if (headlines.isEmpty()) return
 
         val prompt = promptTemplate(
@@ -57,15 +57,15 @@ class ChapterWatcher(
         val chapter = service.readChapter(chapterId)
             ?: error("chapter with id doesn't exist: $chapterId")
         val currentSources = service.readNullRelevanceChapterSourceInfos(chapterId)
-            .sortedBy { it.chapterSource.textDistance }
+            .sortedBy { it.chapterPage.textDistance }
             .take(100)
-        val headlines = currentSources.filter { it.chapterSource.relevance == null }
-            .mapNotNull { signal -> signal.source.title?.replace("\n", "") }
+        val headlines = currentSources.filter { it.chapterPage.relevance == null }
+            .mapNotNull { signal -> signal.page.title?.replace("\n", "") }
         if (headlines.isEmpty()) return
 
-        val title = chapter.title ?: currentSources.filter { it.source.title != null }
-            .sortedBy { it.chapterSource.textDistance }
-            .firstOrNull()?.source?.title
+        val title = chapter.title ?: currentSources.filter { it.page.title != null }
+            .sortedBy { it.chapterPage.textDistance }
+            .firstOrNull()?.page?.title
 
         if (title == null) return
 
@@ -87,7 +87,7 @@ class ChapterWatcher(
             val relevance = when {
                 headline == null -> Relevance.Unsure
                 response.relevant.containsSimilar(headline) -> Relevance.Relevant
-                (it.chapterSource.textDistance ?: 1f) > CHAPTER_MAX_DISTANCE / 2 &&
+                (it.chapterPage.textDistance ?: 1f) > CHAPTER_MAX_DISTANCE / 2 &&
                         response.irrelevant.containsSimilar(headline) -> Relevance.Irrelevant
                 response.unsure.containsSimilar(headline) -> Relevance.Unsure
                 else -> Relevance.Unsure

@@ -30,8 +30,10 @@ private fun migrate(protocol: String, applyMigration: Boolean) {
 	TransactionManager.registerManager(db, PgVectorManager(TransactionManager.manager))
 
 	if (file.readText().isNotEmpty()) {
+		// custom sql
 		file.renameTo(File("${file.absolutePath}.sql"))
 	} else {
+		// generated sql
 		file.delete()
 		transaction {
 			exec("CREATE EXTENSION IF NOT EXISTS vector;")
@@ -45,12 +47,19 @@ private fun migrate(protocol: String, applyMigration: Boolean) {
 
 	if (!applyMigration) return
 
-	val flyway = Flyway.configure()
-		.dataSource(URL, USER, env.read(PASSWORD_KEY))
-		.locations("filesystem:$MIGRATIONS_DIRECTORY")
-		.baselineOnMigrate(isBaseline) // Used when migrating an existing database for the first time
-		.load()
-	flyway.migrate()
+	try {
+		val flyway = Flyway.configure()
+			.dataSource(URL, USER, env.read(PASSWORD_KEY))
+			.locations("filesystem:$MIGRATIONS_DIRECTORY")
+			.baselineOnMigrate(isBaseline) // Used when migrating an existing database for the first time
+			.load()
+		flyway.migrate()
+	} catch (e: Exception) {
+		println("Error: ${e.message}")
+		println("Recreating original file state")
+		File("${file.absolutePath}.sql").delete()
+		file.createNewFile()
+	}
 }
 
 const val MIGRATIONS_DIRECTORY = "../migrations/apply" // Location of migration scripts

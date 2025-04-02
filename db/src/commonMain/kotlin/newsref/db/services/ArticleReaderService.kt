@@ -3,6 +3,8 @@ package newsref.db.services
 import newsref.db.*
 import newsref.db.model.*
 import newsref.db.tables.*
+import newsref.db.utils.read
+import newsref.db.utils.updateById
 import newsref.model.core.*
 import org.jetbrains.exposed.sql.*
 import org.postgresql.geometric.PGpoint
@@ -10,21 +12,19 @@ import kotlin.time.Duration.Companion.days
 
 class ArticleReaderService : DbService() {
     suspend fun readNext() = dbQuery {
-        val subquery = NewsArticleTable.select(NewsArticleTable.pageId)
-        PageTable.select(PageTable.columns)
-            .where {
-                PageTable.type.eq(PageType.NewsArticle) and
-                        PageTable.existedSince(7.days) and
-                        PageTable.score.greaterEq(2) and
-                        PageTable.title.isNotNull() and
-                        PageTable.contentCount.greaterEq(READER_MIN_WORDS) and
-                        PageTable.id.notInSubQuery(subquery)
-            }
+        PageTable.read {
+            PageTable.contentType.eq(ContentType.NewsArticle) and
+                    PageTable.existedSince(7.days) and
+                    PageTable.score.greaterEq(2) and
+                    PageTable.title.isNotNull() and
+                    PageTable.contentWordCount.greaterEq(READER_MIN_WORDS) and
+                    PageTable.summary.isNull()
+        }
             .orderBy(PageTable.score, SortOrder.DESC_NULLS_LAST)
-            .firstOrNull()?.toSource()
+            .firstOrNull()?.toPage()
     }
 
-    suspend fun createNewsArticle(
+    suspend fun updateArticle(
         pageId: Long,
         locationId: Int?,
         summary: String?,
@@ -32,58 +32,13 @@ class ArticleReaderService : DbService() {
         category: NewsSection,
         articleType: ArticleType
     ) = dbQuery {
-        NewsArticleTable.insert {
-            it[this.pageId] = pageId
+        PageTable.updateById(pageId) {
             it[this.locationId] = locationId
             it[this.documentType] = documentType
             it[this.summary] = summary
             it[this.section] = category
             it[this.articleType] = articleType
         }
-    }
-
-    suspend fun readPeopleWithName(name: String) = dbQuery {
-        PersonTable.select(PersonTable.columns)
-            .where { PersonTable.name.eq(name)}
-            .map { it.toPerson() }
-    }
-
-    suspend fun linkPerson(pageId: Long, personId: Int) = dbQuery {
-        PagePersonTable.insert {
-            it[this.pageId] = pageId
-            it[this.personId] = personId
-        }
-    }
-
-    suspend fun createPerson(name: String, identifier: String) = dbQuery {
-        PersonTable.insertAndGetId {
-            it[this.name] = name
-            it[this.identifiers] = listOf(identifier)
-        }.value
-    }
-
-    suspend fun addIdentifier(personId: Int, identifier: String) = dbQuery {
-        val identifiers = PersonTable.select(PersonTable.identifiers)
-            .where { PersonTable.id.eq(personId) }
-            .firstOrNull()?.let { it[PersonTable.identifiers] } ?: emptyList()
-        PersonTable.update({PersonTable.id.eq(personId)}) {
-            it[this.identifiers] = identifiers + identifier
-        }
-    }
-
-    suspend fun readLocationId(name: String) = dbQuery {
-        LocationTable.select(LocationTable.id)
-            .where { LocationTable.name.lowerCase().eq(name.lowercase())}
-            .firstOrNull()?.let { it[LocationTable.id].value }
-    }
-
-    suspend fun createLocation(name: String, point: GeoPoint, northEast: GeoPoint, southWest: GeoPoint) = dbQuery {
-        LocationTable.insertAndGetId {
-            it[this.name] = name
-            it[this.geoPoint] = point.toPGpoint()
-            it[this.northEast] = northEast.toPGpoint()
-            it[this.southWest] = southWest.toPGpoint()
-        }.value
     }
 }
 

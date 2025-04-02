@@ -8,7 +8,7 @@ import newsref.app.blip.core.StateModel
 import newsref.dashboard.ChapterItemRoute
 import newsref.dashboard.utils.emptyImmutableList
 import newsref.db.model.Chapter
-import newsref.db.model.ChapterSourceInfo
+import newsref.db.model.ChapterPageInfo
 import newsref.db.model.NewsSourceType
 import newsref.db.services.*
 import newsref.model.core.DataSort
@@ -32,8 +32,8 @@ class ChapterItemModel(
     suspend fun refreshModel() {
         val chapter = chapterService.readChapter(stateNow.chapterId)
         val chapterSources = chapterWatcherService.readChapterSourceInfos(stateNow.chapterId)
-        val primarySources = chapterSources.filter { it.chapterSource.type == NewsSourceType.Primary }
-        val secondarySources = chapterSources.filter { it.chapterSource.type == NewsSourceType.Secondary }
+        val primarySources = chapterSources.filter { it.chapterPage.type == NewsSourceType.Primary }
+        val secondarySources = chapterSources.filter { it.chapterPage.type == NewsSourceType.Secondary }
         val children = chapterLinkerService.readChildren(stateNow.chapterId)
             .sortedBy { it.averageAt }
             .toImmutableList()
@@ -58,11 +58,11 @@ class ChapterItemModel(
         ) }
     }
 
-    private fun List<ChapterSourceInfo>.sort(sorting: Sorting) = when (sorting.first) {
-        DataSort.Id -> this.sortedByDirection(sorting.second) { it.chapterSource.id }
-        DataSort.Time -> this.sortedByDirection(sorting.second) { it.source.seenAt }
+    private fun List<ChapterPageInfo>.sort(sorting: Sorting) = when (sorting.first) {
+        DataSort.Id -> this.sortedByDirection(sorting.second) { it.chapterPage.id }
+        DataSort.Time -> this.sortedByDirection(sorting.second) { it.page.seenAt }
         DataSort.Name -> error("no name sorting provided")
-        DataSort.Score, null -> this.sortedByDirection(sorting.second) { it.chapterSource.distance ?: 0f }
+        DataSort.Score, null -> this.sortedByDirection(sorting.second) { it.chapterPage.distance ?: 0f }
     }.toImmutableList()
 }
 
@@ -70,8 +70,8 @@ data class ChapterItemState(
     val chapterId: Long,
     val chapter: Chapter? = null,
     val page: String? = null,
-    val primaries: List<ChapterSourceInfo> = emptyList(),
-    val secondaries: List<ChapterSourceInfo> = emptyList(),
+    val primaries: List<ChapterPageInfo> = emptyList(),
+    val secondaries: List<ChapterPageInfo> = emptyList(),
     val children: ImmutableList<Chapter> = emptyImmutableList(),
     val nextChildId : Long? = null
 )

@@ -23,22 +23,22 @@ import androidx.compose.ui.graphics.Color
 import androidx.lifecycle.viewmodel.compose.viewModel
 import coil3.compose.AsyncImage
 import newsref.dashboard.LocalNavigator
-import newsref.dashboard.SourceItemRoute
+import newsref.dashboard.PageItemRoute
 import newsref.dashboard.baseSpacing
 import newsref.dashboard.halfSpacing
 import newsref.dashboard.ui.controls.ScrollBox
 import newsref.dashboard.utils.SpeechPlayer
 import newsref.db.model.Content
-import newsref.db.model.Source
-import newsref.model.dto.SourceInfo
+import newsref.db.model.Page
+import newsref.model.dto.PageInfo
 
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
-fun SourceContentView(
-    source: Source,
+fun PageContentView(
+    page: Page,
     contents: List<Content>,
-    route: SourceItemRoute,
-    viewModel: SourceContentModel = viewModel { SourceContentModel(source, contents) }
+    route: PageItemRoute,
+    viewModel: PageContentModel = viewModel { PageContentModel(page, contents) }
 ) {
     val state by viewModel.state.collectAsState()
     val nav = LocalNavigator.current
@@ -53,7 +53,7 @@ fun SourceContentView(
                 verticalArrangement = Arrangement.spacedBy(halfSpacing)
             ) {
                 Spacer(modifier = Modifier.height(baseSpacing))
-                source.imageUrl?.let {
+                page.imageUrl?.let {
                     AsyncImage(
                         model = it,
                         contentDescription = null,
@@ -95,10 +95,10 @@ fun SourceContentView(
     }
 }
 
-fun List<Long>.createSpeakRoute(): SourceItemRoute? {
+fun List<Long>.createSpeakRoute(): PageItemRoute? {
     if (this.isEmpty()) return null
     val next = this.first()
-    return SourceItemRoute(sourceId = next, pageName = "Content", nextSpeakContent = this - next)
+    return PageItemRoute(pageId = next, pageName = "Content", nextSpeakContent = this - next)
 }
 
-fun List<SourceInfo>.toSpeakRoute() = this.map { it.sourceId }.createSpeakRoute()
+fun List<PageInfo>.toSpeakRoute() = this.map { it.pageId }.createSpeakRoute()

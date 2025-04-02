@@ -1,0 +1,1 @@
+At this time, ChapterComposer looks for news articles that have summaries or referenced sources that have a high visibility, and then the news articles that link to them. It is guaranteed to find a summary for the news articles it finds based on visibility but not the ones that it finds through a high visibility referenced source. Perhaps it could  

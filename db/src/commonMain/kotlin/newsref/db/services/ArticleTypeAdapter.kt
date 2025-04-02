@@ -1,7 +1,10 @@
 package newsref.db.services
 
 import newsref.db.model.Huddle
-import newsref.db.tables.NewsArticleTable
+import newsref.db.tables.PageTable
+import newsref.db.utils.readById
+import newsref.db.utils.readFirst
+import newsref.db.utils.updateById
 import newsref.model.core.ArticleType
 import newsref.model.core.HuddleType
 import newsref.model.data.HuddleKey
@@ -24,16 +27,16 @@ object ArticleTypeAdapter : HuddleAdapter(HuddleType.EditArticleType) {
 
     override suspend fun updateDatabase(consensus: String, huddle: Huddle) {
         val value = ArticleType.valueOf(consensus)
-        NewsArticleTable.update({ NewsArticleTable.pageId.eq(huddle.pageId) }) {
+        PageTable.updateById(huddle.pageId) {
             it[articleType] = value
             it[articleTypeHuddleId] = huddle.id
         }
     }
 
     override suspend fun readCurrentValue(key: HuddleKey) =
-        NewsArticleTable.select(NewsArticleTable.articleType)
-            .where { NewsArticleTable.pageId.eq(key.pageId) }
-            .first()[NewsArticleTable.articleType].name
+        key.pageId?.let {
+            PageTable.readById(it, listOf(PageTable.articleType))[PageTable.articleType].name
+        } ?: error("Key must have a pageId")
 
     override suspend fun readGuide(key: HuddleKey) = "[Placeholder for EditArticleType Guide]"
 }

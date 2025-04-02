@@ -15,8 +15,8 @@ private val defaultNarrator = Narrator(
 
 private val initialTaskWithPrimary = File("../docs/narrator-initial-task-with-primary.txt")
 
-// val originContent = contentService.readSourceContentText(origin.id)
-//        val centralContent = contentService.readSourceContentText(centralSource.id)
+// val originContent = contentService.readPageContentText(origin.id)
+//        val centralContent = contentService.readPageContentText(centralSource.id)
 //        val initialTask = buildString {
 //            appendLine(narrator.bio)
 //            if (originContent.isNotEmpty()) {

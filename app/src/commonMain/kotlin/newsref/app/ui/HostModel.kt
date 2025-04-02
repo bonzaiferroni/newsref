@@ -18,7 +18,7 @@ class HostModel(
         viewModelScope.launch {
             val host = store.readHost(route.hostId)
             val sources = store.readHostSources(route.hostId, Clock.System.now() - 1.days)
-                .sortedWith(compareBy<SourceBit> { it.feedPosition }
+                .sortedWith(compareBy<PageBit> { it.feedPosition }
                     .thenByDescending { it.score }
                     .thenByDescending { it.existedAt })
                 .toImmutableList()
@@ -35,6 +35,6 @@ class HostModel(
 data class HostState(
     val host: Host? = null,
     val tab: String? = null,
-    val sources: ImmutableList<SourceBit> = persistentListOf(),
+    val sources: ImmutableList<PageBit> = persistentListOf(),
     val feeds: ImmutableList<Feed> = persistentListOf(),
 )

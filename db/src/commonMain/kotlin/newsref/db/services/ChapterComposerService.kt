@@ -16,22 +16,21 @@ private val console = globalConsole.getHandle("ChapterComposerService")
 
 class ChapterComposerService : DbService() {
     suspend fun findNextSignal(excludedIds: List<Long>) = dbQuery {
-        val subquery = ChapterSourceTable.select(ChapterSourceTable.sourceId)
-        PageTable.select(PageTable.columns).where {
+        val subquery = ChapterPageTable.select(ChapterPageTable.pageId)
+        PageTable.read {
                 PageTable.score.greaterEq(2) and
                         PageTable.id.notInList(excludedIds) and
                         PageTable.id.notInSubQuery(subquery) and
-                        (PageTable.type.neq(PageType.NewsArticle) or
-                                PageTable.contentCount.greaterEq(EMBEDDING_MIN_WORDS))
+                        (PageTable.contentType.neq(ContentType.NewsArticle) or PageTable.summary.isNotNull())
             }
             .orderBy(PageTable.seenAt, SortOrder.DESC)
             .firstOrNull()?.toChapterSignal()
     }
 
-    suspend fun findTextRelatedChapters(chapterId: Long, sourceIds: List<Long>, vector: FloatArray) = dbQuery {
+    suspend fun findTextRelatedChapters(chapterId: Long, pageIds: List<Long>, vector: FloatArray) = dbQuery {
         val distance = ChapterTable.vector.cosineDistance(vector).alias("cosine_distance")
         val subquery = ChapterExclusionTable.select(ChapterExclusionTable.chapterId).where {
-                ChapterExclusionTable.chapterId.eq(chapterId) and ChapterExclusionTable.sourceId.inList(sourceIds)
+                ChapterExclusionTable.chapterId.eq(chapterId) and ChapterExclusionTable.pageId.inList(pageIds)
             }
         ChapterTable.select(ChapterAspect.columns + distance)
             .where {
@@ -44,11 +43,11 @@ class ChapterComposerService : DbService() {
     }
 
     suspend fun readChapterSourceSignals(chapterId: Long) = dbQuery {
-        ChapterSourceTable.leftJoin(PageTable)
-            .select(PageTable.columns + ChapterSourceTable.columns)
+        ChapterPageTable.leftJoin(PageTable)
+            .select(PageTable.columns + ChapterPageTable.columns)
             .where {
-                ChapterSourceTable.chapterId.eq(chapterId) and
-                        ChapterSourceTable.type.eq(SourceType.Article)
+                ChapterPageTable.chapterId.eq(chapterId) and
+                        ChapterPageTable.type.eq(SourceType.Article)
             }
             .map { it.toChapterSignal() }
     }
@@ -59,7 +58,7 @@ class ChapterComposerService : DbService() {
         size: Int,
         cohesion: Float,
         happenedAt: Instant,
-        sources: List<ChapterSource>,
+        sources: List<ChapterPage>,
         vector: FloatArray,
     ) = dbQuery {
         ChapterTable.update({ ChapterTable.id.eq(chapterId) }) {
@@ -76,15 +75,15 @@ class ChapterComposerService : DbService() {
         updateAndTrimSources(chapterId, sources)
     }
 
-    fun Transaction.updateAndTrimSources(chapterId: Long, sources: List<ChapterSource>) {
-        val sourceIds = sources.map { it.sourceId }
-        ChapterSourceTable.deleteWhere {
-            ChapterSourceTable.chapterId.eq(chapterId) and sourceId.notInList(sourceIds)
+    fun Transaction.updateAndTrimSources(chapterId: Long, sources: List<ChapterPage>) {
+        val pageIds = sources.map { it.pageId }
+        ChapterPageTable.deleteWhere {
+            ChapterPageTable.chapterId.eq(chapterId) and pageId.notInList(pageIds)
         }
         for (source in sources) {
-            ChapterSourceTable.upsert(ChapterSourceTable.chapterId, ChapterSourceTable.sourceId) {
-                it[ChapterSourceTable.chapterId] = chapterId
-                it[sourceId] = source.sourceId
+            ChapterPageTable.upsert(ChapterPageTable.chapterId, ChapterPageTable.pageId) {
+                it[ChapterPageTable.chapterId] = chapterId
+                it[pageId] = source.pageId
                 it[type] = source.type
                 it[distance] = source.distance
                 it[linkDistance] = source.linkDistance
@@ -98,7 +97,7 @@ class ChapterComposerService : DbService() {
         ChapterTable.deleteWhere { ChapterTable.id.eq(chapterId) }
     }
 
-    suspend fun createChapter(chapter: Chapter, sources: List<ChapterSource>, vector: FloatArray) = dbQuery {
+    suspend fun createChapter(chapter: Chapter, sources: List<ChapterPage>, vector: FloatArray) = dbQuery {
         val chapterId = ChapterTable.insertAndGetId {
             it.fromModel(chapter)
             it[ChapterTable.vector] = vector
@@ -107,36 +106,36 @@ class ChapterComposerService : DbService() {
         chapterId
     }
 
-    suspend fun readInboundSignals(sourceId: Long) = dbQuery {
-        LinkTable.leftJoin(LeadTable).join(PageTable, JoinType.LEFT, LinkTable.sourceId, PageTable.id)
+    suspend fun readInboundSignals(pageId: Long) = dbQuery {
+        LinkTable.leftJoin(LeadTable).join(PageTable, JoinType.LEFT, LinkTable.pageId, PageTable.id)
             .select(PageTable.columns)
-            .where { LeadTable.sourceId.eq(sourceId) and PageTable.contentCount.greaterEq(EMBEDDING_MIN_WORDS) }
+            .where { LeadTable.pageId.eq(pageId) and PageTable.contentWordCount.greaterEq(EMBEDDING_MIN_WORDS) }
             .map { it.toChapterSignal() }
     }
 
-    suspend fun readChapterSources(sourceId: Long) = dbQuery {
-        ChapterSourceTable.select(ChapterSourceTable.columns)
-            .where { ChapterSourceTable.sourceId.eq(sourceId) }
+    suspend fun readChapterSources(pageId: Long) = dbQuery {
+        ChapterPageTable.select(ChapterPageTable.columns)
+            .where { ChapterPageTable.pageId.eq(pageId) }
             .map { it.toChapterSource() }
     }
 }
 
 internal fun ResultRow.toChapterSignal() = this.let {
-    val source = this.toSource()
+    val source = this.toPage()
     val chapterSource = when {
-        this.getOrNull(ChapterSourceTable.id) != null -> this.toChapterSource()
+        this.getOrNull(ChapterPageTable.id) != null -> this.toChapterSource()
         else -> null
     }
-    val outboundIds = LinkTable.leftJoin(LeadTable).select(LeadTable.sourceId)
+    val outboundIds = LinkTable.leftJoin(LeadTable).select(LeadTable.pageId)
         .where {
-            LinkTable.sourceId.eq(source.id) and
+            LinkTable.pageId.eq(source.id) and
                     LinkTable.isExternal.eq(true) and
-                    LeadTable.sourceId.isNotNull()
+                    LeadTable.pageId.isNotNull()
         }
-        .groupBy(LeadTable.sourceId)
-        .map { it[LeadTable.sourceId]!!.value }
+        .groupBy(LeadTable.pageId)
+        .map { it[LeadTable.pageId]!!.value }
         .toSet()
-    ChapterSourceSignal(source, chapterSource, outboundIds)
+    ChapterPageSignal(source, chapterSource, outboundIds)
 }
 
 const val CHAPTER_MIN_ARTICLES = 3
@@ -145,9 +144,9 @@ const val CHAPTER_MAX_DISTANCE = .4f
 const val CHAPTER_MERGE_FACTOR = .75f
 val CHAPTER_EPOCH = 5.days
 
-data class ChapterSourceSignal(
-    val source: Source,
-    val chapterSource: ChapterSource?,
+data class ChapterPageSignal(
+    val page: Page,
+    val chapterPage: ChapterPage?,
     val linkIds: Set<Long>
 )
 

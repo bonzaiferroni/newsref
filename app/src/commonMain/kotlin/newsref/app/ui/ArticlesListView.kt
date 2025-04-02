@@ -17,14 +17,14 @@ import kotlinx.collections.immutable.toImmutableList
 import newsref.app.blip.controls.ButtonToggle
 import newsref.app.blip.core.StateModel
 import newsref.app.blip.theme.Blip
-import newsref.app.model.SourceBit
+import newsref.app.model.PageBit
 import newsref.model.core.ArticleType
 
 @OptIn(ExperimentalLayoutApi::class)
 @Composable
-fun SourcesListView(
-    articles: ImmutableList<SourceBit>,
-    viewModelKey: String = "SourcesListView",
+fun PagesListView(
+    articles: ImmutableList<PageBit>,
+    viewModelKey: String = "PagesListView",
     chapterId: Long? = null,
     viewModel: ArticlesListModel = viewModel(key = viewModelKey) { ArticlesListModel(articles) }
 ) {
@@ -49,8 +49,8 @@ fun SourcesListView(
     LazyColumn(
     ) {
         items(state.filteredArticles) {
-            SourceBitItem(
-                source = it,
+            PageBitItem(
+                page = it,
                 chapterId = chapterId,
                 modifier = Modifier.animateItem()
             )
@@ -59,7 +59,7 @@ fun SourcesListView(
 }
 
 class ArticlesListModel(
-    private val articles: List<SourceBit>
+    private val articles: List<PageBit>
 ): StateModel<ArticlesListState>(ArticlesListState()) {
 
     init {
@@ -107,5 +107,5 @@ data class ArticlesListState(
     val analysisCount: Int = 0,
     val investigationCount: Int = 0,
     val unknownCount: Int = 0,
-    val filteredArticles: ImmutableList<SourceBit> = persistentListOf()
+    val filteredArticles: ImmutableList<PageBit> = persistentListOf()
 )

@@ -55,33 +55,10 @@ class HostAgent(
 
     suspend fun updateParameters(host: Host, navParams: Set<String>?, junkParams: Set<String>?): Host {
         if (navParams == null && junkParams == null) return host
-        return hostService.updateParameters(host, navParams, junkParams)
+        return hostService.updateParameters(host.id, navParams, junkParams)
     }
 
     private fun fetchRedirectUrl(url: Url) =
         web.fetchRedirect(url).takeIf { it.isRedirect() }?.redirectHref?.toUrlOrNull()
 }
-
-
-//        console.logPartial(url.domain.toBlue())
-
-//        val redirectUrl = fetchRedirectUrl(url)
-//        if (redirectUrl != null && redirectUrl.core != url.core) {
-//            console.finishPartial("found redirect: \n${redirectUrl}")
-//            val host = hostService.findByUrl(url)
-//            if (host == null) {
-//                hostService.createHost(
-//                    url = url, robotsTxt = null, isRedirect = true, bannedPaths = emptySet()
-//                )
-//            }
-//            return createHost(redirectUrl)
-//        }
-
-//        val robotsUrl = url.getRobotsTxtUrl()
-//        val result = web.fetch(robotsUrl, false)
-
-//        val robotsTxt = result.let{ if (it.isSuccess()) it.doc?.text else null }
-//        val disallowed = robotsTxt?.let { parseRobotsTxt(it) } ?: emptySet()
-//        val everythingDisallowed = disallowed.contains("/")
-//        console.finishPartial("${disallowed.size} disallowed ${if (everythingDisallowed) "(everything)" else ""}")
 

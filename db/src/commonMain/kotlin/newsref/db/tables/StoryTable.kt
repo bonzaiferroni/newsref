@@ -18,7 +18,7 @@ object StoryTable : LongIdTable("story") {
     val score = integer("score")
     val coherence = float("coherence")
     val happenedAt = datetime("happened_at")
-    val vector = vector("vector", 1536)
+    val vector = vector("vector", 768)
 }
 
 internal fun ResultRow.toStory() = Story(

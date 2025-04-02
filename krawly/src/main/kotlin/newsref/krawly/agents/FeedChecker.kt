@@ -10,13 +10,13 @@ import newsref.krawly.SpiderWeb
 import newsref.db.console.underline
 import newsref.db.services.CreateLeadResult
 import newsref.db.services.LeadService
-import newsref.db.services.SourceService
+import newsref.db.services.PageService
 import newsref.krawly.utils.isLikelyAd
 import newsref.krawly.utils.tryGetHrefOrChild
 import newsref.krawly.utils.tryGetHrefOrParent
-import newsref.model.core.PageType
+import newsref.model.core.ContentType
 import newsref.db.core.toUrlWithContextOrNull
-import newsref.db.model.FeedSource
+import newsref.db.model.FeedPage
 import newsref.db.model.LeadJob
 import kotlin.math.pow
 import kotlin.time.Duration.Companion.days
@@ -31,7 +31,7 @@ class FeedChecker(
     private val hostAgent: HostAgent,
     private val leadMaker: LeadMaker,
     private val feedService: FeedService = FeedService(),
-    private val sourceService: SourceService = SourceService(),
+    private val pageService: PageService = PageService(),
     private val leadService: LeadService = LeadService(),
     private val anchorFinder: AnchorFinder = AnchorFinder(),
 ) {
@@ -53,7 +53,7 @@ class FeedChecker(
 
         val messages = mutableListOf<ConsoleMessage>()
         for (feed in feeds) {
-            val feedSources = mutableListOf<FeedSource>()
+            val feedPages = mutableListOf<FeedPage>()
             val hrefs = mutableSetOf<String>()
             var new = 0
             if (feed.debug)
@@ -85,10 +85,10 @@ class FeedChecker(
                     console.log("$linkCount: ${headline.take(30)} // ${url.path.take(30)}")
                 val (host, hostUrl) = hostAgent.getHost(url)
                 // todo: block from robots.txt
-                val source = sourceService.readSourceByUrl(url)
+                val source = pageService.readSourceByUrl(url)
                 if (source != null) {
-                    if (source.type == PageType.NewsArticle && now - source.existedAt < FAMILIAR_HREF_INTERVAL) {
-                        feedSources.add(FeedSource(feedId = feed.id, sourceId = source.id, position = linkCount))
+                    if (source.type == ContentType.NewsArticle && now - source.existedAt < FAMILIAR_HREF_INTERVAL) {
+                        feedPages.add(FeedPage(feedId = feed.id, pageId = source.id, position = linkCount))
                         linkCount++
                     }
                     continue
@@ -116,7 +116,7 @@ class FeedChecker(
                 new == 0 -> 1.hours
                 else -> 15.minutes
             }
-            feedService.updateFromCheck(feed, now + delay, linkCount, feedSources)
+            feedService.updateFromCheck(feed, now + delay, linkCount, feedPages)
         }
         messages.forEach {
             console.cell(it.core, 20, "core", Justify.LEFT).cell(it.new, 5, "new").cell(it.links, 5, "links")

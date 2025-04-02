@@ -6,13 +6,13 @@ import newsref.model.data.HuddleResponseSeed
 import newsref.model.dto.ArticleDto
 import newsref.model.dto.AuthDto
 import newsref.model.dto.ChapterPackDto
-import newsref.model.dto.ChapterSourceDto
+import newsref.model.dto.ChapterPageDto
 import newsref.model.dto.FeedDto
 import newsref.model.dto.HostDto
 import newsref.model.dto.HuddleContentDto
 import newsref.model.dto.HuddleResponseDto
 import newsref.model.dto.PrivateInfo
-import newsref.model.dto.SourceBitDto
+import newsref.model.dto.PageBitDto
 import newsref.model.dto.UserDto
 
 object Api : ParentEndpoint(null, "/api/v1") {
@@ -22,7 +22,7 @@ object Api : ParentEndpoint(null, "/api/v1") {
         object GetArticleById : GetByIdEndpoint<ArticleDto>(this)
     }
 
-    object ChapterSources : GetEndpoint<ChapterSourceDto>(this, "/chapter_sources") {
+    object ChapterPages : GetEndpoint<ChapterPageDto>(this, "/chapter_pages") {
         val pageId = addLongParam("pageId")
         val chapterId = addLongParam("chapterId")
     }
@@ -35,7 +35,7 @@ object Api : ParentEndpoint(null, "/api/v1") {
             val core = addStringParam("core")
         }
         object GetHostById : GetByIdEndpoint<HostDto>(this)
-        object GetHostSources : GetByIdEndpoint<List<SourceBitDto>>(this, "/source") {
+        object GetHostPages : GetByIdEndpoint<List<PageBitDto>>(this, "/page") {
             val start = addInstantParam("start")
         }
     }

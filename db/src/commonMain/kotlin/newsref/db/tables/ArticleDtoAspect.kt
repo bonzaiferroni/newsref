@@ -6,23 +6,23 @@ import newsref.model.dto.ArticleDto
 import org.jetbrains.exposed.sql.ResultRow
 
 object ArticleDtoAspect : Aspect<ArticleDtoAspect, ArticleDto>(
-    PageTable.leftJoin(NewsArticleTable).leftJoin(ArticleTable),
+    PageTable,
     ResultRow::toSourceDto
 ) {
     val pageId = add(PageTable.id)
     val hostId = add(PageTable.hostId)
     val url = add(PageTable.url)
     val title = add(PageTable.title)
-    val headline = add(ArticleTable.headline)
-    val type = add(PageTable.type)
+    val headline = add(PageTable.headline)
+    val type = add(PageTable.contentType)
     val score = add(PageTable.score)
     val imageUrl = add(PageTable.imageUrl)
     val thumbnail = add(PageTable.thumbnail)
     val embed = add(PageTable.embed)
-    val wordCount = add(ArticleTable.wordCount)
-    val summary = add(NewsArticleTable.summary)
-    val newsType = add(NewsArticleTable.articleType)
-    val articleTypeHuddleId = add(NewsArticleTable.articleTypeHuddleId)
+    val wordCount = add(PageTable.wordCount)
+    val summary = add(PageTable.summary)
+    val newsType = add(PageTable.articleType)
+    val articleTypeHuddleId = add(PageTable.articleTypeHuddleId)
     val seenAt = add(PageTable.seenAt)
     val accessedAt = add(PageTable.accessedAt)
     val publishedAt = add(PageTable.publishedAt)

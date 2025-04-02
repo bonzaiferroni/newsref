@@ -2,11 +2,8 @@ package newsref.krawly.agents
 
 import kotlinx.coroutines.*
 import newsref.db.*
-import newsref.db.model.Huddle
 import newsref.db.services.*
 import newsref.krawly.clients.GeminiClient
-import newsref.model.core.ArticleType
-import newsref.model.core.HuddleType.*
 import kotlin.time.Duration.Companion.hours
 
 private val console = globalConsole.getHandle("HuddleRunner")
@@ -14,7 +11,7 @@ private val console = globalConsole.getHandle("HuddleRunner")
 class HuddleCompleter(
     private val client: GeminiClient,
     private val service: HuddleCompleterService = HuddleCompleterService(),
-    private val articleService: NewsArticleService = NewsArticleService(),
+    private val articleService: ArticleService = ArticleService(),
 ) {
     fun start() {
         CoroutineScope(Dispatchers.IO).launch {

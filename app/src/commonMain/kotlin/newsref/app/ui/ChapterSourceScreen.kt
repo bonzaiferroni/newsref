@@ -7,13 +7,12 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import newsref.app.*
 import newsref.app.blip.controls.*
 import newsref.app.blip.theme.Blip
-import newsref.app.io.LocalUserContext
 import newsref.app.model.*
 
 @Composable
-fun ChapterSourceScreen(
-    route: ChapterSourceRoute,
-    viewModel: ChapterSourceModel = viewModel { ChapterSourceModel(route) }
+fun ChapterPageScreen(
+    route: ChapterPageRoute,
+    viewModel: ChapterPageModel = viewModel { ChapterPageModel(route) }
 ) {
     val state by viewModel.state.collectAsState()
     val chapter = state.chapter
@@ -28,16 +27,16 @@ fun ChapterSourceScreen(
             height = 400.dp,
             onClickBalloon = viewModel::selectSource
         )
-        val chapterSource = state.chapterSource
+        val chapterSource = state.chapterPage
         val article = state.article
         val host = state.host
         if (chapterSource == null || article == null || host == null) return@Column
 
         val height = 130f
-        ChapterSourceHeader(
+        ChapterPageHeader(
             height = height,
             article = article,
-            chapterSource = chapterSource,
+            chapterPage = chapterSource,
             host = host,
             chapter = chapter
         )

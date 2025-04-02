@@ -19,7 +19,7 @@ val appConfig = BlipConfig(
         routeScreen<HelloRoute> { HelloScreen(it) }
         routeScreen<ChapterFeedRoute> { ChapterFeedScreen(it) }
         routeScreen<ChapterRoute> { ChapterScreen(it) }
-        routeScreen<ChapterSourceRoute> { ChapterSourceScreen(it) }
+        routeScreen<ChapterPageRoute> { ChapterPageScreen(it) }
         routeScreen<HostFeedRoute> { HostFeedScreen(it) }
         routeScreen<HostRoute> { HostScreen(it) }
     },

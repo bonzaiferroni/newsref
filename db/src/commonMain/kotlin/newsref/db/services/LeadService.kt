@@ -7,6 +7,8 @@ import newsref.db.utils.sameUrl
 import newsref.db.core.CheckedUrl
 import newsref.db.core.Url
 import newsref.db.model.LeadJob
+import newsref.db.utils.readFirstOrNull
+import newsref.db.utils.toLocalDateTimeUtc
 import org.jetbrains.exposed.sql.*
 import org.jetbrains.exposed.sql.SqlExpressionBuilder.isNull
 
@@ -15,7 +17,7 @@ private val console = globalConsole.getHandle("LeadService")
 class LeadService : DbService() {
 
     suspend fun getOpenLeads(limit: Int = 20000) = dbQuery {
-        leadInfoJoin.where(LeadTable.sourceId.isNull())
+        leadInfoJoin.where(LeadTable.pageId.isNull())
             .orderBy(linkCountAlias, SortOrder.DESC)
             .orderBy(LeadJobTable.isExternal, SortOrder.DESC)
             .orderBy(LeadJobTable.freshAt, SortOrder.DESC_NULLS_LAST)
@@ -25,25 +27,31 @@ class LeadService : DbService() {
     }
 
     suspend fun createOrLinkLead(url: CheckedUrl, leadJob: LeadJob?, createIfFresh: Boolean) = dbQuery {
-        var leadRow = LeadRow.find(LeadTable.url.sameUrl(url)).firstOrNull()
-        if (leadRow != null) {
+        val lead = LeadTable.readFirstOrNull { it.url.sameUrl(url) }?.toLead()
+        if (lead != null) {
             // assign lead to links that might already exist from other sources
-            val affirmed = LinkRow.setLeadOnSameLinks(url, leadRow)
+            val affirmed = LinkTable.setLeadOnSameLinks(url, lead.id)
             return@dbQuery if (affirmed) CreateLeadResult.AFFIRMED else CreateLeadResult.IRRELEVANT
         }
         if (!createIfFresh) return@dbQuery CreateLeadResult.IRRELEVANT
 
-        leadRow = LeadRow.createOrUpdateAndLink(url)
+        val leadId = LeadTable.createOrUpdateAndLink(url)
 
         leadJob?.let { job ->
-            val feedRow = job.feedId?.let { FeedRow[it] }
-            LeadJobRow.new { fromModel(leadJob, leadRow, feedRow) }
+            LeadJobTable.insert {
+                it[this.leadId] = leadId
+                it[this.feedId] = job.feedId
+                it[this.headline] = job.headline
+                it[this.isExternal] = job.isExternal
+                it[this.freshAt] = job.freshAt?.toLocalDateTimeUtc()
+                it[this.feedPosition] = job.feedPosition
+            }
         }
         CreateLeadResult.CREATED // return
     }
 
     suspend fun getResultsByHost(hostId: Int, limit: Int) = dbQuery {
-        LeadResultRow.getHostResults(hostId, limit)
+        LeadResultTable.getHostResults(hostId, limit)
     }
 
     suspend fun getLeadsFromFeed(feedId: Int) = dbQuery {
@@ -62,8 +70,6 @@ class LeadService : DbService() {
             .toLeadInfos().firstOrNull()
     }
 }
-
-class LeadExistsException(url: CheckedUrl) : IllegalArgumentException("Lead already exists: $url")
 
 // lead info
 

@@ -11,7 +11,7 @@ import newsref.app.*
 import newsref.app.blip.controls.*
 import newsref.app.blip.nav.LocalNav
 import newsref.app.blip.theme.Blip
-import newsref.app.model.SourceBit
+import newsref.app.model.PageBit
 import newsref.model.utils.formatSpanLong
 
 @Composable
@@ -37,18 +37,18 @@ fun ChapterScreen(
                 ChapterPropertyRow(chapter)
             }
             Tab("Articles", false) {
-                SourcesListView(state.articles, "articles", chapter.id)
+                PagesListView(state.articles, "articles", chapter.id)
             }
             Tab("References", false) {
-                SourcesListView(state.references, "references", chapter.id)
+                PagesListView(state.references, "references", chapter.id)
             }
         }
     }
 }
 
 @Composable
-fun SourceBitItem(
-    source: SourceBit,
+fun PageBitItem(
+    page: PageBit,
     chapterId: Long? = null,
     modifier: Modifier = Modifier,
 ) {
@@ -58,14 +58,14 @@ fun SourceBitItem(
         modifier = modifier
             .clickable {
                 if (chapterId != null)
-                    nav.go(ChapterSourceRoute(chapterId, source.id, source.headline))
+                    nav.go(ChapterPageRoute(chapterId, page.id, page.headline))
             }
             .padding(vertical = Blip.ruler.innerSpacing)
     ) {
-        val color = Blip.colors.getSwatchFromIndex(source.id)
+        val color = Blip.colors.getSwatchFromIndex(page.id)
         ShapeImage(
             color = color,
-            url = source.imageUrl,
+            url = page.imageUrl,
             padding = PaddingValues(1.dp),
             modifier = Modifier.height(48.dp)
         )
@@ -75,9 +75,9 @@ fun SourceBitItem(
                 horizontalArrangement = Blip.ruler.rowTight
             ) {
                 val uriHandler = LocalUriHandler.current
-                H4(source.headline ?: "source: ${source.id}", maxLines = 2, modifier = Modifier.weight(1f))
+                H4(page.headline ?: "source: ${page.id}", maxLines = 2, modifier = Modifier.weight(1f))
                 Button(
-                    onClick = { uriHandler.openUri(source.url) },
+                    onClick = { uriHandler.openUri(page.url) },
                     background = Blip.colors.accent
                 ) { Text("Read") }
             }
@@ -85,8 +85,8 @@ fun SourceBitItem(
                 horizontalArrangement = Arrangement.SpaceBetween,
                 modifier = Modifier.fillMaxWidth()
             ) {
-                Label("${source.articleType.title} from ${source.existedAt.formatSpanLong()}, visibility: ${source.score}")
-                Label(source.hostCore)
+                Label("${page.articleType.title} from ${page.existedAt.formatSpanLong()}, visibility: ${page.score}")
+                Label(page.hostCore)
             }
         }
     }

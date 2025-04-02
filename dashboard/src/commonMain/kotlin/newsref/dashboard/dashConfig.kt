@@ -12,8 +12,8 @@ import newsref.dashboard.ui.screens.FeedTableScreen
 import newsref.dashboard.ui.screens.HelloScreen
 import newsref.dashboard.ui.screens.HostItemScreen
 import newsref.dashboard.ui.screens.HostTableScreen
-import newsref.dashboard.ui.screens.SourceItemScreen
-import newsref.dashboard.ui.screens.SourceTableScreen
+import newsref.dashboard.ui.screens.PageItemScreen
+import newsref.dashboard.ui.screens.PageTableScreen
 import newsref.dashboard.ui.screens.StartScreen
 import newsref.dashboard.ui.screens.StoryItemScreen
 import newsref.dashboard.ui.screens.StoryTableScreen
@@ -22,8 +22,8 @@ val dashConfig = BlipConfig(
     name = "Dashboard",
     navGraph = {
         routeScreen<StartRoute> { StartScreen(it) }
-        routeScreen<SourceTableRoute> { SourceTableScreen(it) }
-        routeScreen<SourceItemRoute> { SourceItemScreen(it) }
+        routeScreen<PageTableRoute> { PageTableScreen(it) }
+        routeScreen<PageItemRoute> { PageItemScreen(it) }
         routeScreen<FeedTableRoute> { FeedTableScreen(it) }
         routeScreen<HelloRoute> { HelloScreen(it) }
         routeScreen<FeedItemRoute> { FeedItemScreen(it) }

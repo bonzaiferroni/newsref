@@ -17,14 +17,14 @@ data class FeedTableRoute(val page: String? = null) : DashRoute("Feed Table")
 data class HelloRoute(val name: String) : DashRoute("Hello")
 
 @Serializable
-data class SourceItemRoute(
-    val sourceId: Long,
+data class PageItemRoute(
+    val pageId: Long,
     val pageName: String = "",
     val nextSpeakContent: List<Long>? = null
 ) : DashRoute("Source Item")
 
 @Serializable
-object SourceTableRoute : DashRoute("Sources")
+object PageTableRoute : DashRoute("Pages")
 
 @Serializable
 data class StartRoute(val days: Int = 7) : DashRoute("Start")

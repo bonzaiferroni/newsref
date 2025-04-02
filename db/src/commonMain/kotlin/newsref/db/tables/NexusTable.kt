@@ -5,24 +5,13 @@ import org.jetbrains.exposed.dao.EntityClass
 import org.jetbrains.exposed.dao.IntEntity
 import org.jetbrains.exposed.dao.id.EntityID
 import org.jetbrains.exposed.dao.id.IntIdTable
+import org.jetbrains.exposed.sql.ResultRow
 
 internal object NexusTable : IntIdTable("nexus") {
 	val name = text("name")
 }
 
-internal class NexusRow(id: EntityID<Int>) : IntEntity(id) {
-	companion object : EntityClass<Int, NexusRow>(NexusTable)
-
-	var name by NexusTable.name
-
-	val hosts by HostRow optionalReferrersOn HostTable.nexusId
-}
-
-internal fun NexusRow.toModel() = Nexus(
-	id = this.id.value,
-	name = this.name,
+internal fun ResultRow.toNexus() = Nexus(
+	id = this[NexusTable.id].value,
+	name = this[NexusTable.name],
 )
-
-internal fun NexusRow.fromModel(nexus: Nexus) {
-	name = nexus.name
-}

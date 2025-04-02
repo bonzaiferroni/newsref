@@ -1,11 +1,11 @@
 package newsref.db.tables
 
 import newsref.db.utils.toInstantUtc
-import newsref.model.dto.SourceInfo
+import newsref.model.dto.PageInfo
 import org.jetbrains.exposed.sql.ResultRow
 
 // sourceInfo
-internal val sourceInfoColumns = listOf(
+internal val pageInfoColumns = listOf(
     PageTable.id,
     PageTable.url,
     PageTable.title,
@@ -17,18 +17,18 @@ internal val sourceInfoColumns = listOf(
     HostTable.core,
     HostTable.name,
     HostTable.logo,
-    ArticleTable.headline,
-    ArticleTable.description,
-    ArticleTable.wordCount,
-    ArticleTable.section,
+    PageTable.headline,
+    PageTable.description,
+    PageTable.wordCount,
+    PageTable.section,
     NoteTable.body
 )
 
-val sourceInfoTables get () = PageTable.leftJoin(ArticleTable).leftJoin(HostTable).leftJoin(NoteTable)
-    .select(sourceInfoColumns)
+val sourceInfoTables get () = PageTable.leftJoin(HostTable).leftJoin(NoteTable)
+    .select(pageInfoColumns)
 
-internal fun ResultRow.toSourceInfo() = SourceInfo(
-    sourceId = this[PageTable.id].value,
+internal fun ResultRow.toPageInfo() = PageInfo(
+    pageId = this[PageTable.id].value,
     url = this[PageTable.url],
     pageTitle = this[PageTable.title],
     score = this[PageTable.score] ?: 0,
@@ -39,9 +39,9 @@ internal fun ResultRow.toSourceInfo() = SourceInfo(
     hostCore = this[HostTable.core],
     hostName = this.getOrNull(HostTable.name),
     hostLogo = this.getOrNull(HostTable.logo),
-    headline = this.getOrNull(ArticleTable.headline),
-    description = this.getOrNull(ArticleTable.description),
-    wordCount = this.getOrNull(ArticleTable.wordCount),
-    section = this.getOrNull(ArticleTable.section),
+    headline = this.getOrNull(PageTable.headline),
+    description = this.getOrNull(PageTable.description),
+    wordCount = this.getOrNull(PageTable.wordCount),
+    metaSection = this.getOrNull(PageTable.metaSection),
     note = this.getOrNull(NoteTable.body),
 )

@@ -42,11 +42,11 @@ class HostItemModel(
             ).toImmutableList()
             val clouds = sources.map {
                 CloudPoint(
-                    it.sourceId,
+                    it.pageId,
                     -(Clock.System.now() - it.existedAt).inWholeHours / 24.0f,
                     it.score.toFloat(),
                     it.score.toFloat(),
-                    it.pageTitle ?: it.sourceId.toString()
+                    it.pageTitle ?: it.pageId.toString()
                 )
             }.toImmutableList()
             setState { it.copy(sources = sources, clouds = clouds) }
@@ -81,7 +81,7 @@ data class HostItemState(
     val hostId: Int,
     val page: String? = null,
     val host: Host? = null,
-    val sources: ImmutableList<SourceInfo> = emptyImmutableList(),
+    val sources: ImmutableList<PageInfo> = emptyImmutableList(),
     val sorting: Sorting = null to null,
     val searchText: String = "",
     val since: Duration = 7.days,

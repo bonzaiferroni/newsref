@@ -10,7 +10,7 @@ data class ArticleDto(
     val hostId: Int,
     val url: String,
     val headline: String?,
-    val type: PageType?,
+    val type: ContentType?,
     val score: Int?,
     val thumbnail: String?,
     val imageUrl: String?,
@@ -26,7 +26,7 @@ data class ArticleDto(
 }
 
 @Serializable
-data class SourceBitDto(
+data class PageBitDto(
     val id: Long,
     val hostId: Int,
     val url: String,
@@ -35,7 +35,7 @@ data class SourceBitDto(
     val headline: String?,
     val score: Int,
     val feedPosition: Int?,
-    val pageType: PageType,
+    val contentType: ContentType,
     val articleType: ArticleType,
     val newsSection: NewsSection,
     val existedAt: Instant,

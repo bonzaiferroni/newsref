@@ -11,9 +11,6 @@ import newsref.db.model.Lead
 import newsref.db.model.LeadInfo
 import newsref.db.model.LeadJob
 import newsref.db.model.LeadResult
-import org.jetbrains.exposed.dao.EntityClass
-import org.jetbrains.exposed.dao.LongEntity
-import org.jetbrains.exposed.dao.id.EntityID
 import org.jetbrains.exposed.dao.id.LongIdTable
 import org.jetbrains.exposed.sql.*
 import org.jetbrains.exposed.sql.kotlin.datetime.datetime
@@ -24,54 +21,33 @@ private val console = globalConsole.getHandle("LeadTable")
 internal object LeadTable : LongIdTable("lead") {
 	val url = text("url").uniqueIndex()
 	val hostId = reference("host_id", HostTable, ReferenceOption.CASCADE).index()
-	val sourceId = reference("source_id", PageTable, ReferenceOption.SET_NULL).nullable().index()
+	val pageId = reference("page_id", PageTable, ReferenceOption.SET_NULL).nullable().index()
 }
 
-internal class LeadRow(id: EntityID<Long>) : LongEntity(id) {
-	companion object : EntityClass<Long, LeadRow>(LeadTable)
-
-	var host by HostRow referencedOn LeadTable.hostId
-	var source by SourceRow optionalReferencedOn LeadTable.sourceId
-	var url by LeadTable.url
-
-	val results by LeadResultRow referrersOn LeadResultTable.leadId
-	val links by LinkRow optionalReferrersOn LinkTable.leadId
-}
-
-internal fun LeadRow.toModel() = Lead(
-	id = this.id.value,
-	hostId = this.host.id.value,
-	sourceId = this.source?.id?.value,
-	url = this.url.toCheckedFromTrusted(),
+internal fun ResultRow.toLead() = Lead(
+	id = this[LeadTable.id].value,
+	hostId = this[LeadTable.hostId].value,
+	pageId = this[LeadTable.pageId]?.value,
+	url = this[LeadTable.url].toCheckedFromTrusted(),
 )
 
-internal fun LeadRow.fromModel(lead: Lead, hostRow: HostRow, sourceRow: SourceRow? = null) {
-	host = hostRow
-	source = sourceRow
-	url = lead.url.toString()
-}
+internal fun LeadResultTable.getHostResults(hostId: Int, limit: Int) = LeadResultTable.leftJoin(LeadTable)
+	.select(LeadResultTable.columns)
+	.where { LeadTable.hostId eq hostId }
+	.limit(limit)
+	.wrapLeadResults()
 
-internal fun LeadRow.Companion.leadExists(checkedUrl: CheckedUrl): Boolean {
-	return this.find { LeadTable.url.sameUrl(checkedUrl) }.any()
-}
+internal fun LeadTable.createOrUpdateAndLink(url: CheckedUrl, pageId: Long? = null): Long {
+	val host = HostTable.findByCore(url.core) ?: throw IllegalArgumentException("Host missing: ${url.core}")
 
-internal fun LeadResultRow.Companion.getHostResults(hostId: Int, limit: Int): List<LeadResult> {
-	return LeadResultTable.leftJoin(LeadTable)
-		.select(LeadResultTable.columns)
-		.where { LeadTable.hostId eq hostId }
-		.limit(limit)
-		.wrapLeadResults()
-}
+	val leadId = this.upsert(where = {LeadTable.url.sameUrl(url)}) {
+		it[this.url] = url.href
+		it[hostId] = host.id
+		it[this.pageId] = pageId
+	}[id].value
+	LinkTable.setLeadOnSameLinks(url, leadId)
 
-internal fun LeadRow.Companion.createOrUpdateAndLink(url: CheckedUrl, source: SourceRow? = null): LeadRow {
-	val hostRow = HostRow.findByCore(url.core) ?: throw IllegalArgumentException("Host missing: ${url.core}")
-	val lead = LeadRow.createOrUpdate(LeadTable.url.sameUrl(url)) {
-		this.url = url.href
-		this.host = hostRow
-		source?.let { this.source = it }
-	}
-	LinkRow.setLeadOnSameLinks(url, lead)
-	return lead
+	return leadId
 }
 
 // lead result
@@ -84,21 +60,12 @@ internal object LeadResultTable : LongIdTable("lead_result") {
 	val resultCount = result.count().castTo(IntegerColumnType())
 }
 
-internal class LeadResultRow(id: EntityID<Long>) : LongEntity(id) {
-	companion object : EntityClass<Long, LeadResultRow>(LeadResultTable)
-
-	var lead by LeadRow referencedOn LeadResultTable.leadId
-	var result by LeadResultTable.result
-	var attemptedAt by LeadResultTable.attemptedAt
-	var strategy by LeadResultTable.strategy
-}
-
-internal fun LeadResultRow.toModel() = LeadResult(
-	id = this.id.value,
-	leadId = this.lead.id.value,
-	result = this.result,
-	attemptedAt = this.attemptedAt.toInstant(UtcOffset.ZERO),
-	strategy = this.strategy,
+internal fun ResultRow.toLeadResult() = LeadResult(
+	id = this[LeadResultTable.id].value,
+	leadId = this[LeadResultTable.leadId].value,
+	result = this[LeadResultTable.result],
+	attemptedAt = this[LeadResultTable.attemptedAt].toInstantUtc(),
+	strategy = this[LeadResultTable.strategy],
 )
 
 internal fun Query.wrapLeadResults() = this.map { row ->
@@ -111,13 +78,6 @@ internal fun Query.wrapLeadResults() = this.map { row ->
 	)
 }
 
-internal fun LeadResultRow.fromModel(leadResult: LeadResult, leadRow: LeadRow) {
-	lead = leadRow
-	result = leadResult.result
-	attemptedAt = leadResult.attemptedAt.toLocalDateTimeUtc()
-	strategy = leadResult.strategy
-}
-
 // lead job
 internal object LeadJobTable : LongIdTable("lead_job") {
 	val feedId = reference("feed_id", FeedTable, ReferenceOption.SET_NULL).nullable()
@@ -127,27 +87,6 @@ internal object LeadJobTable : LongIdTable("lead_job") {
 	val freshAt = datetime("fresh_at").nullable().index()
 	val feedPosition = integer("feed_position").nullable()
 }
-
-internal class LeadJobRow(id: EntityID<Long>) : LongEntity(id) {
-	companion object : EntityClass<Long, LeadJobRow>(LeadJobTable)
-
-	var lead by LeadRow referencedOn LeadJobTable.leadId
-	var feed by FeedRow optionalReferencedOn LeadJobTable.feedId
-	var headline by LeadJobTable.headline
-	var isExternal by LeadJobTable.isExternal
-	var freshAt by LeadJobTable.freshAt
-	var feedPosition by LeadJobTable.feedPosition
-}
-
-internal fun LeadJobRow.toModel() = LeadJob(
-	id = this.id.value,
-	leadId = this.lead.id.value,
-	feedId = this.feed?.id?.value,
-	headline = this.headline,
-	isExternal = this.isExternal,
-	freshAt = this.freshAt?.toInstant(UtcOffset.ZERO),
-	feedPosition = this.feedPosition,
-)
 
 internal fun ResultRow.toLeadJob() = LeadJob(
 	id = this[LeadJobTable.id].value,
@@ -159,20 +98,11 @@ internal fun ResultRow.toLeadJob() = LeadJob(
 	feedPosition = this[LeadJobTable.feedPosition],
 )
 
-internal fun LeadJobRow.fromModel(leadJob: LeadJob, leadRow: LeadRow, feedRow: FeedRow?) {
-	lead = leadRow
-	feed = feedRow ?: leadJob.feedId?.let { FeedRow[it] }
-	headline = leadJob.headline
-	isExternal = leadJob.isExternal
-	freshAt = leadJob.freshAt?.toLocalDateTimeUtc()
-	feedPosition = leadJob.feedPosition
-}
-
 // lead info
 internal val leadInfoColumns = listOf(
 	LeadTable.id,
 	LeadTable.url,
-	LeadTable.sourceId,
+	LeadTable.pageId,
 	LeadTable.hostId,
 	LeadJobTable.id,
 	LeadJobTable.headline,
@@ -188,7 +118,7 @@ internal val leadInfoJoin get() = LeadTable.leftJoin(LinkTable).leftJoin(LeadJob
 internal fun ResultRow.toLeadInfo() = LeadInfo(
 	id = this[LeadTable.id].value,
 	url = this[LeadTable.url].toCheckedFromTrusted(),
-	targetId = this[LeadTable.sourceId]?.value,
+	targetId = this[LeadTable.pageId]?.value,
 	hostId = this[LeadTable.hostId].value,
 	feedHeadline = this.getOrNull(LeadJobTable.headline),
 	feedPosition = this.getOrNull(LeadJobTable.feedPosition),

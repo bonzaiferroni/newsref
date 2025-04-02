@@ -3,7 +3,7 @@ package newsref.app.model
 import kotlinx.datetime.Instant
 import kotlinx.serialization.Serializable
 import newsref.model.core.ArticleType
-import newsref.model.core.PageType
+import newsref.model.core.ContentType
 import newsref.model.utils.takeEllipsis
 
 @Serializable
@@ -12,7 +12,7 @@ data class Article(
     val hostId: Int,
     val url: String,
     val headline: String?,
-    val type: PageType?,
+    val type: ContentType?,
     val score: Int?,
     val thumbnail: String?,
     val imageUrl: String?,

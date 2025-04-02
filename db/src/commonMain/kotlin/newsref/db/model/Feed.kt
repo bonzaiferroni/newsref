@@ -17,9 +17,9 @@ data class Feed(
     val checkAt: Instant,
 )
 
-data class FeedSource(
+data class FeedPage(
     val id: Long = 0,
     val feedId: Int,
-    val sourceId: Long,
+    val pageId: Long,
     val position: Int,
 )

@@ -9,7 +9,7 @@ import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.text.withStyle
 import newsref.dashboard.LocalNavigator
-import newsref.dashboard.SourceItemRoute
+import newsref.dashboard.PageItemRoute
 import newsref.dashboard.emptyEmoji
 import newsref.dashboard.ui.table.DataTable
 import newsref.dashboard.ui.table.TableColumn
@@ -40,12 +40,12 @@ fun LinkInfoView(
             ),
             columns(
                 TableColumn<LinkInfo>("Origin", width = 60) { TextCell(it.originId) }
-                    .onClick { nav.go(SourceItemRoute(it.originId, "Content")) },
+                    .onClick { nav.go(PageItemRoute(it.originId, "Content")) },
                 TableColumn<LinkInfo>("Origin Url", weight = 1f) { TextCell(it.originUrl) },
             ),
             columns(
                 TableColumn<LinkInfo>("Target", width = 60) { TextCell(it.targetId) }
-                    .onClick { nav.go(SourceItemRoute(it.originId, "Content")) },
+                    .onClick { nav.go(PageItemRoute(it.originId, "Content")) },
                 TableColumn<LinkInfo>("Target Url", weight = 1f) { TextCell(it.url) },
             ),
             columns(

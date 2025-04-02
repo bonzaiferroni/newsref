@@ -32,8 +32,8 @@ fun StartScreen(
             viewModel::changeSince
         )
 
-        SourceTable(
-            sources = state.sources,
+        PageTable(
+            pages = state.sources,
         )
     }
 }

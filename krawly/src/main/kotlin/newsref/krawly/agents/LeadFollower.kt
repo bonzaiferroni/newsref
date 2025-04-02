@@ -12,7 +12,7 @@ import newsref.db.model.CrawlInfo
 import newsref.db.model.FetchInfo
 import newsref.db.services.CreateLeadResult
 import newsref.db.services.LeadService
-import newsref.db.services.ConsumeSourceService
+import newsref.db.services.ConsumePageService
 import newsref.db.utils.format
 import newsref.krawly.SpiderWeb
 import newsref.krawly.utils.TallyMap
@@ -29,10 +29,10 @@ class LeadFollower(
 	private val web: SpiderWeb,
 	private val hostAgent: HostAgent,
 	private val leadMaker: LeadMaker = LeadMaker(),
-	private val sourceReader: SourceReader = SourceReader(hostAgent),
+	private val pageReader: PageReader = PageReader(hostAgent),
 	private val nexusFinder: NexusFinder = NexusFinder(),
 	private val leadService: LeadService = LeadService(),
-	private val consumeSourceService: ConsumeSourceService = ConsumeSourceService(),
+	private val consumePageService: ConsumePageService = ConsumePageService(),
 ) {
 	private val maxSpiders: Int = 10
 	private val console = globalConsole.getHandle("LeadFollower", true)
@@ -137,7 +137,7 @@ class LeadFollower(
 			awayFromNest.add(spider)
 			spider.url = url.href
 			spider.crawl {
-				val newFetch = spider.sourceFetcher.fetch(lead, url, host, pastResults)
+				val newFetch = spider.pageFetcher.fetch(lead, url, host, pastResults)
 				spider.url = null
 				if (newFetch.result?.noConnection != true || isNetworkAvailable()) {
 					fetched.add(newFetch)
@@ -171,7 +171,7 @@ class LeadFollower(
 				if (fetch != null) {
 					try {
 						hostAgent.updateParameters(fetch.leadHost, fetch.junkParams, fetch.navParams)
-						var crawl = sourceReader.read(fetch)
+						var crawl = pageReader.read(fetch)
 						val pageHost = crawl.page?.pageHost
 						val junkParams = crawl.cannonJunkParams
 						if (pageHost != null && junkParams != null)
@@ -179,7 +179,7 @@ class LeadFollower(
 						crawl = nexusFinder.findNexuses(crawl)
 
 						// consume source
-						val id = consumeSourceService.consume(crawl)
+						val id = consumePageService.consume(crawl)
 						val resultMap = leadMaker.makeCrawlLeads(crawl)
 						logFetch(crawl, id, resultMap)
 					} catch (e: Exception) {
@@ -193,7 +193,7 @@ class LeadFollower(
 
 	inner class Spider(
 		spindex: Int,
-		val sourceFetcher: SourceFetcher = SourceFetcher(spindex, web)
+		val pageFetcher: PageFetcher = PageFetcher(spindex, web)
 	) {
 		val console = globalConsole.getHandle("spider $spindex")
 		var url: String? = null
@@ -211,7 +211,7 @@ class LeadFollower(
 
 	private var alternateBg = false
 
-	private fun logFetch(crawl: CrawlInfo, sourceId: Long, tally: TallyMap<CreateLeadResult>) {
+	private fun logFetch(crawl: CrawlInfo, pageId: Long, tally: TallyMap<CreateLeadResult>) {
 		val resultMap = crawl.fetch.pastResults.groupingBy { it.result }.eachCount()
 		val lead = crawl.fetch.lead
 		val resultType = crawl.fetchResult
@@ -263,20 +263,20 @@ class LeadFollower(
 			return
 		}
 
-		val title = page.article?.headline ?: page.source.title ?: "[No title]"
+		val title = page.article?.headline ?: page.page.title ?: "[No title]"
 		console.cell(title, rowWidth, justify = Justify.LEFT)
 			.send(background = background, width = rowWidth)
 		val externalLinkCount = page.links.count { it.isExternal }
 		console
-			.cell(page.source.type?.getEmoji() ?: "💢")
+			.cell(page.page.type?.getEmoji() ?: "💢")
 			.cell("📰") { page.foundNewsArticle }
-			.cell("🌆") { page.source.imageUrl != null }
-			.cell("💅") { page.source.thumbnail != null }
-			.cell("📅") { page.source.publishedAt != null }
+			.cell("🌆") { page.page.imageUrl != null }
+			.cell("💅") { page.page.thumbnail != null }
+			.cell("📅") { page.page.publishedAt != null }
 			.cell("🦦") { page.authors != null }
 			.cell("🔗") { page.authors?.firstOrNull()?.url != null }
 			.cell("🍓") { page.isFresh }
-			.cell((page.article?.wordCount ?: page.source.contentCount).toString(), 7, "words")
+			.cell((page.article?.wordCount ?: page.page.contentCount).toString(), 7, "words")
 			.cell(createdLeads, 2, "leads", highlight = createdLeads > 0)
 			.cell("$externalLinkCount/${page.links.size}", 5, "links")
 			.cell(strategyMsg, 5, justify = Justify.LEFT)

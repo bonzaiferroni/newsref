@@ -4,11 +4,11 @@ import kotlinx.datetime.Clock
 import kotlinx.datetime.Instant
 import newsref.model.core.ArticleCategory
 import newsref.db.core.CheckedUrl
-import newsref.model.dto.PageAuthor
+import newsref.model.dto.CrawledAuthor
 import kotlin.time.Duration.Companion.days
 
 data class CrawlInfo(
-	val page: PageInfo?,
+	val page: CrawledPage?,
 	val fetchResult: FetchResult,
 	val fetch: FetchInfo,
 	val cannonJunkParams: Set<String>?
@@ -38,8 +38,8 @@ data class WebResult(
 	val isNotFound get() = status == 404
 }
 
-data class PageInfo(
-	val source: Source,
+data class CrawledPage(
+	val page: Page,
 	val article: Article? = null,
 	val articleCategory: ArticleCategory = ArticleCategory.Unknown,
 	val pageHost: Host,
@@ -47,13 +47,13 @@ data class PageInfo(
 	val language: String?,
 	val foundNewsArticle: Boolean,
 	val contents: Set<String>,
-	val links: List<PageLink>,
-	val authors: List<PageAuthor>?,
+	val links: List<CrawledLink>,
+	val authors: List<CrawledAuthor>?,
 ) {
-	val isFresh get() = source.publishedAt.isFresh
+	val isFresh get() = page.publishedAt.isFresh
 }
 
-data class PageLink(
+data class CrawledLink(
     val url: CheckedUrl,
     val anchorText: String,
 	val textIndex: Int,

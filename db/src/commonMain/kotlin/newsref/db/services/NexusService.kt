@@ -2,53 +2,70 @@ package newsref.db.services
 
 import newsref.db.DbService
 import newsref.db.tables.*
-import newsref.db.tables.HostRow
-import newsref.db.tables.NexusRow
-import newsref.db.tables.toModel
 import newsref.db.model.Host
 import newsref.db.model.Nexus
+import newsref.db.utils.*
+import org.jetbrains.exposed.sql.insert
+import org.jetbrains.exposed.sql.insertAndGetId
 
 class NexusService : DbService() {
 
-	suspend fun createNexus(hostCore: String, otherCore: String) = dbQuery {
-		val host = HostRow.findByCore(hostCore) ?: return@dbQuery null
-		val other = HostRow.findByCore(otherCore) ?: return@dbQuery null
-		val nexus = combineNexus(host, other) ?: combineNexus(other, host)
-		if (nexus != null) return@dbQuery nexus
+    suspend fun createNexus(hostCore: String, otherCore: String) = dbQuery {
+        val host = HostTable.findByCore(hostCore) ?: return@dbQuery null
+        val other = HostTable.findByCore(otherCore) ?: return@dbQuery null
+        val nexus = combineNexus(host, other) ?: combineNexus(other, host)
+        if (nexus != null) return@dbQuery nexus
 
-		val nexusRow = NexusRow.new { fromModel(Nexus(name = "${host.core} ❤ ${other.core}")) }
-		host.nexus = nexusRow
-		other.nexus = nexusRow
-		nexusRow.toModel()
-	}
+        val nexusId = NexusTable.insertAndGetId {
+            it[this.name] = "${host.core} ❤ ${other.core}"
+        }.value
+        HostTable.updateById(host.id) {
+            it[this.nexusId] = nexusId
+        }
+        HostTable.updateById(other.id) {
+            it[this.nexusId] = nexusId
+        }
 
-	private fun combineNexus(first: HostRow, second: HostRow): Nexus? {
-		val nexus = first.nexus ?: return null
-		if (nexus == second.nexus) return null
-		if (second.nexus != null) return null // todo: combine two existing nexuses
-		second.nexus = nexus
-		nexus.name = "${nexus.name} ❤ ${second.core}"
-		return nexus.toModel()
-	}
+        NexusTable.readById(nexusId).toNexus()
+    }
 
-	suspend fun updateNexus(pageHost: Host, linkHost: Host) = dbQuery {
-		val host = HostRow.findByCore(pageHost.core) ?: return@dbQuery null
-		val other = HostRow.findByCore(linkHost.core) ?: return@dbQuery null
-		if (host.nexus?.id?.value != null && host.nexus?.id?.value == other.nexus?.id?.value) return@dbQuery null
-		val hostSet = getHostCoreSet(pageHost)
-		val linkSet = getHostCoreSet(linkHost)
-		if (hostSet.any { hostCore ->
-				linkSet.any { linkCore -> hostCore.endsWith(".${linkCore}")
-						|| linkCore.endsWith(".${hostCore}") }
-			}) {
-			createNexus(pageHost.core, linkHost.core)
-		} else {
-			null
-		}
-	}
+    private fun combineNexus(first: Host, second: Host): Nexus? {
+        val nexusId = first.nexusId ?: return null
+        if (nexusId == second.nexusId) return null
+        if (second.nexusId != null) return null // todo: combine two existing nexuses
+        HostTable.updateById(second.id) {
+            it[this.nexusId] = nexusId
+        }
+        val nexus = NexusTable.readById(nexusId).toNexus()
+        NexusTable.updateById(nexusId) {
+            it[this.name] = "${nexus.name} ❤ ${second.core}"
+        }
+        return NexusTable.readById(nexusId).toNexus()
+    }
 
-	private suspend fun getHostCoreSet(host: Host) = dbQuery {
-		host.nexusId?.let { HostRow.find { HostTable.nexusId eq it } }?.map { it.core }?.toSet()
-			?: setOf(host.core)
-	}
+    suspend fun updateNexus(pageHost: Host, linkHost: Host) = dbQuery {
+        val host = HostTable.findByCore(pageHost.core) ?: return@dbQuery null
+        val other = HostTable.findByCore(linkHost.core) ?: return@dbQuery null
+        if (host.nexusId != null && host.nexusId == other.nexusId) return@dbQuery null
+        val hostSet = getHostCoreSet(pageHost)
+        val linkSet = getHostCoreSet(linkHost)
+        if (hostSet.any { hostCore ->
+                linkSet.any { linkCore ->
+                    hostCore.endsWith(".${linkCore}")
+                            || linkCore.endsWith(".${hostCore}")
+                }
+            }) {
+            createNexus(pageHost.core, linkHost.core)
+        } else {
+            null
+        }
+    }
+
+    private suspend fun getHostCoreSet(host: Host) = dbQuery {
+        host.nexusId?.let { nexusId ->
+            HostTable.read(listOf(HostTable.core)) { HostTable.nexusId.eq(nexusId) }
+                .map { it[HostTable.core] }
+                .takeIf { it.isNotEmpty() }?.toSet()
+        } ?: setOf(host.core)
+    }
 }

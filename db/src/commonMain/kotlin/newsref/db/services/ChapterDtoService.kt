@@ -4,7 +4,6 @@ import kotlinx.datetime.Instant
 import newsref.db.DbService
 import newsref.db.tables.*
 import newsref.db.utils.*
-import newsref.model.core.*
 import newsref.model.dto.*
 import org.jetbrains.exposed.sql.*
 
@@ -22,16 +21,16 @@ class ChapterDtoService : DbService() {
     }
 
     fun Transaction.toChapterPackDto(chapter: ChapterDto): ChapterPackDto {
-        val sources = ChapterSourceTable.leftJoin(PageTable).leftJoin(HostTable).leftJoin(ArticleTable).leftJoin(NewsArticleTable)
-            .select(SourceBitAspect.columns)
-            .where { ChapterSourceTable.chapterId.eq(chapter.id) }
+        val sources = ChapterPageTable.leftJoin(PageTable).leftJoin(HostTable)
+            .select(PageBitAspect.columns)
+            .where { ChapterPageTable.chapterId.eq(chapter.id) }
             .orderBy(PageTable.score, SortOrder.DESC_NULLS_LAST)
             .limit(30)
-            .map { it.toSourceBitDto() }
+            .map { it.toPageBitDto() }
         return ChapterPackDto(chapter, sources)
     }
 
     suspend fun readChapterSource(chapterId: Long, pageId: Long) = dbQuery {
-        ChapterSourceDtoAspect.readFirst { it.chapterId.eq(chapterId) and it.pageId.eq(pageId) }
+        ChapterPageDtoAspect.readFirst { it.chapterId.eq(chapterId) and it.pageId.eq(pageId) }
     }
 }

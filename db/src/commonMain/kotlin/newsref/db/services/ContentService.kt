@@ -1,30 +1,36 @@
 package newsref.db.services
 
 import newsref.db.DbService
-import newsref.db.tables.ContentRow
 import newsref.db.tables.ContentTable
-import newsref.db.tables.SourceContentTable
+import newsref.db.tables.PageTable
+import newsref.db.tables.PageContentTable
 import newsref.db.tables.toContent
+import newsref.db.utils.read
+import newsref.db.utils.readById
 
 class ContentService : DbService() {
 	suspend fun isFresh(content: String) = dbQuery {
-		ContentRow.find { ContentTable.text eq content}.empty()
+		ContentTable.read { it.text.eq(content) }.count() == 0L
 	}
 
-	suspend fun readSourceContentText(sourceId: Long) = dbQuery {
-		val contents = SourceContentTable.leftJoin(ContentTable)
+	suspend fun readPageContentText(pageId: Long) = dbQuery {
+		val contents = PageContentTable.leftJoin(ContentTable)
 			.select(ContentTable.text)
-			.where{ SourceContentTable.sourceId eq sourceId}
-			.orderBy(SourceContentTable.id)
+			.where{ PageContentTable.pageId eq pageId}
+			.orderBy(PageContentTable.id)
 			.map{ it[ContentTable.text]}
 		contents.joinToString("\n\n")
 	}
 
-	suspend fun readSourceContent(sourceId: Long) = dbQuery {
-		SourceContentTable.leftJoin(ContentTable)
+	suspend fun readSourceContent(pageId: Long) = dbQuery {
+		PageContentTable.leftJoin(ContentTable)
 			.select(ContentTable.columns)
-			.where{ SourceContentTable.sourceId eq sourceId}
-			.orderBy(SourceContentTable.id)
+			.where{ PageContentTable.pageId eq pageId}
+			.orderBy(PageContentTable.id)
 			.map{ it.toContent() }
+	}
+
+	suspend fun readSummaryContent(pageId: Long) = dbQuery {
+		PageTable.readById(pageId, listOf(PageTable.summary))[PageTable.summary]
 	}
 }

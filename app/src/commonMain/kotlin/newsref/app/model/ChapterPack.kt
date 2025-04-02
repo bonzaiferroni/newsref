@@ -8,16 +8,16 @@ import newsref.model.dto.*
 @Serializable
 data class ChapterPack(
     val chapter: Chapter,
-    val sources: ImmutableList<SourceBit>
+    val sources: ImmutableList<PageBit>
 ) {
     val imageUrl
         get() = sources.firstNotNullOfOrNull {
-            if (it.pageType != PageType.NewsArticle) return@firstNotNullOfOrNull null
+            if (it.contentType != ContentType.NewsArticle) return@firstNotNullOfOrNull null
             it.imageUrl
         }
 }
 
 fun ChapterPackDto.toModel() = ChapterPack(
     chapter = this.chapter.toChapter(),
-    sources = this.sourceBits.map { it.toSourceBit() }.toImmutableList()
+    sources = this.pageBits.map { it.toSourceBit() }.toImmutableList()
 )

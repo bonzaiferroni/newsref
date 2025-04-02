@@ -9,7 +9,7 @@ import newsref.model.dto.SourceInfo
 import newsref.web.ui.pages.ChartCache
 
 fun Container.sourceChart(source: SourceInfo, cache: ChartCache) {
-	val scores = cache.scores[source.sourceId]
+	val scores = cache.scores[source.pageId]
 	val labels = cache.labels
 	if (scores == null || labels == null) return
 

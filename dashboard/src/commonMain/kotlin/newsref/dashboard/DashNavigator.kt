@@ -75,7 +75,7 @@ fun DashNavigator(
                         TopBarLink(TablerIcons.Book, StoryTableRoute()),
                         TopBarLink(TablerIcons.ChartLine, ChartBoardRoute()),
                         TopBarLink(TablerIcons.GitBranch, ChapterTableRoute),
-                        TopBarLink(TablerIcons.FileInfo, SourceTableRoute),
+                        TopBarLink(TablerIcons.FileInfo, PageTableRoute),
                         TopBarLink(TablerIcons.News, HostTableRoute()),
                         TopBarLink(TablerIcons.Rss, FeedTableRoute()),
                         TopBarLink(Icons.Default.Close) { context.exitApp() }

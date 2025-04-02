@@ -10,9 +10,9 @@ import newsref.app.blip.controls.Tabs
 import newsref.dashboard.*
 import newsref.dashboard.ChapterItemRoute
 import newsref.dashboard.LocalNavigator
-import newsref.dashboard.SourceItemRoute
+import newsref.dashboard.PageItemRoute
 import newsref.dashboard.ui.table.*
-import newsref.db.model.ChapterSourceInfo
+import newsref.db.model.ChapterPageInfo
 import newsref.db.utils.format
 import newsref.model.core.DataSort
 import newsref.model.core.Sorting
@@ -52,7 +52,7 @@ fun ChapterItemScreen(
             horizontalArrangement = Arrangement.spacedBy(baseSpacing)
         ) {
             Button(onClick = {
-                val route = state.secondaries.map { it.source.id }.createSpeakRoute()
+                val route = state.secondaries.map { it.page.id }.createSpeakRoute()
                 route?.let { nav.go(it) }
             }) {
                 Text("Speak Chapter")
@@ -85,7 +85,7 @@ fun ChapterItemScreen(
 @Composable
 fun ChapterTable(
     name: String,
-    sources: List<ChapterSourceInfo>,
+    sources: List<ChapterPageInfo>,
     onSorting: (Sorting) -> Unit
 ) {
     val nav = LocalNavigator.current
@@ -99,33 +99,33 @@ fun ChapterTable(
             columns(
                 TableColumn(
                     name = "Score", width = 60, align = AlignCell.Right
-                ) { TextCell(it.source.score) },
+                ) { TextCell(it.page.score) },
                 TableColumn(
                     name = "Headline", weight = 1f,
-                    onClickCell = { nav.go(SourceItemRoute(it.source.id)) }
-                ) { TextCell(it.source.title) },
+                    onClickCell = { nav.go(PageItemRoute(it.page.id)) }
+                ) { TextCell(it.page.title) },
                 TableColumn(
                     name = "Exst", width = 60, align = AlignCell.Right
-                ) { TextCell(it.source.existedAt.formatSpanBrief()) },
+                ) { TextCell(it.page.existedAt.formatSpanBrief()) },
             ),
             columns(
                 TableColumn(
                     name = "Url", weight = 1f, alpha = .8f,
-                    onClickCell = { uriHandler.openUri(it.source.url.href) },
-                    controls = listOf(copyText { it.source.url.href })
-                ) { TextCell(it.source.url.href) },
+                    onClickCell = { uriHandler.openUri(it.page.url.href) },
+                    controls = listOf(copyText { it.page.url.href })
+                ) { TextCell(it.page.url.href) },
                 TableColumn(
                     name = "Text", width = 60, align = AlignCell.Right, sort = DataSort.Score
-                ) { TextCell(it.chapterSource.textDistance) },
+                ) { TextCell(it.chapterPage.textDistance) },
                 TableColumn(
                     name = "Link", width = 60, align = AlignCell.Right, sort = DataSort.Score
-                ) { TextCell(it.chapterSource.linkDistance) },
+                ) { TextCell(it.chapterPage.linkDistance) },
                 TableColumn(
                     name = "Time", width = 60, align = AlignCell.Right, sort = DataSort.Score
-                ) { TextCell(it.chapterSource.timeDistance) },
+                ) { TextCell(it.chapterPage.timeDistance) },
                 TableColumn(
                     name = "Dist", width = 60, align = AlignCell.Right, sort = DataSort.Score
-                ) { TextCell(it.chapterSource.distance) },
+                ) { TextCell(it.chapterPage.distance) },
 
             )
         )

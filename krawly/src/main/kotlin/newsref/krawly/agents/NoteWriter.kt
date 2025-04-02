@@ -15,7 +15,7 @@ import newsref.krawly.models.AiConfig
 import newsref.krawly.models.AiSpeech
 import newsref.krawly.models.BotStatus
 import newsref.krawly.clients.AiClient
-import newsref.db.model.Source
+import newsref.db.model.Page
 import java.io.File
 import kotlin.time.Duration.Companion.minutes
 
@@ -43,25 +43,25 @@ class NoteWriter(
 	}
 
 	private suspend fun makeNotes() {
-		val source = noteService.findNextJob() ?: return
-		val (title, content) = noteService.getContent(source.id)
-			?: Pair("haiku", listOf("nevermind about the article, write a haiku inspired by this url:\n${source.url}"))
-		val body = content.joinToString("\n\n").take(20000)
-		val prompt = "# $title\n\n$body"
-		console.log(prompt)
-		val bots = bots.filter { it.status == BotStatus.ACTIVE }
-		if (bots.isEmpty()) return
-
-		val bot = bots.random()
-		if (title == "haiku") {
-			makeNote(bot, source, prompt)
-		} else {
-			createSpeech("${source.id}-body", body)
-			makeNote(bot, source, prompt)
-		}
+//		val source = noteService.findNextJob() ?: return
+//		val (title, content) = noteService.getContent(source.id)
+//			?: Pair("haiku", listOf("nevermind about the article, write a haiku inspired by this url:\n${source.url}"))
+//		val body = content.joinToString("\n\n").take(20000)
+//		val prompt = "# $title\n\n$body"
+//		console.log(prompt)
+//		val bots = bots.filter { it.status == BotStatus.ACTIVE }
+//		if (bots.isEmpty()) return
+//
+//		val bot = bots.random()
+//		if (title == "haiku") {
+//			makeNote(bot, source, prompt)
+//		} else {
+//			createSpeech("${source.id}-body", body)
+//			makeNote(bot, source, prompt)
+//		}
 	}
 
-	private suspend fun makeNote(bot: AiConfig, source: Source, prompt: String) {
+	private suspend fun makeNote(bot: AiConfig, page: Page, prompt: String) {
 //		val userId = noteService.getUserId(bot.name) ?: return
 //		val chat = client.createChat(bot, defaultScript)
 //		val response = chat.ask(prompt) ?: return

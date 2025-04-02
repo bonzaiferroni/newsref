@@ -20,7 +20,7 @@ class ChapterBucket(
     private var _chapter: Chapter? = null
 ) {
     private var _chapterId: Long? = null
-    private val _signals = mutableListOf<ChapterSourceSignal>()
+    private val _signals = mutableListOf<ChapterPageSignal>()
     private val _vectors = mutableMapOf<Long, FloatArray>()
     private var _averageVector: FloatArray? = null
     private var _happenedAt: Instant? = null
@@ -28,7 +28,7 @@ class ChapterBucket(
     private var _cohesion: Float? = null
     private var _distances: Map<Long, Float>? = null
 
-    val signals: List<ChapterSourceSignal> get() = _signals
+    val signals: List<ChapterPageSignal> get() = _signals
     val vectors: Map<Long, FloatArray> get() = _vectors
     val distances: Map<Long, Float> get() = _distances ?: findDistances().also { _distances = it }
     val size get() = _signals.size
@@ -39,36 +39,36 @@ class ChapterBucket(
     val title get() = _chapter?.title
     val linkIds: Set<Long> get() = _linkTally.keys
 
-    fun remove(sourceId: Long) {
-        val signal = _signals.firstOrNull { it.source.id == sourceId }
+    fun remove(pageId: Long) {
+        val signal = _signals.firstOrNull { it.page.id == pageId }
         if (signal == null) return
         invalidateCache()
-        _vectors.remove(sourceId)
-        _signals.removeIf { it.source.id == sourceId }
+        _vectors.remove(pageId)
+        _signals.removeIf { it.page.id == pageId }
         for (id in signal.linkIds) {
             _linkTally[id] = _linkTally.getValue(id) - 1
             if (_linkTally.getValue(id) == 0) _linkTally.remove(id)
         }
     }
 
-    fun add(signal: ChapterSourceSignal, vector: FloatArray) {
-        if (_vectors.contains(signal.source.id)) error("signal is already present in bucket")
+    fun add(signal: ChapterPageSignal, vector: FloatArray) {
+        if (_vectors.contains(signal.page.id)) error("signal is already present in bucket")
         invalidateCache()
         _signals.add(signal)
-        _vectors[signal.source.id] = vector
+        _vectors[signal.page.id] = vector
         for (id in signal.linkIds) {
             _linkTally[id] = (_linkTally[id] ?: 0) + 1
         }
     }
 
-    fun contains(sourceId: Long) = _signals.any { it.source.id == sourceId }
+    fun contains(pageId: Long) = _signals.any { it.page.id == pageId }
 
-    fun getSourceIds() = signals.map { it.source.id }
+    fun getPageIds() = signals.map { it.page.id }
 
-    fun getChapterScore() = signals.sumOf { it.source.score ?: 0 }
+    fun getChapterScore() = signals.sumOf { it.page.score ?: 0 }
 
-    fun getDistanceVector(signal: ChapterSourceSignal, vector: FloatArray, sampleMaxSize: Int = 0) =
-        getDistanceVector(signal.source.existedAt, signal.linkIds, vector, sampleMaxSize)
+    fun getDistanceVector(signal: ChapterPageSignal, vector: FloatArray, sampleMaxSize: Int = 0) =
+        getDistanceVector(signal.page.existedAt, signal.linkIds, vector, sampleMaxSize)
 
     fun getDistanceVector(bucket: ChapterBucket, sampleMaxSize: Int = 0) =
         getDistanceVector(bucket.happenedAt, bucket.linkIds, bucket.averageVector, sampleMaxSize)
@@ -93,16 +93,16 @@ class ChapterBucket(
         if (size == 0) return emptyList()
         val removedIds = mutableListOf<Long>()
         do {
-            val unsureSignals = signals.filter { it.chapterSource?.relevance != Relevance.Relevant }
+            val unsureSignals = signals.filter { it.chapterPage?.relevance != Relevance.Relevant }
             if (unsureSignals.isEmpty()) return emptyList()
 
             val (distance, signal) = unsureSignals.map {
-                    val distance = getDistanceVector(it, vectors.getValue(it.source.id)).magnitude
+                    val distance = getDistanceVector(it, vectors.getValue(it.page.id)).magnitude
                     distance to it
                 }.maxBy { it.first }
             if (distance < CHAPTER_MAX_DISTANCE) break
-            remove(signal.source.id)
-            removedIds.add(signal.source.id)
+            remove(signal.page.id)
+            removedIds.add(signal.page.id)
         } while (size > 1)
         if (removedIds.isNotEmpty()) {
             console.log("${removedIds.size} shaken out of bucket")
@@ -111,9 +111,9 @@ class ChapterBucket(
     }
 
     fun getPrimarySources() = linkIds.map {
-        ChapterSource(
+        ChapterPage(
             chapterId = chapterId ?: 0,
-            sourceId = it,
+            pageId = it,
             type = SourceType.Reference,
             distance = null,
             textDistance = null,
@@ -123,14 +123,14 @@ class ChapterBucket(
     }
 
     fun getSecondarySources() = signals.map {
-        ChapterSource(
+        ChapterPage(
             chapterId = chapterId ?: 0,
-            sourceId = it.source.id,
+            pageId = it.page.id,
             type = SourceType.Article,
-            distance = distances.getValue(it.source.id),
+            distance = distances.getValue(it.page.id),
             textDistance = contentDistance(it),
             linkDistance = outboundDistance(it.linkIds),
-            timeDistance = timeDistance(it.source.existedAt),
+            timeDistance = timeDistance(it.page.existedAt),
         )
     }
 
@@ -140,11 +140,11 @@ class ChapterBucket(
 
     fun mergeInto(bucket: ChapterBucket) {
         for (signal in signals) {
-            if (bucket.contains(signal.source.id)) {
-                console.log("signal already in bucket: ${signal.source.id}")
+            if (bucket.contains(signal.page.id)) {
+                console.log("signal already in bucket: ${signal.page.id}")
                 continue
             }
-            val vector = vectors.getValue(signal.source.id)
+            val vector = vectors.getValue(signal.page.id)
             bucket.add(signal, vector)
         }
     }
@@ -156,14 +156,14 @@ class ChapterBucket(
         _cohesion = null
     }
 
-    private fun contentDistance(signal: ChapterSourceSignal) = distance(averageVector, vectors.getValue(signal.source.id))
+    private fun contentDistance(signal: ChapterPageSignal) = distance(averageVector, vectors.getValue(signal.page.id))
 
     private fun findAverageVector() = averageAndNormalize(vectors.values.toList())
 
-    private fun findHappenedAt() = signals.map { it.source.existedAt }.averageInstant()
+    private fun findHappenedAt() = signals.map { it.page.existedAt }.averageInstant()
 
     private fun findDistances() = signals.associate {
-        it.source.id to getDistanceVector(it, vectors.getValue(it.source.id)).magnitude
+        it.page.id to getDistanceVector(it, vectors.getValue(it.page.id)).magnitude
     }
 
     private fun findCohesion() = distances.values.sumOf { it.toDouble() }.let { it / size }.toFloat()

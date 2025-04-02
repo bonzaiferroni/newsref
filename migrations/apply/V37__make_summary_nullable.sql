@@ -1,1 +1,0 @@
-ALTER TABLE news_article ALTER COLUMN summary TYPE TEXT, ALTER COLUMN summary DROP NOT NULL;

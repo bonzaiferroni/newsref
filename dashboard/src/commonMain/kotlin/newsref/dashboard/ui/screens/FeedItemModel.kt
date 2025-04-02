@@ -15,7 +15,7 @@ import newsref.db.services.LeadService
 import newsref.db.core.toUrlOrNull
 import newsref.db.model.Feed
 import newsref.db.model.LeadInfo
-import newsref.model.dto.SourceInfo
+import newsref.model.dto.PageInfo
 import kotlin.time.Duration.Companion.minutes
 import kotlin.time.Duration.Companion.seconds
 
@@ -43,7 +43,7 @@ class FeedItemModel(
             .sortedByDescending { it.id }
             .toImmutableList()
         val sourceInfos = feedService.readFeedSources(route.feedId)
-            .groupBy { it.second.sourceId }.map { it.value.first() } // ensure unique sources
+            .groupBy { it.second.pageId }.map { it.value.first() } // ensure unique sources
             .sortedBy { it.first }
             .map { it.second }
             .toImmutableList()
@@ -52,7 +52,7 @@ class FeedItemModel(
             updatedFeed = feed,
             updatedHref = feed?.url.toString(),
             leadInfos = leadInfos,
-            sourceInfos = sourceInfos,
+            pageInfos = sourceInfos,
             nextRefresh = (feed?.checkAt ?: Clock.System.now()) + 1.minutes
         ) }
     }
@@ -93,7 +93,7 @@ data class FeedItemState(
     val updatedFeed: Feed? = null,
     val updatedHref: String = "",
     val leadInfos: ImmutableList<LeadInfo> = emptyImmutableList(),
-    val sourceInfos: ImmutableList<SourceInfo> = emptyImmutableList(),
+    val pageInfos: ImmutableList<PageInfo> = emptyImmutableList(),
     val nextRefresh: Instant = Instant.DISTANT_PAST,
     val page: String? = null,
 ) {

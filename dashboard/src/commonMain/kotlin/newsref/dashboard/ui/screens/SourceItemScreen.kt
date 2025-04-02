@@ -13,20 +13,20 @@ import newsref.app.blip.controls.Tab
 import newsref.app.blip.controls.Tabs
 import newsref.dashboard.*
 import newsref.dashboard.LocalNavigator
-import newsref.dashboard.SourceItemRoute
-import newsref.db.model.Source
+import newsref.dashboard.PageItemRoute
+import newsref.db.model.Page
 
 @Composable
-fun SourceItemScreen(
-    route: SourceItemRoute,
-    viewModel: SourceItemModel = viewModel { SourceItemModel(route) }
+fun PageItemScreen(
+    route: PageItemRoute,
+    viewModel: PageItemModel = viewModel { PageItemModel(route) }
 ) {
     val state by viewModel.state.collectAsState()
-    val source = state.source
+    val source = state.page
     val nav = LocalNavigator.current
 
     if (source == null) {
-        Text("Fetching Source with id: ${route.sourceId}")
+        Text("Fetching Source with id: ${route.pageId}")
         return
     }
 
@@ -35,17 +35,17 @@ fun SourceItemScreen(
     ) {
         ItemHeader(source)
         Tabs(
-            currentPageName = state.page,
+            currentPageName = state.tab,
             onChangePage = {
                 viewModel.changePage(it)
                 nav.setRoute(route.copy(pageName = it))
             }
         ) {
             Tab("Data") {
-                SourceDataView(viewModel)
+                PageDataView(viewModel)
             }
             Tab("Content", false) {
-                SourceContentView(source, state.contents, route)
+                PageContentView(source, state.contents, route)
             }
             Tab("Inbound", false, state.inbound.isNotEmpty()) {
                 LinkInfoView("Inbound Links", state.inbound)
@@ -62,7 +62,7 @@ fun SourceItemScreen(
 
 @Composable
 fun ItemHeader(
-    source: Source
+    page: Page
 ) {
     Row(
         horizontalArrangement = Arrangement.spacedBy(halfSpacing),
@@ -79,11 +79,11 @@ fun ItemHeader(
                     .fillMaxHeight()
             ) {
                 Text(
-                    text = (source.score ?: 0).toString(),
+                    text = (page.score ?: 0).toString(),
                     modifier = Modifier.align(Alignment.Center)
                 )
             }
-            source.thumbnail?.let {
+            page.thumbnail?.let {
                 AsyncImage(
                     model = it,
                     contentDescription = null,
@@ -94,12 +94,12 @@ fun ItemHeader(
         Column {
             SelectionContainer {
                 Text(
-                    text = source.title ?: source.url.href,
+                    text = page.title ?: page.url.href,
                     style = MaterialTheme.typography.headlineSmall
                 )
             }
             Text(
-                text = source.url.core,
+                text = page.url.core,
                 style = MaterialTheme.typography.labelMedium
             )
         }
