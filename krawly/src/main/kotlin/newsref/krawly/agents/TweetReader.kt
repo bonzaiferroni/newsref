@@ -53,7 +53,7 @@ class TweetReader {
 			page = Page(
                 url = tweetUrl,
                 title = title,
-                type = ContentType.SocialPost,
+                contentType = ContentType.SocialPost,
                 embed = html,
                 cachedWordCount = wordCount,
                 accessedAt = now,

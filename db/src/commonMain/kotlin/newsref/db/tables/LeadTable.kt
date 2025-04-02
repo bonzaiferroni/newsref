@@ -40,11 +40,12 @@ internal fun LeadResultTable.getHostResults(hostId: Int, limit: Int) = LeadResul
 internal fun LeadTable.createOrUpdateAndLink(url: CheckedUrl, pageId: Long? = null): Long {
 	val host = HostTable.findByCore(url.core) ?: throw IllegalArgumentException("Host missing: ${url.core}")
 
-	val leadId = this.upsert(where = {LeadTable.url.sameUrl(url)}) {
-		it[this.url] = url.href
-		it[hostId] = host.id
-		it[this.pageId] = pageId
-	}[id].value
+	val leadId = this.updateOrInsert({ LeadTable.url.sameUrl(url) }) { (row, isInsert) ->
+		if (isInsert) row[this.url] = url.href
+		row[this.hostId] = host.id
+		row[this.pageId] = pageId
+	}
+
 	LinkTable.setLeadOnSameLinks(url, leadId)
 
 	return leadId
@@ -54,8 +55,8 @@ internal fun LeadTable.createOrUpdateAndLink(url: CheckedUrl, pageId: Long? = nu
 internal object LeadResultTable : LongIdTable("lead_result") {
 	val leadId = reference("lead_id", LeadTable, ReferenceOption.SET_NULL)
 	val result = enumeration("result", FetchResult::class)
-	val attemptedAt = datetime("attempted_at")
 	val strategy = enumeration("strategy", FetchStrategy::class).nullable()
+	val attemptedAt = datetime("attempted_at")
 
 	val resultCount = result.count().castTo(IntegerColumnType())
 }

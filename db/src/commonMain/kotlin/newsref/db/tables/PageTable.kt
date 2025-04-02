@@ -42,8 +42,8 @@ internal object PageTable : LongIdTable("page") {
     val commentCount = integer("comment_count").nullable()
     val articleTypeHuddleId = reference("article_type_huddle_id", HuddleTable, ReferenceOption.SET_NULL).nullable()
     val summary = text("summary").nullable()
-    val documentType = enumeration<DocumentType>("type")
-    val section = enumeration<NewsSection>("category")
+    val documentType = enumeration<DocumentType>("document_type").nullable()
+    val section = enumeration<NewsSection>("section").nullable()
     val articleType = enumeration<ArticleType>("news_type").default(ArticleType.Unknown)
 
     val seenAt = datetime("seen_at").index()
@@ -82,7 +82,7 @@ internal fun ResultRow.toPage() = Page(
 
     url = this[PageTable.url].toCheckedFromTrusted(),
     title = this[PageTable.title],
-    type = this[PageTable.contentType],
+    contentType = this[PageTable.contentType],
     score = this[PageTable.score],
     feedPosition = this[PageTable.feedPosition],
     thumbnail = this[PageTable.thumbnail],

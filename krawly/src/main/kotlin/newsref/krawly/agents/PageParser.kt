@@ -152,7 +152,7 @@ class PageParser(
 		val page = Page(
 			url = pageUrl,
 			title = doc.titleText,
-			type = contentType,
+			contentType = contentType,
 			thumbnail = thumbnail,
 			imageUrl = imageUrl?.href,
 			cachedWordCount = if (isNewsContent(contentType, language)) contentWordCount else 0,

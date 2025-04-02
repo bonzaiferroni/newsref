@@ -12,6 +12,7 @@ import newsref.db.utils.createOrUpdate
 import newsref.db.utils.jsonDecoder
 import newsref.db.utils.toLocalDateTimeUtc
 import org.jetbrains.exposed.sql.SqlExpressionBuilder.eq
+import org.jetbrains.exposed.sql.insertIgnore
 import org.jetbrains.exposed.sql.upsert
 import java.io.File
 
@@ -21,7 +22,7 @@ class UserInitService: DbService() {
 		if (!userFile.exists()) return@dbQuery false
 		val users = jsonDecoder.decodeFromString<List<User>>(userFile.readText())
 		for (user in users) {
-			UserTable.upsert {
+			UserTable.insertIgnore {
 				it[this.name] = user.name
 				it[this.username] = user.username
 				it[this.hashedPassword] = user.hashedPassword

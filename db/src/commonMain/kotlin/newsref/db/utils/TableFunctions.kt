@@ -1,12 +1,16 @@
 package newsref.db.utils
 
+import org.jetbrains.exposed.dao.id.EntityID
 import org.jetbrains.exposed.dao.id.IdTable
 import org.jetbrains.exposed.sql.Column
-import org.jetbrains.exposed.sql.ColumnSet
 import org.jetbrains.exposed.sql.Op
-import org.jetbrains.exposed.sql.ResultRow
 import org.jetbrains.exposed.sql.SqlExpressionBuilder
 import org.jetbrains.exposed.sql.Table
+import org.jetbrains.exposed.sql.insert
+import org.jetbrains.exposed.sql.insertAndGetId
+import org.jetbrains.exposed.sql.statements.InsertStatement
+import org.jetbrains.exposed.sql.statements.Statement
+import org.jetbrains.exposed.sql.statements.UpdateBuilder
 import org.jetbrains.exposed.sql.statements.UpdateStatement
 import org.jetbrains.exposed.sql.update
 
@@ -58,5 +62,38 @@ internal fun <Id : Comparable<Id>, T : IdTable<Id>> T.readIdOrNull(
 
 internal fun <Id : Comparable<Id>, T : IdTable<Id>> T.updateById(
     id: Id,
-    body: T.(UpdateStatement) -> Unit
-) = this.update(where = { this@updateById.id.eq(id) }, body = body)
+    block: T.(UpdateStatement) -> Unit
+) = this.update(where = { this@updateById.id.eq(id) }, body = block)
+
+internal fun <Id : Comparable<Id>, T : IdTable<Id>> T.updateSingleWhere(
+    where: SqlExpressionBuilder.(T) -> Op<Boolean>,
+    block: T.(UpdateStatement) -> Unit
+) = this.read(listOf(id), block = where).let {
+    if (it.count() != 1L) return@let null
+    val id = it.first()[id].value
+    updateById(id, block = block)
+    id
+}
+
+internal fun <Id : Comparable<Id>, T : IdTable<Id>> T.updateOrInsert(
+    where: SqlExpressionBuilder.(T) -> Op<Boolean>,
+    block: T.(UpdateOrInsertArgs) -> Unit
+) = this.read(listOf(id), block = where).let {
+    if (it.count() != 1L) return@let null
+    val id = it.first()[id].value
+    updateById(id) { block(UpdateOrInsertArgs(it, false))}
+    id
+} ?: this.insertAndGetId { block(UpdateOrInsertArgs(it, true)) }.value
+
+data class UpdateOrInsertArgs(
+    val row: UpdateBuilder<*>,
+    val isInsert: Boolean
+)
+
+internal fun <Id : Comparable<Id>, T : IdTable<Id>> T.readIdOrInsert(
+    where: SqlExpressionBuilder.(T) -> Op<Boolean>,
+    block: T.(InsertStatement<EntityID<Id>>) -> Unit
+) = this.read(listOf(this.id), block = where).let {
+    if (it.count() != 1L) return@let null
+    it.first()[id].value
+} ?: this.insertAndGetId(block).value

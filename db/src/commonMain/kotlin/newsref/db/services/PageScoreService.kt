@@ -71,7 +71,7 @@ class PageScoreService : DbService() {
 
 			val sourceCollection = PageTable.getCollections { PageTable.id.eq(pageId) }.firstOrNull()
 				?: throw IllegalArgumentException("Source not found: $pageId")
-			PageCacheTable.upsert(where = { PageScoreTable.pageId.eq(pageId)}) {
+			PageCacheTable.upsert(PageScoreTable.pageId) {
 				it[this.pageId] = pageId
 				it[this.score] = score
 				it[this.createdAt] = page.existedAt.toLocalDateTimeUtc()

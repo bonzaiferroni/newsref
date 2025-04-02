@@ -43,6 +43,7 @@ internal fun Column<String>.sameUrl(url: Url): Op<Boolean> {
 	} else {
 		"${url.scheme}://www.${url.domain}${url.fullPath}".lowercase()
 	}
+
 	return this.lowerCase().eq(url.href.lowercase()) or this.lowerCase().eq(alternateUrl)
 }
 fun Column<String>.sameAs(other: String) = this.lowerCase() eq other.lowercase()

@@ -183,7 +183,7 @@ class LeadFollower(
 						val resultMap = leadMaker.makeCrawlLeads(crawl)
 						logFetch(crawl, id, resultMap)
 					} catch (e: Exception) {
-						console.logError("Error consuming fetch:\n${fetch.lead.url}\n$e")
+						console.logError("Error consuming fetch:\n${fetch.lead.url}\n${e.stackTraceToString()}")
 					}
 				}
 				delay(100)
@@ -268,7 +268,7 @@ class LeadFollower(
 			.send(background = background, width = rowWidth)
 		val externalLinkCount = crawledPage.links.count { it.isExternal }
 		console
-			.cell(crawledPage.page.type?.getEmoji() ?: "💢")
+			.cell(crawledPage.page.contentType?.getEmoji() ?: "💢")
 			.cell("📰") { crawledPage.foundNewsArticle }
 			.cell("🌆") { crawledPage.page.imageUrl != null }
 			.cell("💅") { crawledPage.page.thumbnail != null }

@@ -82,7 +82,7 @@ class PageReader(
 			return FetchResult.CAPTCHA
 		// todo: support other languages
 		if (crawledData.language?.startsWith("en") != true) return FetchResult.IRRELEVANT
-		if (crawledData.page.type == ContentType.NewsArticle) {
+		if (crawledData.page.contentType == ContentType.NewsArticle) {
 			if (crawledData.foundNewsArticle) return FetchResult.RELEVANT
 			val wordCount = crawledData.page.wordCount ?: 0
 			val maybeUseful = crawledData.page.publishedAt != null && crawledData.links.any { it.isExternal } && wordCount > 100

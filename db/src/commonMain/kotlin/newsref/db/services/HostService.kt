@@ -34,6 +34,8 @@ class HostService : DbService() {
             it[this.robotsTxt] = robotsTxt
             it[this.isRedirect] = isRedirect
             it[this.score] = 0
+            it[this.junkParams] = emptyList()
+            it[this.navParams] = emptyList()
             it[this.bannedPaths] = bannedPaths.toList()
             it[this.domains] = domains.toList()
         }.value

@@ -35,7 +35,7 @@ fun PageDataView(
                 textRow("Id", source.id.toString()),
                 textRow("Url", source.url.href, 1, openExternalLink { it.url.href }),
                 textRow("Title", source.title),
-                textRow("Type", source.type?.toString()),
+                textRow("Type", source.contentType?.toString()),
                 PropertyRow("Score") { TextCell(it.score) },
                 textRow("Host", source.url.core),
                 textRow("Image", source.imageUrl),

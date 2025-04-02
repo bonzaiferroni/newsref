@@ -11,7 +11,7 @@ data class Page(
     val hostId: Int = 0,
     val url: CheckedUrl,
     val title: String? = null,
-    val type: ContentType? = null,
+    val contentType: ContentType? = null,
     val score: Int? = null,
     val feedPosition: Int? = null,
     val thumbnail: String? = null,
