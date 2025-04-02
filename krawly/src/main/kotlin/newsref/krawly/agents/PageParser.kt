@@ -6,13 +6,12 @@ import newsref.db.core.CheckedUrl
 import newsref.db.core.toUrlOrNull
 import newsref.db.core.toUrlWithContextOrNull
 import newsref.db.globalConsole
-import newsref.db.model.Article
 import newsref.db.model.Host
 import newsref.db.model.LeadInfo
 import newsref.db.services.ContentService
 import newsref.krawly.utils.*
 import newsref.model.core.*
-import newsref.db.model.CrawledPage
+import newsref.db.model.CrawledData
 import newsref.db.model.CrawledLink
 import newsref.db.model.Page
 import newsref.db.model.WebResult
@@ -31,7 +30,7 @@ class PageParser(
 	private var docCount = 0
 	private var articleCount = 0
 
-	suspend fun read(lead: LeadInfo, result: WebResult, pageUrl: CheckedUrl?, pageHost: Host?): CrawledPage? {
+	suspend fun read(lead: LeadInfo, result: WebResult, pageUrl: CheckedUrl?, pageHost: Host?): CrawledData? {
 		val now = Clock.System.now()
 		val doc = result.content?.contentToDoc() ?: return null
 		if (pageUrl == null || pageHost == null) return null
@@ -156,39 +155,38 @@ class PageParser(
 			type = contentType,
 			thumbnail = thumbnail,
 			imageUrl = imageUrl?.href,
-			contentCount = if (isNewsContent(contentType, language)) contentWordCount else 0,
+			cachedWordCount = if (isNewsContent(contentType, language)) contentWordCount else 0,
 			okResponse = true,
+
+			headline = headline,
+			alternativeHeadline = newsArticle?.alternativeHeadline,
+			description = description,
+			cannonUrl = cannonUrl?.toString(),
+			metaSection = newsArticle?.articleSection?.firstOrNull(),
+			keywords = newsArticle?.keywords,
+			wordCount = newsArticle?.wordCount ?: contentWordCount,
+			isFree = newsArticle?.isAccessibleForFree,
+			language = newsArticle?.inLanguage,
+			commentCount = newsArticle?.commentCount,
+
 			seenAt = lead.freshAt ?: now,
 			accessedAt = now,
 			publishedAt = publishedAt,
 			modifiedAt = modifiedAt,
 		)
-		val crawledPage = CrawledPage(
+		val crawledData = CrawledData(
 			page = page,
 			pageHost = pageHost,
 			articleCategory = articleCategory,
 			hostName = hostName,
 			language = language,
 			foundNewsArticle = newsArticle != null,
-			article = Article(
-				page = page,
-                headline = headline,
-                alternativeHeadline = newsArticle?.alternativeHeadline,
-                description = description,
-                cannonUrl = cannonUrl?.toString(),
-                metaSection = newsArticle?.articleSection?.firstOrNull(),
-                keywords = newsArticle?.keywords,
-                wordCount = newsArticle?.wordCount ?: contentWordCount,
-                isFree = newsArticle?.isAccessibleForFree,
-                language = newsArticle?.inLanguage,
-                commentCount = newsArticle?.commentCount,
-            ),
 			contents = contents,
 			links = links,
 			authors = authors,
 		)
 
-		return crawledPage
+		return crawledData
 	}
 
 	private fun getSourceType(

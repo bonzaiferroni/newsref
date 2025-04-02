@@ -3,17 +3,17 @@ package newsref.krawly.utils
 import newsref.db.model.CrawlInfo
 
 fun CrawlInfo.toMarkdown(): String? {
-    val page = this.page ?: return null
+    val crawledData = this.crawledData ?: return null
     val sb = StringBuilder()
-    val contents = page.contents.joinToString("\n\n") { it }
-    val externalLinksCount = page.links.count { it.isExternal }
-    sb.append("# ${page.article?.headline}\n${page.page.url}")
-    sb.append("\nby ${page.authors?.joinToString(", ")}")
-    sb.append("\n${page.page.type} - ${page.articleCategory} - $externalLinksCount/${page.links.size} links")
-    sb.append(" - ${page.article?.wordCount}")
+    val contents = crawledData.contents.joinToString("\n\n") { it }
+    val externalLinksCount = crawledData.links.count { it.isExternal }
+    sb.append("# ${crawledData.page.headline}\n${crawledData.page.url}")
+    sb.append("\nby ${crawledData.authors?.joinToString(", ")}")
+    sb.append("\n${crawledData.page.type} - ${crawledData.articleCategory} - $externalLinksCount/${crawledData.links.size} links")
+    sb.append(" - ${crawledData.page.wordCount}")
     sb.append("\n\n$contents")
     var content = sb.toString()
-    for (link in page.links) {
+    for (link in crawledData.links) {
         content = content.replaceFirst(link.anchorText, "[${link.anchorText}](${link.url})")
     }
     return content

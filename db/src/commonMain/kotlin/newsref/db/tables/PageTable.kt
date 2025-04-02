@@ -3,7 +3,6 @@ package newsref.db.tables
 import kotlinx.datetime.Clock
 import kotlinx.datetime.Instant
 import newsref.db.core.Aspect
-import newsref.db.model.Article
 import newsref.db.model.DocumentType
 import newsref.db.model.Page
 import newsref.db.utils.toCheckedFromTrusted
@@ -18,6 +17,8 @@ import kotlin.time.Duration
 internal object PageTable : LongIdTable("page") {
     // page properties
     val hostId = reference("host_id", HostTable, ReferenceOption.CASCADE).index()
+    val locationId = reference("location_id", LocationTable, ReferenceOption.CASCADE).nullable().index()
+
     val url = text("url").uniqueIndex()
     val title = text("title").nullable()
     val contentType = enumeration<ContentType>("content_type").nullable()
@@ -26,15 +27,9 @@ internal object PageTable : LongIdTable("page") {
     val imageUrl = text("image_url").nullable()
     val thumbnail = text("thumbnail").nullable()
     val embed = text("embed").nullable()
-    val contentWordCount = integer("content_word_count").nullable()
+    val cachedWordCount = integer("cached_word_count").nullable()
     val okResponse = bool("ok_response").default(false)
-    val seenAt = datetime("seen_at").index()
-    val accessedAt = datetime("accessed_at").nullable()
-    val publishedAt = datetime("published_at").nullable().index()
-    val modifiedAt = datetime("modified_at").nullable()
 
-    // article properties
-    val locationId = reference("location_id", LocationTable, ReferenceOption.CASCADE).nullable().index()
     val headline = text("headline").nullable()
     val alternativeHeadline = text("alternative_headline").nullable()
     val description = text("description").nullable()
@@ -50,6 +45,11 @@ internal object PageTable : LongIdTable("page") {
     val documentType = enumeration<DocumentType>("type")
     val section = enumeration<NewsSection>("category")
     val articleType = enumeration<ArticleType>("news_type").default(ArticleType.Unknown)
+
+    val seenAt = datetime("seen_at").index()
+    val accessedAt = datetime("accessed_at").nullable()
+    val publishedAt = datetime("published_at").nullable().index()
+    val modifiedAt = datetime("modified_at").nullable()
 }
 
 object PageAspect : Aspect<PageAspect, Page>(PageTable, ResultRow::toPage) {
@@ -62,7 +62,7 @@ object PageAspect : Aspect<PageAspect, Page>(PageTable, ResultRow::toPage) {
     val imageUrl = add(PageTable.imageUrl)
     val thumbnail = add(PageTable.thumbnail)
     val embed = add(PageTable.embed)
-    val contentCount = add(PageTable.contentWordCount)
+    val contentCount = add(PageTable.cachedWordCount)
     val okResponse = add(PageTable.okResponse)
     val seenAt = add(PageTable.seenAt)
     val accessedAt = add(PageTable.accessedAt)
@@ -78,6 +78,8 @@ internal fun PageTable.existedSince(duration: Duration) = existedAfter(Clock.Sys
 internal fun ResultRow.toPage() = Page(
     id = this[PageTable.id].value,
     hostId = this[PageTable.hostId].value,
+    locationId = this[PageTable.locationId]?.value,
+
     url = this[PageTable.url].toCheckedFromTrusted(),
     title = this[PageTable.title],
     type = this[PageTable.contentType],
@@ -86,17 +88,9 @@ internal fun ResultRow.toPage() = Page(
     thumbnail = this[PageTable.thumbnail],
     imageUrl = this[PageTable.imageUrl],
     embed = this[PageTable.embed],
-    contentCount = this[PageTable.contentWordCount],
+    cachedWordCount = this[PageTable.cachedWordCount],
     okResponse = this[PageTable.okResponse],
-    seenAt = this[PageTable.seenAt].toInstantUtc(),
-    accessedAt = this[PageTable.accessedAt]?.toInstantUtc(),
-    publishedAt = this[PageTable.publishedAt]?.toInstantUtc(),
-    modifiedAt = this[PageTable.modifiedAt]?.toInstantUtc()
-)
 
-internal fun ResultRow.toArticle() = Article(
-    page = this.toPage(),
-    locationId = this[PageTable.locationId]?.value,
     headline = this[PageTable.headline],
     alternativeHeadline = this[PageTable.alternativeHeadline],
     description = this[PageTable.description],
@@ -111,4 +105,9 @@ internal fun ResultRow.toArticle() = Article(
     documentType = this[PageTable.documentType],
     section = this[PageTable.section],
     articleType = this[PageTable.articleType],
+
+    seenAt = this[PageTable.seenAt].toInstantUtc(),
+    accessedAt = this[PageTable.accessedAt]?.toInstantUtc(),
+    publishedAt = this[PageTable.publishedAt]?.toInstantUtc(),
+    modifiedAt = this[PageTable.modifiedAt]?.toInstantUtc()
 )

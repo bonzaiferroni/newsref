@@ -17,7 +17,7 @@ class ArticleReaderService : DbService() {
                     PageTable.existedSince(7.days) and
                     PageTable.score.greaterEq(2) and
                     PageTable.title.isNotNull() and
-                    PageTable.contentWordCount.greaterEq(READER_MIN_WORDS) and
+                    PageTable.cachedWordCount.greaterEq(READER_MIN_WORDS) and
                     PageTable.summary.isNull()
         }
             .orderBy(PageTable.score, SortOrder.DESC_NULLS_LAST)

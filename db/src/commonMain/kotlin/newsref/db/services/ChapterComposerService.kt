@@ -109,7 +109,7 @@ class ChapterComposerService : DbService() {
     suspend fun readInboundSignals(pageId: Long) = dbQuery {
         LinkTable.leftJoin(LeadTable).join(PageTable, JoinType.LEFT, LinkTable.pageId, PageTable.id)
             .select(PageTable.columns)
-            .where { LeadTable.pageId.eq(pageId) and PageTable.contentWordCount.greaterEq(EMBEDDING_MIN_WORDS) }
+            .where { LeadTable.pageId.eq(pageId) and PageTable.cachedWordCount.greaterEq(EMBEDDING_MIN_WORDS) }
             .map { it.toChapterSignal() }
     }
 

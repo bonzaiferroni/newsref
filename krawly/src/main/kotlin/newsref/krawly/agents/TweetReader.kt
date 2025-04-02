@@ -5,7 +5,7 @@ import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 import newsref.db.model.Host
 import newsref.db.model.LeadInfo
-import newsref.db.model.CrawledPage
+import newsref.db.model.CrawledData
 import newsref.db.model.Page
 import newsref.db.model.WebResult
 import newsref.db.utils.jsonDecoder
@@ -21,7 +21,7 @@ import java.net.URLEncoder
 import java.nio.charset.StandardCharsets
 
 class TweetReader {
-	fun read(lead: LeadInfo, url: Url, host: Host, result: WebResult?): CrawledPage? {
+	fun read(lead: LeadInfo, url: Url, host: Host, result: WebResult?): CrawledData? {
 		val now = Clock.System.now()
 		if (result == null || !result.isOk || result.content == null) return null
 		val tweetUrl = url.stripParams().toNewDomain("x.com")
@@ -49,13 +49,13 @@ class TweetReader {
 			"$it$snippet”"
 		}
 
-		return CrawledPage(
+		return CrawledData(
 			page = Page(
                 url = tweetUrl,
                 title = title,
                 type = ContentType.SocialPost,
                 embed = html,
-                contentCount = wordCount,
+                cachedWordCount = wordCount,
                 accessedAt = now,
                 seenAt = lead.freshAt ?: now,
                 okResponse = true,

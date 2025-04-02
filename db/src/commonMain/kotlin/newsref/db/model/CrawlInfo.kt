@@ -8,7 +8,7 @@ import newsref.model.dto.CrawledAuthor
 import kotlin.time.Duration.Companion.days
 
 data class CrawlInfo(
-	val page: CrawledPage?,
+	val crawledData: CrawledData?,
 	val fetchResult: FetchResult,
 	val fetch: FetchInfo,
 	val cannonJunkParams: Set<String>?
@@ -38,9 +38,8 @@ data class WebResult(
 	val isNotFound get() = status == 404
 }
 
-data class CrawledPage(
+data class CrawledData(
 	val page: Page,
-	val article: Article? = null,
 	val articleCategory: ArticleCategory = ArticleCategory.Unknown,
 	val pageHost: Host,
 	val hostName: String?,

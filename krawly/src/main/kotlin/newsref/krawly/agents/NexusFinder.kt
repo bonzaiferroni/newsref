@@ -13,7 +13,7 @@ class NexusFinder(
 	private val console = globalConsole.getHandle("NexusFinder")
 
 	suspend fun findNexuses(crawl: CrawlInfo): CrawlInfo {
-		val page = crawl.page ?: return crawl
+		val page = crawl.crawledData ?: return crawl
 		val pageHost = page.pageHost
 		val links = mutableListOf<CrawledLink>()
 		for (link in page.links) {
@@ -34,7 +34,7 @@ class NexusFinder(
 				links.add(link)
 			}
 		}
-		return crawl.copy(page = crawl.page!!.copy(links = links))
+		return crawl.copy(crawledData = crawl.crawledData!!.copy(links = links))
 	}
 }
 

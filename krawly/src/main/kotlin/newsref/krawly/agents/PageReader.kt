@@ -10,7 +10,7 @@ import newsref.db.model.CrawlInfo
 import newsref.db.model.FetchInfo
 import newsref.db.model.FetchResult
 import newsref.db.model.LeadResult
-import newsref.db.model.CrawledPage
+import newsref.db.model.CrawledData
 import newsref.db.model.WebResult
 import newsref.krawly.utils.toMarkdown
 import newsref.model.core.*
@@ -25,17 +25,17 @@ class PageReader(
 	suspend fun read(fetch: FetchInfo): CrawlInfo {
 		val (pageHost, pageUrl) = fetch.result?.takeIf { it.isOk }?.pageHref?.toUrlOrNull()
 			?.let { hostAgent.getHost(it) } ?: Pair(null, null)
-		val page = fetch.lead.url.takeIf { it.isTweet }?.let {
+		val crawledData = fetch.lead.url.takeIf { it.isTweet }?.let {
 			val (twitterHost, _) = hostAgent.getHost("https://x.com/".toUrl())
 			tweetReader.read(fetch.lead, it, twitterHost, fetch.result)
 		} ?: fetch.result?.takeIf { it.isOk && it.pageHref != null }?.let {
 			pageParser.read(fetch.lead, it, pageUrl, pageHost)
 		}
-		val resultType = determineResultType(fetch.skipFetch, fetch.result, page)
+		val resultType = determineResultType(fetch.skipFetch, fetch.result, crawledData)
 		if (resultType != FetchResult.TIMEOUT && !fetch.skipFetch)
 			cacheResult(fetch.result, fetch.lead.url)
 
-		val junkParams = page?.article?.cannonUrl?.toUrlOrNull()?.takeIf { fetch.lead.url.core == it.core }
+		val junkParams = crawledData?.page?.cannonUrl?.toUrlOrNull()?.takeIf { fetch.lead.url.core == it.core }
 			?.let {
 				val leadParams = fetch.lead.url.params.keys.toSet()
 				val cannonParams = it.params.keys.toSet()
@@ -46,7 +46,7 @@ class PageReader(
 
 		// parse strategies
 		val crawl = CrawlInfo(
-			page = page,
+			crawledData = crawledData,
 			fetchResult = resultType,
 			fetch = fetch.copy(
 				pastResults = fetch.pastResults.toMutableList().also {
@@ -59,33 +59,33 @@ class PageReader(
 		)
 		// todo: if it is a news article, save a video of the endpoint
 
-		if (page != null) {
+		if (crawledData != null) {
 			val md = crawl.toMarkdown()
-			md?.cacheResource(page.page.url.core, "md")
+			md?.cacheResource(crawledData.page.url.core, "md")
 		}
 
 		return crawl
 	}
 
-	private fun determineResultType(skipFetch: Boolean, result: WebResult?, page: CrawledPage?): FetchResult {
+	private fun determineResultType(skipFetch: Boolean, result: WebResult?, crawledData: CrawledData?): FetchResult {
 		if (skipFetch) return FetchResult.SKIPPED
 		if (result == null) return FetchResult.UNKNOWN
 		if (result.timeout) return FetchResult.TIMEOUT
 		if (result.status in 400..499) return FetchResult.UNAUTHORIZED
 		if (result.exception != null) return FetchResult.ERROR
-		if (page == null) return FetchResult.UNKNOWN
+		if (crawledData == null) return FetchResult.UNKNOWN
 		// todo: better bot detection
-		val title = page.page.title
+		val title = crawledData.page.title
 		if (title != null && title.contains("you") && (title.contains("robot") || title.contains("human"))
 			&& title.endsWith('?')
 		)
 			return FetchResult.CAPTCHA
 		// todo: support other languages
-		if (page.language?.startsWith("en") != true) return FetchResult.IRRELEVANT
-		if (page.page.type == ContentType.NewsArticle) {
-			if (page.foundNewsArticle) return FetchResult.RELEVANT
-			val wordCount = page.article?.wordCount ?: 0
-			val maybeUseful = page.page.publishedAt != null && page.links.any { it.isExternal } && wordCount > 100
+		if (crawledData.language?.startsWith("en") != true) return FetchResult.IRRELEVANT
+		if (crawledData.page.type == ContentType.NewsArticle) {
+			if (crawledData.foundNewsArticle) return FetchResult.RELEVANT
+			val wordCount = crawledData.page.wordCount ?: 0
+			val maybeUseful = crawledData.page.publishedAt != null && crawledData.links.any { it.isExternal } && wordCount > 100
 			if (maybeUseful) return FetchResult.RELEVANT
 			// todo: add more relevance indicators
 		}

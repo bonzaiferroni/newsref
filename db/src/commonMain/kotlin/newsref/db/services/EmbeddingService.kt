@@ -34,8 +34,8 @@ class EmbeddingService : DbService() {
     suspend fun findNextJob() = dbQuery {
         PageTable.leftJoin(EmbeddingTable).select(PageTable.columns)
             .where {
-                EmbeddingTable.id.isNull() and PageTable.contentWordCount.greater(EMBEDDING_MIN_WORDS) and
-                        PageTable.contentWordCount.less(EMBEDDING_MAX_WORDS)
+                EmbeddingTable.id.isNull() and PageTable.cachedWordCount.greater(EMBEDDING_MIN_WORDS) and
+                        PageTable.cachedWordCount.less(EMBEDDING_MAX_WORDS)
             }
             .orderBy(PageTable.score, SortOrder.DESC_NULLS_LAST)
             .firstOrNull()?.toPage()

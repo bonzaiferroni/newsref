@@ -33,8 +33,8 @@ class LeadMaker(
 
 	suspend fun makeCrawlLeads(crawl: CrawlInfo): TallyMap<CreateLeadResult> {
 		val resultMap = mutableMapOf<CreateLeadResult, Int>()
-		val page = crawl.page ?: return resultMap
-		val links = crawl.page?.links ?: return resultMap
+		val page = crawl.crawledData ?: return resultMap
+		val links = crawl.crawledData?.links ?: return resultMap
 		for (link in links) {
 			val publishedAt = page.page.publishedAt
 			val freshSource = publishedAt != null && publishedAt > (Clock.System.now() - 30.days)
@@ -42,8 +42,8 @@ class LeadMaker(
 			if (!createIfFresh && !link.isExternal) continue
 			val job = LeadJob(
 				isExternal = link.isExternal,
-				freshAt = crawl.page?.page?.publishedAt
-					?: crawl.page?.page?.seenAt
+				freshAt = crawl.crawledData?.page?.publishedAt
+					?: crawl.crawledData?.page?.seenAt
 					?: crawl.fetch.lead.freshAt
 			)
 			val result = makeLead(link.url, job, createIfFresh)

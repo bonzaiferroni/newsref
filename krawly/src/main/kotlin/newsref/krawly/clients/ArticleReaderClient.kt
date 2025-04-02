@@ -7,7 +7,6 @@ import kotlinx.serialization.Serializable
 import kotlinx.serialization.cbor.Cbor
 import newsref.db.core.Url
 import newsref.db.globalConsole
-import newsref.db.model.Article
 import newsref.db.model.DocumentType
 import newsref.db.model.Person
 import newsref.db.model.Page

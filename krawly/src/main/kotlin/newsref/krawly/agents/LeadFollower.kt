@@ -172,7 +172,7 @@ class LeadFollower(
 					try {
 						hostAgent.updateParameters(fetch.leadHost, fetch.junkParams, fetch.navParams)
 						var crawl = pageReader.read(fetch)
-						val pageHost = crawl.page?.pageHost
+						val pageHost = crawl.crawledData?.pageHost
 						val junkParams = crawl.cannonJunkParams
 						if (pageHost != null && junkParams != null)
 							hostAgent.updateParameters(pageHost, null, junkParams)
@@ -234,8 +234,8 @@ class LeadFollower(
 		}
 		console.send(urlMsg, background = background, width = rowWidth)
 
-		val page = crawl.page
-		if (page == null) {
+		val crawledPage = crawl.crawledData
+		if (crawledPage == null) {
 			console.cell("", justify = Justify.LEFT, width = 22)
 				.cell(resultMap.getResult(FetchResult.SKIPPED), 5, "skip",
 					highlight = resultType == FetchResult.SKIPPED
@@ -263,22 +263,22 @@ class LeadFollower(
 			return
 		}
 
-		val title = page.article?.headline ?: page.page.title ?: "[No title]"
+		val title = crawledPage.page.headline ?: crawledPage.page.title ?: "[No title]"
 		console.cell(title, rowWidth, justify = Justify.LEFT)
 			.send(background = background, width = rowWidth)
-		val externalLinkCount = page.links.count { it.isExternal }
+		val externalLinkCount = crawledPage.links.count { it.isExternal }
 		console
-			.cell(page.page.type?.getEmoji() ?: "💢")
-			.cell("📰") { page.foundNewsArticle }
-			.cell("🌆") { page.page.imageUrl != null }
-			.cell("💅") { page.page.thumbnail != null }
-			.cell("📅") { page.page.publishedAt != null }
-			.cell("🦦") { page.authors != null }
-			.cell("🔗") { page.authors?.firstOrNull()?.url != null }
-			.cell("🍓") { page.isFresh }
-			.cell((page.article?.wordCount ?: page.page.contentCount).toString(), 7, "words")
+			.cell(crawledPage.page.type?.getEmoji() ?: "💢")
+			.cell("📰") { crawledPage.foundNewsArticle }
+			.cell("🌆") { crawledPage.page.imageUrl != null }
+			.cell("💅") { crawledPage.page.thumbnail != null }
+			.cell("📅") { crawledPage.page.publishedAt != null }
+			.cell("🦦") { crawledPage.authors != null }
+			.cell("🔗") { crawledPage.authors?.firstOrNull()?.url != null }
+			.cell("🍓") { crawledPage.isFresh }
+			.cell((crawledPage.page.wordCount ?: crawledPage.page.cachedWordCount).toString(), 7, "words")
 			.cell(createdLeads, 2, "leads", highlight = createdLeads > 0)
-			.cell("$externalLinkCount/${page.links.size}", 5, "links")
+			.cell("$externalLinkCount/${crawledPage.links.size}", 5, "links")
 			.cell(strategyMsg, 5, justify = Justify.LEFT)
 			.cell(
 				"${resultMap.getResult(FetchResult.RELEVANT)}", 5, "relevant",

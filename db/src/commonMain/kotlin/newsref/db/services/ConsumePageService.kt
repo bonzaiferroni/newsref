@@ -28,10 +28,9 @@ class ConsumePageService : DbService() {
 		val nowUtc = now.toLocalDateTimeUtc()
 		val lead = crawl.fetch.lead
 		val fetch = crawl.fetch
-		val pageInfo = crawl.page
-		val crawledArticle = pageInfo?.article
+		val pageInfo = crawl.crawledData
 
-		val crawledPage = crawl.page?.page ?: Page(
+		val crawledPage = crawl.crawledData?.page ?: Page(
 			url = lead.url,
 			seenAt = crawl.fetch.lead.freshAt ?: now,
 			okResponse = false,
@@ -49,26 +48,26 @@ class ConsumePageService : DbService() {
 			it[imageUrl] = crawledPage.imageUrl
 			it[thumbnail] = crawledPage.thumbnail
 			it[embed] = crawledPage.embed
-			it[contentWordCount] = crawledPage.contentCount
+			it[cachedWordCount] = crawledPage.cachedWordCount
+
+			// article data
+			it[headline] = crawledPage.headline
+			it[alternativeHeadline] = crawledPage.alternativeHeadline
+			it[description] = crawledPage.description
+			it[cannonUrl] = crawledPage.cannonUrl
+			it[metaSection] = crawledPage.metaSection
+			it[keywords] = crawledPage.keywords
+			it[wordCount] = crawledPage.wordCount
+			it[isFree] = crawledPage.isFree
+			it[language] = crawledPage.language
+			it[commentCount] = crawledPage.commentCount
+
 			if (it.type == StatementType.CREATE) {
 				it[seenAt] = crawledPage.seenAt.toLocalDateTimeUtc()
 			}
 			it[accessedAt] = crawledPage.accessedAt?.toLocalDateTimeUtc()
 			it[publishedAt] = crawledPage.publishedAt?.toLocalDateTimeUtc()
 			it[modifiedAt] = crawledPage.modifiedAt?.toLocalDateTimeUtc()
-
-			if (crawledArticle != null) {
-				it[headline] = crawledArticle.headline
-				it[alternativeHeadline] = crawledArticle.alternativeHeadline
-				it[description] = crawledArticle.description
-				it[cannonUrl] = crawledArticle.cannonUrl
-				it[metaSection] = crawledArticle.metaSection
-				it[keywords] = crawledArticle.keywords
-				it[wordCount] = crawledArticle.wordCount
-				it[isFree] = crawledArticle.isFree
-				it[language] = crawledArticle.language
-				it[commentCount] = crawledArticle.commentCount
-			}
 		}[PageTable.id].value
 		val page = PageTable.readById(pageId).toPage()
 

@@ -44,7 +44,7 @@ fun PageDataView(
                 PropertyRow("Seen") { DurationAgoCell(it.seenAt) },
                 PropertyRow("Published") { DurationAgoCell(it.publishedAt) },
                 PropertyRow("Accessed") { DurationAgoCell(it.accessedAt) },
-                PropertyRow("ContentCount") { TextCell(it.contentCount) },
+                PropertyRow("ContentCount") { TextCell(it.cachedWordCount) },
                 PropertyRow("Scores") { TextCell(state.chartData?.times?.size ?: 0) },
                 PropertyRow("Contents") { TextCell(contents.size) },
                 PropertyRow("Outbound links") { TextCell(state.outbound.size) },

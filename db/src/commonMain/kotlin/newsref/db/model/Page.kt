@@ -17,18 +17,10 @@ data class Page(
     val thumbnail: String? = null,
     val imageUrl: String? = null,
     val embed: String? = null,
-    val contentCount: Int? = null,
+    val cachedWordCount: Int? = null,
     val okResponse: Boolean,
-    val seenAt: Instant,
-    val accessedAt: Instant? = null,
-    val publishedAt: Instant? = null,
-    val modifiedAt: Instant? = null,
-) {
-	val existedAt get() = publishedAt ?: seenAt
-}
 
-data class Article(
-    val page: Page,
+    // article
     val locationId: Int? = null,
     val headline: String? = null,
     val alternativeHeadline: String? = null,
@@ -44,4 +36,11 @@ data class Article(
     val documentType: DocumentType? = null,
     val section: NewsSection? = null,
     val articleType: ArticleType? = null,
-)
+
+    val seenAt: Instant,
+    val accessedAt: Instant? = null,
+    val publishedAt: Instant? = null,
+    val modifiedAt: Instant? = null,
+) {
+	val existedAt get() = publishedAt ?: seenAt
+}
