@@ -86,9 +86,6 @@ internal fun PageTable.getCollections(block: SqlExpressionBuilder.() -> Op<Boole
         val authors = PageAuthorTable.leftJoin(AuthorTable).select(AuthorTable.name)
             .where { PageAuthorTable.pageId.eq(sourceInfo.pageId) }
             .map { it[AuthorTable.name] }
-        val notes = noteInfoJoins
-            .where { PageNoteTable.pageId eq sourceInfo.pageId }
-            .map { it.toNoteInfo() }
 
         PageCollection(
             info = sourceInfo,
@@ -96,7 +93,6 @@ internal fun PageTable.getCollections(block: SqlExpressionBuilder.() -> Op<Boole
             outLinks = outLinks,
             scores = scores.map { ScoreInfo(it.score, it.scoredAt) },
             authors = authors,
-            notes = notes
         )
     }
 }

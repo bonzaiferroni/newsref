@@ -21,10 +21,9 @@ internal val pageInfoColumns = listOf(
     PageTable.description,
     PageTable.wordCount,
     PageTable.section,
-    NoteTable.body
 )
 
-val sourceInfoTables get () = PageTable.leftJoin(HostTable).leftJoin(NoteTable)
+val sourceInfoTables get () = PageTable.leftJoin(HostTable)
     .select(pageInfoColumns)
 
 internal fun ResultRow.toPageInfo() = PageInfo(
@@ -43,5 +42,4 @@ internal fun ResultRow.toPageInfo() = PageInfo(
     description = this.getOrNull(PageTable.description),
     wordCount = this.getOrNull(PageTable.wordCount),
     metaSection = this.getOrNull(PageTable.metaSection),
-    note = this.getOrNull(NoteTable.body),
 )

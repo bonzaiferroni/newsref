@@ -105,7 +105,7 @@ class FeedService : DbService() {
     }
 
     suspend fun readFeedSources(feedId: Int, limit: Int = 100) = dbQuery {
-        FeedPageTable.leftJoin(PageTable).leftJoin(HostTable).leftJoin(NoteTable)
+        FeedPageTable.leftJoin(PageTable).leftJoin(HostTable)
             .select(pageInfoColumns + FeedPageTable.position)
             .where { FeedPageTable.feedId.eq(feedId) }
             .orderBy(FeedPageTable.position, SortOrder.ASC)

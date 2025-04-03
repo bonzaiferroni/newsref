@@ -13,11 +13,9 @@ internal object ContentTable : LongIdTable("content") {
     val text = text("text").uniqueIndex()
 }
 
-internal object PageContentTable : CompositeIdTable("page_content") {
+internal object PageContentTable : LongIdTable("page_content") {
     val pageId = reference("page_id", PageTable, ReferenceOption.CASCADE).index()
     val contentId = reference("content_id", ContentTable, ReferenceOption.CASCADE).index()
-
-    override val primaryKey = PrimaryKey(pageId, contentId)
 }
 
 internal fun ResultRow.toContent() = Content(

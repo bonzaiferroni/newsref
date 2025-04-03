@@ -17,7 +17,6 @@ data class PageInfo(
     val metaSection: String?,
     val image: String?,
     val thumbnail: String?,
-    val note: String?,
     val seenAt: Instant,
     val score: Int,
     val publishedAt: Instant?,
@@ -31,7 +30,6 @@ data class PageCollection(
 	val authors: List<String>?,
 	val inLinks: List<LinkCollection>,
 	val outLinks: List<LinkCollection>,
-	val notes: List<NoteInfo>,
 	val scores: List<ScoreInfo>
 )
 

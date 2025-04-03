@@ -69,14 +69,7 @@ class PageScoreService : DbService() {
 				this[PageScoreTable.scoredAt] = it.scoredAt.toLocalDateTimeUtc()
 			}
 
-			val sourceCollection = PageTable.getCollections { PageTable.id.eq(pageId) }.firstOrNull()
-				?: throw IllegalArgumentException("Source not found: $pageId")
-			PageCacheTable.upsert(PageScoreTable.pageId) {
-				it[this.pageId] = pageId
-				it[this.score] = score
-				it[this.createdAt] = page.existedAt.toLocalDateTimeUtc()
-				it[this.json] = sourceCollection
-			}[PageCacheTable.id].value
+			pageId
 		}
 		console.log("FeedSourceService: added ${updatedIds.size} scores")
 	}
