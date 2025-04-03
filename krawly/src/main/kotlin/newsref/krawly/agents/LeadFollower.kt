@@ -12,7 +12,7 @@ import newsref.db.model.CrawlInfo
 import newsref.db.model.FetchInfo
 import newsref.db.services.CreateLeadResult
 import newsref.db.services.LeadService
-import newsref.db.services.ConsumePageService
+import newsref.db.services.ConsumeCrawlService
 import newsref.db.utils.format
 import newsref.krawly.SpiderWeb
 import newsref.krawly.utils.TallyMap
@@ -20,6 +20,7 @@ import newsref.krawly.utils.getCount
 import newsref.krawly.utils.isNetworkAvailable
 import newsref.db.model.LeadInfo
 import newsref.db.model.FetchResult
+import newsref.db.services.LogService
 import java.util.*
 import kotlin.time.Duration.Companion.minutes
 import kotlin.time.Duration.Companion.seconds
@@ -32,7 +33,8 @@ class LeadFollower(
 	private val pageReader: PageReader = PageReader(hostAgent),
 	private val nexusFinder: NexusFinder = NexusFinder(),
 	private val leadService: LeadService = LeadService(),
-	private val consumePageService: ConsumePageService = ConsumePageService(),
+	private val logService: LogService = LogService(),
+	private val consumeCrawlService: ConsumeCrawlService = ConsumeCrawlService(),
 ) {
 	private val maxSpiders: Int = 10
 	private val console = globalConsole.getHandle("LeadFollower", true)
@@ -179,9 +181,10 @@ class LeadFollower(
 						crawl = nexusFinder.findNexuses(crawl)
 
 						// consume source
-						val id = consumePageService.consume(crawl)
+						val pageId = consumeCrawlService.consume(crawl)
 						val resultMap = leadMaker.makeCrawlLeads(crawl)
-						logFetch(crawl, id, resultMap)
+						logService.writeBook(fetch.logBook, pageId)
+						logFetch(crawl, pageId, resultMap)
 					} catch (e: Exception) {
 						console.logError("Error consuming fetch:\n${fetch.lead.url}\n${e.stackTraceToString()}")
 					}

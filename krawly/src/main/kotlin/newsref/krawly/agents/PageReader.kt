@@ -29,7 +29,7 @@ class PageReader(
 			val (twitterHost, _) = hostAgent.getHost("https://x.com/".toUrl())
 			tweetReader.read(fetch.lead, it, twitterHost, fetch.result)
 		} ?: fetch.result?.takeIf { it.isOk && it.pageHref != null }?.let {
-			pageParser.read(fetch.lead, it, pageUrl, pageHost)
+			pageParser.read(fetch.lead, it, pageUrl, pageHost, fetch.logBook)
 		}
 		val resultType = determineResultType(fetch.skipFetch, fetch.result, crawledData)
 		if (resultType != FetchResult.TIMEOUT && !fetch.skipFetch)

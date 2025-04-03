@@ -46,6 +46,7 @@ fun ChapterScreen(
     }
 }
 
+@OptIn(ExperimentalLayoutApi::class)
 @Composable
 fun PageBitItem(
     page: PageBit,
@@ -81,7 +82,7 @@ fun PageBitItem(
                     background = Blip.colors.accent
                 ) { Text("Read") }
             }
-            Row(
+            FlowRow(
                 horizontalArrangement = Arrangement.SpaceBetween,
                 modifier = Modifier.fillMaxWidth()
             ) {

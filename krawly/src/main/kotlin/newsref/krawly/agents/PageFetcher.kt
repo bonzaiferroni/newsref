@@ -3,6 +3,7 @@ package newsref.krawly.agents
 import kotlinx.coroutines.delay
 import kotlinx.datetime.Clock
 import newsref.db.core.CheckedUrl
+import newsref.db.core.LogBook
 import newsref.db.core.toCheckedUrl
 import newsref.db.core.toUrlOrNull
 import newsref.db.globalConsole
@@ -17,6 +18,7 @@ import newsref.db.model.FetchStrategy.BASIC
 import newsref.db.model.FetchStrategy.BROWSER
 import newsref.db.model.LeadInfo
 import newsref.db.model.LeadResult
+import newsref.db.model.Log
 import kotlin.time.Duration.Companion.hours
 import kotlin.time.Duration.Companion.seconds
 
@@ -33,11 +35,18 @@ class PageFetcher(
 	)
 
 	suspend fun fetch(lead: LeadInfo, leadUrl: CheckedUrl, leadHost: Host, pastResults: List<LeadResult>): FetchInfo {
+		val logBook = LogBook()
 		val specialFetch = specialFetchers[lead.url.core]?.fetch(lead, leadUrl, leadHost, pastResults)
 		if (specialFetch != null) return specialFetch
 
 		if (decideSkipFetch(lead, pastResults))
-			return FetchInfo(lead = lead, leadHost = leadHost, pastResults = pastResults, skipFetch = true)
+			return FetchInfo(
+				lead = lead,
+				leadHost = leadHost,
+				pastResults = pastResults,
+				skipFetch = true,
+				logBook = logBook
+			)
 
 		val newParams = leadUrl.params.map { it.key }.toSet() - leadHost.navParams
 		val firstParam = newParams.takeIf { it.isNotEmpty() }?.let { setOf(it.first()) } ?: emptySet()
@@ -59,7 +68,8 @@ class PageFetcher(
 					pastResults = pastResults,
 					strategy = BROWSER,
 					result = originalResult,
-					navParams = newParams
+					navParams = newParams,
+					logBook = logBook,
 				)
 			}
 			delay(60.seconds)
@@ -75,6 +85,7 @@ class PageFetcher(
 					result = originalResult,
 					strategy = BROWSER,
 					navParams = firstParam,
+					logBook = logBook,
 				)
 			}
 			console.logTrace("junk param ${lead.url.core} $firstParam")
@@ -85,6 +96,7 @@ class PageFetcher(
 				result = newResult,
 				strategy = BROWSER,
 				junkParams = firstParam,
+				logBook = logBook,
 			)
 		} else {
 			var strategy = decideStrategy(pastResults)
@@ -104,6 +116,7 @@ class PageFetcher(
 				result = result,
 				strategy = strategy,
 				failedStrategy = failedStrategy,
+				logBook = logBook,
 			)
 		}
 	}

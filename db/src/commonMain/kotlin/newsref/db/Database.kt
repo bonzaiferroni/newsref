@@ -62,6 +62,7 @@ val dbTables = listOf(
 	HuddleCommentTable,
 	HuddleResponseTable,
 	CommentTable,
+	LogTable,
 )
 
 const val URL = "jdbc:postgresql://localhost:5432/newsrefdb"

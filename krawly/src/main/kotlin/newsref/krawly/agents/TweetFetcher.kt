@@ -6,6 +6,7 @@ import newsref.db.utils.stripParams
 import newsref.db.utils.toNewDomain
 import newsref.krawly.SpiderWeb
 import newsref.db.core.CheckedUrl
+import newsref.db.core.LogBook
 import newsref.db.model.FetchStrategy
 import newsref.db.model.Host
 import newsref.db.model.LeadInfo
@@ -18,6 +19,7 @@ class TweetFetcher(
 	private val web: SpiderWeb,
 ) {
 	suspend fun fetch(lead: LeadInfo, leadUrl: CheckedUrl, leadHost: Host, pastResults: List<LeadResult>): FetchInfo? {
+		val logBook = LogBook()
 		if (!lead.url.isTweet) return null
 		val tweetUrl = leadUrl.stripParams().toNewDomain("x.com")
 		val result = web.fetch(tweetUrl.toTweetEmbedUrl(), FetchStrategy.BASIC)
@@ -27,6 +29,7 @@ class TweetFetcher(
 			pastResults = pastResults,
 			result = result,
 			strategy = FetchStrategy.BASIC,
+			logBook = logBook,
 		)
 	}
 }

@@ -3,9 +3,11 @@ package newsref.krawly.agents
 import it.skrape.selects.DocElement
 import kotlinx.datetime.Clock
 import newsref.db.core.CheckedUrl
+import newsref.db.core.LogBook
 import newsref.db.core.toUrlOrNull
 import newsref.db.core.toUrlWithContextOrNull
 import newsref.db.globalConsole
+import newsref.db.log.toYellow
 import newsref.db.model.Host
 import newsref.db.model.LeadInfo
 import newsref.db.services.ContentService
@@ -19,21 +21,27 @@ import newsref.db.services.isNewsContent
 import newsref.krawly.models.MetaNewsArticle
 import newsref.model.dto.CrawledAuthor
 
-private val console = globalConsole.getHandle("PageReader")
+private val console = globalConsole.getHandle(PageParser::class)
 
 class PageParser(
 	private val hostAgent: HostAgent,
 	private val elementReader: ElementReader = ElementReader(),
 	private val contentService: ContentService = ContentService(),
 ) {
-	private val console = globalConsole.getHandle("PageReader")
 	private var docCount = 0
 	private var articleCount = 0
 
-	suspend fun read(lead: LeadInfo, result: WebResult, pageUrl: CheckedUrl?, pageHost: Host?): CrawledData? {
+	suspend fun read(
+		lead: LeadInfo,
+		result: WebResult,
+		pageUrl: CheckedUrl?,
+		pageHost: Host?,
+		logBook: LogBook,
+	): CrawledData? {
 		val now = Clock.System.now()
-		val doc = result.content?.contentToDoc() ?: return null
-		if (pageUrl == null || pageHost == null) return null
+		val html = result.content
+		val doc = html?.contentToDoc()
+		if (doc == null || pageUrl == null || pageHost == null) return null
 
 		val newsArticle = doc.getNewsArticle(pageUrl)
 
@@ -149,6 +157,25 @@ class PageParser(
 		docCount++
 		console.status = "$articleCount/$docCount"
 
+		val audioUrls = findMediaUrls(html, "mp3|aac|ogg|oga|wav|flac|m4a|opus")
+		if (audioUrls.isNotEmpty()) {
+			val message = audioUrls.joinToString("\n")
+			// console.log("Audio urls: ${headline.take(60)} \n$message".toYellow())
+			logBook.write(PageParser::class, "Audio urls", message)
+		}
+		val videoUrls = findMediaUrls(html, "mp4|webm|ogv|mov|avi|flv|wmv|mkv")
+		if (videoUrls.isNotEmpty()) {
+			val message = videoUrls.joinToString("\n")
+			// console.log("Video urls: ${headline.take(60)} \n$message".toYellow())
+			logBook.write(PageParser::class, "Video urls", message)
+		}
+		val youtubeUrls = extractYouTubeLinks(html)
+		if (youtubeUrls.isNotEmpty()) {
+			val message = youtubeUrls.joinToString("\n")
+			console.log("YouTube urls: ${headline.take(60)} \n$message".toYellow())
+			logBook.write(PageParser::class, "YouTube urls", message)
+		}
+
 		val page = Page(
 			url = pageUrl,
 			title = doc.titleText,
@@ -260,4 +287,14 @@ fun ContentType.getEmoji() = when (this) {
 
 private fun String.stripHtmlTags(): String {
 	return this.replace(Regex("<.*?>"), "")
+}
+
+fun findMediaUrls(html: String, formats: String): List<String> {
+	val regex = Regex("""https?://[^\s"'<>]+\.($formats)""", RegexOption.IGNORE_CASE)
+	return regex.findAll(html).map { it.value }.toSet().toList()
+}
+
+fun extractYouTubeLinks(html: String): List<String> {
+	val regex = Regex("""https?://(www\.)?youtube\.com/watch\?v=[a-zA-Z0-9_-]{11}""", RegexOption.IGNORE_CASE)
+	return regex.findAll(html).map { it.value }.toSet().toList()
 }

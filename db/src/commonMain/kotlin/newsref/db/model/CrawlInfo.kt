@@ -4,6 +4,7 @@ import kotlinx.datetime.Clock
 import kotlinx.datetime.Instant
 import newsref.model.core.ArticleCategory
 import newsref.db.core.CheckedUrl
+import newsref.db.core.LogBook
 import newsref.model.dto.CrawledAuthor
 import kotlin.time.Duration.Companion.days
 
@@ -11,19 +12,20 @@ data class CrawlInfo(
 	val crawledData: CrawledData?,
 	val fetchResult: FetchResult,
 	val fetch: FetchInfo,
-	val cannonJunkParams: Set<String>?
+	val cannonJunkParams: Set<String>?,
 )
 
 data class FetchInfo(
 	val lead: LeadInfo,
 	val leadHost: Host,
 	val pastResults: List<LeadResult>,
+	val logBook: LogBook,
 	val skipFetch: Boolean = false,
 	val result: WebResult? = null,
 	val strategy: FetchStrategy? = null,
 	val failedStrategy: FetchStrategy? = null,
 	val navParams: Set<String>? = null,
-	val junkParams: Set<String>? = null,
+	val junkParams: Set<String>? = null
 )
 
 data class WebResult(

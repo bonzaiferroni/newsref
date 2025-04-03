@@ -9,9 +9,7 @@ import newsref.model.core.ContentType
 import newsref.db.model.CrawlInfo
 import newsref.db.model.FetchResult
 import newsref.db.model.Page
-import newsref.db.utils.readById
 import newsref.db.utils.readFirst
-import newsref.db.utils.readFirstOrNull
 import newsref.db.utils.readIdOrInsert
 import newsref.db.utils.readIdOrNull
 import newsref.db.utils.sameAs
@@ -20,13 +18,10 @@ import newsref.db.utils.toLocalDateTimeUtc
 import newsref.db.utils.updateById
 import newsref.db.utils.updateOrInsert
 import org.jetbrains.exposed.sql.*
-import org.jetbrains.exposed.sql.statements.StatementType
-import org.jetbrains.exposed.sql.statements.UpdateStatement
-import org.jetbrains.exposed.sql.statements.UpsertStatement
 
-private val console = globalConsole.getHandle("ConsumePageService")
+private val console = globalConsole.getHandle(ConsumeCrawlService::class)
 
-class ConsumePageService : DbService() {
+class ConsumeCrawlService : DbService() {
 
     suspend fun consume(crawl: CrawlInfo): Long = dbQuery {
         val now = Clock.System.now()

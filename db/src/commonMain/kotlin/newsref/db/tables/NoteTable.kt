@@ -25,14 +25,6 @@ internal fun ResultRow.toNote() = Note(
 	this[NoteTable.modifiedAt].toInstantUtc(),
 )
 
-//internal fun NoteRow.fromModel(data: Note, userRow: UserRow) {
-//	user = userRow
-//	subject = data.subject
-//	body = data.body
-//	createdAt = data.createdAt.toLocalDateTimeUtc()
-//	modifiedAt = Clock.System.now().toLocalDateTimeUtc()
-//}
-
 internal object PageNoteTable : LongIdTable("page_note") {
 	val pageId = reference("page_id", PageTable, ReferenceOption.CASCADE).index()
 	val noteId = reference("note_id", NoteTable, ReferenceOption.SET_NULL).index()
