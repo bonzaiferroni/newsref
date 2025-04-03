@@ -1,5 +1,6 @@
 package newsref.krawly.agents
 
+import kotlinx.serialization.Serializable
 import newsref.db.globalConsole
 import newsref.db.model.Page
 import newsref.db.model.Person
@@ -104,3 +105,8 @@ class PeopleLinkerClient(
         }
     }
 }
+
+@Serializable
+data class PersonChoiceResponse(
+    val people: List<String>
+)

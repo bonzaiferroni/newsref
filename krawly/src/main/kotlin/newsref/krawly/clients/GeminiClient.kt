@@ -5,9 +5,9 @@ import io.ktor.client.call.*
 import io.ktor.client.plugins.*
 import io.ktor.client.request.*
 import io.ktor.http.*
+import kotlinx.coroutines.delay
 import kotlinx.datetime.*
 import kotlinx.datetime.Instant
-import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.descriptors.PrimitiveKind
 import kotlinx.serialization.descriptors.SerialDescriptor
@@ -18,16 +18,25 @@ import kotlinx.serialization.*
 import kotlinx.serialization.json.*
 import newsref.db.globalConsole
 import kotlin.time.Duration.Companion.hours
+import kotlin.time.Duration.Companion.seconds
 
 class GeminiClient(
     val limitedToken: String,
     val unlimitedToken: String? = null,
-    val model: String = "gemini-1.5-flash",
+    val model: String = DEFAULT_MODEL,
     val client: HttpClient = globalKtor,
 ) {
     var unlimitedUntil: Instant = Instant.DISTANT_PAST
+    var restingUntil: Instant = Instant.DISTANT_PAST
 
-    suspend inline fun <reified Received> requestJson(maxAttempts: Int, vararg parts: String): Received? {
+    suspend inline fun <reified Received> requestJson(
+        maxAttempts: Int,
+        vararg parts: String
+    ): Received? {
+        val now = Clock.System.now()
+        if (restingUntil > now) delay(restingUntil - now)
+        restingUntil = now + 6.seconds
+
         val token = when {
             unlimitedToken != null && Clock.System.now() < unlimitedUntil -> unlimitedToken
             else -> limitedToken
@@ -42,10 +51,16 @@ class GeminiClient(
                         responseSchema = generateJsonSchema<Received>()
                     )
                 )
-                val response = globalKtor.post(url) {
+
+                val ktorRequest = HttpRequestBuilder().apply {
+                    method = HttpMethod.Post
+                    url(url)
                     contentType(ContentType.Application.Json)
                     setBody(request)
                 }
+
+                val response = client.request(ktorRequest)
+
                 if (response.status == HttpStatusCode.OK) {
                     return response.body<GeminiResponse>()
                         .candidates.firstOrNull()?.content?.parts?.firstOrNull()?.text?.let {
@@ -184,6 +199,7 @@ fun mapTypeToJson(descriptor: SerialDescriptor): JsonObject = when (descriptor.k
 
 fun String.toSnakeCase(): String = this.replace(Regex("([a-z])([A-Z])"), "$1_$2").lowercase()
 
+const val DEFAULT_MODEL = "gemini-2.5-pro-exp-03-25"
 
 //@Serializable
 //sealed class Schema {

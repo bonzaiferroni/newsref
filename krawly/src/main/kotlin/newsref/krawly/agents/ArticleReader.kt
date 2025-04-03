@@ -38,22 +38,14 @@ class ArticleReader(
         }
     }
 
-    internal suspend fun readNextArticle() {
-        val page = service.readNext()
-        if (page == null) {
-            // console.log("No articles found")
-            return
-        }
+    suspend fun readArticle(page: Page): String? {
         val content = contentService.readPageContentText(pageId = page.id)
         if (content.length < READER_MIN_WORDS) error("Page content unexpectedly short: ${content.length}")
 
         val response = articleReaderClient.readArticle(page, content)
 
         if (response == null) {
-            if (lastAttemptFail) error("two fails in a row")
-            lastAttemptFail = true
-            delay(1.minutes)
-            return
+            return null
         }
 
         val documentType = response.documentType.toDocumentType() ?: DocumentType.Unknown
@@ -78,16 +70,28 @@ class ArticleReader(
                     "\n${page.url.href.take(80)}"
         )
 
-        lastAttemptFail = false
-
         peopleLinkerClient.linkPeople(page, response.people, content)
+        return response.summary
+    }
+
+    internal suspend fun readNextArticle() {
+        val page = service.readNext()
+        if (page == null) {
+            // console.log("No articles found")
+            return
+        }
+
+        val summary = readArticle(page)
+        if (summary == null) {
+            if (lastAttemptFail) error("two fails in a row")
+            lastAttemptFail = true
+            delay(1.minutes)
+            return
+        }
+
+        lastAttemptFail = false
     }
 }
-
-@Serializable
-data class PersonChoiceResponse(
-    val people: List<String>
-)
 
 private fun String.toNewsCategory() = NewsSection.entries.firstOrNull { it.title == this }
 private fun String.toDocumentType() = DocumentType.entries.firstOrNull { it.title == this }

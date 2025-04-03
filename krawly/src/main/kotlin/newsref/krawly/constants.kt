@@ -5,11 +5,21 @@ import io.ktor.client.engine.cio.CIO
 import io.ktor.client.plugins.HttpTimeout
 import io.ktor.client.plugins.contentnegotiation.ContentNegotiation
 import io.ktor.client.plugins.defaultRequest
+import io.ktor.client.plugins.logging.DEFAULT
+import io.ktor.client.plugins.logging.LogLevel
+import io.ktor.client.plugins.logging.Logger
+import io.ktor.client.plugins.logging.Logging
+import io.ktor.client.plugins.logging.SIMPLE
+import io.ktor.client.request.HttpRequestBuilder
 import io.ktor.client.request.headers
 import io.ktor.http.HttpHeaders
+import io.ktor.http.encodedPath
 import io.ktor.http.headers
 import io.ktor.serialization.kotlinx.json.json
+import kotlinx.io.Source
+import kotlinx.io.readByteArray
 import kotlinx.serialization.json.Json
+import kotlin.text.StringBuilder
 
 val firefoxAgent = "Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:130.0) Gecko/20100101 Firefox/130.0"
 val firefoxLinuxAgent = "Mozilla/5.0 (X11; Ubuntu; Linux x86_64; rv:130.0) Gecko/20100101 Firefox/130.0"
@@ -51,4 +61,12 @@ val globalKtor = HttpClient(CIO) {
         connectTimeoutMillis = 120_000 // Set connection timeout
         socketTimeoutMillis = 120_000  // Set socket timeout
     }
+//    install(Logging) {
+//        logger = Logger.SIMPLE
+//        level = LogLevel.BODY
+//        filter { request ->
+//            request.url.encodedPath.contains("generateContent")
+//        }
+//        sanitizeHeader { header -> header == HttpHeaders.Authorization }
+//    }
 }

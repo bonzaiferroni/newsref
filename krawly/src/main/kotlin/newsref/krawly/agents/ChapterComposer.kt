@@ -18,6 +18,7 @@ import newsref.db.services.ChapterPageSignal
 import newsref.db.services.ContentService
 import newsref.db.services.DataLogService
 import newsref.db.services.EmbeddingService
+import newsref.krawly.clients.ArticleReaderClient
 import newsref.krawly.clients.GeminiClient
 import newsref.model.core.ContentType
 import kotlin.time.Duration
@@ -28,11 +29,12 @@ private val console = globalConsole.getHandle("ChapterComposer")
 
 class ChapterComposer(
     aiClient: GeminiClient,
+    private val articleReader: ArticleReader,
     private val embeddingClient: EmbeddingClient = EmbeddingClient(aiClient),
     private val embeddingService: EmbeddingService = EmbeddingService(),
     private val service: ChapterComposerService = ChapterComposerService(),
     private val contentService: ContentService = ContentService(),
-    private val dataLogService: DataLogService = DataLogService(),
+    private val dataLogService: DataLogService = DataLogService()
 ) : StateModule<ChapterFinderState>(ChapterFinderState()) {
     private val excludedIds = mutableListOf<Pair<Long, Instant>>()
 
@@ -233,7 +235,7 @@ class ChapterComposer(
         if (cachedVector != null) {
             return cachedVector
         }
-        val summary = contentService.readSummaryContent(page.id)
+        val summary = contentService.readSummaryContent(page.id) ?: articleReader.readArticle(page)
         if (summary == null) {
             setState { it.copy(contentsMissing = it.contentsMissing + 1) }
             console.log("Article summary missing")

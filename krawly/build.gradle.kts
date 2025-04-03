@@ -15,6 +15,7 @@ dependencies {
 	implementation("io.ktor:ktor-client-cio:$ktor_version")
 	implementation("io.ktor:ktor-client-apache:$ktor_version")
 	implementation("io.ktor:ktor-client-encoding:$ktor_version")
+	implementation("io.ktor:ktor-client-logging:$ktor_version")
 	implementation("io.ktor:ktor-network-tls:$ktor_version")
 	implementation("io.ktor:ktor-serialization-kotlinx-json:$ktor_version")
 	implementation("io.ktor:ktor-client-content-negotiation:$ktor_version")
@@ -29,6 +30,7 @@ dependencies {
 	implementation(project(":db"))
 
 	implementation(libs.kotlinx.datetime)
+	implementation(libs.logback.classic)
 
 	// Add dependencies for unit testing
 	testImplementation(kotlin("test"))
