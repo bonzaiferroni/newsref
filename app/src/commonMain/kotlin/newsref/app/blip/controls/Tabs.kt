@@ -50,7 +50,8 @@ fun Tabs(
                 ) {
                     Text(
                         text = tab.name,
-                        modifier = Modifier.align(Alignment.Center)
+                        modifier = Modifier.align(Alignment.Center),
+                        maxLines = 1
                     )
                 }
             }

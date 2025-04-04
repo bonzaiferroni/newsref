@@ -160,19 +160,19 @@ class PageParser(
 		val audioUrls = findMediaUrls(html, "mp3|aac|ogg|oga|wav|flac|m4a|opus")
 		if (audioUrls.isNotEmpty()) {
 			val message = audioUrls.joinToString("\n")
-			// console.log("Audio urls: ${headline.take(60)} \n$message".toYellow())
+			// console.log("Audio urls: ${headline.take(50)} \n$message".toYellow())
 			logBook.write(PageParser::class, "Audio urls", message)
 		}
 		val videoUrls = findMediaUrls(html, "mp4|webm|ogv|mov|avi|flv|wmv|mkv")
 		if (videoUrls.isNotEmpty()) {
 			val message = videoUrls.joinToString("\n")
-			// console.log("Video urls: ${headline.take(60)} \n$message".toYellow())
+			// console.log("Video urls: ${headline.take(50)} \n$message".toYellow())
 			logBook.write(PageParser::class, "Video urls", message)
 		}
 		val youtubeUrls = extractYouTubeLinks(html)
 		if (youtubeUrls.isNotEmpty()) {
 			val message = youtubeUrls.joinToString("\n")
-			console.log("YouTube urls: ${headline.take(60)} \n$message".toYellow())
+			console.log("YouTube urls: ${headline.take(50)} \n$message".toYellow())
 			logBook.write(PageParser::class, "YouTube urls", message)
 		}
 

@@ -30,7 +30,7 @@ class ApiClient(
     suspend inline fun <reified Returned> get(
         endpoint: GetByIdEndpoint<Returned>,
         id: Any,
-        vararg params: Pair<String, String>
+        vararg params: Pair<String, String>?
     ): Returned = request(
         method = HttpMethod.Get,
         path = endpoint.replaceClientId(id),
@@ -41,7 +41,7 @@ class ApiClient(
     suspend inline fun <reified Returned> getOrNull(
         endpoint: GetByIdEndpoint<Returned>,
         id: Any,
-        vararg params: Pair<String, String>
+        vararg params: Pair<String, String>?
     ): Returned? = requestOrNull(
         method = HttpMethod.Get,
         path = endpoint.replaceClientId(id),
@@ -52,7 +52,7 @@ class ApiClient(
     suspend inline fun <reified Returned> getSameData(
         endpoint: GetByIdEndpoint<*>,
         id: Any,
-        vararg params: Pair<String, String>
+        vararg params: Pair<String, String>?
     ): Returned = request(
         method = HttpMethod.Get,
         path = endpoint.replaceClientId(id),
@@ -62,32 +62,38 @@ class ApiClient(
 
     suspend inline fun <reified Returned> get(
         endpoint: GetEndpoint<Returned>,
-        vararg params: Pair<String, String>
+        vararg params: Pair<String, String>?
     ): Returned = request(HttpMethod.Get, endpoint.path, null, *params)
 
     suspend inline fun <reified Returned> getSameData(
         endpoint: GetEndpoint<*>,
-        vararg params: Pair<String, String>
+        vararg params: Pair<String, String>?
     ): Returned = request(HttpMethod.Get, endpoint.path, null, *params)
 
     suspend inline fun <reified Sent, reified Returned> post(
         endpoint: PostEndpoint<Sent, Returned>,
         value: Sent,
-        vararg params: Pair<String, String>
+        vararg params: Pair<String, String>?
+    ): Returned = request(HttpMethod.Post, endpoint.path, value, *params)
+
+    suspend inline fun <reified Sent, reified Returned> postSameData(
+        endpoint: PostEndpoint<Sent, *>,
+        value: Sent,
+        vararg params: Pair<String, String>?
     ): Returned = request(HttpMethod.Post, endpoint.path, value, *params)
 
     suspend inline fun <reified Sent, reified Received> request(
         method: HttpMethod,
         path: String,
         body: Sent,
-        vararg params: Pair<String, String>
+        vararg params: Pair<String, String>?
     ): Received = requestOrNull(method, path, body, *params) ?: error("Request result is null")
 
     suspend inline fun <reified Sent, reified Received> requestOrNull(
         method: HttpMethod,
         path: String,
         body: Sent,
-        vararg params: Pair<String, String>
+        vararg params: Pair<String, String>?
     ): Received? {
         val response = sendRequest<Sent>(method, "$baseUrl$path", body, *params)
         if (response.status == HttpStatusCode.OK) return response.body()
@@ -98,6 +104,30 @@ class ApiClient(
             }
         }
         return null
+    }
+
+    suspend inline fun <reified Sent> sendRequest(
+        method: HttpMethod,
+        url: String,
+        body: Sent,
+        vararg params: Pair<String, String>?
+    ) = client.request(
+        urlString = url,
+    ) {
+        contentType(ContentType.Application.Json)
+        this.method = method
+        jwt?.let {
+            header(HttpHeaders.Authorization, "Bearer $it")
+        }
+        url {
+            params.forEach {
+                if (it == null) return@forEach
+                parameters.append(it.first, it.second)
+            }
+        }
+        if (body != null && body !is Unit) {
+            setBody(body)
+        }
     }
 
     suspend fun login(request: LoginRequest? = null): Auth? {
@@ -115,29 +145,6 @@ class ApiClient(
             refreshToken = auth.refreshToken
         )
         return auth
-    }
-
-    suspend inline fun <reified Sent> sendRequest(
-        method: HttpMethod,
-        url: String,
-        body: Sent,
-        vararg params: Pair<String, String>
-    ) = client.request(
-        urlString = url,
-    ) {
-        contentType(ContentType.Application.Json)
-        this.method = method
-        jwt?.let {
-            header(HttpHeaders.Authorization, "Bearer $it")
-        }
-        url {
-            params.forEach {
-                parameters.append(it.first, it.second)
-            }
-        }
-        if (body != null && body !is Unit) {
-            setBody(body)
-        }
     }
 }
 

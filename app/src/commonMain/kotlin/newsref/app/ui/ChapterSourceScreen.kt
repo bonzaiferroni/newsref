@@ -8,6 +8,7 @@ import newsref.app.*
 import newsref.app.blip.controls.*
 import newsref.app.blip.theme.Blip
 import newsref.app.model.*
+import newsref.model.dto.LogKey
 
 @Composable
 fun ChapterPageScreen(
@@ -50,6 +51,7 @@ fun ChapterPageScreen(
             Tab("Summary", isVisible = article.summary != null) { Text(article.summary!!) }
             Tab("Embed", isVisible = article.embed != null) { Text(article.embed!!) }
             Tab("Publisher") { HostProperties(host) }
+            Tab("Log", scrollable = false) { LogView(LogKey(pageId = article.pageId))}
         }
     }
 }

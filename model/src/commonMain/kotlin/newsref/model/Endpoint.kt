@@ -1,6 +1,7 @@
 package newsref.model
 
 import kotlinx.datetime.Instant
+import kotlin.text.toString
 
 sealed class Endpoint<Received>(
     val parent: Endpoint<*>?,
@@ -73,7 +74,7 @@ class EndpointParam<T>(
     private val toValue: (String) -> T,
     private val toString: (T) -> String,
 ) {
-    fun write(value: T) = key to toString(value)
+    fun write(value: T?) = value?.let { key to toString(value) }
     fun read(str: String) = toValue(str)
 }
 

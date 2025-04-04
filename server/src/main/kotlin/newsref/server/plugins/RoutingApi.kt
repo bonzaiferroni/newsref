@@ -23,5 +23,6 @@ fun Application.configureApiRoutes() {
         serveChapters()
         serveHosts()
         serveHuddles()
+        serveLogs()
     }
 }

@@ -11,6 +11,8 @@ import newsref.model.dto.FeedDto
 import newsref.model.dto.HostDto
 import newsref.model.dto.HuddleContentDto
 import newsref.model.dto.HuddleResponseDto
+import newsref.model.dto.LogDto
+import newsref.model.dto.LogKey
 import newsref.model.dto.PrivateInfo
 import newsref.model.dto.PageBitDto
 import newsref.model.dto.UserDto
@@ -59,4 +61,6 @@ object Api : ParentEndpoint(null, "/api/v1") {
 
         object GetChapterById : GetByIdEndpoint<ChapterPackDto>(this)
     }
+
+    object Logs : PostEndpoint<LogKey, List<LogDto>>(this, "/logs")
 }
