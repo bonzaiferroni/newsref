@@ -5,7 +5,7 @@ import kotlinx.serialization.*
 import newsref.model.core.*
 
 @Serializable
-data class ArticleDto(
+data class PageDto(
     val id: Long,
     val hostId: Int,
     val url: String,

@@ -3,7 +3,8 @@ package newsref.model
 import newsref.model.data.HuddleKey
 import newsref.model.data.HuddlePrompt
 import newsref.model.data.HuddleResponseSeed
-import newsref.model.dto.ArticleDto
+import newsref.model.data.Page
+import newsref.model.dto.PageDto
 import newsref.model.dto.AuthDto
 import newsref.model.dto.ChapterPackDto
 import newsref.model.dto.ChapterPageDto
@@ -20,8 +21,8 @@ import newsref.model.dto.UserDto
 object Api : ParentEndpoint(null, "/api/v1") {
     object Login : GetEndpoint<AuthDto>(this, "/login")
 
-    object Articles : ParentEndpoint(this, "/articles") {
-        object GetArticleById : GetByIdEndpoint<ArticleDto>(this)
+    object Pages : ParentEndpoint(this, "/articles") {
+        object GetArticleById : GetByIdEndpoint<Page>(this)
     }
 
     object ChapterPages : GetEndpoint<ChapterPageDto>(this, "/chapter_pages") {

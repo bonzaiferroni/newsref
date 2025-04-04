@@ -1,12 +1,12 @@
 package newsref.server.routes
 
 import io.ktor.server.routing.*
-import newsref.db.services.ArticleDtoService
+import newsref.db.services.PageDtoService
 import newsref.model.Api
 import newsref.server.utilities.getById
 
 fun Routing.serveArticles(
-    service: ArticleDtoService = ArticleDtoService()
+    service: PageDtoService = PageDtoService()
 ) {
 
 //    get(Api.TopSources) {
@@ -17,7 +17,7 @@ fun Routing.serveArticles(
 //        call.respond(sources)
 //    }
 
-    getById(Api.Articles.GetArticleById) { id, endpoint ->
-        service.readArticle(id)
+    getById(Api.Pages.GetArticleById) { id, endpoint ->
+        service.readPage(id)
     }
 }
