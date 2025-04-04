@@ -5,7 +5,7 @@ import newsref.app.blip.controls.Tab
 import newsref.app.blip.controls.TabCard
 import newsref.app.blip.controls.Text
 import newsref.app.model.Host
-import newsref.app.model.Page
+import newsref.model.data.Page
 import newsref.model.dto.LogKey
 
 @Composable

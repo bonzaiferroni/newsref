@@ -7,6 +7,7 @@ import newsref.app.blip.controls.BalloonsData
 import newsref.app.blip.core.*
 import newsref.app.io.*
 import newsref.app.model.*
+import newsref.model.data.Page
 
 class ChapterPageModel(
     private val route: ChapterPageRoute,

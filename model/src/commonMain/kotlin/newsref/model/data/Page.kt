@@ -1,4 +1,4 @@
-package newsref.app.model
+package newsref.model.data
 
 import kotlinx.datetime.Instant
 import kotlinx.serialization.Serializable

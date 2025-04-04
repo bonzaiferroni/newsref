@@ -16,12 +16,9 @@ application {
     mainClass.set("newsref.server.ApplicationKt")
 }
 
-repositories {
-    mavenCentral()
-}
-
 dependencies {
     implementation(libs.kotlinx.datetime)
+    implementation(libs.kotlinx.serialization.json)
 
     implementation("io.ktor:ktor-server-core-jvm")
     implementation("io.ktor:ktor-serialization-kotlinx-json-jvm")
@@ -32,7 +29,6 @@ dependencies {
     implementation("org.jetbrains.exposed:exposed-jdbc:$exposed_version")
     implementation("org.jetbrains.exposed:exposed-json:$exposed_version")
     implementation("org.jetbrains.exposed:exposed-java-time:$exposed_version")
-    implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:1.6.3")
 
     implementation("com.h2database:h2:2.1.214")
 

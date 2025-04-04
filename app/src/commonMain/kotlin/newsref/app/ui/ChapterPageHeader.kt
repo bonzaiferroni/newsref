@@ -20,7 +20,7 @@ import androidx.compose.ui.unit.dp
 import newsref.app.blip.controls.H2
 import newsref.app.blip.theme.Blip
 import newsref.app.blip.theme.ProvideSkyColors
-import newsref.app.model.Page
+import newsref.model.data.Page
 import newsref.app.model.ChapterPack
 import newsref.app.model.ChapterPage
 import newsref.app.model.Host

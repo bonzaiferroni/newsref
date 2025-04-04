@@ -2,7 +2,7 @@ package newsref.app.ui
 
 import newsref.app.blip.core.StateModel
 import newsref.app.io.HuddleStore
-import newsref.app.model.Page
+import newsref.model.data.Page
 import newsref.model.core.ArticleType
 
 class ArticlePropertiesModel(
