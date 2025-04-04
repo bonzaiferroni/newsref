@@ -5,6 +5,7 @@ import androidx.compose.foundation.text.BasicText
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.takeOrElse
+import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.text.TextLayoutResult
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontFamily
@@ -19,6 +20,23 @@ import newsref.app.blip.theme.*
 @Composable
 fun Text(
     text: String,
+    color: Color = Blip.localColors.content,
+    style: TextStyle = Blip.typ.body,
+    maxLines: Int = Int.MAX_VALUE,
+    overflow: TextOverflow = TextOverflow.Clip,
+    modifier: Modifier = Modifier
+) = BasicText(
+    text = text,
+    color = { color },
+    style = style,
+    modifier = modifier,
+    maxLines = maxLines,
+    overflow = overflow
+)
+
+@Composable
+fun Text(
+    text: AnnotatedString,
     color: Color = Blip.localColors.content,
     style: TextStyle = Blip.typ.body,
     maxLines: Int = Int.MAX_VALUE,
