@@ -7,8 +7,8 @@ import newsref.model.core.ContentType
 import newsref.model.utils.takeEllipsis
 
 @Serializable
-data class Article(
-    val pageId: Long,
+data class Page(
+    val id: Long,
     val hostId: Int,
     val url: String,
     val headline: String?,

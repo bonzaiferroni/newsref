@@ -29,7 +29,7 @@ object ArticleDtoAspect : Aspect<ArticleDtoAspect, ArticleDto>(
 }
 
 internal fun ResultRow.toSourceDto() = ArticleDto(
-    pageId = this[ArticleDtoAspect.pageId].value,
+    id = this[ArticleDtoAspect.pageId].value,
     hostId = this[ArticleDtoAspect.hostId].value,
     url = this[ArticleDtoAspect.url],
     headline = this.getOrNull(ArticleDtoAspect.headline) ?: this[ArticleDtoAspect.title],

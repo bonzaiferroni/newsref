@@ -58,8 +58,11 @@ fun PageBitItem(
         horizontalArrangement = Blip.ruler.rowTight,
         modifier = modifier
             .clickable {
-                if (chapterId != null)
+                if (chapterId != null) {
                     nav.go(ChapterPageRoute(chapterId, page.id, page.headline))
+                } else {
+                    nav.go(PageRoute(page.id, page.headline))
+                }
             }
             .padding(vertical = Blip.ruler.innerSpacing)
     ) {

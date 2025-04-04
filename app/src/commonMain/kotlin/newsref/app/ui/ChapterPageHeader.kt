@@ -20,7 +20,7 @@ import androidx.compose.ui.unit.dp
 import newsref.app.blip.controls.H2
 import newsref.app.blip.theme.Blip
 import newsref.app.blip.theme.ProvideSkyColors
-import newsref.app.model.Article
+import newsref.app.model.Page
 import newsref.app.model.ChapterPack
 import newsref.app.model.ChapterPage
 import newsref.app.model.Host
@@ -28,7 +28,7 @@ import newsref.app.model.Host
 @Composable
 fun ChapterPageHeader(
     height: Float,
-    article: Article,
+    page: Page,
     chapterPage: ChapterPage,
     host: Host,
     chapter: ChapterPack
@@ -48,14 +48,14 @@ fun ChapterPageHeader(
             val color = Blip.colors.getSwatchFromIndex(chapterPage.chapterId)
             BalloonHeader(
                 color = color,
-                title = article.bestTitle,
-                imageUrl = article.imageUrl,
-                score = article.score ?: 0,
+                title = page.bestTitle,
+                imageUrl = page.imageUrl,
+                score = page.score ?: 0,
                 height = height,
                 isSelected = false,
                 onSelect = { },
                 storyCount = null,
-                time = article.existedAt,
+                time = page.existedAt,
                 sources = chapter.sources
             )
             Row(

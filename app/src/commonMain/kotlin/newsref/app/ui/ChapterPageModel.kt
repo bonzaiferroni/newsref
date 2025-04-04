@@ -11,7 +11,7 @@ import newsref.app.model.*
 class ChapterPageModel(
     private val route: ChapterPageRoute,
     private val chapterStore: ChapterStore = ChapterStore(),
-    private val articleStore: ArticleStore = ArticleStore(),
+    private val pageStore: PageStore = PageStore(),
     private val hostStore: HostStore = HostStore(),
 ) : StateModel<ChapterPageState>(ChapterPageState(route.pageId)) {
     init {
@@ -20,24 +20,24 @@ class ChapterPageModel(
             val balloons = chapter.toBalloonsData()
             setState { it.copy(chapter = chapter, balloons = balloons) }
         }
-        selectSource(route.pageId)
+        selectPage(route.pageId)
     }
 
-    fun selectSource(pageId: Long) {
+    fun selectPage(pageId: Long) {
         setState { it.copy(selectedId = pageId)}
         viewModelScope.launch {
             val chapterSource = chapterStore.readChapterSource(route.chapterId, pageId)
             setState { it.copy(chapterPage = chapterSource) }
         }
         viewModelScope.launch {
-            val source = articleStore.readSource(pageId)
-            val host = hostStore.readHost(source.hostId)
-            setState { it.copy(article = source, host = host) }
+            val page = pageStore.readPage(pageId)
+            val host = hostStore.readHost(page.hostId)
+            setState { it.copy(page = page, host = host) }
         }
     }
 
-    fun onChangePage(page: String) {
-        setState { it.copy(page = page) }
+    fun onChangeTab(page: String) {
+        setState { it.copy(tab = page) }
     }
 }
 
@@ -45,8 +45,8 @@ data class ChapterPageState(
     val selectedId: Long,
     val chapter: ChapterPack? = null,
     val chapterPage: ChapterPage? = null,
-    val article: Article? = null,
+    val page: Page? = null,
     val host: Host? = null,
     val balloons: BalloonsData? = null,
-    val page: String? = null,
+    val tab: String? = null,
 )

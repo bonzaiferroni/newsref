@@ -23,7 +23,7 @@ fun HostScreen(
         currentTab = state.tab,
         onChangePage = viewModel::changeTab,
     ) {
-        Tab(name = "Sources", scrollable = false) {
+        Tab(name = "Articles", scrollable = false) {
             LazyColumn {
                 items(state.sources) {
                     PageBitItem(it)

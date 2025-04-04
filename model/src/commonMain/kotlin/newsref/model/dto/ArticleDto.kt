@@ -6,7 +6,7 @@ import newsref.model.core.*
 
 @Serializable
 data class ArticleDto(
-    val pageId: Long,
+    val id: Long,
     val hostId: Int,
     val url: String,
     val headline: String?,

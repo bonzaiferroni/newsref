@@ -2,13 +2,13 @@ package newsref.app.ui
 
 import newsref.app.blip.core.StateModel
 import newsref.app.io.HuddleStore
-import newsref.app.model.Article
+import newsref.app.model.Page
 import newsref.model.core.ArticleType
 
 class ArticlePropertiesModel(
-    val article: Article,
+    val page: Page,
     val huddleStore: HuddleStore = HuddleStore()
-): StateModel<ArticlePropertiesState>(ArticlePropertiesState(article)) {
+): StateModel<ArticlePropertiesState>(ArticlePropertiesState(page)) {
 
     fun toggleEditingArticleType() {
         setState { it.copy(editingArticleType = !it.editingArticleType) }
@@ -37,12 +37,12 @@ class ArticlePropertiesModel(
 }
 
 data class ArticlePropertiesState(
-    val article: Article,
+    val page: Page,
     val articleType: ArticleType = ArticleType.Unknown,
     val comment: String = "",
     val editingArticleType: Boolean = false
 ) {
     val isValidArticleType get() = articleType != ArticleType.Unknown
-            && articleType != article.articleType
+            && articleType != page.articleType
             && comment.isNotBlank()
 }

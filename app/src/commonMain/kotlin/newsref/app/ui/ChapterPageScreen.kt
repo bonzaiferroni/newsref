@@ -8,7 +8,6 @@ import newsref.app.*
 import newsref.app.blip.controls.*
 import newsref.app.blip.theme.Blip
 import newsref.app.model.*
-import newsref.model.dto.LogKey
 
 @Composable
 fun ChapterPageScreen(
@@ -26,40 +25,35 @@ fun ChapterPageScreen(
             selectedId = state.selectedId,
             balloons = state.balloons,
             height = 400.dp,
-            onClickBalloon = viewModel::selectSource
+            onClickBalloon = viewModel::selectPage
         )
         val chapterSource = state.chapterPage
-        val article = state.article
+        val article = state.page
         val host = state.host
         if (chapterSource == null || article == null || host == null) return@Column
 
         val height = 130f
         ChapterPageHeader(
             height = height,
-            article = article,
+            page = article,
             chapterPage = chapterSource,
             host = host,
             chapter = chapter
         )
-        TabCard(
-            state.page,
-            viewModel::onChangePage,
-        ) {
-            Tab("Details") {
-                ArticlePropertyRow(article)
-            }
-            Tab("Summary", isVisible = article.summary != null) { Text(article.summary!!) }
-            Tab("Embed", isVisible = article.embed != null) { Text(article.embed!!) }
-            Tab("Publisher") { HostProperties(host) }
-            Tab("Log", scrollable = false) { LogView(LogKey(pageId = article.pageId))}
-        }
+        PageTabs(
+            tab = state.tab,
+            onChangeTab = viewModel::onChangeTab,
+            page = article,
+            host = host
+        )
     }
 }
 
 @Composable
 fun HostProperties(
-    host: Host
+    host: Host?
 ) {
+    if (host == null) return
     H2(host.name ?: host.core)
     Text("Domain: ${host.core}")
     Text("Score: ${host.score}")
