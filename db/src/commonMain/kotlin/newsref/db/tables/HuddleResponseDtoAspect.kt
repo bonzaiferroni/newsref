@@ -2,7 +2,7 @@ package newsref.db.tables
 
 import newsref.db.core.Aspect
 import newsref.db.utils.toInstantUtc
-import newsref.model.dto.HuddleResponseDto
+import newsref.model.data.HuddleResponseDto
 import org.jetbrains.exposed.sql.JoinType
 import org.jetbrains.exposed.sql.ResultRow
 

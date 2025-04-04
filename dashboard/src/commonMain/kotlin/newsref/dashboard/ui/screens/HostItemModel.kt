@@ -10,8 +10,8 @@ import newsref.dashboard.ui.controls.CloudPoint
 import newsref.dashboard.utils.*
 import newsref.db.model.Host
 import newsref.db.services.*
-import newsref.model.core.*
-import newsref.model.dto.*
+import newsref.model.data.PageInfo
+import newsref.model.data.Sorting
 import kotlin.time.Duration
 import kotlin.time.Duration.Companion.days
 

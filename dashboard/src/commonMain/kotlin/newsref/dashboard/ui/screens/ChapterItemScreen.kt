@@ -14,8 +14,8 @@ import newsref.dashboard.PageItemRoute
 import newsref.dashboard.ui.table.*
 import newsref.db.model.ChapterPageInfo
 import newsref.db.utils.format
-import newsref.model.core.DataSort
-import newsref.model.core.Sorting
+import newsref.model.data.DataSort
+import newsref.model.data.Sorting
 import newsref.model.utils.*
 
 @Composable

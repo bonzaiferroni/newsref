@@ -1,10 +1,10 @@
-package newsref.model.dto
+package newsref.model.data
 
 import kotlinx.datetime.Instant
 import kotlinx.serialization.Serializable
 
 @Serializable
-data class LogDto(
+data class Log(
     val id: Long = 0,
     val pageId: Long? = null,
     val origin: String,
@@ -17,4 +17,3 @@ data class LogDto(
 data class LogKey(
     val pageId: Long? = null
 )
-// maybe: use dto pattern

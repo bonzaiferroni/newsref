@@ -7,7 +7,7 @@ import kotlinx.serialization.Serializable
 import newsref.app.*
 import newsref.app.blip.core.*
 import newsref.app.io.*
-import newsref.app.model.*
+import newsref.model.data.Host
 
 class HostFeedModel(
     route: HostFeedRoute,

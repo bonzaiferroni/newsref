@@ -11,7 +11,7 @@ import newsref.db.globalConsole
 import newsref.db.utils.*
 import newsref.krawly.models.MetaNewsArticle
 import newsref.db.core.Url
-import newsref.model.core.toSourceType
+import newsref.model.data.toSourceType
 
 fun Doc.readMetaContent(vararg propertyValues: String) = propertyValues.firstNotNullOfOrNull {
     var value = this.findFirstOrNull("meta[property=\"$it\"]")?.attributes?.get("content")

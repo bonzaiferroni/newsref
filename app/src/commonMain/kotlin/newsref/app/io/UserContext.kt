@@ -5,7 +5,7 @@ import kotlinx.coroutines.launch
 import kotlinx.serialization.Serializable
 import newsref.app.KeyStore
 import newsref.app.blip.core.StateModel
-import newsref.app.model.User
+import newsref.model.data.User
 import newsref.model.data.LoginRequest
 import newsref.model.utils.obfuscate
 

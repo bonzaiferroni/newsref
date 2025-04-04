@@ -7,7 +7,9 @@ import kotlinx.datetime.Clock
 import newsref.app.*
 import newsref.app.blip.core.*
 import newsref.app.io.*
-import newsref.app.model.*
+import newsref.model.data.Feed
+import newsref.model.data.Host
+import newsref.model.data.PageBit
 import kotlin.time.Duration.Companion.days
 
 class HostModel(

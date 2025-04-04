@@ -7,6 +7,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
+import kotlinx.collections.immutable.toImmutableList
 import newsref.app.*
 import newsref.app.blip.controls.*
 import newsref.app.blip.nav.LocalNav
@@ -59,6 +60,7 @@ fun ChapterFeedScreen(
                     .height(height.dp)
             ) {
                 val color = Blip.colors.getSwatchFromIndex(pack.chapter.id)
+                val pageBits = remember(pack.chapter.id) { pack.pageBits.toImmutableList() }
                 BalloonHeader(
                     color = color,
                     title = pack.chapter.title ?: "Chapter id: ${pack.chapter.id}",
@@ -69,7 +71,7 @@ fun ChapterFeedScreen(
                     onSelect = { viewModel.selectId(pack.chapter.id) },
                     storyCount = pack.chapter.size,
                     time = pack.chapter.averageAt,
-                    sources = pack.sources
+                    sources = pageBits
                 )
             }
         }

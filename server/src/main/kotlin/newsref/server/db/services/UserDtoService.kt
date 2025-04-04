@@ -6,21 +6,24 @@ import newsref.db.model.*
 import newsref.db.tables.*
 import newsref.db.utils.eqLowercase
 import newsref.db.utils.toLocalDateTimeUtc
-import newsref.model.core.UserRole
+import newsref.model.data.UserRole
 import newsref.model.data.EditUserRequest
 import newsref.model.data.SignUpRequest
-import newsref.model.dto.*
+import newsref.model.data.User
+import newsref.db.model.User as DbUser
 import newsref.model.utils.*
 import newsref.server.db.*
 import newsref.server.serverLog
+import newsref.db.utils.*
+import newsref.model.data.PrivateInfo
 import org.jetbrains.exposed.sql.*
 
 class UserDtoService : DbService() {
 
-    private fun readByUsername(username: String): User? =
+    private fun readByUsername(username: String): DbUser? =
         UserAspect.readFirst { UserTable.username.lowerCase() eq username.lowercase() }
 
-    suspend fun readByUsernameOrEmail(usernameOrEmail: String): User? = dbQuery {
+    suspend fun readByUsernameOrEmail(usernameOrEmail: String): DbUser? = dbQuery {
         UserAspect.readFirst {
             (UserTable.username.lowerCase() eq usernameOrEmail.lowercase()) or
                     (UserTable.email.lowerCase() eq usernameOrEmail.lowercase())
@@ -33,9 +36,9 @@ class UserDtoService : DbService() {
             .first()[UserTable.id].value
     }
 
-    suspend fun readUserDto(username: String): UserDto {
+    suspend fun readUserDto(username: String): User {
         val user = readByUsernameOrEmail(username) ?: throw IllegalArgumentException("User not found")
-        return UserDto(
+        return User(
             username = user.username,
             roles = user.roles,
             avatarUrl = user.avatarUrl,
@@ -84,8 +87,11 @@ class UserDtoService : DbService() {
     }
 
     suspend fun getPrivateInfo(username: String) = dbQuery {
-        val user = readByUsername(username) ?: throw IllegalArgumentException("User not found")
-        user.toPrivateInfo()
+        UserTable.select(UserTable.name, UserTable.email)
+            .where { UserTable.username.eq(username) }
+            .firstOrNull()
+            ?.let { PrivateInfo(it[UserTable.name], it[UserTable.email]) }
+            ?: throw IllegalArgumentException("User not found")
     }
 
     suspend fun updateUser(username: String, info: EditUserRequest) = dbQuery {

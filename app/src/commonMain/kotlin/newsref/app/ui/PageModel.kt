@@ -7,7 +7,7 @@ import newsref.app.PageRoute
 import newsref.app.blip.core.StateModel
 import newsref.app.io.HostStore
 import newsref.app.io.PageStore
-import newsref.app.model.Host
+import newsref.model.data.Host
 import newsref.model.data.Page
 
 class PageModel(

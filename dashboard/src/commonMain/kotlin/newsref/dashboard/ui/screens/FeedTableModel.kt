@@ -11,7 +11,9 @@ import newsref.db.core.toUrl
 import newsref.db.core.toUrlOrNull
 import newsref.db.model.Feed
 import newsref.db.services.*
-import newsref.model.core.*
+import newsref.model.data.DataSort
+import newsref.model.data.Sorting
+import newsref.model.data.sortedByDirection
 import kotlin.time.Duration.Companion.minutes
 
 class FeedTableModel(

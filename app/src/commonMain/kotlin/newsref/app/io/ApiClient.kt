@@ -11,7 +11,7 @@ import io.ktor.http.HttpHeaders
 import io.ktor.http.HttpMethod
 import io.ktor.http.HttpStatusCode
 import io.ktor.http.contentType
-import newsref.app.model.Auth
+import newsref.model.data.Auth
 import newsref.model.Api
 import newsref.model.GetByIdEndpoint
 import newsref.model.GetEndpoint

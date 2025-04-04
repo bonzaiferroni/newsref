@@ -1,4 +1,4 @@
-package newsref.model.dto
+package newsref.model.data
 
 import kotlinx.serialization.Serializable
 

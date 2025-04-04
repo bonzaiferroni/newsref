@@ -11,7 +11,7 @@ import androidx.compose.ui.unit.dp
 import coil3.compose.AsyncImage
 import kotlinx.collections.immutable.ImmutableList
 import newsref.app.blip.theme.Blip
-import newsref.app.model.*
+import newsref.model.data.PageBit
 
 @Composable
 fun PageArray(pages: ImmutableList<PageBit>, color: Color) {

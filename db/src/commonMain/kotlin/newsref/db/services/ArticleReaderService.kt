@@ -5,7 +5,9 @@ import newsref.db.model.*
 import newsref.db.tables.*
 import newsref.db.utils.read
 import newsref.db.utils.updateById
-import newsref.model.core.*
+import newsref.model.data.ArticleType
+import newsref.model.data.ContentType
+import newsref.model.data.NewsSection
 import org.jetbrains.exposed.sql.*
 import org.postgresql.geometric.PGpoint
 import kotlin.time.Duration.Companion.days

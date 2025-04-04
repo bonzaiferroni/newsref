@@ -1,6 +1,5 @@
 package newsref.krawly.clients
 
-import kotlinx.coroutines.delay
 import kotlinx.serialization.ExperimentalSerializationApi
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
@@ -8,17 +7,11 @@ import kotlinx.serialization.cbor.Cbor
 import newsref.db.core.Url
 import newsref.db.globalConsole
 import newsref.db.model.DocumentType
-import newsref.db.model.Person
 import newsref.db.model.Page
-import newsref.db.services.ArticleReaderService
-import newsref.db.services.ContentService
 import newsref.db.services.PERSON_UNCLEAR
-import newsref.db.services.READER_MIN_WORDS
-import newsref.model.core.ArticleType
-import newsref.model.core.NewsSection
+import newsref.model.data.ArticleType
+import newsref.model.data.NewsSection
 import java.io.File
-import kotlin.text.lowercase
-import kotlin.time.Duration.Companion.minutes
 
 private val console = globalConsole.getHandle(ArticleReaderClient::class)
 

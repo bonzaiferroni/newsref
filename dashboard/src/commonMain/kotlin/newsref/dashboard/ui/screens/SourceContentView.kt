@@ -30,7 +30,7 @@ import newsref.dashboard.ui.controls.ScrollBox
 import newsref.dashboard.utils.SpeechPlayer
 import newsref.db.model.Content
 import newsref.db.model.Page
-import newsref.model.dto.PageInfo
+import newsref.model.data.PageInfo
 
 @OptIn(ExperimentalFoundationApi::class)
 @Composable

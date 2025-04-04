@@ -7,8 +7,8 @@ import newsref.db.services.*
 import newsref.db.utils.*
 import newsref.db.utils.distance
 import newsref.db.model.*
-import newsref.model.core.SourceType
-import newsref.model.core.Relevance
+import newsref.model.data.SourceType
+import newsref.model.data.Relevance
 import kotlin.collections.maxBy
 import kotlin.collections.set
 import kotlin.math.abs

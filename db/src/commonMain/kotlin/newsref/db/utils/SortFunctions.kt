@@ -1,6 +1,6 @@
 package newsref.db.utils
 
-import newsref.model.core.SortDirection
+import newsref.model.data.SortDirection
 import org.jetbrains.exposed.sql.SortOrder
 
 fun SortDirection.toSortOrder() = when (this) {

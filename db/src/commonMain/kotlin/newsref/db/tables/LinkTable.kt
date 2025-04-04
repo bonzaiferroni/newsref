@@ -9,7 +9,7 @@ import newsref.db.utils.toCheckedFromTrusted
 import newsref.db.utils.toInstantUtc
 import newsref.db.core.CheckedUrl
 import newsref.db.model.Link
-import newsref.model.dto.LinkInfo
+import newsref.model.data.LinkInfo
 import org.jetbrains.exposed.dao.id.LongIdTable
 import org.jetbrains.exposed.sql.ReferenceOption
 import org.jetbrains.exposed.sql.ResultRow
@@ -67,7 +67,7 @@ internal val linkInfoColumns = listOf(
 )
 
 internal fun ResultRow.toLinkInfo() = LinkInfo(
-    originId = this[LinkTable.pageId].value,
+    originId = this[pageId].value,
     targetId = this[LeadTable.pageId]?.value,
     url = this[url],
     urlText = this[urlText],

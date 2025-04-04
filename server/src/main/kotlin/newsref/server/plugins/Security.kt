@@ -10,10 +10,9 @@ import io.ktor.server.auth.*
 import io.ktor.server.auth.jwt.*
 import io.ktor.server.response.*
 import io.ktor.server.routing.*
-import newsref.db.Environment
 import newsref.db.readEnvFromDirectory
-import newsref.model.core.UserRole
-import newsref.model.core.toClaimValue
+import newsref.model.data.UserRole
+import newsref.model.data.toClaimValue
 import newsref.server.db.VariableStore
 import java.util.*
 

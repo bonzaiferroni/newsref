@@ -2,10 +2,10 @@ package newsref.db.model
 
 import kotlinx.datetime.Clock
 import kotlinx.datetime.Instant
-import newsref.model.core.ArticleCategory
+import newsref.model.data.ArticleCategory
 import newsref.db.core.CheckedUrl
 import newsref.db.core.LogBook
-import newsref.model.dto.CrawledAuthor
+import newsref.model.data.CrawledAuthor
 import kotlin.time.Duration.Companion.days
 
 data class CrawlInfo(

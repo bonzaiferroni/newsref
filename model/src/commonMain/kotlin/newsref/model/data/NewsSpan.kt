@@ -1,4 +1,4 @@
-package newsref.model.core
+package newsref.model.data
 
 import kotlin.time.Duration
 import kotlin.time.Duration.Companion.days

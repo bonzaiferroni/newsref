@@ -13,10 +13,10 @@ import newsref.db.utils.stripParams
 import newsref.db.utils.toNewDomain
 import newsref.krawly.utils.contentToDoc
 import newsref.krawly.utils.findFirstOrNull
-import newsref.model.core.ContentType
+import newsref.model.data.ContentType
 import newsref.db.core.Url
 import newsref.db.core.toUrl
-import newsref.model.dto.CrawledAuthor
+import newsref.model.data.CrawledAuthor
 import java.net.URLEncoder
 import java.nio.charset.StandardCharsets
 

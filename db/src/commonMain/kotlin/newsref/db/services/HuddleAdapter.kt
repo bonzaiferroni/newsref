@@ -1,7 +1,6 @@
 package newsref.db.services
 
 import newsref.db.model.*
-import newsref.model.core.*
 import newsref.model.data.*
 import kotlin.time.Duration
 import kotlin.time.Duration.Companion.minutes

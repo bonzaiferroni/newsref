@@ -14,7 +14,7 @@ import newsref.app.blip.controls.Tabs
 import newsref.dashboard.FeedItemRoute
 import newsref.dashboard.FeedTableRoute
 import newsref.dashboard.LocalNavigator
-import newsref.model.core.*
+import newsref.model.data.DataSort
 import kotlin.time.Duration.Companion.hours
 
 @OptIn(ExperimentalLayoutApi::class)

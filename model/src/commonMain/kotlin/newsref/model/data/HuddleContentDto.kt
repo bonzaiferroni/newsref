@@ -1,9 +1,7 @@
-package newsref.model.dto
+package newsref.model.data
 
 import kotlinx.datetime.Instant
 import kotlinx.serialization.Serializable
-import newsref.model.core.HuddleStatus
-import newsref.model.core.HuddleType
 
 @Serializable
 data class HuddleContentDto(

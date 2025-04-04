@@ -6,7 +6,8 @@ import newsref.db.core.*
 import newsref.db.model.*
 import newsref.db.tables.*
 import newsref.db.utils.*
-import newsref.model.core.*
+import newsref.model.data.ContentType
+import newsref.model.data.SourceType
 import org.jetbrains.exposed.sql.*
 import org.jetbrains.exposed.sql.SqlExpressionBuilder.eq
 import org.jetbrains.exposed.sql.SqlExpressionBuilder.notInList

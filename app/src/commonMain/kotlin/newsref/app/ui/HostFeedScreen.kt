@@ -12,7 +12,7 @@ import newsref.app.*
 import newsref.app.blip.controls.*
 import newsref.app.blip.nav.LocalNav
 import newsref.app.blip.theme.Blip
-import newsref.app.model.Host
+import newsref.model.data.Host
 
 @Composable
 fun HostFeedScreen(

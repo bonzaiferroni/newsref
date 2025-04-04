@@ -2,10 +2,10 @@ package newsref.db.tables
 
 import newsref.db.core.Aspect
 import newsref.db.utils.toInstantUtc
-import newsref.model.dto.LogDto
+import newsref.model.data.Log
 import org.jetbrains.exposed.sql.ResultRow
 
-internal object LogDtoAspect: Aspect<LogDtoAspect, LogDto>(
+internal object LogDtoAspect: Aspect<LogDtoAspect, Log>(
     LogTable,
     ResultRow::toLogDto
 ) {
@@ -17,7 +17,7 @@ internal object LogDtoAspect: Aspect<LogDtoAspect, LogDto>(
     val time = add(LogTable.time)
 }
 
-internal fun ResultRow.toLogDto() = LogDto(
+internal fun ResultRow.toLogDto() = Log(
     this[LogTable.id].value,
     this[LogTable.pageId]?.value,
     this[LogTable.origin],

@@ -14,7 +14,7 @@ import newsref.db.services.PageService
 import newsref.krawly.utils.isLikelyAd
 import newsref.krawly.utils.tryGetHrefOrChild
 import newsref.krawly.utils.tryGetHrefOrParent
-import newsref.model.core.ContentType
+import newsref.model.data.ContentType
 import newsref.db.core.toUrlWithContextOrNull
 import newsref.db.model.FeedPage
 import newsref.db.model.LeadJob

@@ -2,10 +2,10 @@ package newsref.db.tables
 
 import newsref.db.core.*
 import newsref.db.utils.*
-import newsref.model.dto.*
+import newsref.model.data.Chapter
 import org.jetbrains.exposed.sql.*
 
-object ChapterDtoAspect : Aspect<ChapterDtoAspect, ChapterDto>(ChapterTable, ResultRow::toChapterDto) {
+object ChapterDtoAspect : Aspect<ChapterDtoAspect, Chapter>(ChapterTable, ResultRow::toChapterDto) {
     val id = add(ChapterTable.id)
     val title = add(ChapterTable.title)
     val score = add(ChapterTable.score)
@@ -14,11 +14,11 @@ object ChapterDtoAspect : Aspect<ChapterDtoAspect, ChapterDto>(ChapterTable, Res
     val happenedAt = add(ChapterTable.happenedAt)
 }
 
-fun ResultRow.toChapterDto() = ChapterDto(
+fun ResultRow.toChapterDto() = Chapter(
     id = this[ChapterTable.id].value,
     title = this[ChapterTable.title],
     score = this[ChapterTable.score],
     size = this[ChapterTable.size],
     cohesion = this[ChapterTable.cohesion],
-    happenedAt = this[ChapterTable.happenedAt].toInstantUtc(),
+    averageAt = this[ChapterTable.happenedAt].toInstantUtc(),
 )

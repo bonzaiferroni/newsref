@@ -17,8 +17,8 @@ import kotlinx.collections.immutable.toImmutableList
 import newsref.app.blip.controls.ButtonToggle
 import newsref.app.blip.core.StateModel
 import newsref.app.blip.theme.Blip
-import newsref.app.model.PageBit
-import newsref.model.core.ArticleType
+import newsref.model.data.PageBit
+import newsref.model.data.ArticleType
 
 @OptIn(ExperimentalLayoutApi::class)
 @Composable

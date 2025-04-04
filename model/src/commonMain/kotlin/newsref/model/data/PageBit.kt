@@ -1,11 +1,9 @@
-package newsref.app.model
+package newsref.model.data
 
 import kotlinx.datetime.Instant
 import kotlinx.serialization.*
-import newsref.model.core.*
-import newsref.model.dto.*
 
-fun PageBitDto.toSourceBit() = PageBit(
+fun PageBit.toSourceBit() = PageBit(
     id = this.id,
     hostId = this.hostId,
     url = this.url,

@@ -12,10 +12,9 @@ import newsref.app.blip.controls.BalloonPoint
 import newsref.app.blip.controls.generateAxisTicks
 import newsref.app.blip.core.StateModel
 import newsref.app.io.ChapterStore
-import newsref.app.model.ChapterPack
-import newsref.app.model.PageBit
-import newsref.app.model.toModel
-import newsref.model.core.ContentType
+import newsref.model.data.ChapterPack
+import newsref.model.data.PageBit
+import newsref.model.data.ContentType
 import newsref.model.utils.toDaysFromNow
 import kotlin.time.Duration.Companion.days
 
@@ -25,9 +24,9 @@ class ChapterModel(
 ) : StateModel<ChapterState>(ChapterState()) {
     init {
         viewModelScope.launch {
-            val pack = chapterStore.readChapter(route.id).toModel()
-            val articles = pack.sources.filter { it.contentType == ContentType.NewsArticle }.toImmutableList()
-            val references = pack.sources.filter { it.contentType != ContentType.NewsArticle }.toImmutableList()
+            val pack = chapterStore.readChapter(route.id)
+            val articles = pack.pageBits.filter { it.contentType == ContentType.NewsArticle }.toImmutableList()
+            val references = pack.pageBits.filter { it.contentType != ContentType.NewsArticle }.toImmutableList()
             val data = pack.toBalloonsData()
             setState { it.copy(
                 pack = pack,
@@ -61,7 +60,7 @@ fun ChapterPack.toBalloonsData(): BalloonsData {
         else -> eventTime
     }
     val endTime = startTime + dayRange.days
-    val balloonPoints = this.sources.mapNotNull {
+    val balloonPoints = this.pageBits.mapNotNull {
         if (it.existedAt > endTime || it.existedAt < startTime) return@mapNotNull null
         val x = (now - it.existedAt).inWholeHours / 24f
         BalloonPoint(

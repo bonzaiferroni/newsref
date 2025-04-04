@@ -1,7 +1,7 @@
 package newsref.krawly.agents
 
 import it.skrape.selects.DocElement
-import newsref.model.core.ArticleCategory
+import newsref.model.data.ArticleCategory
 
 data class ContentInfo(
 	val text: String,

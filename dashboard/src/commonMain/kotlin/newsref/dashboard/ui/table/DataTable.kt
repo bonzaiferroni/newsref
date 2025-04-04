@@ -19,7 +19,9 @@ import newsref.app.utils.modifyIfNotNull
 import newsref.dashboard.*
 import newsref.dashboard.ui.theme.primaryContainerDark
 import newsref.dashboard.utils.*
-import newsref.model.core.*
+import newsref.model.data.DataSort
+import newsref.model.data.SortDirection
+import newsref.model.data.Sorting
 
 @Composable
 fun <Item> DataTable(

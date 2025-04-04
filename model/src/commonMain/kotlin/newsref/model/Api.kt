@@ -1,44 +1,28 @@
 package newsref.model
 
-import newsref.model.data.HuddleKey
-import newsref.model.data.HuddlePrompt
-import newsref.model.data.HuddleResponseSeed
-import newsref.model.data.Page
-import newsref.model.dto.PageDto
-import newsref.model.dto.AuthDto
-import newsref.model.dto.ChapterPackDto
-import newsref.model.dto.ChapterPageDto
-import newsref.model.dto.FeedDto
-import newsref.model.dto.HostDto
-import newsref.model.dto.HuddleContentDto
-import newsref.model.dto.HuddleResponseDto
-import newsref.model.dto.LogDto
-import newsref.model.dto.LogKey
-import newsref.model.dto.PrivateInfo
-import newsref.model.dto.PageBitDto
-import newsref.model.dto.UserDto
+import newsref.model.data.*
 
 object Api : ParentEndpoint(null, "/api/v1") {
-    object Login : GetEndpoint<AuthDto>(this, "/login")
+    object Login : GetEndpoint<Auth>(this, "/login")
 
     object Pages : ParentEndpoint(this, "/articles") {
         object GetArticleById : GetByIdEndpoint<Page>(this)
     }
 
-    object ChapterPages : GetEndpoint<ChapterPageDto>(this, "/chapter_pages") {
+    object ChapterPages : GetEndpoint<ChapterPage>(this, "/chapter_pages") {
         val pageId = addLongParam("pageId")
         val chapterId = addLongParam("chapterId")
     }
 
-    object Hosts : GetEndpoint<List<HostDto>>(this, "/hosts") {
+    object Hosts : GetEndpoint<List<Host>>(this, "/hosts") {
         val ids = addIntList("ids")
         val search = addStringParam("search")
 
-        object GetHostFeeds : GetEndpoint<List<FeedDto>>(this, "/feeds") {
+        object GetHostFeeds : GetEndpoint<List<Feed>>(this, "/feeds") {
             val core = addStringParam("core")
         }
-        object GetHostById : GetByIdEndpoint<HostDto>(this)
-        object GetHostPages : GetByIdEndpoint<List<PageBitDto>>(this, "/page") {
+        object GetHostById : GetByIdEndpoint<Host>(this)
+        object GetHostPages : GetByIdEndpoint<List<PageBit>>(this, "/page") {
             val start = addInstantParam("start")
         }
     }
@@ -53,15 +37,15 @@ object Api : ParentEndpoint(null, "/api/v1") {
 
     // user
     object Users : ParentEndpoint(this, "/users") {
-        object GetUser : GetEndpoint<UserDto>(this)
+        object GetUser : GetEndpoint<User>(this)
         object GetPrivateInfo : GetEndpoint<PrivateInfo>(this, "/private")
     }
 
-    object Chapters : GetEndpoint<List<ChapterPackDto>>(this, "/chapters") {
+    object Chapters : GetEndpoint<List<ChapterPack>>(this, "/chapters") {
         val start = addInstantParam("start")
 
-        object GetChapterById : GetByIdEndpoint<ChapterPackDto>(this)
+        object GetChapterById : GetByIdEndpoint<ChapterPack>(this)
     }
 
-    object Logs : PostEndpoint<LogKey, List<LogDto>>(this, "/logs")
+    object Logs : PostEndpoint<LogKey, List<Log>>(this, "/logs")
 }

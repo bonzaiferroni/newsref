@@ -11,9 +11,9 @@ import newsref.db.model.Chapter
 import newsref.db.model.ChapterPageInfo
 import newsref.db.model.NewsSourceType
 import newsref.db.services.*
-import newsref.model.core.DataSort
-import newsref.model.core.Sorting
-import newsref.model.core.sortedByDirection
+import newsref.model.data.DataSort
+import newsref.model.data.Sorting
+import newsref.model.data.sortedByDirection
 
 class ChapterItemModel(
     route: ChapterItemRoute,

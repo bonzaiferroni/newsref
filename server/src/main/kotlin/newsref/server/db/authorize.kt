@@ -5,9 +5,9 @@ import io.ktor.server.application.*
 import io.ktor.server.request.*
 import io.ktor.server.response.*
 import newsref.db.model.User
-import newsref.model.dto.AuthDto
 import newsref.model.data.LoginRequest
 import newsref.db.tables.UserTable
+import newsref.model.data.Auth
 import newsref.model.utils.deobfuscate
 import newsref.server.db.services.RefreshTokenService
 import newsref.server.db.services.UserDtoService
@@ -51,7 +51,7 @@ suspend fun ApplicationCall.authorize(service: UserDtoService = UserDtoService()
     this.respond(HttpStatusCode.Unauthorized, "Missing password or token")
 }
 
-suspend fun testPassword(claimedUser: User, givenPassword: String, stayLoggedIn: Boolean): AuthDto? {
+suspend fun testPassword(claimedUser: User, givenPassword: String, stayLoggedIn: Boolean): Auth? {
     val byteArray = claimedUser.salt.base64ToByteArray()
     val hashedPassword = hashPassword(givenPassword, byteArray)
     if (hashedPassword != claimedUser.hashedPassword) {
@@ -60,10 +60,10 @@ suspend fun testPassword(claimedUser: User, givenPassword: String, stayLoggedIn:
 
     val sessionToken = createRefreshToken(claimedUser, stayLoggedIn)
     val jwt = createJWT(claimedUser.username, claimedUser.roles)
-    return AuthDto(jwt, sessionToken)
+    return Auth(jwt, sessionToken)
 }
 
-suspend fun testToken(claimedUser: User, refreshToken: String, stayLoggedIn: Boolean): AuthDto? {
+suspend fun testToken(claimedUser: User, refreshToken: String, stayLoggedIn: Boolean): Auth? {
     val service = RefreshTokenService()
     val cachedToken = service.readToken(refreshToken)
         ?: return null
@@ -81,7 +81,7 @@ suspend fun testToken(claimedUser: User, refreshToken: String, stayLoggedIn: Boo
         refreshToken
     }
     val jwt = createJWT(claimedUser.username, claimedUser.roles)
-    return AuthDto(jwt, returnedToken)
+    return Auth(jwt, returnedToken)
 }
 
 fun generateToken() = UUID.randomUUID().toString()

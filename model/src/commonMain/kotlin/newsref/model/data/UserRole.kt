@@ -1,4 +1,4 @@
-package newsref.model.core
+package newsref.model.data
 
 enum class UserRole {
 	ADMIN,
@@ -6,7 +6,7 @@ enum class UserRole {
 	BOT;
 
 	companion object {
-		private val map = UserRole.entries.associateBy { it.ordinal }
+		private val map = entries.associateBy { it.ordinal }
 
 		fun Int.toUserRole() = map[this] ?: throw IllegalArgumentException("UserRole has no ordinal value: $this")
 	}

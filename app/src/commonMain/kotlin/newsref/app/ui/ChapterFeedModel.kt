@@ -8,7 +8,7 @@ import newsref.app.*
 import newsref.app.blip.controls.*
 import newsref.app.blip.core.*
 import newsref.app.io.*
-import newsref.app.model.*
+import newsref.model.data.ChapterPack
 import newsref.model.utils.*
 import kotlin.time.Duration
 import kotlin.time.Duration.Companion.days
@@ -32,7 +32,6 @@ class ChapterFeedModel(
         viewModelScope.launch {
             val start = Clock.System.now() - stateNow.feedSpan.duration
             val chapters = chapterStore.readChapters(start)
-                .map { it.toModel() }
                 .toImmutableList()
 
             val balloons = chapters.map { (chapter, sources) ->

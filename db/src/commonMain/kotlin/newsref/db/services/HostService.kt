@@ -6,7 +6,9 @@ import newsref.db.core.Url
 import newsref.db.model.Host
 import newsref.db.tables.*
 import newsref.db.utils.*
-import newsref.model.core.*
+import newsref.model.data.ContentType
+import newsref.model.data.DataSort
+import newsref.model.data.SortDirection
 import org.jetbrains.exposed.sql.*
 import kotlin.time.Duration
 

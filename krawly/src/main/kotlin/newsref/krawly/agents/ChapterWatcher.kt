@@ -6,7 +6,7 @@ import newsref.db.*
 import newsref.db.services.*
 import newsref.krawly.clients.GeminiClient
 import newsref.krawly.clients.promptTemplate
-import newsref.model.core.Relevance
+import newsref.model.data.Relevance
 import kotlin.time.Duration.Companion.seconds
 
 private val console = globalConsole.getHandle("ChapterWatcher")

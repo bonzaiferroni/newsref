@@ -19,7 +19,7 @@ import newsref.db.model.Article
 import newsref.db.model.Content
 import newsref.db.model.Page
 import newsref.db.services.ArticleService
-import newsref.model.dto.LinkInfo
+import newsref.model.data.LinkInfo
 import kotlin.time.Duration.Companion.minutes
 
 class PageItemModel(

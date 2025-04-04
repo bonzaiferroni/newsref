@@ -1,13 +1,13 @@
 package newsref.app.io
 
 import kotlinx.datetime.*
-import newsref.app.model.*
 import newsref.model.Api
-import newsref.model.dto.*
+import newsref.model.data.ChapterPack
+import newsref.model.data.ChapterPage
 
 class ChapterStore(private val client: ApiClient = globalApiClient) {
     suspend fun readChapter(id: Long) = client.get(Api.Chapters.GetChapterById, id)
-    suspend fun readChapters(start: Instant): List<ChapterPackDto> = client.get(
+    suspend fun readChapters(start: Instant): List<ChapterPack> = client.get(
         Api.Chapters,
         Api.Chapters.start.write(start),
     )

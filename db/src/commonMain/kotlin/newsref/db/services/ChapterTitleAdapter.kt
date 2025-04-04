@@ -3,7 +3,7 @@ package newsref.db.services
 import newsref.db.model.Huddle
 import newsref.db.tables.ChapterTable
 import newsref.db.tables.HuddleAspect
-import newsref.model.core.HuddleType
+import newsref.model.data.HuddleType
 import newsref.model.data.HuddleKey
 import newsref.model.data.HuddleOption
 import org.jetbrains.exposed.sql.update

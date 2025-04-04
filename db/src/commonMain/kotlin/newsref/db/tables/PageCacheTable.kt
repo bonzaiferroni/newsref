@@ -3,7 +3,7 @@ package newsref.db.tables
 import kotlinx.serialization.json.Json
 import newsref.db.utils.toInstantUtc
 import newsref.db.model.PageCache
-import newsref.model.dto.PageCollection
+import newsref.model.data.PageCollection
 import org.jetbrains.exposed.dao.id.IntIdTable
 import org.jetbrains.exposed.sql.ReferenceOption
 import org.jetbrains.exposed.sql.ResultRow

@@ -4,9 +4,9 @@ import androidx.compose.runtime.Composable
 import newsref.app.blip.controls.Tab
 import newsref.app.blip.controls.TabCard
 import newsref.app.blip.controls.Text
-import newsref.app.model.Host
+import newsref.model.data.Host
 import newsref.model.data.Page
-import newsref.model.dto.LogKey
+import newsref.model.data.LogKey
 
 @Composable
 fun PageTabs(

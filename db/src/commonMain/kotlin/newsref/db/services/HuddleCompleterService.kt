@@ -3,7 +3,7 @@ package newsref.db.services
 import kotlinx.datetime.Clock
 import kotlinx.datetime.Instant
 import newsref.db.DbService
-import newsref.model.core.HuddleStatus
+import newsref.model.data.HuddleStatus
 import newsref.db.model.Huddle
 import newsref.db.utils.*
 import newsref.db.tables.*

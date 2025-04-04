@@ -13,7 +13,7 @@ import newsref.db.model.LeadResult
 import newsref.db.model.CrawledData
 import newsref.db.model.WebResult
 import newsref.krawly.utils.toMarkdown
-import newsref.model.core.*
+import newsref.model.data.ContentType
 
 class PageReader(
 	private val hostAgent: HostAgent,

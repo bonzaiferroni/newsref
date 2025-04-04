@@ -2,11 +2,11 @@ package newsref.db.tables
 
 import newsref.db.core.Aspect
 import newsref.db.utils.toInstantUtc
-import newsref.model.core.UserRole
-import newsref.model.dto.*
+import newsref.model.data.UserRole
+import newsref.model.data.User
 import org.jetbrains.exposed.sql.ResultRow
 
-object UserDtoAspect : Aspect<UserDtoAspect, UserDto>(
+object UserDtoAspect : Aspect<UserDtoAspect, User>(
     UserTable,
     ResultRow::toUserDto
 ) {
@@ -18,7 +18,7 @@ object UserDtoAspect : Aspect<UserDtoAspect, UserDto>(
     val updatedAt = add(UserTable.updatedAt)
 }
 
-fun ResultRow.toUserDto() = UserDto(
+fun ResultRow.toUserDto() = User(
     username = this[UserDtoAspect.username],
     roles = this[UserDtoAspect.roles].map { UserRole.valueOf(it) }.toSet(),
     avatarUrl = this[UserDtoAspect.avatarUrl],

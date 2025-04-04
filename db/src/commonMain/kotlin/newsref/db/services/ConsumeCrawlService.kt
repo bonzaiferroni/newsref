@@ -5,7 +5,7 @@ import newsref.db.DbService
 import newsref.db.globalConsole
 import newsref.db.model.Content
 import newsref.db.tables.*
-import newsref.model.core.ContentType
+import newsref.model.data.ContentType
 import newsref.db.model.CrawlInfo
 import newsref.db.model.FetchResult
 import newsref.db.model.Page

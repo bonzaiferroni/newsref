@@ -5,7 +5,7 @@ import kotlinx.coroutines.launch
 import newsref.app.blip.core.StateModel
 import newsref.dashboard.StartRoute
 import newsref.db.services.PageService
-import newsref.model.dto.PageInfo
+import newsref.model.data.PageInfo
 import kotlin.time.Duration
 import kotlin.time.Duration.Companion.days
 

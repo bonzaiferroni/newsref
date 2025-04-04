@@ -2,7 +2,7 @@ package newsref.db.tables
 
 import newsref.db.utils.toInstantUtc
 import newsref.db.model.Note
-import newsref.model.dto.NoteInfo
+import newsref.model.data.NoteInfo
 import org.jetbrains.exposed.dao.id.LongIdTable
 import org.jetbrains.exposed.sql.ReferenceOption
 import org.jetbrains.exposed.sql.ResultRow

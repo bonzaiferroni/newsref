@@ -2,8 +2,8 @@ package newsref.db.tables
 
 import newsref.db.model.ChapterPage
 import newsref.db.model.ChapterPageInfo
-import newsref.model.core.SourceType
-import newsref.model.core.Relevance
+import newsref.model.data.SourceType
+import newsref.model.data.Relevance
 import org.jetbrains.exposed.dao.id.LongIdTable
 import org.jetbrains.exposed.sql.ReferenceOption
 import org.jetbrains.exposed.sql.ResultRow

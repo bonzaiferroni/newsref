@@ -6,7 +6,7 @@ import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import newsref.app.blip.core.StateModel
 import newsref.db.services.*
-import newsref.model.dto.*
+import newsref.model.data.PageInfo
 
 class PageTableModel(
     private val pageService: PageService = PageService()

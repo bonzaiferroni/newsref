@@ -2,7 +2,7 @@ package newsref.db.model
 
 import kotlinx.datetime.Instant
 import kotlinx.serialization.Serializable
-import newsref.model.dto.PageCollection
+import newsref.model.data.PageCollection
 
 @Serializable
 data class PageCache(

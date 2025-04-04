@@ -16,7 +16,7 @@ import kotlinx.datetime.Instant
 import newsref.app.blip.controls.*
 import newsref.app.blip.theme.Blip
 import newsref.app.blip.theme.ProvideSkyColors
-import newsref.app.model.PageBit
+import newsref.model.data.PageBit
 import newsref.model.utils.formatSpanLong
 
 @Composable

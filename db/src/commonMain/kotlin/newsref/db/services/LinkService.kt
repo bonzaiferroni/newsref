@@ -8,8 +8,8 @@ import newsref.db.tables.PageAuthorTable
 import newsref.db.tables.linkInfoColumns
 import newsref.db.tables.linkInfoJoins
 import newsref.db.tables.toLinkInfo
-import newsref.model.dto.LinkCollection
-import newsref.model.dto.LinkInfo
+import newsref.model.data.LinkCollection
+import newsref.model.data.LinkInfo
 import org.jetbrains.exposed.sql.Op
 import org.jetbrains.exposed.sql.SqlExpressionBuilder
 import org.jetbrains.exposed.sql.and

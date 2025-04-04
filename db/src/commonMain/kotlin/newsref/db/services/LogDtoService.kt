@@ -3,10 +3,8 @@ package newsref.db.services
 import newsref.db.DbService
 import newsref.db.tables.LogDtoAspect
 import newsref.db.tables.LogTable
-import newsref.db.tables.toLog
 import newsref.db.tables.toLogDto
-import newsref.db.utils.read
-import newsref.model.dto.LogKey
+import newsref.model.data.LogKey
 import org.jetbrains.exposed.sql.SortOrder
 
 class LogDtoService : DbService() {

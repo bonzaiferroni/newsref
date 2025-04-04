@@ -3,7 +3,7 @@ package newsref.server.db
 import kotlinx.datetime.Clock
 import newsref.db.Environment
 import newsref.db.model.User
-import newsref.model.core.UserRole
+import newsref.model.data.UserRole
 
 class VariableStore(
     private val env: Environment

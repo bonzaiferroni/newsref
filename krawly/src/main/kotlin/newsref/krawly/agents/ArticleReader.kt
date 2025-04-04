@@ -1,17 +1,12 @@
 package newsref.krawly.agents
 
 import kotlinx.coroutines.*
-import kotlinx.serialization.*
-import kotlinx.serialization.cbor.Cbor
 import newsref.db.*
-import newsref.db.core.Url
 import newsref.db.model.*
 import newsref.db.services.*
 import newsref.krawly.clients.*
-import newsref.model.core.ArticleType
-import newsref.model.core.NewsSection
-import java.io.File
-import kotlin.text.split
+import newsref.model.data.ArticleType
+import newsref.model.data.NewsSection
 import kotlin.time.Duration.Companion.minutes
 import kotlin.time.Duration.Companion.seconds
 

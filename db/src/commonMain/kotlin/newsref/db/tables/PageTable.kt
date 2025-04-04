@@ -8,7 +8,9 @@ import newsref.db.model.Page
 import newsref.db.utils.toCheckedFromTrusted
 import newsref.db.utils.toInstantUtc
 import newsref.db.utils.toLocalDateTimeUtc
-import newsref.model.core.*
+import newsref.model.data.ArticleType
+import newsref.model.data.ContentType
+import newsref.model.data.NewsSection
 import org.jetbrains.exposed.dao.id.*
 import org.jetbrains.exposed.sql.*
 import org.jetbrains.exposed.sql.kotlin.datetime.datetime

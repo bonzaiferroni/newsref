@@ -18,9 +18,8 @@ import newsref.db.services.ChapterPageSignal
 import newsref.db.services.ContentService
 import newsref.db.services.DataLogService
 import newsref.db.services.EmbeddingService
-import newsref.krawly.clients.ArticleReaderClient
 import newsref.krawly.clients.GeminiClient
-import newsref.model.core.ContentType
+import newsref.model.data.ContentType
 import kotlin.time.Duration
 import kotlin.time.Duration.Companion.hours
 import kotlin.time.Duration.Companion.minutes

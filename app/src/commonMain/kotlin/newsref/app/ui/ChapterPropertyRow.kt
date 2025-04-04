@@ -2,12 +2,11 @@ package newsref.app.ui
 
 import androidx.compose.foundation.text.selection.SelectionContainer
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.key
 import newsref.app.blip.controls.PropertyTile
 import newsref.app.blip.controls.Text
-import newsref.app.model.Chapter
+import newsref.model.data.Chapter
 import newsref.app.utils.format
-import newsref.model.core.HuddleType
+import newsref.model.data.HuddleType
 import newsref.model.data.HuddleKey
 import newsref.model.utils.formatSpanLong
 

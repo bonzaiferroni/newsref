@@ -1,8 +1,8 @@
 package newsref.db.model
 
 import kotlinx.datetime.Instant
-import newsref.model.core.HuddleStatus
-import newsref.model.core.HuddleType
+import newsref.model.data.HuddleStatus
+import newsref.model.data.HuddleType
 import newsref.model.data.HuddleOption
 
 data class Huddle(

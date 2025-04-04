@@ -17,7 +17,7 @@ import newsref.dashboard.ui.table.TextCell
 import newsref.dashboard.ui.table.columns
 import newsref.dashboard.ui.table.onClick
 import newsref.dashboard.ui.table.openExternalLink
-import newsref.model.dto.LinkInfo
+import newsref.model.data.LinkInfo
 
 @Composable
 fun LinkInfoView(

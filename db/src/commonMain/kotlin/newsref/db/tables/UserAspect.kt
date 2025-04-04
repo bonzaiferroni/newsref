@@ -3,7 +3,7 @@ package newsref.db.tables
 import newsref.db.core.Aspect
 import newsref.db.model.*
 import newsref.db.utils.*
-import newsref.model.core.UserRole
+import newsref.model.data.UserRole
 import org.jetbrains.exposed.sql.ResultRow
 
 object UserAspect: Aspect<UserAspect, User>(

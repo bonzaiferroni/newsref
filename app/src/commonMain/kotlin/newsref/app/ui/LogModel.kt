@@ -4,8 +4,8 @@ import androidx.lifecycle.viewModelScope
 import kotlinx.coroutines.launch
 import newsref.app.blip.core.StateModel
 import newsref.app.io.LogStore
-import newsref.app.model.Log
-import newsref.model.dto.LogKey
+import newsref.model.data.Log
+import newsref.model.data.LogKey
 
 class LogModel(
     private val key: LogKey,

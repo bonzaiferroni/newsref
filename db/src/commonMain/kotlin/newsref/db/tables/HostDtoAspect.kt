@@ -1,10 +1,10 @@
 package newsref.db.tables
 
 import newsref.db.core.Aspect
-import newsref.model.dto.HostDto
+import newsref.model.data.Host
 import org.jetbrains.exposed.sql.ResultRow
 
-object HostDtoAspect : Aspect<HostDtoAspect, HostDto>(
+object HostDtoAspect : Aspect<HostDtoAspect, Host>(
     HostTable,
     ResultRow::toHostDto
 ) {
@@ -15,7 +15,7 @@ object HostDtoAspect : Aspect<HostDtoAspect, HostDto>(
     val score = add(HostTable.score)
 }
 
-internal fun ResultRow.toHostDto() = HostDto(
+internal fun ResultRow.toHostDto() = Host(
     id = this[HostDtoAspect.hostId].value,
     core = this[HostDtoAspect.core],
     name = this[HostDtoAspect.name],

@@ -1,12 +1,10 @@
 package newsref.db.tables
 
 import newsref.db.core.Aspect
-import newsref.db.utils.*
-import newsref.model.core.*
-import newsref.model.dto.*
+import newsref.model.data.Feed
 import org.jetbrains.exposed.sql.ResultRow
 
-object FeedDtoAspect : Aspect<FeedDtoAspect, FeedDto>(
+object FeedDtoAspect : Aspect<FeedDtoAspect, Feed>(
     FeedTable,
     ResultRow::toFeedDto
 ) {
@@ -14,7 +12,7 @@ object FeedDtoAspect : Aspect<FeedDtoAspect, FeedDto>(
     val url = add(FeedTable.url)
 }
 
-fun ResultRow.toFeedDto() = FeedDto(
+fun ResultRow.toFeedDto() = Feed(
     id = this[FeedDtoAspect.id].value,
     url = this[FeedDtoAspect.url],
 )

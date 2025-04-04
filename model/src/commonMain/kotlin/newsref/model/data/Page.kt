@@ -2,8 +2,6 @@ package newsref.model.data
 
 import kotlinx.datetime.Instant
 import kotlinx.serialization.Serializable
-import newsref.model.core.ArticleType
-import newsref.model.core.ContentType
 import newsref.model.utils.takeEllipsis
 
 @Serializable

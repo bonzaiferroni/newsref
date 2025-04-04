@@ -11,7 +11,9 @@ import newsref.db.utils.sameUrl
 import newsref.db.utils.toLocalDateTimeUtc
 import newsref.db.core.Url
 import newsref.db.utils.read
-import newsref.model.dto.*
+import newsref.model.data.CrawledAuthor
+import newsref.model.data.PageCollection
+import newsref.model.data.ScoreInfo
 import org.jetbrains.exposed.sql.Op
 import org.jetbrains.exposed.sql.SortOrder
 import org.jetbrains.exposed.sql.SqlExpressionBuilder

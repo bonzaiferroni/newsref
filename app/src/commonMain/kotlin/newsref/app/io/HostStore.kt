@@ -1,8 +1,10 @@
 package newsref.app.io
 
 import kotlinx.datetime.Instant
-import newsref.app.model.*
 import newsref.model.Api
+import newsref.model.data.Feed
+import newsref.model.data.Host
+import newsref.model.data.PageBit
 
 class HostStore(private val client: ApiClient = globalApiClient) {
     suspend fun readPinnedHosts(pinnedIds: Set<Int>): List<Host> = client.getSameData(

@@ -15,7 +15,7 @@ import newsref.db.services.LeadService
 import newsref.db.core.toUrlOrNull
 import newsref.db.model.Feed
 import newsref.db.model.LeadInfo
-import newsref.model.dto.PageInfo
+import newsref.model.data.PageInfo
 import kotlin.time.Duration.Companion.minutes
 import kotlin.time.Duration.Companion.seconds
 

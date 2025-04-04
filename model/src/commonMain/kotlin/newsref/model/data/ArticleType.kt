@@ -1,4 +1,4 @@
-package newsref.model.core
+package newsref.model.data
 
 enum class ArticleType(override val title: String): TitleEnum {
     Unknown("Unknown"),

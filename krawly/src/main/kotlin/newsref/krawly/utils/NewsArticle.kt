@@ -3,7 +3,7 @@ package newsref.krawly.utils
 import kotlinx.datetime.Instant
 import newsref.db.utils.tryParse
 import newsref.krawly.models.MetaNewsArticle
-import newsref.model.dto.CrawledAuthor
+import newsref.model.data.CrawledAuthor
 
 fun MetaNewsArticle.readPublishedAt() = this.datePublished?.let { Instant.tryParse(it) }
 fun MetaNewsArticle.readModifiedAt() = this.dateModified?.let { Instant.tryParse(it) }

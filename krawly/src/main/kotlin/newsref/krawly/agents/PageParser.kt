@@ -12,14 +12,15 @@ import newsref.db.model.Host
 import newsref.db.model.LeadInfo
 import newsref.db.services.ContentService
 import newsref.krawly.utils.*
-import newsref.model.core.*
 import newsref.db.model.CrawledData
 import newsref.db.model.CrawledLink
 import newsref.db.model.Page
 import newsref.db.model.WebResult
 import newsref.db.services.isNewsContent
 import newsref.krawly.models.MetaNewsArticle
-import newsref.model.dto.CrawledAuthor
+import newsref.model.data.ArticleCategory
+import newsref.model.data.ContentType
+import newsref.model.data.CrawledAuthor
 
 private val console = globalConsole.getHandle(PageParser::class)
 

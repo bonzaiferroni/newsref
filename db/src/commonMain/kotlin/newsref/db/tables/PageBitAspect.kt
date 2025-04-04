@@ -2,11 +2,13 @@ package newsref.db.tables
 
 import newsref.db.core.Aspect
 import newsref.db.utils.*
-import newsref.model.core.*
-import newsref.model.dto.*
+import newsref.model.data.ArticleType
+import newsref.model.data.ContentType
+import newsref.model.data.NewsSection
+import newsref.model.data.PageBit
 import org.jetbrains.exposed.sql.ResultRow
 
-object PageBitAspect : Aspect<PageBitAspect, PageBitDto>(
+object PageBitAspect : Aspect<PageBitAspect, PageBit>(
     PageTable.leftJoin(HostTable),
     ResultRow::toPageBitDto
 ) {
@@ -28,7 +30,7 @@ object PageBitAspect : Aspect<PageBitAspect, PageBitDto>(
     val seenAt = add(PageTable.seenAt)
 }
 
-internal fun ResultRow.toPageBitDto() = PageBitDto(
+internal fun ResultRow.toPageBitDto() = PageBit(
     id = this[PageBitAspect.id].value,
     hostId = this[PageBitAspect.hostId].value,
     url = this[PageBitAspect.url],

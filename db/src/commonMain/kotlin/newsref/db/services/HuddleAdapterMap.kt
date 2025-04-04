@@ -1,6 +1,6 @@
 package newsref.db.services
 
-import newsref.model.core.HuddleType
+import newsref.model.data.HuddleType
 
 typealias HuddleAdapterMap = Map<HuddleType, HuddleAdapter>
 

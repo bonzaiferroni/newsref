@@ -14,8 +14,9 @@ import newsref.dashboard.PageItemRoute
 import newsref.dashboard.PageTableRoute
 import newsref.dashboard.ui.table.*
 import newsref.dashboard.utils.*
-import newsref.model.core.*
-import newsref.model.dto.*
+import newsref.model.data.DataSort
+import newsref.model.data.PageInfo
+import newsref.model.data.Sorting
 
 @Composable
 fun PageTableScreen(

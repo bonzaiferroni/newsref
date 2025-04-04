@@ -21,9 +21,10 @@ import newsref.app.blip.controls.H2
 import newsref.app.blip.theme.Blip
 import newsref.app.blip.theme.ProvideSkyColors
 import newsref.model.data.Page
-import newsref.app.model.ChapterPack
-import newsref.app.model.ChapterPage
-import newsref.app.model.Host
+import newsref.model.data.ChapterPack
+import newsref.model.data.ChapterPage
+import newsref.model.data.Host
+import newsref.app.utils.rememberImmutableList
 
 @Composable
 fun ChapterPageHeader(
@@ -56,7 +57,7 @@ fun ChapterPageHeader(
                 onSelect = { },
                 storyCount = null,
                 time = page.existedAt,
-                sources = chapter.sources
+                sources = chapter.pageBits.rememberImmutableList()
             )
             Row(
                 horizontalArrangement = Blip.ruler.rowSpaced,

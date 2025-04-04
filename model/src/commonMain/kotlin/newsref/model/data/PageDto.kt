@@ -1,8 +1,7 @@
-package newsref.model.dto
+package newsref.model.data
 
 import kotlinx.datetime.Instant
 import kotlinx.serialization.*
-import newsref.model.core.*
 
 @Serializable
 data class PageDto(
@@ -24,19 +23,3 @@ data class PageDto(
     val publishedAt: Instant?,
 ) {
 }
-
-@Serializable
-data class PageBitDto(
-    val id: Long,
-    val hostId: Int,
-    val url: String,
-    val imageUrl: String?,
-    val hostCore: String,
-    val headline: String?,
-    val score: Int,
-    val feedPosition: Int?,
-    val contentType: ContentType,
-    val articleType: ArticleType,
-    val newsSection: NewsSection,
-    val existedAt: Instant,
-)

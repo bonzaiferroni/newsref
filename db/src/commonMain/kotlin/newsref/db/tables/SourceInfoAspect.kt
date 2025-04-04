@@ -1,7 +1,7 @@
 package newsref.db.tables
 
 import newsref.db.utils.toInstantUtc
-import newsref.model.dto.PageInfo
+import newsref.model.data.PageInfo
 import org.jetbrains.exposed.sql.ResultRow
 
 // sourceInfo

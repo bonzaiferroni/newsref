@@ -1,14 +1,5 @@
 package newsref.db.tables
 
-import kotlinx.datetime.*
-import kotlinx.datetime.TimeZone
-import org.jetbrains.exposed.dao.EntityClass
-import org.jetbrains.exposed.dao.id.EntityID
-import newsref.model.dto.UserDto
-import newsref.db.model.User
-import newsref.db.utils.toLocalDateTimeUtc
-import newsref.model.core.UserRole
-import org.jetbrains.exposed.dao.LongEntity
 import org.jetbrains.exposed.dao.id.LongIdTable
 import org.jetbrains.exposed.sql.kotlin.datetime.datetime
 

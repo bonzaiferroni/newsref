@@ -2,7 +2,7 @@ package newsref.db.tables
 
 import newsref.db.core.Aspect
 import newsref.db.utils.toInstantUtc
-import newsref.model.dto.HuddleContentDto
+import newsref.model.data.HuddleContentDto
 import org.jetbrains.exposed.sql.ResultRow
 
 object HuddleContentAspect : Aspect<HuddleContentAspect, HuddleContentDto>(

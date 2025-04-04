@@ -1,7 +1,6 @@
 package newsref.model.data
 
 import kotlinx.serialization.Serializable
-import newsref.model.core.HuddleType
 
 @Serializable
 data class HuddleResponseSeed(

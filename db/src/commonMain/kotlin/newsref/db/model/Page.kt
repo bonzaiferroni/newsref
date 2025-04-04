@@ -2,9 +2,9 @@ package newsref.db.model
 
 import kotlinx.datetime.Instant
 import newsref.db.core.CheckedUrl
-import newsref.model.core.ArticleType
-import newsref.model.core.NewsSection
-import newsref.model.core.ContentType
+import newsref.model.data.ArticleType
+import newsref.model.data.NewsSection
+import newsref.model.data.ContentType
 
 data class Page(
     val id: Long = 0,

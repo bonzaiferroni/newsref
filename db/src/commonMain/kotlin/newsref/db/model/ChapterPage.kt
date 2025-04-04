@@ -1,6 +1,7 @@
 package newsref.db.model
 
-import newsref.model.core.*
+import newsref.model.data.Relevance
+import newsref.model.data.SourceType
 
 data class ChapterPage(
     val id: Long = 0,
