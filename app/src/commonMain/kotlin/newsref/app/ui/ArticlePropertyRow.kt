@@ -26,6 +26,7 @@ fun ArticlePropertyRow(
 
         PropertyTile("Word Count", page.wordCount)
         PropertyTile("Score", page.score)
+        PropertyTile("Id", page.id)
         page.publishedAt?.let { PropertyTile("Published", it.formatSpanLong()) }
             ?: PropertyTile("Seen", page.seenAt.formatSpanLong())
         page.accessedAt?.let { PropertyTile("Accessed", it.formatSpanLong()) }

@@ -37,8 +37,10 @@ class GeminiClient(
         if (restingUntil > now) delay(restingUntil - now)
         restingUntil = now + 6.seconds
 
+        val isUnlimited = unlimitedToken != null && Clock.System.now() < unlimitedUntil
+
         val token = when {
-            unlimitedToken != null && Clock.System.now() < unlimitedUntil -> unlimitedToken
+            isUnlimited -> unlimitedToken
             else -> limitedToken
         }
         for (attempt in 0 until maxAttempts) {
@@ -67,11 +69,13 @@ class GeminiClient(
                             Json.decodeFromString(it)
                         }
                 } else if (response.status == HttpStatusCode.TooManyRequests) {
-                    unlimitedUntil = Clock.System.now() + 4.hours
-                    globalConsole.logError(
-                        "GeminiClient",
-                        "Too many requests"
-                    )
+                    if (isUnlimited) {
+                        restingUntil = Clock.System.now() + 1.hours
+                        globalConsole.logError("GeminiClient", "Rate limit reached on unlimited token, resting")
+                    } else {
+                        unlimitedUntil = Clock.System.now() + 4.hours
+                        globalConsole.logError("GeminiClient", "Too many requests")
+                    }
                 } else {
                     globalConsole.logError(
                         "GeminiClient",

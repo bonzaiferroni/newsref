@@ -24,7 +24,7 @@ object PageBitAspect : Aspect<PageBitAspect, PageBit>(
     val headline = add(PageTable.headline)
     val score = add(PageTable.score)
     val feedPosition = add(PageTable.feedPosition)
-    val newsType = add(PageTable.articleType)
+    val articleType = add(PageTable.articleType)
     val newsSection = add(PageTable.section)
     val publishedAt = add(PageTable.publishedAt)
     val seenAt = add(PageTable.seenAt)
@@ -36,11 +36,11 @@ internal fun ResultRow.toPageBitDto() = PageBit(
     url = this[PageBitAspect.url],
     imageUrl = this[PageBitAspect.thumbnail] ?: this[PageBitAspect.imageUrl] ?: this[PageBitAspect.hostLogo],
     hostCore = this[PageBitAspect.hostCore],
-    headline = this.getOrNull(PageBitAspect.headline) ?: this[PageBitAspect.title],
+    headline = this[PageBitAspect.headline] ?: this[PageBitAspect.title],
     score = this[PageBitAspect.score] ?: 0,
     feedPosition = this[PageBitAspect.feedPosition],
     contentType = this[PageBitAspect.type] ?: ContentType.Unknown,
-    articleType = this.getOrNull(PageBitAspect.newsType) ?: ArticleType.Unknown,
-    newsSection = this.getOrNull(PageBitAspect.newsSection) ?: NewsSection.Unknown,
+    articleType = this[PageBitAspect.articleType],
+    newsSection = this[PageBitAspect.newsSection] ?: NewsSection.Unknown,
     existedAt = (this[PageBitAspect.publishedAt] ?: this[PageBitAspect.seenAt]).toInstantUtc(),
 )

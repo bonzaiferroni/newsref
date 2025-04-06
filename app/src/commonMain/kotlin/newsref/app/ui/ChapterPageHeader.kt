@@ -8,6 +8,7 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.runtime.Composable
@@ -44,7 +45,8 @@ fun ChapterPageHeader(
         modifier = Modifier.fillMaxWidth()
     ) {
         Column(
-            verticalArrangement = Blip.ruler.columnTight
+            verticalArrangement = Blip.ruler.columnTight,
+            horizontalAlignment = Alignment.CenterHorizontally
         ) {
             val color = Blip.colors.getSwatchFromIndex(chapterPage.chapterId)
             BalloonHeader(
@@ -59,36 +61,18 @@ fun ChapterPageHeader(
                 time = page.existedAt,
                 sources = chapter.pageBits.rememberImmutableList()
             )
-            Row(
-                horizontalArrangement = Blip.ruler.rowSpaced,
-                modifier = Modifier.height(height.dp)
-                    .fillMaxWidth()
+            Box(
+                contentAlignment = Alignment.Center,
+                modifier = Modifier.shadow(Blip.ruler.shadowElevation, Blip.ruler.round)
+                    .background(Blip.colors.accent)
+                    .clickable { println("open in browser") }
+                    .padding(Blip.ruler.basePadding)
             ) {
-                Box(
-                    contentAlignment = Alignment.Center,
-                    modifier = Modifier.size(height.dp)
-                ) {
-
-                }
-                Box(
-                    contentAlignment = Alignment.Center,
-                    modifier = Modifier.fillMaxHeight()
-                        .weight(1f)
-                        .shadow(Blip.ruler.shadowElevation, RoundedCornerShape(height / 2))
-                        .background(Blip.colors.accent)
-                        .clickable { println("open in browser") }
-                ) {
-                    ProvideSkyColors {
-                        H2(
-                            text = "Read at\n${host.core}",
-                            style = TextStyle(textAlign = TextAlign.Center)
-                        )
-                    }
-                }
-                Column(
-                    modifier = Modifier.size(height.dp)
-                ) {
-
+                ProvideSkyColors {
+                    H2(
+                        text = "Read at\n${host.core}",
+                        style = TextStyle(textAlign = TextAlign.Center)
+                    )
                 }
             }
         }

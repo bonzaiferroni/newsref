@@ -10,6 +10,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.sizeIn
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.text.selection.SelectionContainer
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -44,15 +45,17 @@ fun <T> PropertyTile(
                 .background(color = Blip.localColors.surface.darken())
                 .padding(Blip.ruler.innerPadding)
         )
-        Row(
-            verticalAlignment = Alignment.CenterVertically,
-            horizontalArrangement = Arrangement.spacedBy(Blip.ruler.halfSpacing, Alignment.CenterHorizontally),
-            modifier = Modifier.sizeIn(minHeight = 40.dp)
-                .fillMaxWidth()
-                .background(color = Blip.localColors.surface.brighten())
-                .padding(Blip.ruler.innerPadding)
-        ) {
-            content(value)
+        SelectionContainer {
+            Row(
+                verticalAlignment = Alignment.CenterVertically,
+                horizontalArrangement = Arrangement.spacedBy(Blip.ruler.halfSpacing, Alignment.CenterHorizontally),
+                modifier = Modifier.sizeIn(minHeight = 40.dp)
+                    .fillMaxWidth()
+                    .background(color = Blip.localColors.surface.brighten())
+                    .padding(Blip.ruler.innerPadding)
+            ) {
+                content(value)
+            }
         }
     }
 }

@@ -12,6 +12,7 @@ import newsref.app.blip.controls.BalloonPoint
 import newsref.app.blip.controls.generateAxisTicks
 import newsref.app.blip.core.StateModel
 import newsref.app.io.ChapterStore
+import newsref.model.data.ArticleType
 import newsref.model.data.ChapterPack
 import newsref.model.data.PageBit
 import newsref.model.data.ContentType
@@ -25,8 +26,8 @@ class ChapterModel(
     init {
         viewModelScope.launch {
             val pack = chapterStore.readChapter(route.id)
-            val articles = pack.pageBits.filter { it.contentType == ContentType.NewsArticle }.toImmutableList()
-            val references = pack.pageBits.filter { it.contentType != ContentType.NewsArticle }.toImmutableList()
+            val articles = pack.pageBits.filter { it.articleType != ArticleType.Unknown }.toImmutableList()
+            val references = pack.pageBits.filter { it.articleType == ArticleType.Unknown }.toImmutableList()
             val data = pack.toBalloonsData()
             setState { it.copy(
                 pack = pack,
