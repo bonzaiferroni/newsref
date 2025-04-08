@@ -4,6 +4,7 @@ import androidx.compose.runtime.Composable
 import newsref.app.blip.controls.Tab
 import newsref.app.blip.controls.TabCard
 import newsref.app.blip.controls.Text
+import newsref.model.data.ChapterPage
 import newsref.model.data.Host
 import newsref.model.data.Page
 import newsref.model.data.LogKey
@@ -14,12 +15,13 @@ fun PageTabs(
     onChangeTab: (String) -> Unit,
     page: Page,
     host: Host?,
+    chapterPage: ChapterPage? = null
 ) {
     TabCard(
         tab,
         onChangeTab,
     ) {
-        Tab("Details") { ArticlePropertyRow(page) }
+        Tab("Details") { PagePropertyRow(page, chapterPage) }
         Tab("Summary", isVisible = page.summary != null) { Text(page.summary!!) }
         Tab("Embed", isVisible = page.embed != null) { Text(page.embed!!) }
         Tab("Source") { HostProperties(host) }

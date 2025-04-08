@@ -12,7 +12,7 @@ object ChapterPageTable : LongIdTable("chapter_page") {
     val chapterId = reference("chapter_id", ChapterTable, ReferenceOption.CASCADE).index()
     val pageId = reference("page_id", PageTable, ReferenceOption.CASCADE).index()
     val relevanceHuddleId = reference("relevance_huddle_id", HuddleTable, ReferenceOption.SET_NULL).nullable().index()
-    val type = enumeration<SourceType>("type")
+    val sourceType = enumeration<SourceType>("type")
     val distance = float("distance").nullable()
     val textDistance = float("text_distance").nullable()
     val timeDistance = float("time_distance").nullable()
@@ -30,7 +30,7 @@ fun ResultRow.toChapterSource() = ChapterPage(
     pageId = this[ChapterPageTable.pageId].value,
     // relevance = this[ChapterSourceTable.relevance],
     // contrast = this[ChapterSourceTable.contrast],
-    type = this[ChapterPageTable.type],
+    type = this[ChapterPageTable.sourceType],
     distance = this[ChapterPageTable.distance],
     textDistance = this[ChapterPageTable.textDistance],
     timeDistance = this[ChapterPageTable.timeDistance],

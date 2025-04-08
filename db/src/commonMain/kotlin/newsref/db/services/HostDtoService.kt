@@ -21,7 +21,7 @@ class HostDtoService : DbService() {
     }
 
     suspend fun readSources(hostId: Int, start: Instant, limit: Int = 20) = dbQuery {
-        PageBitAspect.read(PageBitAspect.feedPosition, SortOrder.ASC_NULLS_LAST, limit) {
+        PageLiteAspect.read(PageLiteAspect.feedPosition, SortOrder.ASC_NULLS_LAST, limit) {
             it.hostId.eq(hostId) and it.seenAt.greater(start)
         }
     }

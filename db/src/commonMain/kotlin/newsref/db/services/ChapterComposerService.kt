@@ -48,7 +48,7 @@ class ChapterComposerService : DbService() {
             .select(PageTable.columns + ChapterPageTable.columns)
             .where {
                 ChapterPageTable.chapterId.eq(chapterId) and
-                        ChapterPageTable.type.eq(SourceType.Article)
+                        ChapterPageTable.sourceType.eq(SourceType.Article)
             }
             .map { it.toChapterSignal() }
     }
@@ -85,7 +85,7 @@ class ChapterComposerService : DbService() {
             ChapterPageTable.upsert(ChapterPageTable.chapterId, ChapterPageTable.pageId) {
                 it[ChapterPageTable.chapterId] = chapterId
                 it[pageId] = source.pageId
-                it[type] = source.type
+                it[sourceType] = source.type
                 it[distance] = source.distance
                 it[linkDistance] = source.linkDistance
                 it[timeDistance] = source.timeDistance

@@ -22,7 +22,7 @@ object Api : ParentEndpoint(null, "/api/v1") {
             val core = addStringParam("core")
         }
         object GetHostById : GetByIdEndpoint<Host>(this)
-        object GetHostPages : GetByIdEndpoint<List<PageBit>>(this, "/page") {
+        object GetHostPages : GetByIdEndpoint<List<PageLite>>(this, "/page") {
             val start = addInstantParam("start")
         }
     }
@@ -41,10 +41,10 @@ object Api : ParentEndpoint(null, "/api/v1") {
         object GetPrivateInfo : GetEndpoint<PrivateInfo>(this, "/private")
     }
 
-    object Chapters : GetEndpoint<List<ChapterPack>>(this, "/chapters") {
+    object Chapters : GetEndpoint<List<Chapter>>(this, "/chapters") {
         val start = addInstantParam("start")
 
-        object GetChapterById : GetByIdEndpoint<ChapterPack>(this)
+        object GetChapterById : GetByIdEndpoint<Chapter>(this)
     }
 
     object Logs : PostEndpoint<LogKey, List<Log>>(this, "/logs")

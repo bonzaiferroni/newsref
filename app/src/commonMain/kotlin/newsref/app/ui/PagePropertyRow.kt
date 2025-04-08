@@ -2,14 +2,16 @@ package newsref.app.ui
 
 import androidx.compose.runtime.*
 import newsref.app.blip.controls.*
+import newsref.model.data.ChapterPage
 import newsref.model.data.HuddleType
 import newsref.model.data.HuddleKey
 import newsref.model.data.Page
 import newsref.model.utils.formatSpanLong
 
 @Composable
-fun ArticlePropertyRow(
+fun PagePropertyRow(
     page: Page,
+    chapterPage: ChapterPage? = null,
 ) {
     PropertyRow {
         PropertyTile("Url", page.url)
@@ -31,5 +33,9 @@ fun ArticlePropertyRow(
             ?: PropertyTile("Seen", page.seenAt.formatSpanLong())
         page.accessedAt?.let { PropertyTile("Accessed", it.formatSpanLong()) }
             ?: PropertyTile("Accessed", "never")
+        chapterPage?.let {
+            println(chapterPage)
+            PropertyTile("Text Distance", it.textDistance)
+        }
     }
 }

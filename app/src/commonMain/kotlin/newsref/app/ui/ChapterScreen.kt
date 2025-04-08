@@ -11,7 +11,7 @@ import newsref.app.*
 import newsref.app.blip.controls.*
 import newsref.app.blip.nav.LocalNav
 import newsref.app.blip.theme.Blip
-import newsref.model.data.PageBit
+import newsref.model.data.PageLite
 import newsref.model.utils.formatSpanLong
 
 @Composable
@@ -20,9 +20,9 @@ fun ChapterScreen(
     viewModel: ChapterModel = viewModel { ChapterModel(route) }
 ) {
     val state by viewModel.state.collectAsState()
-    val pack = state.pack
-    if (pack == null) return
-    val (chapter, articles) = pack
+    val chapter = state.chapter
+    val articles = chapter?.pages
+    if (chapter == null || articles == null) return
     Column(
         verticalArrangement = Blip.ruler.columnTight
     ) {
@@ -37,10 +37,10 @@ fun ChapterScreen(
                 ChapterPropertyRow(chapter)
             }
             Tab("Articles", false) {
-                PagesListView(state.articles, "articles", chapter.id)
+                ChapterPagesListView(state.articles, "articles", chapter.id)
             }
             Tab("References", false) {
-                PagesListView(state.references, "references", chapter.id)
+                ChapterPagesListView(state.references, "references", chapter.id)
             }
         }
     }
@@ -49,7 +49,7 @@ fun ChapterScreen(
 @OptIn(ExperimentalLayoutApi::class)
 @Composable
 fun PageBitItem(
-    page: PageBit,
+    page: PageLite,
     chapterId: Long? = null,
     modifier: Modifier = Modifier,
 ) {

@@ -41,10 +41,10 @@ fun ChapterFeedScreen(
         val height = 108f
         CardFeed(
             selectedId = state.selectedId,
-            items = state.chapterPacks,
+            items = state.chapters,
             onSelect = viewModel::selectId,
-            getId = { it.chapter.id }
-        ) { pack, isSelected ->
+            getId = { it.id }
+        ) { chapter, isSelected ->
             val corner = (height / 2) * density.density
             Card(
                 shape = RoundedCornerShape(
@@ -54,24 +54,24 @@ fun ChapterFeedScreen(
                     bottomEnd = 0f
                 ),
                 onClick = {
-                    nav.go(ChapterRoute(pack.chapter.id, pack.chapter.title))
+                    nav.go(ChapterRoute(chapter.id, chapter.title))
                 },
                 modifier = Modifier.fillMaxWidth()
                     .height(height.dp)
             ) {
-                val color = Blip.colors.getSwatchFromIndex(pack.chapter.id)
-                val pageBits = remember(pack.chapter.id) { pack.pageBits.toImmutableList() }
+                val color = Blip.colors.getSwatchFromIndex(chapter.id)
+                val pages = remember(chapter.id) { chapter.pages?.toImmutableList() }
                 BalloonHeader(
                     color = color,
-                    title = pack.chapter.title ?: "Chapter id: ${pack.chapter.id}",
-                    imageUrl = pack.imageUrl,
-                    score = pack.chapter.score,
+                    title = chapter.title ?: "Chapter id: ${chapter.id}",
+                    imageUrl = chapter.imageUrl,
+                    score = chapter.score,
                     height = height,
                     isSelected = isSelected,
-                    onSelect = { viewModel.selectId(pack.chapter.id) },
-                    storyCount = pack.chapter.size,
-                    time = pack.chapter.averageAt,
-                    sources = pageBits
+                    onSelect = { viewModel.selectId(chapter.id) },
+                    storyCount = chapter.size,
+                    time = chapter.averageAt,
+                    pages = pages
                 )
             }
         }

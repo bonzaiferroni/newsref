@@ -6,7 +6,7 @@ import newsref.app.*
 import newsref.app.blip.controls.BalloonsData
 import newsref.app.blip.core.*
 import newsref.app.io.*
-import newsref.model.data.ChapterPack
+import newsref.model.data.Chapter
 import newsref.model.data.ChapterPage
 import newsref.model.data.Host
 import newsref.model.data.Page
@@ -29,7 +29,7 @@ class ChapterPageModel(
     fun selectPage(pageId: Long) {
         setState { it.copy(selectedId = pageId)}
         viewModelScope.launch {
-            val chapterSource = chapterStore.readChapterSource(route.chapterId, pageId)
+            val chapterSource = chapterStore.readChapterPage(route.chapterId, pageId)
             setState { it.copy(chapterPage = chapterSource) }
         }
         viewModelScope.launch {
@@ -46,7 +46,7 @@ class ChapterPageModel(
 
 data class ChapterPageState(
     val selectedId: Long,
-    val chapterPack: ChapterPack? = null,
+    val chapterPack: Chapter? = null,
     val chapterPage: ChapterPage? = null,
     val page: Page? = null,
     val host: Host? = null,

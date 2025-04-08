@@ -11,22 +11,24 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.lifecycle.viewmodel.compose.viewModel
+import io.ktor.util.valuesOf
 import kotlinx.collections.immutable.ImmutableList
 import kotlinx.collections.immutable.persistentListOf
 import kotlinx.collections.immutable.toImmutableList
 import newsref.app.blip.controls.ButtonToggle
 import newsref.app.blip.core.StateModel
 import newsref.app.blip.theme.Blip
-import newsref.model.data.PageBit
+import newsref.model.data.PageLite
 import newsref.model.data.ArticleType
+import newsref.model.data.ChapterPageLite
 
 @OptIn(ExperimentalLayoutApi::class)
 @Composable
-fun PagesListView(
-    articles: ImmutableList<PageBit>,
-    viewModelKey: String = "PagesListView",
+fun ChapterPagesListView(
+    pages: ImmutableList<ChapterPageLite>,
+    viewModelKey: String = "ChapterPagesListView",
     chapterId: Long? = null,
-    viewModel: ArticlesListModel = viewModel(key = viewModelKey) { ArticlesListModel(articles) }
+    viewModel: ArticlesListModel = viewModel(key = viewModelKey) { ArticlesListModel(pages) }
 ) {
     val state by viewModel.state.collectAsState()
     FlowRow(
@@ -50,7 +52,7 @@ fun PagesListView(
     ) {
         items(state.filteredArticles) {
             PageBitItem(
-                page = it,
+                page = it.page,
                 chapterId = chapterId,
                 modifier = Modifier.animateItem()
             )
@@ -59,16 +61,17 @@ fun PagesListView(
 }
 
 class ArticlesListModel(
-    private val articles: List<PageBit>
+    private val articles: List<ChapterPageLite>
 ): StateModel<ArticlesListState>(ArticlesListState()) {
 
     init {
+
         setState { it.copy(
-            reportCount = articles.count { it.articleType == ArticleType.Report },
-            analysisCount = articles.count { it.articleType == ArticleType.Analysis },
-            opinionCount = articles.count { it.articleType == ArticleType.Opinion },
-            investigationCount = articles.count { it.articleType == ArticleType.Investigation },
-            unknownCount = articles.count { it.articleType == ArticleType.Unknown }
+            reportCount = articles.count { it.page.articleType == ArticleType.Report },
+            analysisCount = articles.count { it.page.articleType == ArticleType.Analysis },
+            opinionCount = articles.count { it.page.articleType == ArticleType.Opinion },
+            investigationCount = articles.count { it.page.articleType == ArticleType.Investigation },
+            unknownCount = articles.count { it.page.articleType == ArticleType.Unknown }
         ) }
         filterArticles()
     }
@@ -86,11 +89,11 @@ class ArticlesListModel(
 
     fun filterArticles() {
         val filteredArticles = articles.filter {
-            it.articleType == ArticleType.Report && stateNow.showReports ||
-                    it.articleType == ArticleType.Opinion && stateNow.showPerspectives ||
-                    it.articleType == ArticleType.Analysis && stateNow.showAnalysis ||
-                    it.articleType == ArticleType.Investigation && stateNow.showInvestigations ||
-                    it.articleType == ArticleType.Unknown && stateNow.showUnknown
+            it.page.articleType == ArticleType.Report && stateNow.showReports ||
+                    it.page.articleType == ArticleType.Opinion && stateNow.showPerspectives ||
+                    it.page.articleType == ArticleType.Analysis && stateNow.showAnalysis ||
+                    it.page.articleType == ArticleType.Investigation && stateNow.showInvestigations ||
+                    it.page.articleType == ArticleType.Unknown && stateNow.showUnknown
         }
         setState { it.copy(filteredArticles = filteredArticles.toImmutableList()) }
     }
@@ -107,5 +110,5 @@ data class ArticlesListState(
     val analysisCount: Int = 0,
     val investigationCount: Int = 0,
     val unknownCount: Int = 0,
-    val filteredArticles: ImmutableList<PageBit> = persistentListOf()
+    val filteredArticles: ImmutableList<ChapterPageLite> = persistentListOf()
 )

@@ -23,7 +23,7 @@ import kotlin.time.Duration.Companion.seconds
 class GeminiClient(
     val limitedToken: String,
     val unlimitedToken: String? = null,
-    val model: String = DEFAULT_MODEL,
+    val model: String = "gemini-1.5-flash",
     val client: HttpClient = globalKtor,
 ) {
     var unlimitedUntil: Instant = Instant.DISTANT_PAST
@@ -203,7 +203,6 @@ fun mapTypeToJson(descriptor: SerialDescriptor): JsonObject = when (descriptor.k
 
 fun String.toSnakeCase(): String = this.replace(Regex("([a-z])([A-Z])"), "$1_$2").lowercase()
 
-const val DEFAULT_MODEL = "gemini-2.5-pro-exp-03-25"
 
 //@Serializable
 //sealed class Schema {

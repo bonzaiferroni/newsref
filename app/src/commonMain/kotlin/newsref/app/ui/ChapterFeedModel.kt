@@ -8,7 +8,7 @@ import newsref.app.*
 import newsref.app.blip.controls.*
 import newsref.app.blip.core.*
 import newsref.app.io.*
-import newsref.model.data.ChapterPack
+import newsref.model.data.Chapter
 import newsref.model.utils.*
 import kotlin.time.Duration
 import kotlin.time.Duration.Companion.days
@@ -27,14 +27,14 @@ class ChapterFeedModel(
     }
 
     fun changeSpan(span: FeedSpan) {
-        if (span == stateNow.feedSpan && stateNow.chapterPacks.isNotEmpty()) return
+        if (span == stateNow.feedSpan && stateNow.chapters.isNotEmpty()) return
         setState { it.copy(feedSpan = span) }
         viewModelScope.launch {
             val start = Clock.System.now() - stateNow.feedSpan.duration
             val chapters = chapterStore.readChapters(start)
                 .toImmutableList()
 
-            val balloons = chapters.map { (chapter, sources) ->
+            val balloons = chapters.map { chapter ->
                 val x = (Clock.System.now() - chapter.averageAt).inWholeHours / 24f
                 BalloonPoint(
                     id = chapter.id,
@@ -43,7 +43,7 @@ class ChapterFeedModel(
                     size = chapter.score.toFloat(),
                     text = chapter.title ?: chapter.id.toString(),
                     colorIndex = chapter.id.toInt(),
-                    imageUrl = sources.firstOrNull { it.imageUrl != null }?.imageUrl
+                    imageUrl = chapter.imageUrl
                 )
             }.toImmutableList()
             val chartConfig = BalloonsData(
@@ -52,14 +52,14 @@ class ChapterFeedModel(
                 xMin = start.toDaysFromNow(),
                 xMax = 0f,
             )
-            setState { it.copy(chapterPacks = chapters, chartConfig = chartConfig) }
+            setState { it.copy(chapters = chapters, chartConfig = chartConfig) }
         }
     }
 }
 
 data class ChapterFeedState(
     val selectedId: Long? = null,
-    val chapterPacks: ImmutableList<ChapterPack> = persistentListOf(),
+    val chapters: ImmutableList<Chapter> = persistentListOf(),
     val chartConfig: BalloonsData = BalloonsData(),
     val feedSpan: FeedSpan = FeedSpan.Week
 )

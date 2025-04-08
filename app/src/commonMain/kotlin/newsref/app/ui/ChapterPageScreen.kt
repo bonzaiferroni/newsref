@@ -44,7 +44,8 @@ fun ChapterPageScreen(
             tab = state.tab,
             onChangeTab = viewModel::onChangeTab,
             page = article,
-            host = host
+            host = host,
+            chapterPage = state.chapterPage
         )
     }
 }

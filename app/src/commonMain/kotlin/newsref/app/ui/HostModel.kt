@@ -9,7 +9,7 @@ import newsref.app.blip.core.*
 import newsref.app.io.*
 import newsref.model.data.Feed
 import newsref.model.data.Host
-import newsref.model.data.PageBit
+import newsref.model.data.PageLite
 import kotlin.time.Duration.Companion.days
 
 class HostModel(
@@ -20,7 +20,7 @@ class HostModel(
         viewModelScope.launch {
             val host = store.readHost(route.hostId)
             val sources = store.readHostSources(route.hostId, Clock.System.now() - 1.days)
-                .sortedWith(compareBy<PageBit> { it.feedPosition }
+                .sortedWith(compareBy<PageLite> { it.feedPosition }
                     .thenByDescending { it.score }
                     .thenByDescending { it.existedAt })
                 .toImmutableList()
@@ -37,6 +37,6 @@ class HostModel(
 data class HostState(
     val host: Host? = null,
     val tab: String? = null,
-    val sources: ImmutableList<PageBit> = persistentListOf(),
+    val sources: ImmutableList<PageLite> = persistentListOf(),
     val feeds: ImmutableList<Feed> = persistentListOf(),
 )

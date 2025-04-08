@@ -13,9 +13,9 @@ import newsref.app.blip.controls.generateAxisTicks
 import newsref.app.blip.core.StateModel
 import newsref.app.io.ChapterStore
 import newsref.model.data.ArticleType
-import newsref.model.data.ChapterPack
-import newsref.model.data.PageBit
-import newsref.model.data.ContentType
+import newsref.model.data.Chapter
+import newsref.model.data.ChapterPageLite
+import newsref.model.data.PageLite
 import newsref.model.utils.toDaysFromNow
 import kotlin.time.Duration.Companion.days
 
@@ -25,12 +25,13 @@ class ChapterModel(
 ) : StateModel<ChapterState>(ChapterState()) {
     init {
         viewModelScope.launch {
-            val pack = chapterStore.readChapter(route.id)
-            val articles = pack.pageBits.filter { it.articleType != ArticleType.Unknown }.toImmutableList()
-            val references = pack.pageBits.filter { it.articleType == ArticleType.Unknown }.toImmutableList()
-            val data = pack.toBalloonsData()
+            val chapter = chapterStore.readChapter(route.id)
+            val pages = chapter.pages ?: error("Chapter had null pages")
+            val articles = pages.filter { it.page.articleType != ArticleType.Unknown }.toImmutableList()
+            val references = pages.filter { it.page.articleType == ArticleType.Unknown }.toImmutableList()
+            val data = chapter.toBalloonsData()
             setState { it.copy(
-                pack = pack,
+                chapter = chapter,
                 balloons = data,
                 articles = articles,
                 references = references,
@@ -45,15 +46,16 @@ class ChapterModel(
 
 data class ChapterState(
     val balloons: BalloonsData = BalloonsData(),
-    val pack: ChapterPack? = null,
-    val articles: ImmutableList<PageBit> = persistentListOf(),
-    val references: ImmutableList<PageBit> = persistentListOf(),
+    val chapter: Chapter? = null,
+    val articles: ImmutableList<ChapterPageLite> = persistentListOf(),
+    val references: ImmutableList<ChapterPageLite> = persistentListOf(),
     val tab: String? = null,
 )
 
-fun ChapterPack.toBalloonsData(): BalloonsData {
+fun Chapter.toBalloonsData(): BalloonsData {
+    val pages = this.pages ?: error("Chapter had null pages")
     val dayRange = 3.0
-    val eventTime = this.chapter.averageAt - (dayRange / 2).days
+    val eventTime = this.averageAt - (dayRange / 2).days
     val now = Clock.System.now()
     val minStartTime = now - dayRange.days
     val startTime = when {
@@ -61,17 +63,18 @@ fun ChapterPack.toBalloonsData(): BalloonsData {
         else -> eventTime
     }
     val endTime = startTime + dayRange.days
-    val balloonPoints = this.pageBits.mapNotNull {
-        if (it.existedAt > endTime || it.existedAt < startTime) return@mapNotNull null
-        val x = (now - it.existedAt).inWholeHours / 24f
+    val balloonPoints = pages.mapNotNull {
+        val page = it.page
+        if (page.existedAt > endTime || page.existedAt < startTime) return@mapNotNull null
+        val x = (now - page.existedAt).inWholeHours / 24f
         BalloonPoint(
-            id = it.id,
+            id = page.id,
             x = -x,
-            y = it.score.toFloat(),
-            size = it.score.toFloat(),
-            text = it.headline.toString(),
-            colorIndex = it.id.toInt(),
-            it.imageUrl
+            y = page.score.toFloat(),
+            size = page.score.toFloat(),
+            text = page.headline.toString(),
+            colorIndex = page.id.toInt(),
+            page.imageUrl
         )
     }.toImmutableList()
     val xTicks = generateAxisTicks(startTime, endTime)

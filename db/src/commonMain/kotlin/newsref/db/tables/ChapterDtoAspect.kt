@@ -15,6 +15,8 @@ object ChapterDtoAspect : Aspect<ChapterDtoAspect, Chapter>(ChapterTable, Result
 }
 
 fun ResultRow.toChapterDto() = Chapter(
+    pages = null,
+
     id = this[ChapterTable.id].value,
     title = this[ChapterTable.title],
     score = this[ChapterTable.score],

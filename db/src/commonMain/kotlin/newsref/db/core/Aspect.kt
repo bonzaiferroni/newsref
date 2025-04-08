@@ -16,6 +16,11 @@ open class Aspect<Self: Aspect<Self, Data>, Data>(
         return expression
     }
 
+    fun add(expressions: List<ExpressionWithColumnType<*>>): List<ExpressionWithColumnType<*>> {
+        _expressions.addAll(expressions)
+        return expressions
+    }
+
     @Suppress("UNCHECKED_CAST")
     fun where(predicate: SqlExpressionBuilder.(Self) -> Op<Boolean>) =
         query.where { predicate(this, this@Aspect as Self) }
