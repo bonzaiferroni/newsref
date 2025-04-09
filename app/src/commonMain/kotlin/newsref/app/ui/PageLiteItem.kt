@@ -1,61 +1,38 @@
 package newsref.app.ui
 
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.layout.*
-import androidx.compose.runtime.*
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.ExperimentalLayoutApi
+import androidx.compose.foundation.layout.FlowRow
+import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
+import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalUriHandler
 import androidx.compose.ui.unit.dp
-import androidx.lifecycle.viewmodel.compose.viewModel
-import newsref.app.*
-import newsref.app.blip.controls.*
+import newsref.app.ChapterPageRoute
+import newsref.app.PageRoute
+import newsref.app.blip.controls.Button
+import newsref.app.blip.controls.H4
+import newsref.app.blip.controls.Label
+import newsref.app.blip.controls.Text
 import newsref.app.blip.nav.LocalNav
 import newsref.app.blip.theme.Blip
-import newsref.model.data.ChapterPageLite
 import newsref.model.data.PageLite
 import newsref.model.utils.formatSpanLong
 
-@Composable
-fun ChapterScreen(
-    route: ChapterRoute,
-    viewModel: ChapterModel = viewModel { ChapterModel(route) }
-) {
-    val state by viewModel.state.collectAsState()
-    val chapter = state.chapter
-    val articles = chapter?.pages
-    if (chapter == null || articles == null) return
-    Column(
-        verticalArrangement = Blip.ruler.columnTight
-    ) {
-        BalloonChart(0, state.balloons, 400.dp, { })
-        H1(chapter.title ?: "Chapter: ${chapter.id}")
-        Text("${chapter.size} sources, ${chapter.averageAt.formatSpanLong()}")
-        TabCard(
-            currentTab = state.tab,
-            onChangePage = viewModel::changeTab,
-        ) {
-            Tab("Data") {
-                ChapterPropertyRow(chapter)
-            }
-            Tab("Articles", false) {
-                ChapterPagesListView(state.articles, "articles", chapter.id)
-            }
-            Tab("References", false) {
-                ChapterPagesListView(state.references, "references", chapter.id)
-            }
-        }
-    }
-}
-
 @OptIn(ExperimentalLayoutApi::class)
 @Composable
-fun ChapterPageLiteItem(
-    chapterPage: ChapterPageLite,
+fun PageLiteItem(
+    page: PageLite,
     chapterId: Long? = null,
     modifier: Modifier = Modifier,
 ) {
     val nav = LocalNav.current
-    val page = chapterPage.page
     Row(
         horizontalArrangement = Blip.ruler.rowTight,
         modifier = modifier
@@ -94,7 +71,6 @@ fun ChapterPageLiteItem(
                 Label("${page.articleType.title} from ${page.existedAt.formatSpanLong()}, visibility: ${page.score}")
                 Label(page.hostCore)
             }
-            Label("Distance: ${chapterPage.textDistance}")
         }
     }
 }

@@ -11,14 +11,12 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.lifecycle.viewmodel.compose.viewModel
-import io.ktor.util.valuesOf
 import kotlinx.collections.immutable.ImmutableList
 import kotlinx.collections.immutable.persistentListOf
 import kotlinx.collections.immutable.toImmutableList
 import newsref.app.blip.controls.ButtonToggle
 import newsref.app.blip.core.StateModel
 import newsref.app.blip.theme.Blip
-import newsref.model.data.PageLite
 import newsref.model.data.ArticleType
 import newsref.model.data.ChapterPageLite
 
@@ -51,8 +49,8 @@ fun ChapterPagesListView(
     LazyColumn(
     ) {
         items(state.filteredArticles) {
-            PageBitItem(
-                page = it.page,
+            ChapterPageLiteItem(
+                chapterPage = it,
                 chapterId = chapterId,
                 modifier = Modifier.animateItem()
             )

@@ -26,7 +26,7 @@ fun HostScreen(
         Tab(name = "Articles", scrollable = false) {
             LazyColumn {
                 items(state.sources) {
-                    PageBitItem(it)
+                    PageLiteItem(it)
                 }
             }
         }
