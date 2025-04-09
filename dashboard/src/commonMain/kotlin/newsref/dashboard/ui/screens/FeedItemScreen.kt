@@ -55,10 +55,7 @@ fun FeedItemScreen(
         }
         Countdown(state.nextRefresh)
     }
-    Tabs(
-        currentPageName = state.page,
-        onChangePage = viewModel::changePage,
-    ) {
+    Tabs {
         Tab(name = "Sources", scrollable = false) {
             PageTable(
                 pages = state.pageInfos

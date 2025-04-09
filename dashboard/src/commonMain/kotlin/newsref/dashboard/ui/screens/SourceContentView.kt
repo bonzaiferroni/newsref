@@ -98,7 +98,7 @@ fun PageContentView(
 fun List<Long>.createSpeakRoute(): PageItemRoute? {
     if (this.isEmpty()) return null
     val next = this.first()
-    return PageItemRoute(pageId = next, pageName = "Content", nextSpeakContent = this - next)
+    return PageItemRoute(pageId = next, tab = "Content", nextSpeakContent = this - next)
 }
 
 fun List<PageInfo>.toSpeakRoute() = this.map { it.pageId }.createSpeakRoute()

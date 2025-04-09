@@ -7,22 +7,22 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.RectangleShape
 import androidx.compose.ui.graphics.Shape
-import kotlinx.collections.immutable.ImmutableList
+import newsref.app.blip.nav.NavRoute
 import newsref.app.blip.theme.Blip
 import newsref.app.blip.theme.ProvideBookColors
 
 @Composable
 fun TabCard(
-    currentTab: String?,
-    onChangePage: (String) -> Unit,
+    initialTab: String? = null,
+    modifyRoute: ((String) -> NavRoute)? = null,
     shape: Shape = RectangleShape, // todo: implement shape
     modifier: Modifier = Modifier, // todo: implement modifier
     content: @Composable TabScope.() -> Unit
 ) {
     ProvideBookColors {
         Tabs(
-            currentPageName = currentTab,
-            onChangePage = onChangePage,
+            initialTab = initialTab,
+            modifyRoute = modifyRoute,
             content = content,
             modifier = modifier
                 .shadow(Blip.ruler.shadowElevation, shape)

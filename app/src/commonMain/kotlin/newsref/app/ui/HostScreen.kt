@@ -19,10 +19,7 @@ fun HostScreen(
     val host = state.host
     if (host == null) return
     H1(host.core)
-    TabCard(
-        currentTab = state.tab,
-        onChangePage = viewModel::changeTab,
-    ) {
+    TabCard {
         Tab(name = "Articles", scrollable = false) {
             LazyColumn {
                 items(state.sources) {

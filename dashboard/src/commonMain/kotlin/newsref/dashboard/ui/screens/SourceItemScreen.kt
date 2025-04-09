@@ -23,7 +23,6 @@ fun PageItemScreen(
 ) {
     val state by viewModel.state.collectAsState()
     val source = state.page
-    val nav = LocalNavigator.current
 
     if (source == null) {
         Text("Fetching Source with id: ${route.pageId}")
@@ -35,11 +34,8 @@ fun PageItemScreen(
     ) {
         ItemHeader(source)
         Tabs(
-            currentPageName = state.tab,
-            onChangePage = {
-                viewModel.changePage(it)
-                nav.setRoute(route.copy(pageName = it))
-            }
+            initialTab = route.tab,
+            modifyRoute = { route.copy(tab = it) }
         ) {
             Tab("Data") {
                 PageDataView(viewModel)
@@ -52,9 +48,6 @@ fun PageItemScreen(
             }
             Tab("Outbound", false, state.outbound.isNotEmpty()) {
                 LinkInfoView("Outbound Links", state.outbound)
-            }
-            Tab("Distances", false, state.distances.isNotEmpty()) {
-                SourceDistanceView(state.distances)
             }
         }
     }

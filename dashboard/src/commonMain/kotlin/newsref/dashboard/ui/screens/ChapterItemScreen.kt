@@ -64,10 +64,7 @@ fun ChapterItemScreen(
                 Button(onClick = { nav.go(ChapterItemRoute(it))}) { Text("Next")}
             }
         }
-        Tabs(
-            currentPageName = state.page,
-            onChangePage = viewModel::changePage,
-        ) {
+        Tabs {
             Tab(name = "Secondary", scrollable = false) {
                 ChapterTable("Secondary Sources", state.secondaries, viewModel::sortSources)
             }

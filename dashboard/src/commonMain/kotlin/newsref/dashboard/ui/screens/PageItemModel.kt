@@ -33,7 +33,7 @@ class PageItemModel(
 ) : StateModel<PageItemState>(
     PageItemState(
         pageId = route.pageId,
-        tab = route.pageName
+        tab = route.tab
     )
 ) {
     init {

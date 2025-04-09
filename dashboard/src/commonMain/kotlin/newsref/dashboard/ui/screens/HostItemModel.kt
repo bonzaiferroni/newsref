@@ -18,7 +18,7 @@ import kotlin.time.Duration.Companion.days
 class HostItemModel(
     private val route: HostItemRoute,
     private val hostService: HostService = HostService()
-) : StateModel<HostItemState>(HostItemState(route.hostId, route.page)) {
+) : StateModel<HostItemState>(HostItemState(route.hostId, route.tab)) {
     init {
         refreshItem()
     }

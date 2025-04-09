@@ -28,11 +28,8 @@ fun HostItemScreen(
     }
     val nav = LocalNavigator.current
     Tabs(
-        currentPageName = state.page,
-        onChangePage = {
-            nav.setRoute(route.copy(page = it))
-            viewModel.changePage(it)
-        },
+        initialTab = route.tab,
+        modifyRoute = { route.copy(tab = it) },
     ) {
         Tab("Properties") {
             PropertyTable(

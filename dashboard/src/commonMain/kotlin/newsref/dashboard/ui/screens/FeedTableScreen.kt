@@ -29,10 +29,7 @@ fun FeedTableScreen(
         nav.setRoute(route.copy(page = state.page))
     }
 
-    Tabs(
-        currentPageName = state.page,
-        onChangePage = viewModel::changePage
-    ) {
+    Tabs {
         Tab(name = "Feeds", scrollable = false) {
             FlowRow(
                 horizontalArrangement = Arrangement.SpaceEvenly,

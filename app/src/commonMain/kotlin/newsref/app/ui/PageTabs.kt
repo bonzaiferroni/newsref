@@ -17,10 +17,7 @@ fun PageTabs(
     host: Host?,
     chapterPage: ChapterPage? = null
 ) {
-    TabCard(
-        tab,
-        onChangeTab,
-    ) {
+    TabCard() {
         Tab("Details") { PagePropertyRow(page, chapterPage) }
         Tab("Summary", isVisible = page.summary != null) { Text(page.summary!!) }
         Tab("Embed", isVisible = page.embed != null) { Text(page.embed!!) }

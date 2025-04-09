@@ -21,7 +21,8 @@ data class ChapterFeedRoute(val feedSpan: Int = FeedSpan.Week.ordinal) : AppRout
 @Serializable
 data class ChapterRoute(
     val id: Long,
-    val chapterTitle: String?
+    val chapterTitle: String?,
+    val tab: String? = null,
 ) : AppRoute(chapterTitle ?: "Chapter: $id")
 
 @Serializable

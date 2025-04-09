@@ -6,6 +6,9 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.*
 import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.viewmodel.compose.viewModel
+import newsref.app.blip.nav.LocalNav
+import newsref.app.blip.nav.NavRoute
 import newsref.app.blip.theme.Blip
 import newsref.app.utils.darken
 import newsref.app.utils.modifyIfNotNull
@@ -13,20 +16,32 @@ import newsref.app.utils.modifyIfTrue
 
 @Composable
 fun Tabs(
-    currentPageName: String?,
-    onChangePage: (String) -> Unit,
+    initialTab: String? = null,
+    modifyRoute: ((String) -> NavRoute)? = null,
     modifier: Modifier = Modifier,
+    viewModel: TabsModel = viewModel { TabsModel(initialTab) },
     content: @Composable TabScope.() -> Unit
 ) {
+    val state by viewModel.state.collectAsState()
+    val nav = LocalNav.current
+
+    fun onTabChange(tab: String) {
+        modifyRoute?.let {
+            val navRoute = it(tab)
+            nav.setRoute(navRoute)
+        }
+        viewModel.setTab(tab)
+    }
+
     val scope = TabScope()
     scope.content()
     val tabs: List<TabItem> = scope.tabs
     if (tabs.isEmpty()) return
 
-    val currentTab = tabs.firstOrNull() { it.name == currentPageName }
+    val currentTab = tabs.firstOrNull() { it.name == state.tab }
 
     if (currentTab == null) {
-        onChangePage(tabs.first().name)
+        onTabChange(tabs.first().name)
         return
     }
 
@@ -42,7 +57,7 @@ fun Tabs(
                 }
                 Box(
                     modifier = Modifier
-                        .modifyIfTrue(currentTab.name != tab.name) { Modifier.clickable { onChangePage(tab.name) } }
+                        .modifyIfTrue(currentTab.name != tab.name) { Modifier.clickable { onTabChange(tab.name) } }
                         .shadow(elevation)
                         .background(background)
                         .padding(Blip.ruler.basePadding)

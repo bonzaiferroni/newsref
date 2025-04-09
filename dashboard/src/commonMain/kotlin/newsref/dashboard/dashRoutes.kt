@@ -19,7 +19,7 @@ data class HelloRoute(val name: String) : DashRoute("Hello")
 @Serializable
 data class PageItemRoute(
     val pageId: Long,
-    val pageName: String = "",
+    val tab: String = "",
     val nextSpeakContent: List<Long>? = null
 ) : DashRoute("Source Item")
 
@@ -39,7 +39,7 @@ data class ChapterItemRoute(val chapterId: Long) : DashRoute("Chapter")
 data class HostTableRoute(val searchText: String? = null) : DashRoute("Hosts")
 
 @Serializable
-data class HostItemRoute(val hostId: Int, val page: String = "Sources") : DashRoute("Host")
+data class HostItemRoute(val hostId: Int, val tab: String = "Sources") : DashRoute("Host")
 
 @Serializable
 data class ChartBoardRoute(val page: String? = null) : DashRoute("Chart Board")

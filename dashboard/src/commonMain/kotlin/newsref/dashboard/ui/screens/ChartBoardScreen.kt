@@ -19,10 +19,7 @@ fun ChartBoardScreen(
 ) {
     val state by viewModel.state.collectAsState()
 
-    Tabs(
-        state.page,
-        viewModel::onChangePage,
-    ) {
+    Tabs() {
         Tab("Chapter Finder") {
             Column(
                 verticalArrangement = Arrangement.spacedBy(baseSpacing)

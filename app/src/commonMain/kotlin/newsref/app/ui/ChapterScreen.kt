@@ -12,7 +12,6 @@ import newsref.app.blip.controls.*
 import newsref.app.blip.nav.LocalNav
 import newsref.app.blip.theme.Blip
 import newsref.model.data.ChapterPageLite
-import newsref.model.data.PageLite
 import newsref.model.utils.formatSpanLong
 
 @Composable
@@ -31,8 +30,8 @@ fun ChapterScreen(
         H1(chapter.title ?: "Chapter: ${chapter.id}")
         Text("${chapter.size} sources, ${chapter.averageAt.formatSpanLong()}")
         TabCard(
-            currentTab = state.tab,
-            onChangePage = viewModel::changeTab,
+            initialTab = route.tab ?: "Articles",
+            modifyRoute = { route.copy(tab = it) },
         ) {
             Tab("Data") {
                 ChapterPropertyRow(chapter)

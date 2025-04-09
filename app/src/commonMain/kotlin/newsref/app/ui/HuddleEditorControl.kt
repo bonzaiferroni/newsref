@@ -39,8 +39,6 @@ fun HuddleEditorControl(
 
     FloatyContent(state.isOpen, viewModel::toggleIsOpen) {
         TabCard(
-            currentTab = state.tab,
-            onChangePage = viewModel::changeTab,
             shape = Blip.ruler.rounded,
             modifier = Modifier.fillMaxWidth()
         ) {

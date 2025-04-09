@@ -38,10 +38,6 @@ class ChapterModel(
             ) }
         }
     }
-
-    fun changeTab(tab: String) {
-        setState { it.copy(tab = tab) }
-    }
 }
 
 data class ChapterState(
@@ -49,7 +45,6 @@ data class ChapterState(
     val chapter: Chapter? = null,
     val articles: ImmutableList<ChapterPageLite> = persistentListOf(),
     val references: ImmutableList<ChapterPageLite> = persistentListOf(),
-    val tab: String? = null,
 )
 
 fun Chapter.toBalloonsData(): BalloonsData {
