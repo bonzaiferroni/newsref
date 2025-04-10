@@ -8,6 +8,7 @@ data class Chapter(
     val id: Long = 0,
     val storyId: Long? = null,
     val parentId: Long? = null,
+    val locationId: Int? = null,
     val title: String? = null,
     val summary: String? = null,
     val score: Int,

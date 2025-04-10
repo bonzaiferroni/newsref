@@ -18,9 +18,12 @@ class LeadService : DbService() {
 
     suspend fun getOpenLeads(limit: Int = 20000) = dbQuery {
         leadInfoJoin.where(LeadTable.pageId.isNull())
-            .orderBy(linkCountAlias, SortOrder.DESC)
-            .orderBy(LeadJobTable.isExternal, SortOrder.DESC)
-            .orderBy(LeadJobTable.freshAt, SortOrder.DESC_NULLS_LAST)
+            .orderBy(
+                Pair(linkCountAlias, SortOrder.DESC),
+                Pair(LeadJobTable.isExternal, SortOrder.DESC_NULLS_LAST),
+                Pair(LeadJobTable.feedPosition, SortOrder.ASC_NULLS_LAST),
+                Pair(LeadJobTable.freshAt, SortOrder.DESC_NULLS_LAST)
+            )
             .limit(limit)
             // .toSqlString { console.log(it) }
             .toLeadInfos()

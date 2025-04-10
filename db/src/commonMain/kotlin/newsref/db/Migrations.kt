@@ -17,7 +17,7 @@ private fun migrate(protocol: String, applyMigration: Boolean) {
 	val folder = File("$MIGRATIONS_DIRECTORY/$protocol")
 	if (!folder.exists()) folder.mkdirs()
 	val file = folder.listFiles()?.firstNotNullOfOrNull {
-		if (it.name.endsWith(".sql")) null
+		if (it.name.endsWith(".sql") || it.name.endsWith(".txt")) null
 		else if (File("${it.absolutePath}.sql").exists()) null
 		else it
 	} ?: return

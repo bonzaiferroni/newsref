@@ -41,15 +41,16 @@ class GeminiClient(
         }
         restingUntil = Clock.System.now() + 6.seconds
 
-        val isUnlimited = unlimitedToken != null && Clock.System.now() < unlimitedUntil
-        if (isUnlimited) globalConsole.log("GeminiClient", LogLevel.INFO, "Unlimited Token Used".toYellow())
-
-        val token = when {
-            isUnlimited -> unlimitedToken
-            else -> limitedToken
-        }
-
         for (attempt in 0 until maxAttempts) {
+
+            val isUnlimited = unlimitedToken != null && Clock.System.now() < unlimitedUntil
+            if (isUnlimited) globalConsole.log("GeminiClient", LogLevel.INFO, "Unlimited Token Used".toYellow())
+
+            val token = when {
+                isUnlimited -> unlimitedToken
+                else -> limitedToken
+            }
+
             try {
                 val url = "https://generativelanguage.googleapis.com/v1beta/models/$model:generateContent?key=$token"
                 val request = GeminiRequest(

@@ -90,7 +90,8 @@ class ChapterBucket(
     }
 
     fun shake(): List<Long> {
-        if (size == 0) return emptyList()
+        val beforeSize = size
+        if (beforeSize == 0) return emptyList()
         val removedIds = mutableListOf<Long>()
         do {
             val unsureSignals = signals.filter { it.chapterPage?.relevance != Relevance.Relevant }
@@ -105,7 +106,7 @@ class ChapterBucket(
             removedIds.add(signal.page.id)
         } while (size > 1)
         if (removedIds.isNotEmpty()) {
-            console.log("${removedIds.size} shaken out of bucket")
+            console.log("${removedIds.size} shaken out of bucket of $beforeSize ($chapterId)")
         }
         return removedIds
     }

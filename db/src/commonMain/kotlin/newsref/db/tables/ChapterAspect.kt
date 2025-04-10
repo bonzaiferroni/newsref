@@ -9,6 +9,7 @@ object ChapterAspect : Aspect<ChapterAspect, Chapter>(ChapterTable, ResultRow::t
     val id = add(ChapterTable.id)
     val storyId = add(ChapterTable.storyId)
     val parentId = add(ChapterTable.parentId)
+    val locationId = add(ChapterTable.locationId)
     val title = add(ChapterTable.title)
     val summary = add(ChapterTable.summary)
     val score = add(ChapterTable.score)
@@ -23,6 +24,7 @@ object ChapterAspect : Aspect<ChapterAspect, Chapter>(ChapterTable, ResultRow::t
 fun ResultRow.toChapter() = Chapter(
     id = this[ChapterTable.id].value,
     storyId = this[ChapterTable.storyId]?.value,
+    locationId = this[ChapterAspect.locationId]?.value,
     title = this[ChapterTable.title],
     summary = this[ChapterTable.summary],
     score = this[ChapterTable.score],

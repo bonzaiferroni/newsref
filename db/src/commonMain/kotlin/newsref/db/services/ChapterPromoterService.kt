@@ -102,7 +102,13 @@ class ChapterPromoterService : DbService() {
             .map { it[PagePersonTable.personId].value }
     }
 
-    suspend fun updateLevel(chapterId: Long, level: Int, title: String, personMentions: Map<Int, Int>) = dbQuery {
+    suspend fun updateLevel(
+        chapterId: Long,
+        level: Int,
+        title: String,
+        locationId: Int?,
+        personMentions: Map<Int, Int>
+    ) = dbQuery {
         ChapterPersonTable.deleteWhere { this.chapterId.eq(chapterId) }
         ChapterPersonTable.batchInsert(personMentions.map { it.key to it.value }) {
             this[ChapterPersonTable.chapterId] = chapterId
@@ -113,6 +119,12 @@ class ChapterPromoterService : DbService() {
             it[this.level] = level
             it[this.title] = title
         }
+    }
+
+    suspend fun readLocationIds(chapterId: Long) = dbQuery {
+        ChapterPageTable.leftJoin(PageTable).select(PageTable.locationId)
+            .where { ChapterPageTable.chapterId.eq(chapterId) and PageTable.locationId.isNotNull() }
+            .map { it[PageTable.locationId]!!.value }
     }
 }
 

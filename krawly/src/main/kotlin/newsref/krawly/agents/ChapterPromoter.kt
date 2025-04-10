@@ -24,7 +24,7 @@ class ChapterPromoter(
                 // findRelevance()
                 // delay(60.seconds)
                 findPromotions()
-                delay(60.seconds)
+                delay(30.seconds)
             }
         }
     }
@@ -34,8 +34,9 @@ class ChapterPromoter(
         if (chapter == null) return
 
         val title = findTitle(chapter) ?: return
+        val locationId = findLocationId(chapter)
         val personMentions = findPersonMentions(chapter)
-        service.updateLevel(chapter.id, chapter.level + 1, title, personMentions)
+        service.updateLevel(chapter.id, chapter.level + 1, title, locationId, personMentions)
     }
 
     private suspend fun findTitle(chapter: Chapter): String? {
@@ -54,6 +55,13 @@ class ChapterPromoter(
         val response: TitleResponse = client.requestJson(2, prompt) ?: return null
         console.log("Title: ${response.title.take(50)}")
         return response.title
+    }
+
+    private suspend fun findLocationId(chapter: Chapter): Int? {
+        val locationIds = service.readLocationIds(chapter.id)
+        return locationIds.groupingBy { it }.eachCount()
+            .map { it.key to it.value }
+            .minByOrNull { it.second }?.first
     }
 
     private suspend fun findPersonMentions(chapter: Chapter): Map<Int, Int> {

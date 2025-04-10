@@ -1,7 +1,0 @@
-ALTER TABLE chapter_person ADD mentions INT NOT NULL;
-ALTER TABLE page ADD CONSTRAINT fk_page_host_id__id FOREIGN KEY (host_id) REFERENCES host(id) ON DELETE CASCADE ON UPDATE RESTRICT;
-ALTER TABLE page ADD CONSTRAINT fk_page_location_id__id FOREIGN KEY (location_id) REFERENCES "location"(id) ON DELETE CASCADE ON UPDATE RESTRICT;
-ALTER TABLE page ADD CONSTRAINT fk_page_article_type_huddle_id__id FOREIGN KEY (article_type_huddle_id) REFERENCES huddle(id) ON DELETE SET NULL ON UPDATE RESTRICT;
-ALTER TABLE page ADD CONSTRAINT fk_page_host_id__id FOREIGN KEY (host_id) REFERENCES host(id) ON DELETE CASCADE ON UPDATE RESTRICT;
-ALTER TABLE page ADD CONSTRAINT fk_page_location_id__id FOREIGN KEY (location_id) REFERENCES "location"(id) ON DELETE CASCADE ON UPDATE RESTRICT;
-ALTER TABLE page ADD CONSTRAINT fk_page_article_type_huddle_id__id FOREIGN KEY (article_type_huddle_id) REFERENCES huddle(id) ON DELETE SET NULL ON UPDATE RESTRICT;
