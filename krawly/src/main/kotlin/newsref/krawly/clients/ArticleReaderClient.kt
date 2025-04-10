@@ -61,6 +61,7 @@ class ArticleReaderClient(
     @OptIn(ExperimentalSerializationApi::class)
     private fun readCachedResponse(url: Url) = readCachedFile(url).takeIf { it.exists() }?.readBytes()
         ?.let { Cbor.decodeFromByteArray(ArticleResponse.serializer(), it) }
+        ?.also { console.log("Read cached article response") }
 }
 
 @Serializable

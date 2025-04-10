@@ -18,25 +18,32 @@ private val console = globalConsole.getHandle("ChapterComposerService")
 class ChapterComposerService : DbService() {
     suspend fun findNextSignal(excludedIds: List<Long>) = dbQuery {
         val subquery = ChapterPageTable.select(ChapterPageTable.pageId)
-        PageTable.read {
-                PageTable.score.greaterEq(2) and
-                        PageTable.id.notInList(excludedIds) and
-                        PageTable.id.notInSubQuery(subquery) and
-                        (PageTable.contentType.neq(ContentType.NewsArticle) or PageTable.summary.isNotNull())
-            }
-            .orderBy(PageTable.seenAt, SortOrder.DESC)
+        val isNotExcluded = Op.build { PageTable.id.notInList(excludedIds) and PageTable.id.notInSubQuery(subquery) }
+        val isValidArticle = Op.build {
+            PageTable.contentType.eq(ContentType.NewsArticle) and PageTable.cachedWordCount.greaterEq(100) and
+                    PageTable.score.greater(0)
+        }
+        val isValidReference = Op.build {
+            PageTable.contentType.neq(ContentType.NewsArticle) and PageTable.score.greaterEq(3)
+        }
+        PageTable.read { isNotExcluded and (isValidArticle or isValidReference) }
+            .orderBy(
+                Pair(PageTable.score, SortOrder.DESC_NULLS_LAST),
+                Pair(PageTable.feedPosition, SortOrder.ASC_NULLS_LAST),
+                Pair(PageTable.seenAt, SortOrder.DESC)
+            )
             .firstOrNull()?.toChapterSignal()
     }
 
     suspend fun findTextRelatedChapters(chapterId: Long, pageIds: List<Long>, vector: FloatArray) = dbQuery {
         val distance = ChapterTable.vector.cosineDistance(vector).alias("cosine_distance")
-        val subquery = ChapterExclusionTable.select(ChapterExclusionTable.chapterId).where {
-                ChapterExclusionTable.chapterId.eq(chapterId) and ChapterExclusionTable.pageId.inList(pageIds)
-            }
+        val excluded = ChapterExclusionTable.select(ChapterExclusionTable.chapterId).where {
+            ChapterExclusionTable.chapterId.eq(chapterId) and ChapterExclusionTable.pageId.inList(pageIds)
+        }
         ChapterTable.select(ChapterAspect.columns + distance)
             .where {
                 ChapterTable.happenedAt.since(CHAPTER_EPOCH * 4) and
-                        ChapterTable.id.notInSubQuery(subquery) and
+                        ChapterTable.id.notInSubQuery(excluded) and
                         ChapterTable.id.neq(chapterId)
             }
             .map { it.toChapter() to it[distance] }
@@ -141,7 +148,7 @@ internal fun ResultRow.toChapterSignal() = this.let {
 
 const val CHAPTER_MIN_ARTICLES = 3
 const val ORIGIN_MIN_SCORE = MAX_LINK_SIGNAL * CHAPTER_MIN_ARTICLES
-const val CHAPTER_MAX_DISTANCE = .4f
+const val CHAPTER_MAX_DISTANCE = .2f
 const val CHAPTER_MERGE_FACTOR = .75f
 val CHAPTER_EPOCH = 5.days
 

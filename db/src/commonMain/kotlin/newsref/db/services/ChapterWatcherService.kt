@@ -19,7 +19,7 @@ class ChapterWatcherService : DbService() {
     suspend fun readTopNullTitle() = dbQuery {
         ChapterTable.select(ChapterAspect.columns)
             .where { ChapterTable.title.isNull() and ChapterTable.size.greaterEq(CHAPTER_MIN_ARTICLES) }
-            .orderBy(ChapterTable.score, SortOrder.DESC)
+            .orderBy(Pair(ChapterTable.size, SortOrder.DESC), Pair(ChapterTable.happenedAt, SortOrder.DESC))
             .firstOrNull()?.toChapter()
     }
 

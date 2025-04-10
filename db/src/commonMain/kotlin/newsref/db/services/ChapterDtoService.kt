@@ -11,7 +11,7 @@ class ChapterDtoService : DbService() {
 
     suspend fun readTopChapters(start: Instant, limit: Int = 20) = dbQuery {
         ChapterDtoAspect.read(ChapterDtoAspect.score, SortOrder.DESC_NULLS_LAST, limit) {
-            it.happenedAt.greater(start)
+            it.happenedAt.greater(start) and it.title.isNotNull()
         }.map { it.addPages(30) }
     }
 

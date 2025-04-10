@@ -16,6 +16,7 @@ import newsref.model.data.ArticleType
 import newsref.model.data.Chapter
 import newsref.model.data.ChapterPageLite
 import newsref.model.data.PageLite
+import newsref.model.data.SourceType
 import newsref.model.utils.toDaysFromNow
 import kotlin.time.Duration.Companion.days
 
@@ -27,8 +28,8 @@ class ChapterModel(
         viewModelScope.launch {
             val chapter = chapterStore.readChapter(route.id)
             val pages = chapter.pages ?: error("Chapter had null pages")
-            val articles = pages.filter { it.page.articleType != ArticleType.Unknown }.toImmutableList()
-            val references = pages.filter { it.page.articleType == ArticleType.Unknown }.toImmutableList()
+            val articles = pages.filter { it.sourceType == SourceType.Article }.toImmutableList()
+            val references = pages.filter { it.sourceType == SourceType.Reference }.toImmutableList()
             val data = chapter.toBalloonsData()
             setState { it.copy(
                 chapter = chapter,

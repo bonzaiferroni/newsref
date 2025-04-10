@@ -15,6 +15,7 @@ fun ChapterPropertyRow(
     chapter: Chapter
 ) {
     PropertyRow {
+        PropertyTile("Id", chapter.id)
         PropertyTile("Title", chapter.title) {
             SelectionContainer {
                 Text(it)

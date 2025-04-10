@@ -214,3 +214,23 @@ Caused by: java.lang.ClassNotFoundException: newsref.db.services.StoryComposerSe
 	at java.base/jdk.internal.loader.ClassLoaders$AppClassLoader.loadClass(ClassLoaders.java:188)
 	at java.base/java.lang.ClassLoader.loadClass(ClassLoader.java:526)
 	... 12 more
+
+
+Exception in thread "DefaultDispatcher-worker-28" java.net.SocketException: Connection reset
+	at java.base/sun.nio.ch.SocketChannelImpl.throwConnectionReset(SocketChannelImpl.java:401)
+	at java.base/sun.nio.ch.SocketChannelImpl.read(SocketChannelImpl.java:434)
+	at io.ktor.network.sockets.CIOReaderKt.readFrom$lambda$0(CIOReader.kt:134)
+	at io.ktor.utils.io.ByteWriteChannelOperations_jvmKt.write(ByteWriteChannelOperations.jvm.kt:28)
+	at io.ktor.utils.io.ByteWriteChannelOperations_jvmKt.write$default(ByteWriteChannelOperations.jvm.kt:24)
+	at io.ktor.network.sockets.CIOReaderKt.readFrom(CIOReader.kt:133)
+	at io.ktor.network.sockets.CIOReaderKt.access$readFrom(CIOReader.kt:1)
+	at io.ktor.network.sockets.CIOReaderKt$attachForReadingDirectImpl$1.invokeSuspend(CIOReader.kt:109)
+	at kotlin.coroutines.jvm.internal.BaseContinuationImpl.resumeWith(ContinuationImpl.kt:33)
+	at kotlinx.coroutines.DispatchedTask.run(DispatchedTask.kt:100)
+	at kotlinx.coroutines.internal.LimitedDispatcher$Worker.run(LimitedDispatcher.kt:113)
+	at kotlinx.coroutines.scheduling.TaskImpl.run(Tasks.kt:89)
+	at kotlinx.coroutines.scheduling.CoroutineScheduler.runSafely(CoroutineScheduler.kt:586)
+	at kotlinx.coroutines.scheduling.CoroutineScheduler$Worker.executeTask(CoroutineScheduler.kt:820)
+	at kotlinx.coroutines.scheduling.CoroutineScheduler$Worker.runWorker(CoroutineScheduler.kt:717)
+	at kotlinx.coroutines.scheduling.CoroutineScheduler$Worker.run(CoroutineScheduler.kt:704)
+	Suppressed: kotlinx.coroutines.internal.DiagnosticCoroutineContextException: [StandaloneCoroutine{Cancelling}@3fd32908, Dispatchers.IO]

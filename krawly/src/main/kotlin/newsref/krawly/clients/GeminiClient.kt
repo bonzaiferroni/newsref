@@ -18,6 +18,7 @@ import kotlinx.serialization.*
 import kotlinx.serialization.json.*
 import newsref.db.globalConsole
 import kotlin.time.Duration.Companion.hours
+import kotlin.time.Duration.Companion.milliseconds
 import kotlin.time.Duration.Companion.seconds
 
 class GeminiClient(
@@ -33,9 +34,10 @@ class GeminiClient(
         maxAttempts: Int,
         vararg parts: String
     ): Received? {
-        val now = Clock.System.now()
-        if (restingUntil > now) delay(restingUntil - now)
-        restingUntil = now + 6.seconds
+        while (restingUntil > Clock.System.now()) {
+            delay((restingUntil - Clock.System.now()))
+        }
+        restingUntil = Clock.System.now() + 6.seconds
 
         val isUnlimited = unlimitedToken != null && Clock.System.now() < unlimitedUntil
 

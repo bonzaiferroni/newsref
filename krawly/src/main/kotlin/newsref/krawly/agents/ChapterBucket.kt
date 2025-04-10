@@ -110,10 +110,10 @@ class ChapterBucket(
         return removedIds
     }
 
-    fun getPrimarySources() = linkIds.map {
+    fun getPrimarySources() = _linkTally.filter { it.value >= 2 }.map {
         ChapterPage(
             chapterId = chapterId ?: 0,
-            pageId = it,
+            pageId = it.key,
             type = SourceType.Reference,
             distance = null,
             textDistance = null,

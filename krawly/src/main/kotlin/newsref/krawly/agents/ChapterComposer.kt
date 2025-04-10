@@ -13,6 +13,7 @@ import newsref.db.model.ChapterFinderLog
 import newsref.db.model.ChapterFinderState
 import newsref.db.model.Page
 import newsref.db.services.CHAPTER_MAX_DISTANCE
+import newsref.db.services.CHAPTER_MIN_ARTICLES
 import newsref.db.services.ChapterComposerService
 import newsref.db.services.ChapterPageSignal
 import newsref.db.services.ContentService
@@ -50,7 +51,11 @@ class ChapterComposer(
         coroutineScope.launch {
             val model = embeddingService.readOrCreateModel("text-embedding-004", "Article Summary")
             while (true) {
-                readNextSignal(model)
+                try {
+                    readNextSignal(model)
+                } catch (e: Exception) {
+                    console.logError(e.stackTraceToString())
+                }
                 delay(10)
             }
         }
@@ -73,11 +78,11 @@ class ChapterComposer(
 
         setState { it.copy(signalDate = origin.page.seenAt) }
         if (origin.page.contentType == ContentType.NewsArticle) {
-            // console.log("found secondary signal ${origin.source.id}")
+            // console.log("found secondary signal ${origin.page.id}")
             setState { it.copy(secondarySignals = it.secondarySignals + 1) }
             findSecondaryBucket(origin, model)
         } else {
-            // console.log("found primary signal: ${origin.source.id}")
+            // console.log("found primary signal: ${origin.page.id}")
             setState { it.copy(primarySignals = it.primarySignals + 1) }
             findPrimaryBucket(origin, model)
         }
@@ -98,8 +103,8 @@ class ChapterComposer(
             bucket.add(signal, vector)
         }
         bucket.shake()
-        if (bucket.size == 0) {
-            console.log("primary bucket too small after shake")
+        if (bucket.size < CHAPTER_MIN_ARTICLES) {
+            // console.log("primary bucket too small after shake")
             return
         }
 

@@ -14,6 +14,7 @@ fun PagePropertyRow(
     chapterPage: ChapterPage? = null,
 ) {
     PropertyRow {
+        PropertyTile("Id", page.id)
         PropertyTile("Url", page.url)
         PropertyTile("Type", page.articleType) {
             Text(it.title)
@@ -34,7 +35,9 @@ fun PagePropertyRow(
         page.accessedAt?.let { PropertyTile("Accessed", it.formatSpanLong()) }
             ?: PropertyTile("Accessed", "never")
         chapterPage?.let {
-            println(chapterPage)
+            PropertyTile("ChapterId", it.chapterId)
+            PropertyTile("Relevance", it.relevance)
+            PropertyTile("SourceType", it.sourceType)
             PropertyTile("Text Distance", it.textDistance)
         }
     }

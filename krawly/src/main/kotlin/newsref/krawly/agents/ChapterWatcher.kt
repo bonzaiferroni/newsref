@@ -20,8 +20,8 @@ class ChapterWatcher(
         CoroutineScope(Dispatchers.IO).launch {
             console.logTrace("watching chapters")
             while (true) {
-                findRelevance()
-                delay(60.seconds)
+                // findRelevance()
+                // delay(60.seconds)
                 findTitle()
                 delay(60.seconds)
             }
