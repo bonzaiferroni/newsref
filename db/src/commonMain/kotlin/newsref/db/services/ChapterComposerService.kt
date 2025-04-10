@@ -21,7 +21,7 @@ class ChapterComposerService : DbService() {
         val isNotExcluded = Op.build { PageTable.id.notInList(excludedIds) and PageTable.id.notInSubQuery(subquery) }
         val isValidArticle = Op.build {
             PageTable.contentType.eq(ContentType.NewsArticle) and PageTable.cachedWordCount.greaterEq(100) and
-                    PageTable.score.greater(0)
+                    PageTable.score.greater(1)
         }
         val isValidReference = Op.build {
             PageTable.contentType.neq(ContentType.NewsArticle) and PageTable.score.greaterEq(3)

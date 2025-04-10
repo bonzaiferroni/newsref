@@ -173,7 +173,7 @@ class PageParser(
 		val youtubeUrls = extractYouTubeLinks(html)
 		if (youtubeUrls.isNotEmpty()) {
 			val message = youtubeUrls.joinToString("\n")
-			console.log("YouTube urls: ${headline.take(50)} \n$message".toYellow())
+			// console.log("YouTube urls: ${headline.take(50)} \n$message".toYellow())
 			logBook.write(PageParser::class, "YouTube urls", message)
 		}
 

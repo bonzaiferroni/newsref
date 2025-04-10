@@ -1,25 +1,35 @@
 package newsref.db.services
 
 import newsref.db.DbService
+import newsref.db.globalConsole
+import newsref.db.log.toYellow
 import newsref.db.model.*
 import newsref.db.tables.*
+import newsref.db.utils.read
+import newsref.db.utils.toSqlString
+import newsref.db.utils.updateById
 import newsref.model.data.Relevance
 import newsref.model.data.SourceType
 import org.jetbrains.exposed.sql.*
 import org.jetbrains.exposed.sql.SqlExpressionBuilder.eq
 
-class ChapterWatcherService : DbService() {
+private val console = globalConsole.getHandle(ChapterPromoterService::class)
+
+class ChapterPromoterService : DbService() {
+
+    suspend fun readNextPromotion() = dbQuery {
+        val promotionReady = Op.build {
+            promotionTargets.map { ChapterTable.level.eq(it.key) and ChapterTable.size.greaterEq(it.value) }
+                .reduce { acc, op -> acc or op }
+        }
+        ChapterTable.read { promotionReady }
+            .orderBy(ChapterTable.size, SortOrder.DESC)
+            .firstOrNull()?.toChapter()
+    }
 
     suspend fun readChapter(chapterId: Long) = dbQuery {
         ChapterTable.select(ChapterAspect.columns)
             .where { ChapterTable.id.eq(chapterId) }
-            .firstOrNull()?.toChapter()
-    }
-
-    suspend fun readTopNullTitle() = dbQuery {
-        ChapterTable.select(ChapterAspect.columns)
-            .where { ChapterTable.title.isNull() and ChapterTable.size.greaterEq(CHAPTER_MIN_ARTICLES) }
-            .orderBy(Pair(ChapterTable.size, SortOrder.DESC), Pair(ChapterTable.happenedAt, SortOrder.DESC))
             .firstOrNull()?.toChapter()
     }
 
@@ -84,4 +94,30 @@ class ChapterWatcherService : DbService() {
             }
         }
     }
+
+    suspend fun readPeopleIds(chapterId: Long) = dbQuery {
+        ChapterPageTable.join(PagePersonTable, JoinType.INNER, ChapterPageTable.pageId, PagePersonTable.pageId)
+            .select(PagePersonTable.personId)
+            .where { ChapterPageTable.chapterId.eq(chapterId) }
+            .map { it[PagePersonTable.personId].value }
+    }
+
+    suspend fun updateLevel(chapterId: Long, level: Int, title: String, personMentions: Map<Int, Int>) = dbQuery {
+        ChapterPersonTable.deleteWhere { this.chapterId.eq(chapterId) }
+        ChapterPersonTable.batchInsert(personMentions.map { it.key to it.value }) {
+            this[ChapterPersonTable.chapterId] = chapterId
+            this[ChapterPersonTable.personId] = it.first
+            this[ChapterPersonTable.mentions] = it.second
+        }
+        ChapterTable.updateById(chapterId) {
+            it[this.level] = level
+            it[this.title] = title
+        }
+    }
 }
+
+val promotionTargets = mapOf(
+    0 to 3,
+    1 to 10,
+    2 to 25,
+)

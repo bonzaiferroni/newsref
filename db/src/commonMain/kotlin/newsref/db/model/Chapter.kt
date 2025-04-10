@@ -14,6 +14,7 @@ data class Chapter(
     val size: Int,
     val cohesion: Float,
     val storyDistance: Float?,
+    val level: Int,
     val createdAt: Instant,
     val averageAt: Instant,
     // val earliestAt: Instant,

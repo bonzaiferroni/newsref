@@ -3,50 +3,65 @@ package newsref.krawly.agents
 import kotlinx.coroutines.*
 import kotlinx.serialization.Serializable
 import newsref.db.*
+import newsref.db.model.Chapter
 import newsref.db.services.*
 import newsref.krawly.clients.GeminiClient
 import newsref.krawly.clients.promptTemplate
 import newsref.model.data.Relevance
 import kotlin.time.Duration.Companion.seconds
 
-private val console = globalConsole.getHandle("ChapterWatcher")
+private val console = globalConsole.getHandle(ChapterPromoter::class)
 
-class ChapterWatcher(
+class ChapterPromoter(
     private val client: GeminiClient,
-    private val service: ChapterWatcherService = ChapterWatcherService(),
+    private val service: ChapterPromoterService = ChapterPromoterService(),
 ) {
 
     fun start() {
         CoroutineScope(Dispatchers.IO).launch {
-            console.logTrace("watching chapters")
+            console.logTrace("promoting chapters")
             while (true) {
                 // findRelevance()
                 // delay(60.seconds)
-                findTitle()
+                findPromotions()
                 delay(60.seconds)
             }
         }
     }
 
-    private suspend fun findTitle() {
-        val chapter = service.readTopNullTitle()
+    private suspend fun findPromotions() {
+        val chapter = service.readNextPromotion()
         if (chapter == null) return
 
+        val title = findTitle(chapter) ?: return
+        val personMentions = findPersonMentions(chapter)
+        service.updateLevel(chapter.id, chapter.level + 1, title, personMentions)
+    }
+
+    private suspend fun findTitle(chapter: Chapter): String? {
         val currentSources = service.readChapterSourceInfos(chapter.id)
             .sortedBy { it.chapterPage.textDistance }
             .take(25)
 
         val headlines = currentSources.mapNotNull { signal -> signal.page.title }.joinToString("\n")
-        if (headlines.isEmpty()) return
+        if (headlines.isEmpty()) return null
 
         val prompt = promptTemplate(
             "../docs/chapter_watcher-create_title.txt",
             "headlines" to headlines
         )
 
-        val response: TitleResponse = client.requestJson(2, prompt) ?: return
-        service.updateChapterDescription(chapter.copy(title = response.title))
+        val response: TitleResponse = client.requestJson(2, prompt) ?: return null
         console.log("Title: ${response.title.take(50)}")
+        return response.title
+    }
+
+    private suspend fun findPersonMentions(chapter: Chapter): Map<Int, Int> {
+        val personIds = service.readPeopleIds(chapter.id)
+        val groups = personIds.groupingBy { it }.eachCount()
+        val filteredGroups = groups.filter { it.value > 1 }
+        // console.log("found ${personIds.size} total people, ${groups.size} unique, ${filteredGroups.size} filtered")
+        return filteredGroups
     }
 
     internal suspend fun findRelevance() {

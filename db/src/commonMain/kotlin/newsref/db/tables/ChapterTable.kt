@@ -18,6 +18,7 @@ object ChapterTable : LongIdTable("chapter") {
     val size = integer("size")
     val cohesion = float("cohesion")
     val storyDistance = float("story_distance").nullable()
+    val level = integer("level").default(0)
     val createdAt = datetime("created_at").index()
     val happenedAt = datetime("happened_at").index()
     val vector = vector("vector", 768)

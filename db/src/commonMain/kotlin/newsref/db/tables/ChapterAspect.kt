@@ -15,6 +15,7 @@ object ChapterAspect : Aspect<ChapterAspect, Chapter>(ChapterTable, ResultRow::t
     val size = add(ChapterTable.size)
     val cohesion = add(ChapterTable.cohesion)
     val storyDistance = add(ChapterTable.storyDistance)
+    val level = add(ChapterTable.level)
     val createdAt = add(ChapterTable.createdAt)
     val happenedAt = add(ChapterTable.happenedAt)
 }
@@ -28,6 +29,7 @@ fun ResultRow.toChapter() = Chapter(
     size = this[ChapterTable.size],
     cohesion = this[ChapterTable.cohesion],
     storyDistance = this[ChapterTable.storyDistance],
+    level = this[ChapterTable.level],
     createdAt = this[ChapterTable.createdAt].toInstantUtc(),
     averageAt = this[ChapterTable.happenedAt].toInstantUtc(),
 )

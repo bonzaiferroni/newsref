@@ -176,7 +176,8 @@ class ChapterComposer(
                 cohesion = 1f,
                 createdAt = Clock.System.now(),
                 averageAt = bucket.happenedAt,
-                storyDistance = null
+                storyDistance = null,
+                level = 0,
             ),
             sources = sources,
             vector = bucket.averageVector

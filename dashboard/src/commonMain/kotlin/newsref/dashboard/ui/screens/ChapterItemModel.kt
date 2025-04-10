@@ -20,7 +20,7 @@ class ChapterItemModel(
     private val chapterService: ChapterService = ChapterService(),
     private val chapterComposerService: ChapterComposerService = ChapterComposerService(),
     private val chapterLinkerService: ChapterLinkerService = ChapterLinkerService(),
-    private val chapterWatcherService: ChapterWatcherService = ChapterWatcherService(),
+    private val chapterPromoterService: ChapterPromoterService = ChapterPromoterService(),
 ) : StateModel<ChapterItemState>(ChapterItemState(route.chapterId)) {
 
     init {
@@ -31,7 +31,7 @@ class ChapterItemModel(
 
     suspend fun refreshModel() {
         val chapter = chapterService.readChapter(stateNow.chapterId)
-        val chapterSources = chapterWatcherService.readChapterSourceInfos(stateNow.chapterId)
+        val chapterSources = chapterPromoterService.readChapterSourceInfos(stateNow.chapterId)
         val primarySources = chapterSources.filter { it.chapterPage.type == NewsSourceType.Primary }
         val secondarySources = chapterSources.filter { it.chapterPage.type == NewsSourceType.Secondary }
         val children = chapterLinkerService.readChildren(stateNow.chapterId)

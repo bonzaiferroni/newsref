@@ -24,9 +24,9 @@ kotlin {
                 implementation("org.jetbrains.exposed:exposed-migration:$exposed_version")
                 implementation("com.pgvector:pgvector:0.1.6")
 
-                implementation("org.postgresql:postgresql:42.7.1")
-                implementation("org.flywaydb:flyway-core:10.20.0")
-                implementation("org.flywaydb:flyway-database-postgresql:10.20.0")
+                implementation("org.postgresql:postgresql:42.7.3")
+                implementation("org.flywaydb:flyway-core:11.7.0")
+                implementation("org.flywaydb:flyway-database-postgresql:11.7.0")
 
                 implementation(libs.logback.classic)
                 api("io.github.cdimascio:dotenv-kotlin:6.4.2")

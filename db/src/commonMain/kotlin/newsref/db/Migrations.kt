@@ -53,11 +53,12 @@ private fun migrate(protocol: String, applyMigration: Boolean) {
 			.locations("filesystem:$MIGRATIONS_DIRECTORY")
 			.baselineOnMigrate(isBaseline) // Used when migrating an existing database for the first time
 			.load()
+		flyway.repair()
 		flyway.migrate()
 	} catch (e: Exception) {
 		println("Error: ${e.message}")
 		println("Recreating original file state")
-		File("${file.absolutePath}.sql").delete()
+		File("${file.absolutePath}.sql").renameTo(File("${file.absolutePath}.txt"))
 		file.createNewFile()
 	}
 }

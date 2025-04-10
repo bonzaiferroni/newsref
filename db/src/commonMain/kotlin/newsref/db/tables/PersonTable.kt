@@ -17,6 +17,14 @@ object PagePersonTable : Table("page_person") {
     override val primaryKey = PrimaryKey(pageId, personId)
 }
 
+object ChapterPersonTable : Table("chapter_person") {
+    val chapterId = reference("chapter_id", ChapterTable, ReferenceOption.CASCADE).index()
+    val personId = reference("person_id", PersonTable, ReferenceOption.CASCADE).index()
+    override val primaryKey = PrimaryKey(chapterId, personId)
+
+    val mentions = integer("mentions")
+}
+
 fun ResultRow.toPerson() = Person(
     this[PersonTable.id].value,
     this[PersonTable.name],

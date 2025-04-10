@@ -16,6 +16,8 @@ import kotlinx.serialization.descriptors.elementDescriptors
 import newsref.krawly.globalKtor
 import kotlinx.serialization.*
 import kotlinx.serialization.json.*
+import newsref.db.console.LogLevel
+import newsref.db.console.toYellow
 import newsref.db.globalConsole
 import kotlin.time.Duration.Companion.hours
 import kotlin.time.Duration.Companion.milliseconds
@@ -40,11 +42,13 @@ class GeminiClient(
         restingUntil = Clock.System.now() + 6.seconds
 
         val isUnlimited = unlimitedToken != null && Clock.System.now() < unlimitedUntil
+        if (isUnlimited) globalConsole.log("GeminiClient", LogLevel.INFO, "Unlimited Token Used".toYellow())
 
         val token = when {
             isUnlimited -> unlimitedToken
             else -> limitedToken
         }
+
         for (attempt in 0 until maxAttempts) {
             try {
                 val url = "https://generativelanguage.googleapis.com/v1beta/models/$model:generateContent?key=$token"

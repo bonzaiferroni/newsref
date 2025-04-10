@@ -1,0 +1,1 @@
+ALTER TABLE chapter_person ADD mentions INT NOT NULL;
