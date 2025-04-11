@@ -7,6 +7,7 @@ import newsref.db.utils.read
 import newsref.db.utils.updateById
 import newsref.model.data.ArticleType
 import newsref.model.data.ContentType
+import newsref.model.data.GeoPoint
 import newsref.model.data.NewsSection
 import org.jetbrains.exposed.sql.*
 import org.postgresql.geometric.PGpoint
@@ -47,11 +48,6 @@ class ArticleReaderService : DbService() {
 const val PERSON_UNCLEAR = "Unclear"
 
 const val READER_MIN_WORDS = 100
-
-data class GeoPoint(
-    val latitude: Double,
-    val longitude: Double,
-)
 
 fun GeoPoint.toPGpoint() = PGpoint(latitude, longitude)
 fun PGpoint.toGeoPoint() = GeoPoint(x, y)

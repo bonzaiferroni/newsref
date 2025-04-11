@@ -9,11 +9,6 @@ object Api : ParentEndpoint(null, "/api/v1") {
         object GetArticleById : GetByIdEndpoint<Page>(this)
     }
 
-    object ChapterPages : GetEndpoint<ChapterPage>(this, "/chapter_pages") {
-        val pageId = addLongParam("pageId")
-        val chapterId = addLongParam("chapterId")
-    }
-
     object Hosts : GetEndpoint<List<Host>>(this, "/hosts") {
         val ids = addIntList("ids")
         val search = addStringParam("search")
@@ -45,6 +40,13 @@ object Api : ParentEndpoint(null, "/api/v1") {
         val start = addInstantParam("start")
 
         object GetChapterById : GetByIdEndpoint<Chapter>(this)
+
+        object Pages : GetEndpoint<ChapterPage>(this, "/pages") {
+            val pageId = addLongParam("pageId")
+            val chapterId = addLongParam("chapterId")
+        }
+
+        object Persons : GetByIdEndpoint<List<ChapterPerson>>(this, "/persons")
     }
 
     object Logs : PostEndpoint<LogKey, List<Log>>(this, "/logs")

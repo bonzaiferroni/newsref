@@ -12,16 +12,16 @@ class ChapterDtoService : DbService() {
     suspend fun readTopChapters(start: Instant, limit: Int = 20) = dbQuery {
         ChapterDtoAspect.read(ChapterDtoAspect.score, SortOrder.DESC_NULLS_LAST, limit) {
             it.happenedAt.greater(start) and it.title.isNotNull()
-        }.map { it.addPages(30) }
+        }.map { it.addCollections(30) }
     }
 
     suspend fun readChapter(id: Long) = dbQuery {
-        ChapterDtoAspect.readFirst { it.id.eq(id) }?.addPages(500)
+        ChapterDtoAspect.readFirst { it.id.eq(id) }?.addCollections(500)
     }
 
-    fun Chapter.addPages(limit: Int): Chapter {
+    fun Chapter.addCollections(limit: Int): Chapter {
         val pages = ChapterPageLiteAspect
-            .where { it.chapterId.eq(this@addPages.id) }
+            .where { it.chapterId.eq(this@addCollections.id) }
             .orderBy(Pair(ChapterPageTable.sourceType, SortOrder.DESC), Pair(PageTable.score, SortOrder.DESC_NULLS_LAST))
             .limit(limit)
             .map { it.toChapterPageLite() }
@@ -30,5 +30,9 @@ class ChapterDtoService : DbService() {
 
     suspend fun readChapterPage(chapterId: Long, pageId: Long) = dbQuery {
         ChapterPageDtoAspect.readFirst { it.chapterId.eq(chapterId) and it.pageId.eq(pageId) }
+    }
+
+    suspend fun readChapterPersons(chapterId: Long) = dbQuery {
+        ChapterPersonAspect.read { ChapterPersonAspect.chapterId.eq(chapterId) }
     }
 }

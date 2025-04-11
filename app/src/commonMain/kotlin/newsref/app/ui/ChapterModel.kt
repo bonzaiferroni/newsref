@@ -15,6 +15,7 @@ import newsref.app.io.ChapterStore
 import newsref.model.data.ArticleType
 import newsref.model.data.Chapter
 import newsref.model.data.ChapterPageLite
+import newsref.model.data.ChapterPerson
 import newsref.model.data.PageLite
 import newsref.model.data.SourceType
 import newsref.model.utils.toDaysFromNow
@@ -38,6 +39,12 @@ class ChapterModel(
                 references = references,
             ) }
         }
+        viewModelScope.launch {
+            val persons = chapterStore.readChapterPersons(route.id)
+                .sortedByDescending { it.mentions }
+                .toImmutableList()
+            setState { it.copy(persons = persons) }
+        }
     }
 }
 
@@ -46,6 +53,7 @@ data class ChapterState(
     val chapter: Chapter? = null,
     val articles: ImmutableList<ChapterPageLite> = persistentListOf(),
     val references: ImmutableList<ChapterPageLite> = persistentListOf(),
+    val persons: ImmutableList<ChapterPerson> = persistentListOf(),
 )
 
 fun Chapter.toBalloonsData(): BalloonsData {

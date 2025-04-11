@@ -17,9 +17,13 @@ fun Routing.serveChapters(service: ChapterDtoService = ChapterDtoService()) {
         service.readTopChapters(startInstant)
     }
 
-    get(Api.ChapterPages) {
+    get(Api.Chapters.Pages) {
         val pageId = it.pageId.readFromCallOrNull(call) ?: error("missing page id")
         val chapterId = it.chapterId.readFromCallOrNull(call) ?: error("missing chapter id")
         service.readChapterPage(chapterId, pageId)
+    }
+
+    getById(Api.Chapters.Persons) { chapterId, endpoint ->
+        service.readChapterPersons(chapterId)
     }
 }

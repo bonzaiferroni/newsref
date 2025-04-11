@@ -5,8 +5,8 @@ import io.ktor.client.request.get
 import io.ktor.http.HttpStatusCode
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
-import newsref.db.services.GeoPoint
 import newsref.krawly.globalKtor
+import newsref.model.data.GeoPoint
 
 class LocationClient(
     private val key: String,

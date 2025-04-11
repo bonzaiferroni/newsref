@@ -10,8 +10,9 @@ class ChapterStore(private val client: ApiClient = globalApiClient) {
         Api.Chapters.start.write(start),
     )
     suspend fun readChapterPage(chapterId: Long, pageId: Long) = client.get(
-        Api.ChapterPages,
-        Api.ChapterPages.chapterId.write(chapterId),
-        Api.ChapterPages.pageId.write(pageId)
+        Api.Chapters.Pages,
+        Api.Chapters.Pages.chapterId.write(chapterId),
+        Api.Chapters.Pages.pageId.write(pageId)
     )
+    suspend fun readChapterPersons(chapterId: Long) = client.get(Api.Chapters.Persons, chapterId)
 }

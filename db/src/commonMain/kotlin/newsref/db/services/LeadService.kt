@@ -19,9 +19,9 @@ class LeadService : DbService() {
     suspend fun getOpenLeads(limit: Int = 20000) = dbQuery {
         leadInfoJoin.where(LeadTable.pageId.isNull())
             .orderBy(
+                Pair(LeadJobTable.feedPosition, SortOrder.ASC_NULLS_LAST),
                 Pair(linkCountAlias, SortOrder.DESC),
                 Pair(LeadJobTable.isExternal, SortOrder.DESC_NULLS_LAST),
-                Pair(LeadJobTable.feedPosition, SortOrder.ASC_NULLS_LAST),
                 Pair(LeadJobTable.freshAt, SortOrder.DESC_NULLS_LAST)
             )
             .limit(limit)

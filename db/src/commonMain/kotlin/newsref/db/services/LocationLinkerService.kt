@@ -2,6 +2,7 @@ package newsref.db.services
 
 import newsref.db.DbService
 import newsref.db.tables.LocationTable
+import newsref.model.data.GeoPoint
 import org.jetbrains.exposed.sql.insertAndGetId
 import org.jetbrains.exposed.sql.lowerCase
 

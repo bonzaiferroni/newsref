@@ -2,16 +2,19 @@ package newsref.app.ui
 
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.lazy.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalUriHandler
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
+import kotlinx.collections.immutable.ImmutableList
 import newsref.app.*
 import newsref.app.blip.controls.*
 import newsref.app.blip.nav.LocalNav
 import newsref.app.blip.theme.Blip
 import newsref.model.data.ChapterPageLite
+import newsref.model.data.ChapterPerson
 import newsref.model.utils.formatSpanLong
 
 @Composable
@@ -41,6 +44,9 @@ fun ChapterScreen(
             }
             Tab("References", false) {
                 ChapterPagesListView(state.references, "references", chapter.id)
+            }
+            Tab("People", false) {
+                ChapterPersonListView(state.persons)
             }
         }
     }
@@ -94,6 +100,32 @@ fun ChapterPageLiteItem(
                 Label(page.hostCore)
             }
             Label("Distance: ${chapterPage.textDistance}")
+        }
+    }
+}
+
+@Composable
+fun ChapterPersonListView(
+    persons: ImmutableList<ChapterPerson>
+) {
+    LazyColumn(
+        verticalArrangement = Blip.ruler.columnGrouped,
+    ) {
+        items(persons) {
+            Column {
+                Row(
+                    horizontalArrangement = Arrangement.SpaceBetween,
+                    modifier = Modifier.fillMaxWidth()
+                ) {
+                    Text(it.name)
+                    Text(it.mentions.toString())
+                }
+                Column {
+                    for (identifier in it.identifiers) {
+                        Text(identifier)
+                    }
+                }
+            }
         }
     }
 }
