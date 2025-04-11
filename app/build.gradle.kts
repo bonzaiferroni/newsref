@@ -1,4 +1,6 @@
 import org.jetbrains.compose.desktop.application.dsl.TargetFormat
+import org.jetbrains.compose.reload.ComposeHotRun
+import org.jetbrains.kotlin.compose.compiler.gradle.ComposeFeatureFlag
 import org.jetbrains.kotlin.gradle.ExperimentalKotlinGradlePluginApi
 import org.jetbrains.kotlin.gradle.ExperimentalWasmDsl
 import org.jetbrains.kotlin.gradle.dsl.JvmTarget
@@ -10,6 +12,7 @@ plugins {
     alias(libs.plugins.composeMultiplatform)
     alias(libs.plugins.composeCompiler)
     alias(libs.plugins.serialization)
+    id("org.jetbrains.compose.hot-reload") version "1.0.0-alpha04" // <- add this additionally
 }
 
 kotlin {
@@ -137,4 +140,10 @@ compose.desktop {
 composeCompiler {
     reportsDestination = layout.buildDirectory.dir("compose_compiler")
     metricsDestination = layout.buildDirectory.dir("compose_compiler")
+    featureFlags.add(ComposeFeatureFlag.OptimizeNonSkippingGroups)
 }
+
+//// build.gradle.kts
+//tasks.register<ComposeHotRun>("runHot") {
+//    mainClass.set("newsref.app.MainKt")
+//}

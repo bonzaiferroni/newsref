@@ -54,24 +54,24 @@ fun Portal(
         modifier = Modifier
             .fillMaxSize()
             .background(Blip.colors.background)
-            .drawBehind {
-                drawRect(
-                    brush = Brush.linearGradient(
-                        colors = gradientColorList,
-                        start = Offset(offsetX, 0f),
-                        end = Offset(offsetX + width, 0f),
-                        tileMode = TileMode.Repeated
-                    )
-                )
-                drawRect(
-                    brush = Brush.linearGradient(
-                        colors = gradientColorList,
-                        start = Offset(-offsetX, 0f),
-                        end = Offset(-offsetX - width, 0f),
-                        tileMode = TileMode.Repeated
-                    )
-                )
-            }
+//            .drawBehind {
+//                drawRect(
+//                    brush = Brush.linearGradient(
+//                        colors = gradientColorList,
+//                        start = Offset(offsetX, 0f),
+//                        end = Offset(offsetX + width, 0f),
+//                        tileMode = TileMode.Repeated
+//                    )
+//                )
+//                drawRect(
+//                    brush = Brush.linearGradient(
+//                        colors = gradientColorList,
+//                        start = Offset(-offsetX, 0f),
+//                        end = Offset(-offsetX - width, 0f),
+//                        tileMode = TileMode.Repeated
+//                    )
+//                )
+//            }
     ) {
         Row(
             horizontalArrangement = Blip.ruler.rowTight,

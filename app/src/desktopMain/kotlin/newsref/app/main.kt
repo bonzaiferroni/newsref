@@ -4,6 +4,7 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.window.Window
 import androidx.compose.ui.window.application
 import kotlinx.serialization.Serializable
+import org.jetbrains.compose.reload.DevelopmentEntryPoint
 
 fun main() {
     application {
@@ -20,7 +21,9 @@ fun main() {
             title = "App",
             undecorated = true,
         ) {
-            App(cache.route, { cacheFlow.value = cache.copy(route = it as AppRoute )}, ::exitApplication)
+            DevelopmentEntryPoint {
+                App(cache.route, { cacheFlow.value = cache.copy(route = it as AppRoute )}, ::exitApplication)
+            }
         }
     }
 }

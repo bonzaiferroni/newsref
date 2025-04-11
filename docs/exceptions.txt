@@ -234,3 +234,28 @@ Exception in thread "DefaultDispatcher-worker-28" java.net.SocketException: Conn
 	at kotlinx.coroutines.scheduling.CoroutineScheduler$Worker.runWorker(CoroutineScheduler.kt:717)
 	at kotlinx.coroutines.scheduling.CoroutineScheduler$Worker.run(CoroutineScheduler.kt:704)
 	Suppressed: kotlinx.coroutines.internal.DiagnosticCoroutineContextException: [StandaloneCoroutine{Cancelling}@3fd32908, Dispatchers.IO]
+
+
+Exception in thread "DefaultDispatcher-worker-5" java.lang.NoClassDefFoundError: newsref/db/tables/ChapterPageTableKt
+	at newsref.db.services.ChapterComposerServiceKt.toChapterSignal(ChapterComposerService.kt:134)
+	at newsref.db.services.ChapterComposerService$readChapterSourceSignals$2.invokeSuspend(ChapterComposerService.kt:60)
+	at newsref.db.services.ChapterComposerService$readChapterSourceSignals$2.invoke(ChapterComposerService.kt)
+	at newsref.db.services.ChapterComposerService$readChapterSourceSignals$2.invoke(ChapterComposerService.kt)
+	at newsref.db.DbService$dbQuery$2.invokeSuspend(DbService.kt:11)
+	at newsref.db.DbService$dbQuery$2.invoke(DbService.kt)
+	at newsref.db.DbService$dbQuery$2.invoke(DbService.kt)
+	at org.jetbrains.exposed.sql.transactions.experimental.SuspendedKt$suspendedTransactionAsyncInternal$1.invokeSuspend(Suspended.kt:193)
+	at kotlin.coroutines.jvm.internal.BaseContinuationImpl.resumeWith(ContinuationImpl.kt:33)
+	at kotlinx.coroutines.DispatchedTask.run(DispatchedTask.kt:100)
+	at kotlinx.coroutines.internal.LimitedDispatcher$Worker.run(LimitedDispatcher.kt:113)
+	at kotlinx.coroutines.scheduling.TaskImpl.run(Tasks.kt:89)
+	at kotlinx.coroutines.scheduling.CoroutineScheduler.runSafely(CoroutineScheduler.kt:586)
+	at kotlinx.coroutines.scheduling.CoroutineScheduler$Worker.executeTask(CoroutineScheduler.kt:820)
+	at kotlinx.coroutines.scheduling.CoroutineScheduler$Worker.runWorker(CoroutineScheduler.kt:717)
+	at kotlinx.coroutines.scheduling.CoroutineScheduler$Worker.run(CoroutineScheduler.kt:704)
+	Suppressed: kotlinx.coroutines.internal.DiagnosticCoroutineContextException: [StandaloneCoroutine{Cancelling}@6e138b89, Dispatchers.IO]
+Caused by: java.lang.ClassNotFoundException: newsref.db.tables.ChapterPageTableKt
+	at java.base/jdk.internal.loader.BuiltinClassLoader.loadClass(BuiltinClassLoader.java:641)
+	at java.base/jdk.internal.loader.ClassLoaders$AppClassLoader.loadClass(ClassLoaders.java:188)
+	at java.base/java.lang.ClassLoader.loadClass(ClassLoader.java:526)
+	... 16 more

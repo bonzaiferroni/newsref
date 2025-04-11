@@ -21,17 +21,13 @@ class ChapterComposerService : DbService() {
         val isNotExcluded = Op.build { PageTable.id.notInList(excludedIds) and PageTable.id.notInSubQuery(subquery) }
         val isValidArticle = Op.build {
             PageTable.contentType.eq(ContentType.NewsArticle) and PageTable.cachedWordCount.greaterEq(100) and
-                    PageTable.score.greater(1)
+                    (PageTable.score.greater(1) or PageTable.feedPosition.lessEq(5))
         }
         val isValidReference = Op.build {
             PageTable.contentType.neq(ContentType.NewsArticle) and PageTable.score.greaterEq(3)
         }
         PageTable.read { isNotExcluded and (isValidArticle or isValidReference) }
-            .orderBy(
-                Pair(PageTable.score, SortOrder.DESC_NULLS_LAST),
-                Pair(PageTable.feedPosition, SortOrder.ASC_NULLS_LAST),
-                Pair(PageTable.seenAt, SortOrder.DESC)
-            )
+            .orderBy(PageTable.seenAt, SortOrder.DESC)
             .firstOrNull()?.toChapterSignal()
     }
 
