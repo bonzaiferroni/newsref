@@ -59,6 +59,20 @@ interface BlipRuler {
         bottomStart = corner.dp,
         bottomEnd = corner.dp
     )
+
+    val roundedBottom: Shape get() = RoundedCornerShape(
+        topStartPercent = 0,
+        topEndPercent = 0,
+        bottomStartPercent = 50,
+        bottomEndPercent = 50
+    )
+
+    val roundedTop: Shape get() = RoundedCornerShape(
+        topStartPercent = 50,
+        topEndPercent = 50,
+        bottomStartPercent = 0,
+        bottomEndPercent = 0
+    )
 }
 
 object DefaultRuler : BlipRuler{

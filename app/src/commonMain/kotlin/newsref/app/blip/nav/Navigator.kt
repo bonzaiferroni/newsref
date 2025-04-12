@@ -1,10 +1,8 @@
 package newsref.app.blip.nav
 
-import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.clip
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavGraphBuilder
 import androidx.navigation.NavHostController
@@ -14,7 +12,6 @@ import androidx.navigation.compose.rememberNavController
 import androidx.navigation.toRoute
 import newsref.app.blip.behavior.SlideIn
 import newsref.app.blip.theme.*
-import newsref.app.blip.controls.Surface
 import newsref.app.blip.core.BlipConfig
 
 @Composable
@@ -53,19 +50,12 @@ fun Navigator(
     }
 }
 
-inline fun <reified T: NavRoute> NavGraphBuilder.routeScreen(
-    defaultSurface: Boolean = true,
+inline fun <reified T: NavRoute> NavGraphBuilder.defaultScreen(
     crossinline content: @Composable (T) -> Unit
 ) {
     composable<T> { backStackEntry ->
         val route: T = backStackEntry.toRoute()
-        if (defaultSurface) {
-            DefaultSurface {
-                content(route)
-            }
-        } else {
-            content(route)
-        }
+        content(route)
     }
 }
 

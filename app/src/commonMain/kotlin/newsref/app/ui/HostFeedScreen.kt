@@ -10,7 +10,9 @@ import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import newsref.app.*
 import newsref.app.blip.controls.*
+import newsref.app.blip.nav.LazyScaffold
 import newsref.app.blip.nav.LocalNav
+import newsref.app.blip.nav.LocalPortalConfig
 import newsref.app.blip.theme.Blip
 import newsref.model.data.Host
 
@@ -21,11 +23,11 @@ fun HostFeedScreen(
 ) {
     val state by viewModel.state.collectAsState()
 
-    TextField(state.searchText, viewModel::changeSearchText)
+    LazyScaffold {
+        item {
+            TextField(state.searchText, viewModel::changeSearchText)
+        }
 
-    LazyColumn(
-        verticalArrangement = Blip.ruler.columnTight
-    ) {
         items(state.pinnedHosts) {
             HostItem(it, true, viewModel::togglePin)
         }

@@ -27,6 +27,8 @@ fun ChapterFeedScreen(
     Column(
         verticalArrangement = ruler.columnSpaced
     ) {
+        Spacer(modifier = Modifier.height(50.dp))
+
         DropMenu(selected = state.feedSpan, items = feedSpans) {
             viewModel.changeSpan(it)
             nav.setRoute(ChapterFeedRoute(it.ordinal))

@@ -9,7 +9,7 @@ import newsref.dashboard.ui.screens.ChapterTableScreen
 import newsref.dashboard.ui.screens.ChartBoardScreen
 import newsref.dashboard.ui.screens.FeedItemScreen
 import newsref.dashboard.ui.screens.FeedTableScreen
-import newsref.dashboard.ui.screens.HelloScreen
+import newsref.dashboard.ui.screens.DashHelloScreen
 import newsref.dashboard.ui.screens.HostItemScreen
 import newsref.dashboard.ui.screens.HostTableScreen
 import newsref.dashboard.ui.screens.PageItemScreen
@@ -25,7 +25,7 @@ val dashConfig = BlipConfig(
         routeScreen<PageTableRoute> { PageTableScreen(it) }
         routeScreen<PageItemRoute> { PageItemScreen(it) }
         routeScreen<FeedTableRoute> { FeedTableScreen(it) }
-        routeScreen<HelloRoute> { HelloScreen(it) }
+        routeScreen<HelloRoute> { DashHelloScreen(it) }
         routeScreen<FeedItemRoute> { FeedItemScreen(it) }
         routeScreen<ChapterTableRoute> { ChapterTableScreen(it) }
         routeScreen<ChapterItemRoute> { ChapterItemScreen(it) }

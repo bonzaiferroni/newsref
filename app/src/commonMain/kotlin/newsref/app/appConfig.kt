@@ -7,7 +7,7 @@ import compose.icons.tablericons.YinYang
 import kotlinx.collections.immutable.persistentListOf
 import newsref.app.blip.core.BlipConfig
 import newsref.app.blip.nav.PortalRoute
-import newsref.app.blip.nav.routeScreen
+import newsref.app.blip.nav.defaultScreen
 import newsref.app.ui.*
 
 val appConfig = BlipConfig(
@@ -15,14 +15,14 @@ val appConfig = BlipConfig(
     logo = TablerIcons.News,
     home = StartRoute,
     navGraph = {
-        routeScreen<StartRoute> { StartScreen(it) }
-        routeScreen<HelloRoute> { HelloScreen(it) }
-        routeScreen<ChapterFeedRoute> { ChapterFeedScreen(it) }
-        routeScreen<ChapterRoute> { ChapterScreen(it) }
-        routeScreen<ChapterPageRoute> { ChapterPageScreen(it) }
-        routeScreen<HostFeedRoute> { HostFeedScreen(it) }
-        routeScreen<HostRoute> { HostScreen(it) }
-        routeScreen<PageRoute> { PageScreen(it) }
+        defaultScreen<StartRoute> { StartScreen(it) }
+        defaultScreen<HelloRoute> { HelloScreen(it) }
+        defaultScreen<ChapterFeedRoute> { ChapterFeedScreen(it) }
+        defaultScreen<ChapterRoute> { ChapterScreen(it) }
+        defaultScreen<ChapterPageRoute> { ChapterPageScreen(it) }
+        defaultScreen<HostFeedRoute> { HostFeedScreen(it) }
+        defaultScreen<HostRoute> { HostScreen(it) }
+        defaultScreen<PageRoute> { PageScreen(it) }
     },
     portalItems = persistentListOf(
         PortalRoute(TablerIcons.YinYang, "Hello", HelloRoute),

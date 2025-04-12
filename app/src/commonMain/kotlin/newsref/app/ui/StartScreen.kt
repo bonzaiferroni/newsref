@@ -1,6 +1,7 @@
 package newsref.app.ui
 
 import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.slideInHorizontally
 import androidx.compose.foundation.*
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.text.BasicText
@@ -12,6 +13,7 @@ import newsref.app.blip.controls.Text
 import newsref.app.generated.resources.Res
 import newsref.app.generated.resources.compose_multiplatform
 import newsref.app.blip.nav.LocalNav
+import newsref.app.blip.nav.Scaffold
 import newsref.app.blip.theme.Blip
 import org.jetbrains.compose.resources.painterResource
 
@@ -19,11 +21,7 @@ import org.jetbrains.compose.resources.painterResource
 fun StartScreen(route: StartRoute) {
     var showContent by remember { mutableStateOf(false) }
     val nav = LocalNav.current
-    Column(
-        modifier = Modifier.fillMaxWidth(),
-        horizontalAlignment = Alignment.CenterHorizontally,
-        verticalArrangement = Blip.ruler.columnGrouped
-    ) {
+    Scaffold(false, transition = slideInHorizontally { it }) {
         Button({ nav.go(HelloRoute) }) {
             Text("Go to Hello")
         }
