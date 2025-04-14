@@ -1,25 +1,20 @@
 package newsref.app.blip.nav
 
 import androidx.compose.animation.AnimatedContent
-import androidx.compose.animation.core.LinearEasing
-import androidx.compose.animation.core.RepeatMode
-import androidx.compose.animation.core.animateFloat
-import androidx.compose.animation.core.infiniteRepeatable
-import androidx.compose.animation.core.rememberInfiniteTransition
-import androidx.compose.animation.core.tween
 import androidx.compose.foundation.background
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
-import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.viewmodel.compose.viewModel
 import compose.icons.TablerIcons
 import compose.icons.tablericons.ArrowBack
 import compose.icons.tablericons.X
@@ -33,6 +28,7 @@ import newsref.app.blip.controls.*
 import newsref.app.blip.core.BlipConfig
 import newsref.app.blip.theme.*
 import newsref.app.utils.darken
+import newsref.app.utils.modifyIfNotNull
 
 @OptIn(ExperimentalHazeMaterialsApi::class)
 @Composable
@@ -40,22 +36,15 @@ fun Portal(
     currentRoute: NavRoute,
     config: BlipConfig,
     exitAction: (() -> Unit)?,
-    content: @Composable () -> Unit
+    viewModel: PortalModel = viewModel { PortalModel() },
+    content: @Composable () -> Unit,
 ) {
+    val state by viewModel.state.collectAsState()
     val nav = LocalNav.current
     val navState by nav.state.collectAsState()
     val hazeState = remember { HazeState() }
-    val topBarHeight = 50.dp
-    val bottomBarHeight = 70.dp
-    var showBottomBar by remember { mutableStateOf(true) }
-    val portalConfig = PortalConfig(
-        topSpacing = topBarHeight,
-        bottomSpacing = bottomBarHeight,
-        showBottomNav = {
-            showBottomBar = it
-        }
-    )
-    CompositionLocalProvider(LocalPortalConfig provides portalConfig) {
+
+    CompositionLocalProvider(LocalPortal provides viewModel) {
         Box(
             modifier = Modifier
                 .background(Blip.colors.background)
@@ -93,7 +82,7 @@ fun Portal(
                     enabled = navState.canGoBack,
                 ) { nav.goBack() }
 
-                PortalTitle(currentRoute, config)
+                PortalTitle(state.hoverText, currentRoute)
 
                 if (exitAction != null) {
                     Spacer(modifier = Modifier.width(0.dp))
@@ -102,28 +91,41 @@ fun Portal(
             }
 
             SlideIn(
-                show = showBottomBar,
+                show = state.bottomBarIsVisible,
                 modifier = Modifier.align(Alignment.BottomStart)
             ) {
                 Row(
-                    horizontalArrangement = Blip.ruler.rowTight,
+                    horizontalArrangement = Blip.ruler.rowGrouped,
                     verticalAlignment = Alignment.CenterVertically,
                     modifier = Modifier.fillMaxWidth()
-                        .height(barHeight)
-                        .shadow(Blip.ruler.shadowElevation, Blip.ruler.roundedTop)
+                        .height(portalBottomBarHeight)
+                        .shadow(Blip.ruler.shadowElevation, RoundedCornerShape(
+                            topStartPercent = 60, topEndPercent = 60,
+                            bottomStartPercent = 0, bottomEndPercent = 0
+                        ))
+                        .pointerInput(Unit) { }
                         .hazeEffect(state = hazeState, style = HazeMaterials.ultraThin(hazeBackground))
-                        .padding(Blip.ruler.innerPadding)
+                        .padding(Blip.ruler.halfPadding)
                 ) {
                     for (item in config.portalItems) {
-                        when (item) {
-                            is PortalAction -> IconButton(item.icon) { item.action(nav) }
-                            is PortalRoute -> {
-                                IconToggle(
-                                    value = currentRoute == item.route,
-                                    imageVector = item.icon,
-                                    modifier = Modifier.isHovered { nav.setHover(item.route, it) }
-                                ) { nav.go(item.route) }
-                            }
+                        Column(
+                            horizontalAlignment = Alignment.CenterHorizontally,
+                            modifier = Modifier.fillMaxHeight()
+                                .aspectRatio(1f)
+                                .modifyIfNotNull(item as? PortalAction) { this.actionable { it.action(nav) } }
+                                .modifyIfNotNull(item as? PortalRoute) {
+                                    if (it != currentRoute) {
+                                        this.actionable(it.route)
+                                    } else {
+                                        this
+                                    }
+                                }
+                        ) {
+                            Icon(
+                                imageVector = item.icon, tint = Blip.localColors.contentDim,
+                                modifier = Modifier.weight(1f).aspectRatio(1f)
+                            )
+                            Label(item.label)
                         }
                     }
                 }
@@ -135,27 +137,18 @@ fun Portal(
 
 @Composable
 fun RowScope.PortalTitle(
+    hoverText: String,
     currentRoute: NavRoute,
-    config: BlipConfig
 ) {
-    val nav = LocalNav.current
-    val navState by nav.state.collectAsState()
-
-    var hoverTitleDisplay by remember { mutableStateOf("") }
-
-    LaunchedEffect(navState.hover) {
-        navState.hover?.let { hoverTitleDisplay = it.title }
-    }
-
     Box(
         modifier = Modifier.weight(1f)
     ) {
-        val hoverVisible = navState.hover != null && navState.hover != currentRoute
+        val hoverVisible = hoverText.isNotEmpty()
         AnimatedContent(targetState = hoverVisible, label = "Visibility") { visible ->
-            if (visible) {
+            if (hoverVisible) {
                 Text(
-                    text = hoverTitleDisplay,
-                    style = Blip.typ.title.copy(textAlign = TextAlign.Center),
+                    text = hoverText,
+                    style = Blip.typo.title.copy(textAlign = TextAlign.Center),
                     color = Blip.colors.shine.copy(.8f),
                     maxLines = 1,
                     overflow = TextOverflow.Ellipsis,
@@ -164,7 +157,7 @@ fun RowScope.PortalTitle(
             } else {
                 Text(
                     text = currentRoute.title,
-                    style = Blip.typ.title.copy(textAlign = TextAlign.Center),
+                    style = Blip.typo.title.copy(textAlign = TextAlign.Center),
                     color = Blip.localColors.content.copy(.6f),
                     maxLines = 1,
                     overflow = TextOverflow.Ellipsis,
@@ -175,17 +168,20 @@ fun RowScope.PortalTitle(
     }
 }
 
-sealed class PortalItem
+sealed class PortalItem {
+    abstract val icon: ImageVector
+    abstract val label: String
+}
 
 data class PortalAction(
-    val icon: ImageVector,
-    val label: String,
+    override val icon: ImageVector,
+    override val label: String,
     val action: (Nav) -> Unit
 ) : PortalItem()
 
 data class PortalRoute(
-    val icon: ImageVector,
-    val label: String,
+    override val icon: ImageVector,
+    override val label: String,
     val route: NavRoute,
 ) : PortalItem()
 
@@ -200,15 +196,12 @@ val gradientColorList = listOf(
     Color.Transparent,
 )
 
-data class PortalConfig(
-    val topSpacing: Dp,
-    val bottomSpacing: Dp,
-    val showBottomNav: (Boolean) -> Unit
-)
-
-val LocalPortalConfig = staticCompositionLocalOf<PortalConfig> {
-    error("No Nav provided")
+val LocalPortal = staticCompositionLocalOf<PortalModel> {
+    error("No portal provided")
 }
+
+val portalTopBarHeight = 50.dp
+val portalBottomBarHeight = 70.dp
 
 //            .drawBehind {
 //                drawRect(

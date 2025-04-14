@@ -12,14 +12,16 @@ import androidx.compose.ui.input.key.onPreviewKeyEvent
 import androidx.compose.ui.input.key.type
 import androidx.compose.ui.platform.LocalFocusManager
 
+@Composable
 inline fun <V> Modifier.modifyIfNotNull(
     value: V?,
-    block: Modifier.(V) -> Modifier
+    block: @Composable Modifier.(V) -> Modifier
 ): Modifier {
     if (value != null) return this.block(value)
     return this
 }
 
+@Composable
 inline fun Modifier.modifyIfTrue(value: Boolean, block: Modifier.() -> Modifier) = when {
     value -> this.block()
     else -> this

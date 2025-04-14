@@ -25,6 +25,7 @@ interface BlipTypography {
     val h3: TextStyle
     val h4: TextStyle
     val body: TextStyle
+    val label: TextStyle
 }
 
 @Composable
@@ -53,12 +54,14 @@ fun DefaultTypography() = object : BlipTypography {
         fontFamily = useFamily(Res.font.Inter_18pt_Light, FontWeight.Light),
     )
     override val body = base
+    override val label = base.copy(
+        fontSize = 12.sp
+    )
 }
 
 private val base @Composable get() = TextStyle.Default.copy(
     fontFamily = useFamily(Res.font.Inter_18pt_Regular)
 )
-
 
 @Composable
 fun PlayfairFontFamily() = FontFamily(

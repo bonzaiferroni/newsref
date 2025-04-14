@@ -21,7 +21,7 @@ import newsref.app.blip.theme.*
 fun Text(
     text: String,
     color: Color = Blip.localColors.content,
-    style: TextStyle = Blip.typ.body,
+    style: TextStyle = Blip.typo.body,
     maxLines: Int = Int.MAX_VALUE,
     overflow: TextOverflow = TextOverflow.Clip,
     modifier: Modifier = Modifier
@@ -38,7 +38,7 @@ fun Text(
 fun Text(
     text: AnnotatedString,
     color: Color = Blip.localColors.content,
-    style: TextStyle = Blip.typ.body,
+    style: TextStyle = Blip.typo.body,
     maxLines: Int = Int.MAX_VALUE,
     overflow: TextOverflow = TextOverflow.Clip,
     modifier: Modifier = Modifier
@@ -55,11 +55,15 @@ fun Text(
 fun Label(
     text: String,
     color: Color = Blip.localColors.contentDim,
+    style: TextStyle = Blip.typo.label,
+    maxLines: Int = 1,
     modifier: Modifier = Modifier
 ) = BasicText(
-    text = text,
+    text = text.uppercase(),
     color = { color },
     modifier = modifier,
+    style = style,
+    maxLines = maxLines,
 )
 
 @Composable
@@ -71,7 +75,7 @@ fun H1(
 ) = BasicText(
     text = text,
     color = { color },
-    style = Blip.typ.h1,
+    style = Blip.typo.h1,
     maxLines = maxLines,
 )
 
@@ -85,7 +89,7 @@ fun H2(
 ) = BasicText(
     text = text,
     color = { color },
-    style = Blip.typ.h2.merge(style),
+    style = Blip.typo.h2.merge(style),
     maxLines = maxLines,
     modifier = modifier
 )
@@ -100,7 +104,7 @@ fun H3(
 ) = BasicText(
     text = text,
     color = { color },
-    style = Blip.typ.h3.merge(style),
+    style = Blip.typo.h3.merge(style),
     maxLines = maxLines,
     modifier = modifier
 )
@@ -115,7 +119,7 @@ fun H4(
 ) = BasicText(
     text = text,
     color = { color },
-    style = Blip.typ.h4.merge(style),
+    style = Blip.typo.h4.merge(style),
     maxLines = maxLines,
     modifier = modifier
 )
@@ -167,4 +171,4 @@ fun OtherText(
 @Composable
 fun OtherH1(
     text: String,
-) = OtherText(text, style = Blip.typ.h1)
+) = OtherText(text, style = Blip.typo.h1)

@@ -10,6 +10,7 @@ import androidx.compose.ui.platform.LocalUriHandler
 import androidx.lifecycle.viewmodel.compose.viewModel
 import newsref.app.*
 import newsref.app.blip.controls.*
+import newsref.app.blip.nav.Scaffold
 
 @Composable
 fun HostScreen(
@@ -19,20 +20,21 @@ fun HostScreen(
     val state by viewModel.state.collectAsState()
     val host = state.host
     if (host == null) return
-    H1(host.core)
-    TabCard {
-        Tab(name = "Articles", scrollable = false) {
-            LazyColumn {
-                items(state.sources) {
-                    PageLiteItem(it)
+    Scaffold {
+        TabCard(modifier = Modifier.weight(1f)) {
+            Tab(name = "Articles", scrollable = false) {
+                LazyColumn {
+                    items(state.sources) {
+                        PageLiteItem(it)
+                    }
                 }
             }
-        }
-        Tab(name = "Feeds", scrollable = false, isVisible = state.feeds.isNotEmpty()) {
-            val uriHandler = LocalUriHandler.current
-            Column {
-                for (feed in state.feeds) {
-                    Text(feed.url, modifier = Modifier.clickable { uriHandler.openUri(feed.url) })
+            Tab(name = "Feeds", scrollable = false, isVisible = state.feeds.isNotEmpty()) {
+                val uriHandler = LocalUriHandler.current
+                Column {
+                    for (feed in state.feeds) {
+                        Text(feed.url, modifier = Modifier.clickable { uriHandler.openUri(feed.url) })
+                    }
                 }
             }
         }

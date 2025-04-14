@@ -27,7 +27,6 @@ fun IconToggle(
         else -> DefaultShadowColor
     }
 
-
     Icon(
         imageVector = imageVector,
         modifier = modifier

@@ -1,7 +1,6 @@
 package newsref.app.blip.nav
 
 import androidx.navigation.NavController
-import newsref.app.KeyStore
 import newsref.app.blip.core.StateModel
 
 class NavigatorModel(
@@ -18,7 +17,6 @@ class NavigatorModel(
         setState { state ->
             state.copy(
                 route = route,
-                hover = null,
                 canGoBack = backStack.isNotEmpty()
             )
         }
@@ -39,19 +37,10 @@ class NavigatorModel(
             )
         }
     }
-
-    override fun setHover(route: NavRoute, isHovered: Boolean) {
-        if (isHovered) {
-            setState { it.copy(hover = route) }
-        } else if (stateNow.hover == route) {
-            setState { it.copy(hover = null) }
-        }
-    }
 }
 
 data class NavState(
     val route: NavRoute,
-    val hover: NavRoute? = null,
     val canGoBack: Boolean = false
 )
 

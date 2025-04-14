@@ -25,8 +25,8 @@ val appConfig = BlipConfig(
         defaultScreen<PageRoute> { PageScreen(it) }
     },
     portalItems = persistentListOf(
+        PortalRoute(TablerIcons.CalendarEvent, "Stories", ChapterFeedRoute()),
+        PortalRoute(TablerIcons.News, "Hosts", HostFeedRoute),
         PortalRoute(TablerIcons.YinYang, "Hello", HelloRoute),
-        PortalRoute(TablerIcons.CalendarEvent, "Chapter Feed", ChapterFeedRoute()),
-        PortalRoute(TablerIcons.News, "Hosts", HostFeedRoute)
     )
 )

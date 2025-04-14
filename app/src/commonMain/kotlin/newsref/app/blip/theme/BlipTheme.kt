@@ -19,7 +19,7 @@ object Blip {
     val colors: BlipColors @Composable @ReadOnlyComposable get() = LocalTheme.current.colors
     val ruler: BlipRuler @Composable @ReadOnlyComposable get() = LocalTheme.current.layout
     val localColors: BlipLocalColors @Composable @ReadOnlyComposable get() = LocalColors.current
-    val typ: BlipTypography @Composable @ReadOnlyComposable get() = LocalTheme.current.typography
+    val typo: BlipTypography @Composable @ReadOnlyComposable get() = LocalTheme.current.typography
 }
 
 @Composable

@@ -23,23 +23,23 @@ fun LazyScaffold(
     transition: EnterTransition = slideInVertically { it },
     content: LazyListScope.() -> Unit
 ) {
-    val portalConfig = LocalPortalConfig.current
+    val portal = LocalPortal.current
 
     LaunchedEffect(showBottomNav) {
-        portalConfig.showBottomNav(showBottomNav)
+        portal.setBottomBarIsVisible(showBottomNav)
     }
 
     SlideIn(transition = transition) {
         LazyColumn {
             item {
-                Spacer(modifier = Modifier.height(portalConfig.topSpacing + Blip.ruler.innerSpacing))
+                Spacer(modifier = Modifier.height(portalTopBarHeight + Blip.ruler.innerSpacing))
             }
 
             content()
 
             if (showBottomNav) {
                 item {
-                    Spacer(modifier = Modifier.height(portalConfig.bottomSpacing + Blip.ruler.innerSpacing))
+                    Spacer(modifier = Modifier.height(portalBottomBarHeight + Blip.ruler.innerSpacing))
                 }
             }
         }
@@ -50,13 +50,13 @@ fun LazyScaffold(
 fun Scaffold(
     showBottomNav: Boolean = true,
     transition: EnterTransition = slideInVertically { it },
-    verticalArrangement: Arrangement.Vertical = Blip.ruler.columnGrouped,
+    verticalArrangement: Arrangement.Vertical = Blip.ruler.columnTight,
     content: @Composable ColumnScope.() -> Unit
 ) {
-    val portalConfig = LocalPortalConfig.current
+    val portal = LocalPortal.current
 
     LaunchedEffect(Unit) {
-        portalConfig.showBottomNav(showBottomNav)
+        portal.setBottomBarIsVisible(showBottomNav)
     }
 
     SlideIn(transition = transition) {
@@ -64,12 +64,12 @@ fun Scaffold(
             modifier = Modifier.fillMaxSize(),
             verticalArrangement = verticalArrangement
         ) {
-            Spacer(modifier = Modifier.height(portalConfig.topSpacing))
+            Spacer(modifier = Modifier.height(portalTopBarHeight))
 
             content()
 
             if (showBottomNav) {
-                Spacer(modifier = Modifier.height(portalConfig.bottomSpacing))
+                Spacer(modifier = Modifier.height(portalBottomBarHeight))
             }
         }
     }

@@ -12,7 +12,6 @@ import newsref.app.*
 import newsref.app.blip.controls.*
 import newsref.app.blip.nav.LazyScaffold
 import newsref.app.blip.nav.LocalNav
-import newsref.app.blip.nav.LocalPortalConfig
 import newsref.app.blip.theme.Blip
 import newsref.model.data.Host
 
