@@ -12,6 +12,7 @@ import kotlinx.collections.immutable.ImmutableList
 import newsref.app.*
 import newsref.app.blip.controls.*
 import newsref.app.blip.nav.LocalNav
+import newsref.app.blip.nav.Scaffold
 import newsref.app.blip.theme.Blip
 import newsref.model.data.ChapterPageLite
 import newsref.model.data.ChapterPerson
@@ -26,7 +27,7 @@ fun ChapterScreen(
     val chapter = state.chapter
     val articles = chapter?.pages
     if (chapter == null || articles == null) return
-    Column(
+    Scaffold(
         verticalArrangement = Blip.ruler.columnTight
     ) {
         BalloonChart(0, state.balloons, 400.dp, { })

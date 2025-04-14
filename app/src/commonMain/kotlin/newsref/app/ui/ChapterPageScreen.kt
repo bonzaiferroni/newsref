@@ -6,6 +6,7 @@ import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import newsref.app.*
 import newsref.app.blip.controls.*
+import newsref.app.blip.nav.Scaffold
 import newsref.app.blip.theme.Blip
 import newsref.model.data.Host
 
@@ -18,19 +19,19 @@ fun ChapterPageScreen(
     val chapter = state.chapterPack
     if (chapter == null) return
 
-    Column(
+    Scaffold(
         verticalArrangement = Blip.ruler.columnTight
     ) {
         BalloonChart(
             selectedId = state.selectedId,
             balloons = state.balloons,
-            height = 400.dp,
+            height = 200.dp,
             onClickBalloon = viewModel::selectPage
         )
         val chapterSource = state.chapterPage
         val article = state.page
         val host = state.host
-        if (chapterSource == null || article == null || host == null) return@Column
+        if (chapterSource == null || article == null || host == null) return@Scaffold
 
         val height = 130f
         ChapterPageHeader(

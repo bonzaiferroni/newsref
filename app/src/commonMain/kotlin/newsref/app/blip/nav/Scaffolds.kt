@@ -3,6 +3,7 @@ package newsref.app.blip.nav
 import androidx.compose.animation.EnterTransition
 import androidx.compose.animation.slideInVertically
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.ColumnScope
 import androidx.compose.foundation.layout.Spacer
@@ -62,11 +63,16 @@ fun Scaffold(
     SlideIn(enter = transition) {
         Column(
             modifier = Modifier.fillMaxSize(),
-            verticalArrangement = verticalArrangement
+            verticalArrangement = Blip.ruler.columnTight
         ) {
             Spacer(modifier = Modifier.height(portalTopBarHeight))
 
-            content()
+            Column(
+                modifier = Modifier.weight(1f),
+                verticalArrangement = verticalArrangement
+            ) {
+                content()
+            }
 
             if (showBottomNav) {
                 Spacer(modifier = Modifier.height(portalBottomBarHeight))

@@ -21,7 +21,7 @@ fun HostScreen(
     val host = state.host
     if (host == null) return
     Scaffold {
-        TabCard(modifier = Modifier.weight(1f)) {
+        TabCard() {
             Tab(name = "Articles", scrollable = false) {
                 LazyColumn {
                     items(state.sources) {
