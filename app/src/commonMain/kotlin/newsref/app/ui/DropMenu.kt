@@ -9,9 +9,9 @@ import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.window.Popup
 import kotlinx.collections.immutable.ImmutableList
-import newsref.app.blip.controls.Text
-import newsref.app.blip.theme.Blip
-import newsref.app.blip.theme.ProvideSkyColors
+import newsref.app.pond.controls.Text
+import newsref.app.pond.theme.Pond
+import newsref.app.pond.theme.ProvideSkyColors
 
 @Composable
 fun <T> DropMenu(
@@ -58,8 +58,8 @@ fun DropMenuItem(
         text = label,
         style = TextStyle(textAlign = TextAlign.Center),
         modifier = modifier
-            .background(Blip.colors.primary)
+            .background(Pond.colors.primary)
             .clickable(onClick = onClick)
-            .padding(Blip.ruler.halfPadding)
+            .padding(Pond.ruler.halfPadding)
     )
 }

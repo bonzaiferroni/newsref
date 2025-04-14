@@ -5,8 +5,8 @@ import androidx.compose.runtime.*
 import androidx.compose.material3.*
 import androidx.compose.ui.platform.LocalUriHandler
 import androidx.lifecycle.viewmodel.compose.viewModel
-import newsref.app.blip.controls.Tab
-import newsref.app.blip.controls.Tabs
+import newsref.app.pond.controls.Tab
+import newsref.app.pond.controls.Tabs
 import newsref.dashboard.*
 import newsref.dashboard.ChapterItemRoute
 import newsref.dashboard.LocalNavigator

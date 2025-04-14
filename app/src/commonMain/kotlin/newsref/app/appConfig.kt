@@ -5,12 +5,12 @@ import compose.icons.tablericons.CalendarEvent
 import compose.icons.tablericons.News
 import compose.icons.tablericons.YinYang
 import kotlinx.collections.immutable.persistentListOf
-import newsref.app.blip.core.BlipConfig
-import newsref.app.blip.nav.PortalRoute
-import newsref.app.blip.nav.defaultScreen
+import newsref.app.pond.core.PondConfig
+import newsref.app.pond.nav.PortalRoute
+import newsref.app.pond.nav.defaultScreen
 import newsref.app.ui.*
 
-val appConfig = BlipConfig(
+val appConfig = PondConfig(
     name = "Newsref",
     logo = TablerIcons.News,
     home = StartRoute,

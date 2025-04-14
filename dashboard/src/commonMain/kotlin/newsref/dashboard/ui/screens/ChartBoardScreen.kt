@@ -7,9 +7,8 @@ import androidx.lifecycle.viewmodel.compose.*
 import newsref.dashboard.*
 import newsref.dashboard.ChartBoardRoute
 import newsref.dashboard.ui.controls.ChartType
-import newsref.app.blip.controls.Tab
-import newsref.app.blip.controls.Tabs
-import newsref.app.blip.controls.rememberTabs
+import newsref.app.pond.controls.Tab
+import newsref.app.pond.controls.Tabs
 import newsref.dashboard.ui.controls.TimeChart
 
 @Composable

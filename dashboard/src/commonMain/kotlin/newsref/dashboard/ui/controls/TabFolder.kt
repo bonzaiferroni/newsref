@@ -6,7 +6,7 @@ import androidx.compose.foundation.layout.*
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.*
-import newsref.app.blip.controls.Tab
+import newsref.app.pond.controls.Tab
 import newsref.dashboard.*
 
 @Composable

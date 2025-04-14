@@ -7,13 +7,12 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.lazy.*
 import androidx.compose.runtime.*
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.lifecycle.viewmodel.compose.viewModel
-import newsref.app.blip.behavior.animateString
-import newsref.app.blip.controls.H2
-import newsref.app.blip.controls.Text
-import newsref.app.blip.theme.Blip
+import newsref.app.pond.behavior.animateString
+import newsref.app.pond.controls.H2
+import newsref.app.pond.controls.Text
+import newsref.app.pond.theme.Pond
 import newsref.app.utils.modifyIfNotNull
 import newsref.model.utils.formatSpanLong
 
@@ -32,7 +31,7 @@ fun ActiveHuddleView(
     }
 
     Column(
-        verticalArrangement = Blip.ruler.columnGrouped
+        verticalArrangement = Pond.ruler.columnGrouped
     ) {
         H2(title)
         if (content == null) return
@@ -45,14 +44,14 @@ fun ActiveHuddleView(
         LazyColumn {
             items(state.responses) {
                 val highlightColor = when {
-                    highlightResponseId == it.responseId -> Blip.colors.primary.copy(0.25f)
+                    highlightResponseId == it.responseId -> Pond.colors.primary.copy(0.25f)
                     else -> null
                 }
                 Column(
                     modifier = Modifier.modifyIfNotNull(highlightColor) { background(it) }
                 ) {
                     Row(
-                        horizontalArrangement = Arrangement.spacedBy(Blip.ruler.halfSpacing),
+                        horizontalArrangement = Arrangement.spacedBy(Pond.ruler.halfSpacing),
                     ) {
                         Text("${it.username}: ${it.response}")
                         Spacer(modifier = Modifier.weight(1f))

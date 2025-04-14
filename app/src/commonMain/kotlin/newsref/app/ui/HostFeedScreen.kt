@@ -9,10 +9,10 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import newsref.app.*
-import newsref.app.blip.controls.*
-import newsref.app.blip.nav.LazyScaffold
-import newsref.app.blip.nav.LocalNav
-import newsref.app.blip.theme.Blip
+import newsref.app.pond.controls.*
+import newsref.app.pond.nav.LazyScaffold
+import newsref.app.pond.nav.LocalNav
+import newsref.app.pond.theme.Pond
 import newsref.model.data.Host
 
 @Composable
@@ -45,18 +45,18 @@ fun HostItem(
 ) {
     val nav = LocalNav.current
     Row(
-        horizontalArrangement = Blip.ruler.rowTight,
+        horizontalArrangement = Pond.ruler.rowTight,
         verticalAlignment = Alignment.CenterVertically,
         modifier = Modifier.fillMaxWidth()
             .clickable { nav.go(HostRoute(host.id, host.core)) }
     ) {
-        val color = Blip.colors.getSwatchFromIndex(host.id)
+        val color = Pond.colors.getSwatchFromIndex(host.id)
         ShapeImage(url = host.logo, color = color, modifier = Modifier.height(48.dp))
         Column(
-            verticalArrangement = Blip.ruler.columnTight,
+            verticalArrangement = Pond.ruler.columnTight,
         ) {
             Row(
-                horizontalArrangement = Blip.ruler.rowTight
+                horizontalArrangement = Pond.ruler.rowTight
             ) {
                 H2(host.name ?: host.core, modifier = Modifier.weight(1f))
                 Button(onClick = { togglePin(host.id) }) {

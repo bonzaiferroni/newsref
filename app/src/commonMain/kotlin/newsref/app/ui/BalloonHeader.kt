@@ -13,11 +13,10 @@ import androidx.compose.ui.unit.dp
 import coil3.compose.AsyncImage
 import kotlinx.collections.immutable.ImmutableList
 import kotlinx.datetime.Instant
-import newsref.app.blip.controls.*
-import newsref.app.blip.theme.Blip
-import newsref.app.blip.theme.ProvideSkyColors
+import newsref.app.pond.controls.*
+import newsref.app.pond.theme.Pond
+import newsref.app.pond.theme.ProvideSkyColors
 import newsref.model.data.ChapterPageLite
-import newsref.model.data.PageLite
 import newsref.model.utils.formatSpanLong
 
 @Composable
@@ -34,7 +33,7 @@ fun BalloonHeader(
     pages: ImmutableList<ChapterPageLite>?
 ) {
     Row(
-        horizontalArrangement = Blip.ruler.rowTight,
+        horizontalArrangement = Pond.ruler.rowTight,
         modifier = Modifier.height(height.dp)
     ) {
         ShapeImage(
@@ -53,13 +52,13 @@ fun BalloonHeader(
 fun ShapeImage(
     url: String?,
     color: Color,
-    padding: PaddingValues = Blip.ruler.innerPadding,
-    shape: Shape = Blip.ruler.round,
+    padding: PaddingValues = Pond.ruler.innerPadding,
+    shape: Shape = Pond.ruler.round,
     modifier: Modifier = Modifier,
 ) {
     Box(
         modifier = modifier.aspectRatio(1f)
-            .shadow(Blip.ruler.shadowElevation, shape)
+            .shadow(Pond.ruler.shadowElevation, shape)
             .background(color)
             .padding(padding)
     ) {
@@ -98,7 +97,7 @@ fun RowScope.HeaderMiddle(
             )
         }
         Row(
-            horizontalArrangement = Blip.ruler.rowSpaced,
+            horizontalArrangement = Pond.ruler.rowSpaced,
             modifier = Modifier.height(IntrinsicSize.Max)
         ) {
             Column(
@@ -123,7 +122,7 @@ fun HeaderBalloon(
     onSelect: () -> Unit,
     height: Float
 ) {
-    val ruler = Blip.ruler
+    val ruler = Pond.ruler
     Box(
         contentAlignment = Alignment.Center,
         modifier = Modifier.fillMaxHeight()

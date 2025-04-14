@@ -1,13 +1,12 @@
 package newsref.app.ui
 
-import androidx.compose.foundation.layout.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import newsref.app.*
-import newsref.app.blip.controls.*
-import newsref.app.blip.nav.Scaffold
-import newsref.app.blip.theme.Blip
+import newsref.app.pond.controls.*
+import newsref.app.pond.nav.Scaffold
+import newsref.app.pond.theme.Pond
 import newsref.model.data.Host
 
 @Composable
@@ -20,7 +19,7 @@ fun ChapterPageScreen(
     if (chapter == null) return
 
     Scaffold(
-        verticalArrangement = Blip.ruler.columnTight
+        verticalArrangement = Pond.ruler.columnTight
     ) {
         BalloonChart(
             selectedId = state.selectedId,

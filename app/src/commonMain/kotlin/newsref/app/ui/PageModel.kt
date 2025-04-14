@@ -1,10 +1,9 @@
 package newsref.app.ui
 
-import androidx.compose.foundation.pager.PagerState
 import androidx.lifecycle.viewModelScope
 import kotlinx.coroutines.launch
 import newsref.app.PageRoute
-import newsref.app.blip.core.StateModel
+import newsref.app.pond.core.StateModel
 import newsref.app.io.HostStore
 import newsref.app.io.PageStore
 import newsref.model.data.Host

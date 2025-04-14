@@ -16,12 +16,12 @@ import androidx.compose.ui.platform.LocalUriHandler
 import androidx.compose.ui.unit.dp
 import newsref.app.ChapterPageRoute
 import newsref.app.PageRoute
-import newsref.app.blip.controls.Button
-import newsref.app.blip.controls.H4
-import newsref.app.blip.controls.Label
-import newsref.app.blip.controls.Text
-import newsref.app.blip.nav.LocalNav
-import newsref.app.blip.theme.Blip
+import newsref.app.pond.controls.Button
+import newsref.app.pond.controls.H4
+import newsref.app.pond.controls.Label
+import newsref.app.pond.controls.Text
+import newsref.app.pond.nav.LocalNav
+import newsref.app.pond.theme.Pond
 import newsref.model.data.PageLite
 import newsref.model.utils.formatSpanLong
 
@@ -34,7 +34,7 @@ fun PageLiteItem(
 ) {
     val nav = LocalNav.current
     Row(
-        horizontalArrangement = Blip.ruler.rowTight,
+        horizontalArrangement = Pond.ruler.rowTight,
         modifier = modifier
             .clickable {
                 if (chapterId != null) {
@@ -43,9 +43,9 @@ fun PageLiteItem(
                     nav.go(PageRoute(page.id, page.headline))
                 }
             }
-            .padding(vertical = Blip.ruler.innerSpacing)
+            .padding(vertical = Pond.ruler.innerSpacing)
     ) {
-        val color = Blip.colors.getSwatchFromIndex(page.id)
+        val color = Pond.colors.getSwatchFromIndex(page.id)
         ShapeImage(
             color = color,
             url = page.imageUrl,
@@ -55,13 +55,13 @@ fun PageLiteItem(
         Column(modifier = Modifier.weight(1f)) {
             Row(
                 modifier = Modifier.fillMaxWidth(),
-                horizontalArrangement = Blip.ruler.rowTight
+                horizontalArrangement = Pond.ruler.rowTight
             ) {
                 val uriHandler = LocalUriHandler.current
                 H4(page.headline ?: "source: ${page.id}", maxLines = 2, modifier = Modifier.weight(1f))
                 Button(
                     onClick = { uriHandler.openUri(page.url) },
-                    background = Blip.colors.accent
+                    background = Pond.colors.accent
                 ) { Text("Read") }
             }
             FlowRow(

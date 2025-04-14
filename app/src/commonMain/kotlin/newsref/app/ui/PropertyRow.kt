@@ -5,7 +5,7 @@ import androidx.compose.foundation.layout.FlowRow
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
-import newsref.app.blip.theme.Blip
+import newsref.app.pond.theme.Pond
 
 
 @OptIn(ExperimentalLayoutApi::class)
@@ -15,8 +15,8 @@ fun PropertyRow(
 ) {
     FlowRow(
         modifier = Modifier.fillMaxWidth(),
-        horizontalArrangement = Blip.ruler.rowTight,
-        verticalArrangement = Blip.ruler.columnTight,
+        horizontalArrangement = Pond.ruler.rowTight,
+        verticalArrangement = Pond.ruler.columnTight,
     ) {
         content()
     }

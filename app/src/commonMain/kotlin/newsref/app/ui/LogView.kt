@@ -17,7 +17,7 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.withLink
 import androidx.lifecycle.viewmodel.compose.viewModel
 import kotlinx.datetime.Clock
-import newsref.app.blip.controls.Text
+import newsref.app.pond.controls.Text
 import newsref.model.data.LogKey
 import newsref.model.utils.formatSpanBrief
 

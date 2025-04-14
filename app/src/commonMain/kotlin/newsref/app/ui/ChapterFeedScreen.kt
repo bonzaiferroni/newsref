@@ -9,9 +9,9 @@ import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import kotlinx.collections.immutable.toImmutableList
 import newsref.app.*
-import newsref.app.blip.controls.*
-import newsref.app.blip.nav.LocalNav
-import newsref.app.blip.theme.Blip
+import newsref.app.pond.controls.*
+import newsref.app.pond.nav.LocalNav
+import newsref.app.pond.theme.Pond
 
 @Composable
 fun ChapterFeedScreen(
@@ -19,7 +19,7 @@ fun ChapterFeedScreen(
     viewModel: ChapterFeedModel = viewModel { ChapterFeedModel(route) }
 ) {
     val state by viewModel.state.collectAsState()
-    val ruler = Blip.ruler
+    val ruler = Pond.ruler
     val nav = LocalNav.current
 
     val density = LocalDensity.current
@@ -61,7 +61,7 @@ fun ChapterFeedScreen(
                 modifier = Modifier.fillMaxWidth()
                     .height(height.dp)
             ) {
-                val color = Blip.colors.getSwatchFromIndex(chapter.id)
+                val color = Pond.colors.getSwatchFromIndex(chapter.id)
                 val pages = remember(chapter.id) { chapter.pages?.toImmutableList() }
                 BalloonHeader(
                     color = color,

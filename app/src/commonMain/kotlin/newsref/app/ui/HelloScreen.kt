@@ -1,10 +1,9 @@
 package newsref.app.ui
 
-import androidx.compose.animation.slideInHorizontally
 import androidx.compose.runtime.*
 import newsref.app.*
-import newsref.app.blip.controls.*
-import newsref.app.blip.nav.*
+import newsref.app.pond.controls.*
+import newsref.app.pond.nav.*
 
 @Composable
 fun HelloScreen(route: HelloRoute) {

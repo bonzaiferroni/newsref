@@ -10,13 +10,12 @@ import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.unit.dp
 import coil3.compose.AsyncImage
 import kotlinx.collections.immutable.ImmutableList
-import newsref.app.blip.theme.Blip
+import newsref.app.pond.theme.Pond
 import newsref.model.data.ChapterPageLite
-import newsref.model.data.PageLite
 
 @Composable
 fun PageArray(pages: ImmutableList<ChapterPageLite>, color: Color) {
-    val ruler = Blip.ruler
+    val ruler = Pond.ruler
     Row(
         horizontalArrangement = ruler.rowTight
     ) {

@@ -5,8 +5,8 @@ import kotlinx.collections.immutable.ImmutableList
 import kotlinx.collections.immutable.persistentListOf
 import kotlinx.collections.immutable.toImmutableList
 import kotlinx.coroutines.launch
-import newsref.app.blip.controls.RadioOption
-import newsref.app.blip.core.StateModel
+import newsref.app.pond.controls.RadioOption
+import newsref.app.pond.core.StateModel
 import newsref.app.io.HuddleStore
 import newsref.model.data.HuddleKey
 import newsref.model.data.HuddleResponseSeed

@@ -9,8 +9,8 @@ import androidx.compose.ui.*
 import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.unit.dp
 import kotlinx.datetime.*
-import newsref.app.blip.controls.Tab
-import newsref.app.blip.controls.Tabs
+import newsref.app.pond.controls.Tab
+import newsref.app.pond.controls.Tabs
 import newsref.dashboard.FeedItemRoute
 import newsref.dashboard.FeedTableRoute
 import newsref.dashboard.LocalNavigator

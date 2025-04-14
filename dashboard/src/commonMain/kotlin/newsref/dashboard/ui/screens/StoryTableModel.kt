@@ -3,7 +3,7 @@ package newsref.dashboard.ui.screens
 import androidx.lifecycle.viewModelScope
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
-import newsref.app.blip.core.StateModel
+import newsref.app.pond.core.StateModel
 import newsref.dashboard.StoryTableRoute
 import newsref.db.model.Story
 import newsref.db.services.*

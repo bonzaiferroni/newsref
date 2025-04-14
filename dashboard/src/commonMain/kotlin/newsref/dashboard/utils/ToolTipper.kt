@@ -33,7 +33,7 @@ import compose.icons.tablericons.Click
 import compose.icons.tablericons.InfoCircle
 import newsref.dashboard.halfPadding
 import newsref.dashboard.halfSpacing
-import newsref.app.blip.core.StateModel
+import newsref.app.pond.core.StateModel
 
 @Composable
 fun ToolTipper(

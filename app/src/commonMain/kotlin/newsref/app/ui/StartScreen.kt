@@ -8,13 +8,12 @@ import androidx.compose.foundation.text.BasicText
 import androidx.compose.runtime.*
 import androidx.compose.ui.*
 import newsref.app.*
-import newsref.app.blip.controls.Button
-import newsref.app.blip.controls.Text
+import newsref.app.pond.controls.Button
+import newsref.app.pond.controls.Text
 import newsref.app.generated.resources.Res
 import newsref.app.generated.resources.compose_multiplatform
-import newsref.app.blip.nav.LocalNav
-import newsref.app.blip.nav.Scaffold
-import newsref.app.blip.theme.Blip
+import newsref.app.pond.nav.LocalNav
+import newsref.app.pond.nav.Scaffold
 import org.jetbrains.compose.resources.painterResource
 
 @Composable

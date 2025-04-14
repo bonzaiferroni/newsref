@@ -7,7 +7,7 @@ import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import kotlinx.datetime.Clock
 import kotlinx.datetime.Instant
-import newsref.app.blip.core.StateModel
+import newsref.app.pond.core.StateModel
 import newsref.dashboard.FeedItemRoute
 import newsref.dashboard.utils.emptyImmutableList
 import newsref.db.services.FeedService

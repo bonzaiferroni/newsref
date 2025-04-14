@@ -1,6 +1,6 @@
 package newsref.dashboard.ui.screens
 
-import newsref.app.blip.core.StateModel
+import newsref.app.pond.core.StateModel
 import newsref.db.model.Content
 import newsref.db.model.Page
 

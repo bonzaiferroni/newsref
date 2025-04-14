@@ -13,9 +13,9 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.style.TextAlign
-import newsref.app.blip.controls.H2
-import newsref.app.blip.theme.Blip
-import newsref.app.blip.theme.ProvideSkyColors
+import newsref.app.pond.controls.H2
+import newsref.app.pond.theme.Pond
+import newsref.app.pond.theme.ProvideSkyColors
 import newsref.model.data.Page
 import newsref.model.data.ChapterPage
 import newsref.model.data.Host
@@ -40,10 +40,10 @@ fun ChapterPageHeader(
         modifier = Modifier.fillMaxWidth()
     ) {
         Column(
-            verticalArrangement = Blip.ruler.columnTight,
+            verticalArrangement = Pond.ruler.columnTight,
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
-            val color = Blip.colors.getSwatchFromIndex(chapterPage.chapterId)
+            val color = Pond.colors.getSwatchFromIndex(chapterPage.chapterId)
             BalloonHeader(
                 color = color,
                 title = page.bestTitle,
@@ -58,10 +58,10 @@ fun ChapterPageHeader(
             )
             Box(
                 contentAlignment = Alignment.Center,
-                modifier = Modifier.shadow(Blip.ruler.shadowElevation, Blip.ruler.round)
-                    .background(Blip.colors.accent)
+                modifier = Modifier.shadow(Pond.ruler.shadowElevation, Pond.ruler.round)
+                    .background(Pond.colors.accent)
                     .clickable { println("open in browser") }
-                    .padding(Blip.ruler.basePadding)
+                    .padding(Pond.ruler.basePadding)
             ) {
                 ProvideSkyColors {
                     H2(

@@ -6,8 +6,8 @@ import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import kotlinx.datetime.Clock
 import newsref.app.*
-import newsref.app.blip.controls.*
-import newsref.app.blip.core.*
+import newsref.app.pond.controls.*
+import newsref.app.pond.core.*
 import newsref.app.io.*
 import newsref.model.data.Chapter
 import newsref.model.utils.*

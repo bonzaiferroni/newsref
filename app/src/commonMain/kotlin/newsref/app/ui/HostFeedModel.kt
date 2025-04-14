@@ -5,7 +5,7 @@ import kotlinx.collections.immutable.*
 import kotlinx.coroutines.launch
 import kotlinx.serialization.Serializable
 import newsref.app.*
-import newsref.app.blip.core.*
+import newsref.app.pond.core.*
 import newsref.app.io.*
 import newsref.model.data.Host
 

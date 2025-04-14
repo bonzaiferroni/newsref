@@ -2,8 +2,8 @@ package newsref.app.ui
 
 import androidx.compose.foundation.text.selection.SelectionContainer
 import androidx.compose.runtime.Composable
-import newsref.app.blip.controls.PropertyTile
-import newsref.app.blip.controls.Text
+import newsref.app.pond.controls.PropertyTile
+import newsref.app.pond.controls.Text
 import newsref.model.data.Chapter
 import newsref.app.utils.format
 import newsref.model.data.HuddleType

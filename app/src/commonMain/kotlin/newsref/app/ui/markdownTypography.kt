@@ -5,9 +5,8 @@ import androidx.compose.ui.text.SpanStyle
 import androidx.compose.ui.text.TextLinkStyles
 import com.mikepenz.markdown.model.DefaultMarkdownColors
 import com.mikepenz.markdown.model.DefaultMarkdownTypography
-import com.mikepenz.markdown.model.MarkdownColors
-import newsref.app.blip.theme.DefaultColors
-import newsref.app.blip.theme.DefaultTypography
+import newsref.app.pond.theme.DefaultColors
+import newsref.app.pond.theme.DefaultTypography
 
 val mdTypography
     @Composable get() = DefaultTypography().let {

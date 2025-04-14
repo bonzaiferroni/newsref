@@ -1,7 +1,7 @@
 package newsref.app.ui
 
 import androidx.compose.runtime.*
-import newsref.app.blip.controls.*
+import newsref.app.pond.controls.*
 import newsref.model.data.ChapterPage
 import newsref.model.data.HuddleType
 import newsref.model.data.HuddleKey

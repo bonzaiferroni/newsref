@@ -16,8 +16,8 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.lifecycle.viewmodel.compose.viewModel
-import newsref.app.blip.core.StateModel
-import newsref.app.blip.nav.Scaffold
+import newsref.app.pond.core.StateModel
+import newsref.app.pond.nav.Scaffold
 import newsref.dashboard.HelloRoute
 import newsref.dashboard.LocalNavigator
 import newsref.dashboard.StartRoute

@@ -14,9 +14,9 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import kotlinx.collections.immutable.ImmutableList
 import kotlinx.collections.immutable.persistentListOf
 import kotlinx.collections.immutable.toImmutableList
-import newsref.app.blip.controls.ButtonToggle
-import newsref.app.blip.core.StateModel
-import newsref.app.blip.theme.Blip
+import newsref.app.pond.controls.ButtonToggle
+import newsref.app.pond.core.StateModel
+import newsref.app.pond.theme.Pond
 import newsref.model.data.ArticleType
 import newsref.model.data.ChapterPageLite
 
@@ -30,9 +30,9 @@ fun ChapterPagesListView(
 ) {
     val state by viewModel.state.collectAsState()
     FlowRow(
-        horizontalArrangement = Arrangement.spacedBy(Blip.ruler.halfSpacing, Alignment.CenterHorizontally),
-        verticalArrangement = Blip.ruler.columnGrouped,
-        modifier = Modifier.padding(vertical = Blip.ruler.halfSpacing)
+        horizontalArrangement = Arrangement.spacedBy(Pond.ruler.halfSpacing, Alignment.CenterHorizontally),
+        verticalArrangement = Pond.ruler.columnGrouped,
+        modifier = Modifier.padding(vertical = Pond.ruler.halfSpacing)
             .fillMaxWidth()
     ) {
         if (state.reportCount > 0)

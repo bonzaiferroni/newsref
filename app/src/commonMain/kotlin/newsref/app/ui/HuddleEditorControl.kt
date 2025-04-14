@@ -11,18 +11,18 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import com.mikepenz.markdown.compose.Markdown
 import compose.icons.TablerIcons
 import compose.icons.tablericons.Edit
-import newsref.app.blip.controls.Button
-import newsref.app.blip.controls.FloatyContent
-import newsref.app.blip.controls.H2
-import newsref.app.blip.controls.IconButton
-import newsref.app.blip.controls.RadioContent
-import newsref.app.blip.controls.RadioGroup
-import newsref.app.blip.controls.RadioOption
-import newsref.app.blip.controls.Tab
-import newsref.app.blip.controls.TabCard
-import newsref.app.blip.controls.Text
-import newsref.app.blip.controls.TextField
-import newsref.app.blip.theme.Blip
+import newsref.app.pond.controls.Button
+import newsref.app.pond.controls.FloatyContent
+import newsref.app.pond.controls.H2
+import newsref.app.pond.controls.IconButton
+import newsref.app.pond.controls.RadioContent
+import newsref.app.pond.controls.RadioGroup
+import newsref.app.pond.controls.RadioOption
+import newsref.app.pond.controls.Tab
+import newsref.app.pond.controls.TabCard
+import newsref.app.pond.controls.Text
+import newsref.app.pond.controls.TextField
+import newsref.app.pond.theme.Pond
 import newsref.app.io.LocalUserContext
 import newsref.model.data.HuddleKey
 
@@ -39,7 +39,7 @@ fun HuddleEditorControl(
 
     FloatyContent(state.isOpen, viewModel::toggleIsOpen) {
         TabCard(
-            shape = Blip.ruler.rounded,
+            shape = Pond.ruler.rounded,
             modifier = Modifier.fillMaxWidth()
         ) {
             Tab(name = "Guide") {
@@ -49,7 +49,7 @@ fun HuddleEditorControl(
             }
             Tab(name = EDIT_TAB_NAME, isVisible = userState.isLoggedIn) {
                 Column(
-                    modifier = Modifier.clip(Blip.ruler.roundBottom)
+                    modifier = Modifier.clip(Pond.ruler.roundBottom)
                 ) {
                     H2(huddleName)
                     RadioGroup(state.selectedValue, viewModel::selectValue) {

@@ -3,7 +3,7 @@ package newsref.dashboard
 import compose.icons.TablerIcons
 import compose.icons.tablericons.Dashboard
 import kotlinx.collections.immutable.persistentListOf
-import newsref.app.blip.core.BlipConfig
+import newsref.app.pond.core.PondConfig
 import newsref.dashboard.ui.screens.ChapterItemScreen
 import newsref.dashboard.ui.screens.ChapterTableScreen
 import newsref.dashboard.ui.screens.ChartBoardScreen
@@ -18,7 +18,7 @@ import newsref.dashboard.ui.screens.StartScreen
 import newsref.dashboard.ui.screens.StoryItemScreen
 import newsref.dashboard.ui.screens.StoryTableScreen
 
-val dashConfig = BlipConfig(
+val dashConfig = PondConfig(
     name = "Dashboard",
     navGraph = {
         routeScreen<StartRoute> { StartScreen(it) }

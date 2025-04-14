@@ -1,12 +1,11 @@
 package newsref.app
 
 import androidx.compose.runtime.*
-import newsref.app.blip.core.Blapp
-import newsref.app.blip.nav.NavRoute
-import newsref.app.blip.theme.ProvideTheme
+import newsref.app.pond.core.Blapp
+import newsref.app.pond.nav.NavRoute
+import newsref.app.pond.theme.ProvideTheme
 import org.jetbrains.compose.ui.tooling.preview.Preview
-import newsref.app.blip.nav.Navigator
-import newsref.app.blip.theme.ProvideSkyColors
+import newsref.app.pond.theme.ProvideSkyColors
 import newsref.app.io.ProvideUserContext
 
 @Composable

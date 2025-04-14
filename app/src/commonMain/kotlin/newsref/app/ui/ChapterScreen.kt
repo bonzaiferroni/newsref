@@ -10,10 +10,10 @@ import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import kotlinx.collections.immutable.ImmutableList
 import newsref.app.*
-import newsref.app.blip.controls.*
-import newsref.app.blip.nav.LocalNav
-import newsref.app.blip.nav.Scaffold
-import newsref.app.blip.theme.Blip
+import newsref.app.pond.controls.*
+import newsref.app.pond.nav.LocalNav
+import newsref.app.pond.nav.Scaffold
+import newsref.app.pond.theme.Pond
 import newsref.model.data.ChapterPageLite
 import newsref.model.data.ChapterPerson
 import newsref.model.utils.formatSpanLong
@@ -28,7 +28,7 @@ fun ChapterScreen(
     val articles = chapter?.pages
     if (chapter == null || articles == null) return
     Scaffold(
-        verticalArrangement = Blip.ruler.columnTight
+        verticalArrangement = Pond.ruler.columnTight
     ) {
         BalloonChart(0, state.balloons, 400.dp, { })
         H1(chapter.title ?: "Chapter: ${chapter.id}")
@@ -63,7 +63,7 @@ fun ChapterPageLiteItem(
     val nav = LocalNav.current
     val page = chapterPage.page
     Row(
-        horizontalArrangement = Blip.ruler.rowTight,
+        horizontalArrangement = Pond.ruler.rowTight,
         modifier = modifier
             .clickable {
                 if (chapterId != null) {
@@ -72,9 +72,9 @@ fun ChapterPageLiteItem(
                     nav.go(PageRoute(page.id, page.headline))
                 }
             }
-            .padding(vertical = Blip.ruler.innerSpacing)
+            .padding(vertical = Pond.ruler.innerSpacing)
     ) {
-        val color = Blip.colors.getSwatchFromIndex(page.id)
+        val color = Pond.colors.getSwatchFromIndex(page.id)
         ShapeImage(
             color = color,
             url = page.imageUrl,
@@ -84,13 +84,13 @@ fun ChapterPageLiteItem(
         Column(modifier = Modifier.weight(1f)) {
             Row(
                 modifier = Modifier.fillMaxWidth(),
-                horizontalArrangement = Blip.ruler.rowTight
+                horizontalArrangement = Pond.ruler.rowTight
             ) {
                 val uriHandler = LocalUriHandler.current
                 H4(page.headline ?: "source: ${page.id}", maxLines = 2, modifier = Modifier.weight(1f))
                 Button(
                     onClick = { uriHandler.openUri(page.url) },
-                    background = Blip.colors.accent
+                    background = Pond.colors.accent
                 ) { Text("Read") }
             }
             FlowRow(
@@ -110,7 +110,7 @@ fun ChapterPersonListView(
     persons: ImmutableList<ChapterPerson>
 ) {
     LazyColumn(
-        verticalArrangement = Blip.ruler.columnGrouped,
+        verticalArrangement = Pond.ruler.columnGrouped,
     ) {
         items(persons) {
             Column {

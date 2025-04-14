@@ -3,8 +3,8 @@ package newsref.app.io
 import androidx.compose.foundation.layout.*
 import androidx.compose.runtime.*
 import androidx.lifecycle.viewmodel.compose.viewModel
-import newsref.app.blip.controls.*
-import newsref.app.blip.theme.Blip
+import newsref.app.pond.controls.*
+import newsref.app.pond.theme.Pond
 
 @Composable
 fun ProvideUserContext(
@@ -18,7 +18,7 @@ fun ProvideUserContext(
             block()
             FloatyBox(state.loginVisible, userContext::dismissLogin) {
                 Column(
-                    verticalArrangement = Blip.ruler.columnTight
+                    verticalArrangement = Pond.ruler.columnTight
                 ) {
                     TextField(state.usernameOrEmail, userContext::setUsernameOrEmail)
                     TextField(
@@ -37,7 +37,7 @@ fun ProvideUserContext(
                         label = "Stay logged in",
                     )
                     Row(
-                        horizontalArrangement = Blip.ruler.rowTight
+                        horizontalArrangement = Pond.ruler.rowTight
                     ) {
                         Button(userContext::login) { Text("Log in") }
                         Button(userContext::dismissLogin) { Text("Cancel") }

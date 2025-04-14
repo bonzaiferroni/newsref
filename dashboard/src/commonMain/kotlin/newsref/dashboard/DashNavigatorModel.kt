@@ -1,6 +1,6 @@
 package newsref.dashboard
 
-import newsref.app.blip.core.StateModel
+import newsref.app.pond.core.StateModel
 
 class DashNavigatorModel(
     initialRoute: DashRoute
