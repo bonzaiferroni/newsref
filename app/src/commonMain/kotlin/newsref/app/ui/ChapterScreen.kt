@@ -100,7 +100,7 @@ fun ChapterPageLiteItem(
                 Label("${page.articleType.title} from ${page.existedAt.formatSpanLong()}, visibility: ${page.score}")
                 Label(page.hostCore)
             }
-            Label("Distance: ${chapterPage.textDistance}")
+            PropertyLabel("Distance", chapterPage.textDistance)
         }
     }
 }

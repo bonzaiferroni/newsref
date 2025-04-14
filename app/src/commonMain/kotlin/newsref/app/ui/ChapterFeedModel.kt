@@ -39,6 +39,7 @@ class ChapterFeedModel(
         viewModelScope.launch {
             val start = Clock.System.now() - stateNow.feedSpan.duration
             val chapters = chapterStore.readChapters(start)
+                .sortedByDescending { it.size }
                 .toImmutableList()
 
             val balloons = chapters.map { chapter ->
@@ -46,8 +47,8 @@ class ChapterFeedModel(
                 BalloonPoint(
                     id = chapter.id,
                     x = -x,
-                    y = chapter.size.toFloat(),
-                    size = chapter.score.toFloat(),
+                    y = chapter.score.toFloat(),
+                    size = chapter.size.toFloat(),
                     text = chapter.title ?: chapter.id.toString(),
                     colorIndex = chapter.id.toInt(),
                     imageUrl = chapter.imageUrl

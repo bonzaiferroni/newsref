@@ -14,13 +14,14 @@ import newsref.app.blip.theme.Blip
 @Composable
 fun PropertyLabel(
     propertyName: String,
-    value: Any,
+    value: Any?,
     style: TextStyle = Blip.typo.label,
     maxLines: Int = 1,
     modifier: Modifier = Modifier
 ) {
+    if (value == null) return
     val propertyColor = Blip.localColors.contentDim
-    val valueColor = Blip.colors.shine
+    val valueColor = Blip.localColors.highlight
     BasicText(
         text = remember { buildAnnotatedString {
             withStyle(style = SpanStyle(color = propertyColor)) {

@@ -26,6 +26,7 @@ data class BlipLocalColors(
     val mode: ColorMode,
     val content: Color,
     val surface: Color,
+    val highlight: Color,
 ) {
     val contentDim get() = content.copy(.8f)
 }
