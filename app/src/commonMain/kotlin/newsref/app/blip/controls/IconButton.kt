@@ -8,19 +8,22 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
 import newsref.app.blip.theme.Blip
+import newsref.app.utils.modifyIfTrue
 
 @Composable
 fun IconButton(
     imageVector: ImageVector,
     tint: Color = Blip.localColors.content,
+    hoverText: String? = null,
+    isEnabled: Boolean = true,
     modifier: Modifier = Modifier,
-    action: () -> Unit
+    onClick: () -> Unit
 ) {
     Icon(
         imageVector = imageVector,
         modifier = modifier
             .clip(Blip.ruler.rounded)
-            .clickable(onClick = action)
+            .modifyIfTrue(isEnabled) { this.actionable(hoverText, onClick = onClick) }
             .padding(Blip.ruler.innerPadding),
         tint = tint
     )

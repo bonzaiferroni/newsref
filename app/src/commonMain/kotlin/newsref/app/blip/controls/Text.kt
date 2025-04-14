@@ -59,7 +59,7 @@ fun Label(
     maxLines: Int = 1,
     modifier: Modifier = Modifier
 ) = BasicText(
-    text = text.uppercase(),
+    text = text,
     color = { color },
     modifier = modifier,
     style = style,

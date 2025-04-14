@@ -17,13 +17,13 @@ class NavigatorModel(
         setState { state ->
             state.copy(
                 route = route,
-                canGoBack = backStack.isNotEmpty()
+                backRoute = backStack.lastOrNull()
             )
         }
     }
 
     override fun goBack() {
-        if (!stateNow.canGoBack) return
+        if (backStack.isEmpty()) return
         val next = backStack.removeLast()
         navController.navigateUp()
         setRoute(next)
@@ -33,7 +33,7 @@ class NavigatorModel(
         setState { state ->
             state.copy(
                 route = route,
-                canGoBack = backStack.isNotEmpty()
+                backRoute = backStack.lastOrNull()
             )
         }
     }
@@ -41,7 +41,7 @@ class NavigatorModel(
 
 data class NavState(
     val route: NavRoute,
-    val canGoBack: Boolean = false
+    val backRoute: NavRoute? = null,
 )
 
 const val NAV_KEY = "nav_route"

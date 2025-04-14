@@ -78,10 +78,14 @@ fun Portal(
                     .height(barHeight)
                     .padding(Blip.ruler.innerPadding)
             ) {
-                IconToggle(
-                    value = currentRoute == config.home,
+                val backRoute = navState.backRoute
+                val backAlpha by animateFloatAsState(if (backRoute != null) 1f else 0f)
+                val backRouteTitle = backRoute?.title ?: ""
+                IconButton(
                     imageVector = TablerIcons.ArrowBack,
-                    enabled = navState.canGoBack,
+                    hoverText = backRouteTitle,
+                    modifier = Modifier
+                        .graphicsLayer { this.alpha = backAlpha }
                 ) { nav.goBack() }
 
                 PortalTitle(state.hoverText, currentRoute)

@@ -21,7 +21,7 @@ fun Modifier.actionable(route: NavRoute, isEnabled: Boolean = true): Modifier {
 fun Modifier.actionable(
     hoverText: String? = null,
     isEnabled: Boolean = true,
-    action: () -> Unit,
+    onClick: () -> Unit,
 ): Modifier {
     return if (isEnabled) {
         this
@@ -34,7 +34,7 @@ fun Modifier.actionable(
                 }
                 this.hoverable(source)
             }
-            .clickable(onClick = action)
+            .clickable(onClick = onClick)
     } else {
         this
     }

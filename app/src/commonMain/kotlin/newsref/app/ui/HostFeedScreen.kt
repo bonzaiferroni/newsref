@@ -63,7 +63,7 @@ fun HostItem(
                     Text(if (isPinned) "Unpin" else "Pin")
                 }
             }
-            Label("Visibility: ${host.score}")
+            PropertyLabel("Visibility", host.score)
         }
     }
 }
