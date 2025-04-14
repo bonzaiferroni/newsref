@@ -16,7 +16,7 @@ object StartRoute : AppRoute("Start")
 object HelloRoute : AppRoute("Hello")
 
 @Serializable
-data class ChapterFeedRoute(val feedSpan: Int = FeedSpan.Week.ordinal) : AppRoute("Chapters")
+data class ChapterFeedRoute(val feedSpan: Int = FeedSpan.Week.ordinal) : AppRoute("Stories")
 
 @Serializable
 data class ChapterRoute(

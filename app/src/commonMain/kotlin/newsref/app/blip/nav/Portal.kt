@@ -1,5 +1,6 @@
 package newsref.app.blip.nav
 
+import androidx.compose.animation.animateColorAsState
 import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
@@ -116,20 +117,26 @@ fun Portal(
                         .padding(Blip.ruler.halfPadding)
                 ) {
                     for (item in config.portalItems) {
+                        val route = (item as? PortalRoute)?.route
                         Column(
                             horizontalAlignment = Alignment.CenterHorizontally,
                             modifier = Modifier.fillMaxHeight()
                                 .aspectRatio(1f)
                                 .modifyIfNotNull(item as? PortalAction) { this.actionable { it.action(nav) } }
-                                .modifyIfNotNull(item as? PortalRoute) {
-                                    this.actionable(it.route, it.route != currentRoute)
+                                .modifyIfNotNull(route) {
+                                    this.actionable(it, it != currentRoute)
                                 }
                         ) {
+                            val color = when {
+                                route != currentRoute -> Blip.localColors.contentDim
+                                else -> Blip.colors.shine
+                            }
                             Icon(
-                                imageVector = item.icon, tint = Blip.localColors.contentDim,
+                                imageVector = item.icon,
+                                tint = color,
                                 modifier = Modifier.weight(1f).aspectRatio(1f)
                             )
-                            Label(item.label)
+                            Label(item.label, color)
                         }
                     }
                 }
@@ -196,8 +203,8 @@ data class PortalAction(
 
 data class PortalRoute(
     override val icon: ImageVector,
-    override val label: String,
     val route: NavRoute,
+    override val label: String = route.title,
 ) : PortalItem()
 
 val gradientColorList = listOf(
