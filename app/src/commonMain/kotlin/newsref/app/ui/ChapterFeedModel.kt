@@ -2,6 +2,7 @@ package newsref.app.ui
 
 import androidx.lifecycle.viewModelScope
 import kotlinx.collections.immutable.*
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import kotlinx.datetime.Clock
 import newsref.app.*
@@ -12,13 +13,19 @@ import newsref.model.data.Chapter
 import newsref.model.utils.*
 import kotlin.time.Duration
 import kotlin.time.Duration.Companion.days
+import kotlin.time.Duration.Companion.minutes
 
 class ChapterFeedModel(
     val route: ChapterFeedRoute,
     val chapterStore: ChapterStore = ChapterStore()
-) : StateModel<ChapterFeedState>(ChapterFeedState()) {
+) : StateModel<ChapterFeedState>(ChapterFeedState(feedSpan = FeedSpan.fromOrdinal(route.feedSpan))) {
     init {
-        changeSpan(FeedSpan.fromOrdinal(route.feedSpan))
+        viewModelScope.launch {
+            while (true) {
+                changeSpan(stateNow.feedSpan)
+                delay(5.minutes)
+            }
+        }
     }
 
     fun selectId(id: Long) {
