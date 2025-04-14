@@ -29,7 +29,7 @@ fun LazyScaffold(
         portal.setBottomBarIsVisible(showBottomNav)
     }
 
-    SlideIn(transition = transition) {
+    SlideIn(enter = transition) {
         LazyColumn {
             item {
                 Spacer(modifier = Modifier.height(portalTopBarHeight + Blip.ruler.innerSpacing))
@@ -59,7 +59,7 @@ fun Scaffold(
         portal.setBottomBarIsVisible(showBottomNav)
     }
 
-    SlideIn(transition = transition) {
+    SlideIn(enter = transition) {
         Column(
             modifier = Modifier.fillMaxSize(),
             verticalArrangement = verticalArrangement

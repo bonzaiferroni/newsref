@@ -12,25 +12,30 @@ import newsref.app.blip.nav.NavRoute
 import newsref.app.utils.modifyIfNotNull
 
 @Composable
-fun Modifier.actionable(route: NavRoute): Modifier {
+fun Modifier.actionable(route: NavRoute, isEnabled: Boolean = true): Modifier {
     val nav = LocalNav.current
-    return this.actionable(route.title) { nav.go(route) }
+    return this.actionable(route.title, isEnabled) { nav.go(route) }
 }
 
 @Composable
 fun Modifier.actionable(
     hoverText: String? = null,
+    isEnabled: Boolean = true,
     action: () -> Unit,
 ): Modifier {
-    return this
-        .modifyIfNotNull(hoverText) {
-            val source = remember { MutableInteractionSource() }
-            val isHovered = source.collectIsHoveredAsState().value
-            val portal = LocalPortal.current
-            LaunchedEffect(isHovered) {
-                portal.setHoverText(it)
+    return if (isEnabled) {
+        this
+            .modifyIfNotNull(hoverText) {
+                val source = remember { MutableInteractionSource() }
+                val isHovered = source.collectIsHoveredAsState().value
+                val portal = LocalPortal.current
+                LaunchedEffect(isHovered) {
+                    portal.setHoverText(if (isHovered) it else "")
+                }
+                this.hoverable(source)
             }
-            this.hoverable(source)
-        }
-        .clickable(onClick = action)
+            .clickable(onClick = action)
+    } else {
+        this
+    }
 }

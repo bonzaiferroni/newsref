@@ -1,14 +1,16 @@
 package newsref.app.blip.nav
 
-import androidx.compose.animation.AnimatedContent
+import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.runtime.*
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.text.style.TextAlign
@@ -33,7 +35,6 @@ import newsref.app.utils.modifyIfNotNull
 @OptIn(ExperimentalHazeMaterialsApi::class)
 @Composable
 fun Portal(
-    currentRoute: NavRoute,
     config: BlipConfig,
     exitAction: (() -> Unit)?,
     viewModel: PortalModel = viewModel { PortalModel() },
@@ -42,6 +43,7 @@ fun Portal(
     val state by viewModel.state.collectAsState()
     val nav = LocalNav.current
     val navState by nav.state.collectAsState()
+    val currentRoute = navState.route
     val hazeState = remember { HazeState() }
 
     CompositionLocalProvider(LocalPortal provides viewModel) {
@@ -91,7 +93,7 @@ fun Portal(
             }
 
             SlideIn(
-                show = state.bottomBarIsVisible,
+                isVisible = state.bottomBarIsVisible,
                 modifier = Modifier.align(Alignment.BottomStart)
             ) {
                 Row(
@@ -99,10 +101,12 @@ fun Portal(
                     verticalAlignment = Alignment.CenterVertically,
                     modifier = Modifier.fillMaxWidth()
                         .height(portalBottomBarHeight)
-                        .shadow(Blip.ruler.shadowElevation, RoundedCornerShape(
-                            topStartPercent = 60, topEndPercent = 60,
-                            bottomStartPercent = 0, bottomEndPercent = 0
-                        ))
+                        .shadow(
+                            Blip.ruler.shadowElevation, RoundedCornerShape(
+                                topStartPercent = 60, topEndPercent = 60,
+                                bottomStartPercent = 0, bottomEndPercent = 0
+                            )
+                        )
                         .pointerInput(Unit) { }
                         .hazeEffect(state = hazeState, style = HazeMaterials.ultraThin(hazeBackground))
                         .padding(Blip.ruler.halfPadding)
@@ -114,11 +118,7 @@ fun Portal(
                                 .aspectRatio(1f)
                                 .modifyIfNotNull(item as? PortalAction) { this.actionable { it.action(nav) } }
                                 .modifyIfNotNull(item as? PortalRoute) {
-                                    if (it != currentRoute) {
-                                        this.actionable(it.route)
-                                    } else {
-                                        this
-                                    }
+                                    this.actionable(it.route, it.route != currentRoute)
                                 }
                         ) {
                             Icon(
@@ -143,27 +143,38 @@ fun RowScope.PortalTitle(
     Box(
         modifier = Modifier.weight(1f)
     ) {
-        val hoverVisible = hoverText.isNotEmpty()
-        AnimatedContent(targetState = hoverVisible, label = "Visibility") { visible ->
-            if (hoverVisible) {
-                Text(
-                    text = hoverText,
-                    style = Blip.typo.title.copy(textAlign = TextAlign.Center),
-                    color = Blip.colors.shine.copy(.8f),
-                    maxLines = 1,
-                    overflow = TextOverflow.Ellipsis,
-                    modifier = Modifier.fillMaxWidth()
-                )
+        var displayedHoverText by remember { mutableStateOf(hoverText) }
+        var isHoverVisible by remember { mutableStateOf(true) }
+        LaunchedEffect(hoverText) {
+            if (hoverText.isNotEmpty()) {
+                displayedHoverText = hoverText
+                isHoverVisible = true
             } else {
-                Text(
-                    text = currentRoute.title,
-                    style = Blip.typo.title.copy(textAlign = TextAlign.Center),
-                    color = Blip.localColors.content.copy(.6f),
-                    maxLines = 1,
-                    overflow = TextOverflow.Ellipsis,
-                    modifier = Modifier.fillMaxWidth()
-                )
+                isHoverVisible = false
             }
+        }
+        val alpha by animateFloatAsState(if (isHoverVisible) 1f else 0f)
+        SlideIn(isHoverVisible, .5f) {
+            Text(
+                text = displayedHoverText,
+                style = Blip.typo.title.copy(textAlign = TextAlign.Center),
+                color = Blip.colors.shine.copy(.8f),
+                maxLines = 1,
+                overflow = TextOverflow.Ellipsis,
+                modifier = Modifier.fillMaxWidth()
+                    .graphicsLayer { this.alpha = alpha }
+            )
+        }
+        SlideIn(!isHoverVisible, .5f) {
+            Text(
+                text = currentRoute.title,
+                style = Blip.typo.title.copy(textAlign = TextAlign.Center),
+                color = Blip.localColors.contentDim,
+                maxLines = 1,
+                overflow = TextOverflow.Ellipsis,
+                modifier = Modifier.fillMaxWidth()
+                    .graphicsLayer { this.alpha = 1 - alpha }
+            )
         }
     }
 }

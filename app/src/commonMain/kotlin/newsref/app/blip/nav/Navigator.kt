@@ -31,7 +31,6 @@ fun Navigator(
 
     CompositionLocalProvider(LocalNav provides nav) {
         Portal(
-            currentRoute = state.route,
             config = config,
             exitAction = exitApp
         ) {

@@ -26,6 +26,17 @@ fun Float.animate(
     return returnedValue
 }
 
+@Composable
+fun animateFloat(
+    value: Float,
+    duration: Int = 200,
+    spec: AnimationSpec<Float> = tween(durationMillis = duration, easing = EaseInOut),
+) = animateFloatAsState(
+    targetValue = value,
+    animationSpec = spec,
+    label = "AnimatedFloat"
+)
+
 val springSpec = spring<Float>(Spring.DampingRatioMediumBouncy)
 
 @Composable
@@ -39,4 +50,3 @@ fun Modifier.animateInitialOffsetX(magnitude: Int): Modifier {
 }
 
 fun Float.randomFlip(): Float = if ((0..1).random() == 0) -this else this
-
