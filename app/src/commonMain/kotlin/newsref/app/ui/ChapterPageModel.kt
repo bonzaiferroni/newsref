@@ -1,10 +1,10 @@
 package newsref.app.ui
 
 import androidx.lifecycle.viewModelScope
+import io.pondlib.compose.ui.controls.BalloonsData
 import kotlinx.coroutines.launch
 import newsref.app.*
-import newsref.app.pond.controls.BalloonsData
-import newsref.app.pond.core.*
+import io.pondlib.compose.ui.core.*
 import newsref.app.io.*
 import newsref.model.data.Chapter
 import newsref.model.data.ChapterPage

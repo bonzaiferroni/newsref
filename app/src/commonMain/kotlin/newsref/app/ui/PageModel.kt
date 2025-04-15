@@ -3,7 +3,7 @@ package newsref.app.ui
 import androidx.lifecycle.viewModelScope
 import kotlinx.coroutines.launch
 import newsref.app.PageRoute
-import newsref.app.pond.core.StateModel
+import io.pondlib.compose.ui.core.StateModel
 import newsref.app.io.HostStore
 import newsref.app.io.PageStore
 import newsref.model.data.Host

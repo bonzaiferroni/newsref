@@ -5,7 +5,7 @@ import kotlinx.collections.immutable.*
 import kotlinx.coroutines.launch
 import kotlinx.serialization.Serializable
 import newsref.app.*
-import newsref.app.pond.core.*
+import io.pondlib.compose.ui.core.*
 import newsref.app.io.*
 import newsref.model.data.Host
 

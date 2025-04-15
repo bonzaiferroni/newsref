@@ -8,12 +8,12 @@ import androidx.compose.foundation.text.BasicText
 import androidx.compose.runtime.*
 import androidx.compose.ui.*
 import newsref.app.*
-import newsref.app.pond.controls.Button
-import newsref.app.pond.controls.Text
+import io.pondlib.compose.ui.controls.Button
+import io.pondlib.compose.ui.controls.Text
 import newsref.app.generated.resources.Res
 import newsref.app.generated.resources.compose_multiplatform
-import newsref.app.pond.nav.LocalNav
-import newsref.app.pond.nav.Scaffold
+import io.pondlib.compose.ui.nav.LocalNav
+import io.pondlib.compose.ui.nav.Scaffold
 import org.jetbrains.compose.resources.painterResource
 
 @Composable

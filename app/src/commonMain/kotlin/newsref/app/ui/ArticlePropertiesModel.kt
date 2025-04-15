@@ -1,6 +1,6 @@
 package newsref.app.ui
 
-import newsref.app.pond.core.StateModel
+import io.pondlib.compose.ui.core.StateModel
 import newsref.app.io.HuddleStore
 import newsref.model.data.Page
 import newsref.model.data.ArticleType

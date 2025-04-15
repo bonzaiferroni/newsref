@@ -2,7 +2,7 @@ package newsref.app.ui
 
 import androidx.lifecycle.viewModelScope
 import kotlinx.coroutines.launch
-import newsref.app.pond.core.StateModel
+import io.pondlib.compose.ui.core.StateModel
 import newsref.app.io.LogStore
 import newsref.model.data.Log
 import newsref.model.data.LogKey

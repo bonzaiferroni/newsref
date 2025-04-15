@@ -1,7 +1,7 @@
 package newsref.app
 
+import io.pondlib.compose.ui.nav.NavRoute
 import kotlinx.serialization.Serializable
-import newsref.app.pond.nav.NavRoute
 import newsref.app.ui.FeedSpan
 
 @Serializable

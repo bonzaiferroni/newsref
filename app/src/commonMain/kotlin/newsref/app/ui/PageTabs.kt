@@ -1,9 +1,9 @@
 package newsref.app.ui
 
 import androidx.compose.runtime.Composable
-import newsref.app.pond.controls.Tab
-import newsref.app.pond.controls.TabCard
-import newsref.app.pond.controls.Text
+import io.pondlib.compose.ui.controls.Tab
+import io.pondlib.compose.ui.controls.TabCard
+import io.pondlib.compose.ui.controls.Text
 import newsref.model.data.ChapterPage
 import newsref.model.data.Host
 import newsref.model.data.Page

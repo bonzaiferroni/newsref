@@ -8,8 +8,8 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalUriHandler
 import androidx.lifecycle.viewmodel.compose.viewModel
 import newsref.app.*
-import newsref.app.pond.controls.*
-import newsref.app.pond.nav.Scaffold
+import io.pondlib.compose.ui.controls.*
+import io.pondlib.compose.ui.nav.Scaffold
 
 @Composable
 fun HostScreen(

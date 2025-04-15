@@ -4,9 +4,9 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import newsref.app.*
-import newsref.app.pond.controls.*
-import newsref.app.pond.nav.Scaffold
-import newsref.app.pond.theme.Pond
+import io.pondlib.compose.ui.controls.*
+import io.pondlib.compose.ui.nav.Scaffold
+import io.pondlib.compose.ui.theme.Pond
 import newsref.model.data.Host
 
 @Composable

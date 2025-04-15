@@ -21,6 +21,7 @@ plugins {
 
 dependencyResolutionManagement {
     repositories {
+        repositoriesMode.set(RepositoriesMode.FAIL_ON_PROJECT_REPOS)
         google {
             mavenContent {
                 includeGroupAndSubgroups("androidx")
@@ -30,6 +31,7 @@ dependencyResolutionManagement {
         }
         mavenCentral()
         maven("https://maven.pkg.jetbrains.space/public/p/compose/dev")
+        maven("https://jitpack.io")
     }
 
     versionCatalogs {
@@ -48,3 +50,5 @@ include(":db")
 include(":scoop")
 include(":dashboard")
 include(":app")
+include(":pond-compose")
+project(":pond-compose").projectDir = file("../pond-compose/composeApp")

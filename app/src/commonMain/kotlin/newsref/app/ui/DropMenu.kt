@@ -8,10 +8,10 @@ import androidx.compose.ui.*
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.window.Popup
+import io.pondlib.compose.ui.controls.Text
+import io.pondlib.compose.ui.theme.Pond
+import io.pondlib.compose.ui.theme.ProvideSkyColors
 import kotlinx.collections.immutable.ImmutableList
-import newsref.app.pond.controls.Text
-import newsref.app.pond.theme.Pond
-import newsref.app.pond.theme.ProvideSkyColors
 
 @Composable
 fun <T> DropMenu(

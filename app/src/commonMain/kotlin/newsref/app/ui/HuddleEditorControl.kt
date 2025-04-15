@@ -11,18 +11,8 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import com.mikepenz.markdown.compose.Markdown
 import compose.icons.TablerIcons
 import compose.icons.tablericons.Edit
-import newsref.app.pond.controls.Button
-import newsref.app.pond.controls.FloatyContent
-import newsref.app.pond.controls.H2
-import newsref.app.pond.controls.IconButton
-import newsref.app.pond.controls.RadioContent
-import newsref.app.pond.controls.RadioGroup
-import newsref.app.pond.controls.RadioOption
-import newsref.app.pond.controls.Tab
-import newsref.app.pond.controls.TabCard
-import newsref.app.pond.controls.Text
-import newsref.app.pond.controls.TextField
-import newsref.app.pond.theme.Pond
+import io.pondlib.compose.ui.controls.*
+import io.pondlib.compose.ui.theme.Pond
 import newsref.app.io.LocalUserContext
 import newsref.model.data.HuddleKey
 
@@ -44,7 +34,7 @@ fun HuddleEditorControl(
         ) {
             Tab(name = "Guide") {
                 SelectionContainer {
-                    Markdown(state.guide, mdColors, mdTypography, Modifier)
+                    Markdown(state.guide, mdColors, MdTypography(), Modifier)
                 }
             }
             Tab(name = EDIT_TAB_NAME, isVisible = userState.isLoggedIn) {
@@ -56,7 +46,7 @@ fun HuddleEditorControl(
                         val options = state.options.map { option ->
                             RadioContent(option) {
                                 SelectionContainer {
-                                    Markdown(option.labelOrValue, mdColors, mdTypography, Modifier)
+                                    Markdown(option.labelOrValue, mdColors, MdTypography(), Modifier)
                                 }
                             }
                         }

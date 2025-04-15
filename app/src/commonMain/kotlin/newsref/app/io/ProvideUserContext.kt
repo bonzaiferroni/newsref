@@ -3,8 +3,8 @@ package newsref.app.io
 import androidx.compose.foundation.layout.*
 import androidx.compose.runtime.*
 import androidx.lifecycle.viewmodel.compose.viewModel
-import newsref.app.pond.controls.*
-import newsref.app.pond.theme.Pond
+import io.pondlib.compose.ui.theme.Pond
+import io.pondlib.compose.ui.controls.*
 
 @Composable
 fun ProvideUserContext(

@@ -2,10 +2,10 @@ package newsref.app.ui
 
 import androidx.compose.foundation.text.selection.SelectionContainer
 import androidx.compose.runtime.Composable
-import newsref.app.pond.controls.PropertyTile
-import newsref.app.pond.controls.Text
+import io.ktor.websocket.Frame.Text
+import io.pondlib.compose.ui.controls.PropertyTile
+import io.pondlib.compose.utils.format
 import newsref.model.data.Chapter
-import newsref.app.utils.format
 import newsref.model.data.HuddleType
 import newsref.model.data.HuddleKey
 import newsref.model.utils.formatSpanLong

@@ -51,8 +51,8 @@ kotlin {
         androidMain.dependencies {
             implementation(compose.preview)
             implementation(libs.androidx.activity.compose)
-            implementation(libs.ktor.client.okhttp)
             implementation(libs.kotlinx.coroutines.android)
+            implementation(libs.ktor.client.okhttp)
             implementation("com.github.tony19:logback-android:3.0.0")
         }
         commonMain.dependencies {
@@ -82,6 +82,7 @@ kotlin {
             implementation("dev.chrisbanes.haze:haze-materials:1.5.2")
 
             implementation(project(":model"))
+            implementation(project(":pond-compose"))
         }
         desktopMain.dependencies {
             implementation(compose.desktop.currentOs)

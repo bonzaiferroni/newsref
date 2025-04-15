@@ -1,10 +1,10 @@
 package newsref.app.io
 
 import androidx.lifecycle.viewModelScope
+import io.pondlib.compose.ui.core.StateModel
 import kotlinx.coroutines.launch
 import kotlinx.serialization.Serializable
 import newsref.app.KeyStore
-import newsref.app.pond.core.StateModel
 import newsref.model.data.User
 import newsref.model.data.LoginRequest
 import newsref.model.utils.obfuscate

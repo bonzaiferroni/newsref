@@ -13,13 +13,13 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.style.TextAlign
-import newsref.app.pond.controls.H2
-import newsref.app.pond.theme.Pond
-import newsref.app.pond.theme.ProvideSkyColors
+import io.pondlib.compose.ui.controls.H2
+import io.pondlib.compose.ui.theme.Pond
+import io.pondlib.compose.ui.theme.ProvideSkyColors
+import io.pondlib.compose.utils.rememberImmutableList
 import newsref.model.data.Page
 import newsref.model.data.ChapterPage
 import newsref.model.data.Host
-import newsref.app.utils.rememberImmutableList
 import newsref.model.data.Chapter
 
 @Composable

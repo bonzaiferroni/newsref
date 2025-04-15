@@ -4,10 +4,10 @@ import compose.icons.TablerIcons
 import compose.icons.tablericons.CalendarEvent
 import compose.icons.tablericons.News
 import compose.icons.tablericons.YinYang
+import io.pondlib.compose.ui.core.PondConfig
+import io.pondlib.compose.ui.nav.PortalRoute
+import io.pondlib.compose.ui.nav.defaultScreen
 import kotlinx.collections.immutable.persistentListOf
-import newsref.app.pond.core.PondConfig
-import newsref.app.pond.nav.PortalRoute
-import newsref.app.pond.nav.defaultScreen
 import newsref.app.ui.*
 
 val appConfig = PondConfig(

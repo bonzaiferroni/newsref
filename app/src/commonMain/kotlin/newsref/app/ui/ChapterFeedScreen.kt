@@ -9,9 +9,9 @@ import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import kotlinx.collections.immutable.toImmutableList
 import newsref.app.*
-import newsref.app.pond.controls.*
-import newsref.app.pond.nav.LocalNav
-import newsref.app.pond.theme.Pond
+import io.pondlib.compose.ui.controls.*
+import io.pondlib.compose.ui.nav.LocalNav
+import io.pondlib.compose.ui.theme.Pond
 
 @Composable
 fun ChapterFeedScreen(

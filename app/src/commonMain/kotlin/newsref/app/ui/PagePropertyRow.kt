@@ -1,7 +1,7 @@
 package newsref.app.ui
 
 import androidx.compose.runtime.*
-import newsref.app.pond.controls.*
+import io.pondlib.compose.ui.controls.*
 import newsref.model.data.ChapterPage
 import newsref.model.data.HuddleType
 import newsref.model.data.HuddleKey

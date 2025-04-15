@@ -5,32 +5,39 @@ import androidx.compose.ui.text.SpanStyle
 import androidx.compose.ui.text.TextLinkStyles
 import com.mikepenz.markdown.model.DefaultMarkdownColors
 import com.mikepenz.markdown.model.DefaultMarkdownTypography
-import newsref.app.pond.theme.DefaultColors
-import newsref.app.pond.theme.DefaultTypography
+import io.pondlib.compose.ui.theme.DefaultColors
+import io.pondlib.compose.ui.theme.Pond
 
-val mdTypography
-    @Composable get() = DefaultTypography().let {
-        DefaultMarkdownTypography(
-            h1 = it.h1,
-            h2 = it.h2,
-            h3 = it.h3,
-            h4 = it.h4,
-            h5 = it.h4, // todo
-            h6 = it.h4, // todo
-            text = it.body,
-            code = it.body,
-            inlineCode = it.body,
-            quote = it.body,
-            paragraph = it.body,
-            ordered = it.body,
-            bullet = it.body,
-            list = it.body,
-            link = it.body,
-            textLink = TextLinkStyles(
-                style = SpanStyle()
-            )
+@Composable
+fun MdTypography(): DefaultMarkdownTypography {
+    if (cachedTypography != null) return cachedTypography!!
+    val typography = Pond.typo
+
+    cachedTypography = DefaultMarkdownTypography(
+        h1 = typography.h1,
+        h2 = typography.h2,
+        h3 = typography.h3,
+        h4 = typography.h4,
+        h5 = typography.h4, // todo
+        h6 = typography.h4, // todo
+        text = typography.body,
+        code = typography.body,
+        inlineCode = typography.body,
+        quote = typography.body,
+        paragraph = typography.body,
+        ordered = typography.body,
+        bullet = typography.body,
+        list = typography.body,
+        link = typography.body,
+        textLink = TextLinkStyles(
+            style = SpanStyle()
         )
-    }
+    )
+
+    return cachedTypography!!
+}
+
+var cachedTypography: DefaultMarkdownTypography? = null
 
 val mdColors = DefaultColors.let {
     DefaultMarkdownColors(
