@@ -21,6 +21,7 @@ kotlin {
                 implementation(compose.runtime)
                 implementation(libs.kotlinx.serialization.json)
                 implementation(libs.kotlinx.datetime)
+                api(project(":kabinet"))
             }
         }
         // Add the commonTest source set

@@ -1,7 +1,7 @@
 package newsref.server.db
 
+import klutch.environment.Environment
 import kotlinx.datetime.Clock
-import newsref.db.Environment
 import newsref.db.model.User
 import newsref.model.data.UserRole
 

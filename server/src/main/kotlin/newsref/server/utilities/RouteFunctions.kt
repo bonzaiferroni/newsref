@@ -8,10 +8,7 @@ import io.ktor.server.routing.RoutingCall
 import io.ktor.server.routing.RoutingContext
 import io.ktor.server.routing.get
 import io.ktor.server.routing.post
-import newsref.model.Endpoint
-import newsref.model.EndpointParam
-import newsref.model.GetByIdEndpoint
-import newsref.model.PostEndpoint
+import kabinet.api.*
 import newsref.server.extensions.getIdOrThrow
 
 fun <Returned, E : Endpoint<Returned>> Route.get(

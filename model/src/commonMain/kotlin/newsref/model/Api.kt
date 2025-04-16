@@ -1,5 +1,6 @@
 package newsref.model
 
+import kabinet.api.*
 import newsref.model.data.*
 
 object Api : ParentEndpoint(null, "/api/v1") {

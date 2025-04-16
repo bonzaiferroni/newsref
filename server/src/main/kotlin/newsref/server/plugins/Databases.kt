@@ -2,10 +2,10 @@ package newsref.server.plugins
 
 import io.ktor.server.application.*
 import newsref.db.initDb
-import newsref.db.readEnvFromDirectory
+import klutch.environment.readEnvFromPath
 
 fun Application.configureDatabases() {
-    val env = readEnvFromDirectory("../.env")
+    val env = readEnvFromPath()
     initDb(env)
 }
 

@@ -32,7 +32,7 @@ kotlin {
                 api("io.github.cdimascio:dotenv-kotlin:6.4.2")
 
                 implementation(project(":model"))
-                implementation(project(":klutch"))
+                api(project(":klutch"))
             }
         }
 

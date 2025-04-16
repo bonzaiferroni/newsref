@@ -10,7 +10,7 @@ import io.ktor.server.auth.*
 import io.ktor.server.auth.jwt.*
 import io.ktor.server.response.*
 import io.ktor.server.routing.*
-import newsref.db.readEnvFromDirectory
+import klutch.environment.readEnvFromPath
 import newsref.model.data.UserRole
 import newsref.model.data.toClaimValue
 import newsref.server.db.VariableStore
@@ -65,7 +65,7 @@ const val TOKEN_NAME = "auth-jwt"
 const val CLAIM_USERNAME = "username"
 const val CLAIM_ROLES = "roles"
 
-private val env = readEnvFromDirectory("../.env")
+private val env = readEnvFromPath()
 
 fun createJWT(username: String, roles: Set<UserRole>): String {
     val audience = "http://localhost:8080/"

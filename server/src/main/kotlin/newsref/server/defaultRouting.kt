@@ -1,18 +1,5 @@
 package newsref.server
 
-import io.ktor.http.*
-import io.ktor.server.application.*
-import io.ktor.server.request.*
-import io.ktor.server.response.*
-import io.ktor.server.routing.*
-import org.jetbrains.exposed.dao.IntEntity
-import newsref.model.Endpoint
-import newsref.db.DataService
-import newsref.server.extensions.getIdOrThrow
-import newsref.server.extensions.testRole
-import newsref.server.plugins.authenticateJwt
-import org.jetbrains.exposed.dao.Entity
-
 //inline fun <reified Data, IdType: Comparable<IdType>, DataEntity: Entity<IdType>> Routing.defaultRouting(
 //    endpoint: Endpoint, service: DataService<Data, IdType, DataEntity>
 //) {
