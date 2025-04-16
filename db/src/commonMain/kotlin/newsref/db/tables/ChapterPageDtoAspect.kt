@@ -1,5 +1,6 @@
 package newsref.db.tables
 
+import klutch.db.Aspect
 import newsref.db.core.*
 import newsref.model.data.ChapterPage
 import org.jetbrains.exposed.sql.*

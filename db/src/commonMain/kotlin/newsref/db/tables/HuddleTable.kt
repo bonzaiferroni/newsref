@@ -1,7 +1,7 @@
 package newsref.db.tables
 
 import kotlinx.serialization.json.*
-import newsref.db.core.Aspect
+import klutch.db.Aspect
 import newsref.model.data.HuddleStatus
 import newsref.db.model.*
 import newsref.db.utils.toInstantUtc

@@ -1,6 +1,6 @@
 package newsref.db.tables
 
-import newsref.db.core.Aspect
+import klutch.db.Aspect
 import newsref.db.utils.*
 import newsref.model.data.ContentType
 import newsref.model.data.NewsSection

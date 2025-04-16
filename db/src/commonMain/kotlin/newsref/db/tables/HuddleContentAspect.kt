@@ -1,6 +1,6 @@
 package newsref.db.tables
 
-import newsref.db.core.Aspect
+import klutch.db.Aspect
 import newsref.db.utils.toInstantUtc
 import newsref.model.data.HuddleContentDto
 import org.jetbrains.exposed.sql.ResultRow

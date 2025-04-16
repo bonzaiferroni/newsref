@@ -2,7 +2,7 @@ package newsref.db.tables
 
 import kotlinx.datetime.Clock
 import kotlinx.datetime.Instant
-import newsref.db.core.Aspect
+import klutch.db.Aspect
 import newsref.db.model.DocumentType
 import newsref.db.model.Page
 import newsref.db.utils.toCheckedFromTrusted

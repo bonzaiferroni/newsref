@@ -1,5 +1,6 @@
 package newsref.db.tables
 
+import klutch.db.Aspect
 import newsref.db.core.*
 import newsref.db.services.toGeoPoint
 import newsref.db.utils.*
