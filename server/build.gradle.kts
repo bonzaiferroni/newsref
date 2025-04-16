@@ -1,7 +1,3 @@
-val ktor_version: String by project
-val kotlin_version: String by project
-val logback_version: String by project
-
 plugins {
     alias(libs.plugins.kotlinJvm)
     alias(libs.plugins.ktor)
@@ -19,9 +15,9 @@ dependencies {
     implementation(libs.kotlinx.datetime)
     implementation(libs.kotlinx.serialization.json)
 
-    implementation("io.ktor:ktor-server-core-jvm")
-    implementation("io.ktor:ktor-serialization-kotlinx-json-jvm")
-    implementation("io.ktor:ktor-server-content-negotiation-jvm")
+    implementation(libs.ktor.server.core.jvm)
+    implementation(libs.ktor.serialization.kotlinx.json.jvm)
+    implementation(libs.ktor.server.content.negotiation.jvm)
 
     implementation(libs.exposed.core)
     implementation(libs.exposed.dao)
@@ -29,19 +25,16 @@ dependencies {
     implementation(libs.exposed.json)
     implementation(libs.exposed.kotlin.datetime)
 
-    implementation("com.h2database:h2:2.1.214")
+    implementation(libs.ktor.server.auth.jvm)
+    implementation(libs.ktor.server.auth.jwt.jvm)
+    implementation(libs.ktor.server.netty.jvm)
+    implementation(libs.ktor.server.html.builder)
+    implementation(libs.ktor.server.websockets)
+    implementation(libs.ktor.server.config.yaml)
+    implementation(libs.ktor.server.cors)
 
-    implementation("io.ktor:ktor-server-auth-jvm")
-    implementation("io.ktor:ktor-server-auth-jwt-jvm")
-    implementation("io.ktor:ktor-server-netty-jvm")
-    implementation("io.ktor:ktor-server-html-builder:$ktor_version")
-    implementation("io.ktor:ktor-server-websockets:$ktor_version")
-    implementation("io.ktor:ktor-server-config-yaml:2.3.10")
-    implementation("io.ktor:ktor-server-cors:$ktor_version")
-    implementation("io.github.cdimascio:dotenv-kotlin:6.4.2")
-
-    implementation("ch.qos.logback:logback-classic:$logback_version")
-    testImplementation("org.jetbrains.kotlin:kotlin-test-junit:$kotlin_version")
+    implementation(libs.logback.classic)
+    testImplementation(libs.kotlin.test.junit)
 
     implementation(project(":model"))
     implementation(project(":db"))

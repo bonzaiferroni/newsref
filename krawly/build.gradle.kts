@@ -1,6 +1,3 @@
-val ktor_version: String by project
-val kotlin_version: String by project
-
 plugins {
 	alias(libs.plugins.kotlinJvm)
 	alias(libs.plugins.serialization)
@@ -11,14 +8,14 @@ dependencies {
 	implementation(libs.kotlinx.serialization.json)
 	implementation(libs.kotlinx.serialization.cbor)
 	implementation("it.skrape:skrapeit:1.3.0-alpha.2")
-	implementation("io.ktor:ktor-client-apache5:$ktor_version")
-	implementation("io.ktor:ktor-client-cio:$ktor_version")
-	implementation("io.ktor:ktor-client-apache:$ktor_version")
-	implementation("io.ktor:ktor-client-encoding:$ktor_version")
-	implementation("io.ktor:ktor-client-logging:$ktor_version")
-	implementation("io.ktor:ktor-network-tls:$ktor_version")
-	implementation("io.ktor:ktor-serialization-kotlinx-json:$ktor_version")
-	implementation("io.ktor:ktor-client-content-negotiation:$ktor_version")
+	implementation(libs.ktor.client.apache5)
+	implementation(libs.ktor.client.cio)
+	implementation(libs.ktor.client.apache)
+	implementation(libs.ktor.client.encoding)
+	implementation(libs.ktor.client.logging)
+	implementation(libs.ktor.network.tls)
+	implementation(libs.ktor.serialization.kotlinx.json)
+	implementation(libs.ktor.client.content.negotiation)
 	implementation("org.jline:jline:3.21.0")
 
 	implementation("com.microsoft.playwright:playwright:1.41.0")
@@ -36,7 +33,7 @@ dependencies {
 
 	// Add dependencies for unit testing
 	testImplementation(kotlin("test"))
-	testImplementation("org.jetbrains.kotlin:kotlin-test-junit5:$kotlin_version")
+	testImplementation(libs.kotlin.test.junit5)
     testImplementation(project(":db"))
 	testImplementation("org.testcontainers:postgresql:1.20.2")
 }
