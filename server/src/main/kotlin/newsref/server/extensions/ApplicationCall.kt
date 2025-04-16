@@ -8,12 +8,6 @@ import io.ktor.server.response.*
 import newsref.server.plugins.CLAIM_ROLES
 import newsref.server.plugins.CLAIM_USERNAME
 
-fun ApplicationCall.getIdOrThrow() = getIdOrThrow { it.toIntOrNull() }
-
-fun <T: Any> ApplicationCall.getIdOrThrow(convertId: (String) -> T?): T {
-    return this.parameters["id"]?.let { convertId(it) } ?: throw IllegalArgumentException("Id not found")
-}
-
 fun ApplicationCall.getClaim(name: String): String {
     return this.principal<JWTPrincipal>()?.payload?.getClaim(name)?.asString() ?: ""
 }

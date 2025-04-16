@@ -90,7 +90,7 @@ ktor-server-auth-jvm = { module = "io.ktor:ktor-server-auth-jvm" }
 ktor-server-auth-jwt-jvm = { module = "io.ktor:ktor-server-auth-jwt-jvm" }
 ktor-server-config-yaml = { module = "io.ktor:ktor-server-config-yaml", version.ref = "ktorServerConfigYaml" }
 ktor-server-content-negotiation-jvm = { module = "io.ktor:ktor-server-content-negotiation-jvm" }
-ktor-server-core-jvm = { module = "io.ktor:ktor-server-core-jvm" }
+ktor-server-core-jvm = { module = "io.ktor:ktor-server-core-jvm", version.ref = "ktor" }
 ktor-server-cors = { module = "io.ktor:ktor-server-cors", version.ref = "ktorServerCors" }
 ktor-server-html-builder = { module = "io.ktor:ktor-server-html-builder", version.ref = "ktorServerHtmlBuilder" }
 ktor-server-netty-jvm = { module = "io.ktor:ktor-server-netty-jvm" }

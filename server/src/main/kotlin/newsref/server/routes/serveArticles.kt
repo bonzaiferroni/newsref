@@ -3,7 +3,7 @@ package newsref.server.routes
 import io.ktor.server.routing.*
 import newsref.db.services.PageDtoService
 import newsref.model.Api
-import newsref.server.utilities.getById
+import klutch.server.getById
 
 fun Routing.serveArticles(
     service: PageDtoService = PageDtoService()

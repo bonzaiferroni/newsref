@@ -10,7 +10,7 @@ import newsref.server.db.services.UserDtoService
 import newsref.server.extensions.getClaim
 import newsref.server.plugins.CLAIM_USERNAME
 import newsref.server.plugins.authenticateJwt
-import newsref.server.utilities.get
+import klutch.server.get
 
 fun Routing.serveUsers(service: UserDtoService = UserDtoService()) {
 
