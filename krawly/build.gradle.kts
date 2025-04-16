@@ -28,6 +28,8 @@ dependencies {
 
 	implementation(project(":model"))
 	implementation(project(":db"))
+	implementation(project(":kabinet"))
+	implementation(project(":klutch"))
 
 	implementation(libs.kotlinx.datetime)
 	implementation(libs.logback.classic)

@@ -4,7 +4,6 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
-import newsref.db.Environment
 import newsref.db.globalConsole
 import newsref.db.services.StoryComposerService
 import kotlin.time.Duration.Companion.minutes
@@ -12,7 +11,6 @@ import kotlin.time.Duration.Companion.minutes
 private val console = globalConsole.getHandle("StoryWatcher")
 
 class StoryWatcher(
-    env: Environment,
     private val storyComposerService: StoryComposerService = StoryComposerService()
 ) {
 

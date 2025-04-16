@@ -1,5 +1,6 @@
 package newsref.db
 
+import klutch.environment.Environment
 import kotlinx.coroutines.runBlocking
 import newsref.db.core.PgVectorManager
 import newsref.db.services.UserInitService

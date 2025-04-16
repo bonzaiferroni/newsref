@@ -1,5 +1,6 @@
 package newsref.db
 
+import klutch.environment.readEnvFromPath
 import newsref.db.core.PgVectorManager
 import org.flywaydb.core.Flyway
 import org.jetbrains.exposed.sql.ExperimentalDatabaseMigrationApi
@@ -23,7 +24,7 @@ private fun migrate(protocol: String, applyMigration: Boolean) {
 	} ?: return
 
 	val name = file.name
-	val env = readEnvFromDirectory("../.env")
+	val env = readEnvFromPath()
 
 	val isBaseline = folder.listFiles()?.count { it.isFile && it.name.endsWith(".sql") } == 0
 	val db = connectDb(env)

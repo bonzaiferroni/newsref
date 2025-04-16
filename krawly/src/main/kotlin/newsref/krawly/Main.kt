@@ -1,9 +1,9 @@
 package newsref.krawly
 
+import klutch.environment.*
 import newsref.db.globalConsole
 import newsref.db.initDb
 import newsref.db.console.ConsoleConfig
-import newsref.db.readEnvFromDirectory
 import newsref.db.utils.initProfiler
 import newsref.krawly.agents.*
 import newsref.krawly.clients.GeminiClient
@@ -17,7 +17,7 @@ fun main(args: Array<String>) {
 
 fun crawl(args: Array<String>) {
     initProfiler(globalConsole.getHandle("profiler")::log)
-    val env = readEnvFromDirectory("../.env")
+    val env = readEnvFromPath()
     initDb(env)
     val web = SpiderWeb()
     val aiClient = GeminiClient(
