@@ -13,10 +13,10 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.style.TextAlign
-import io.pondlib.compose.ui.controls.H2
-import io.pondlib.compose.ui.theme.Pond
-import io.pondlib.compose.ui.theme.ProvideSkyColors
-import io.pondlib.compose.utils.rememberImmutableList
+import pondui.ui.controls.H2
+import pondui.ui.theme.Pond
+import pondui.ui.theme.ProvideSkyColors
+import pondui.utils.rememberImmutableList
 import newsref.model.data.Page
 import newsref.model.data.ChapterPage
 import newsref.model.data.Host

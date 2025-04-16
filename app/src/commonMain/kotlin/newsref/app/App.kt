@@ -2,12 +2,12 @@ package newsref.app
 
 import androidx.compose.runtime.*
 import androidx.compose.ui.text.font.FontWeight
-import io.pondlib.compose.ui.core.Blapp
-import io.pondlib.compose.ui.nav.NavRoute
-import io.pondlib.compose.ui.theme.ProvideSkyColors
-import io.pondlib.compose.ui.theme.ProvideTheme
-import io.pondlib.compose.ui.theme.defaultTheme
-import io.pondlib.compose.ui.theme.useFamily
+import pondui.ui.core.Blapp
+import pondui.ui.nav.NavRoute
+import pondui.ui.theme.ProvideSkyColors
+import pondui.ui.theme.ProvideTheme
+import pondui.ui.theme.defaultTheme
+import pondui.ui.theme.useFamily
 import newsref.app.generated.resources.Inter_18pt_Light
 import newsref.app.generated.resources.Inter_18pt_Regular
 import newsref.app.generated.resources.Inter_24pt_Light

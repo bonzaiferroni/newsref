@@ -9,11 +9,11 @@ import androidx.compose.foundation.lazy.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
 import androidx.lifecycle.viewmodel.compose.viewModel
-import io.pondlib.compose.ui.behavior.animateString
-import io.pondlib.compose.ui.controls.H2
-import io.pondlib.compose.ui.controls.Text
-import io.pondlib.compose.ui.theme.Pond
-import io.pondlib.compose.utils.modifyIfNotNull
+import pondui.ui.behavior.animateString
+import pondui.ui.controls.H2
+import pondui.ui.controls.Text
+import pondui.ui.theme.Pond
+import pondui.utils.modifyIfNotNull
 import newsref.model.utils.formatSpanLong
 
 @Composable

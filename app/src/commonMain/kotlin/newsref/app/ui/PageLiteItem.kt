@@ -16,12 +16,12 @@ import androidx.compose.ui.platform.LocalUriHandler
 import androidx.compose.ui.unit.dp
 import newsref.app.ChapterPageRoute
 import newsref.app.PageRoute
-import io.pondlib.compose.ui.controls.Button
-import io.pondlib.compose.ui.controls.H4
-import io.pondlib.compose.ui.controls.Label
-import io.pondlib.compose.ui.controls.Text
-import io.pondlib.compose.ui.nav.LocalNav
-import io.pondlib.compose.ui.theme.Pond
+import pondui.ui.controls.Button
+import pondui.ui.controls.H4
+import pondui.ui.controls.Label
+import pondui.ui.controls.Text
+import pondui.ui.nav.LocalNav
+import pondui.ui.theme.Pond
 import newsref.model.data.PageLite
 import newsref.model.utils.formatSpanLong
 

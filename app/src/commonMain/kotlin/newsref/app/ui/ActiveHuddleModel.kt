@@ -1,7 +1,7 @@
 package newsref.app.ui
 
 import androidx.lifecycle.viewModelScope
-import io.pondlib.compose.ui.core.StateModel
+import pondui.ui.core.StateModel
 import kotlinx.collections.immutable.ImmutableList
 import kotlinx.collections.immutable.persistentListOf
 import kotlinx.collections.immutable.toImmutableList

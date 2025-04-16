@@ -11,8 +11,8 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import com.mikepenz.markdown.compose.Markdown
 import compose.icons.TablerIcons
 import compose.icons.tablericons.Edit
-import io.pondlib.compose.ui.controls.*
-import io.pondlib.compose.ui.theme.Pond
+import pondui.ui.controls.*
+import pondui.ui.theme.Pond
 import newsref.app.io.LocalUserContext
 import newsref.model.data.HuddleKey
 

@@ -1,10 +1,10 @@
 package newsref.app.ui
 
 import androidx.lifecycle.viewModelScope
-import io.pondlib.compose.ui.controls.BalloonPoint
-import io.pondlib.compose.ui.controls.BalloonsData
-import io.pondlib.compose.ui.controls.generateAxisTicks
-import io.pondlib.compose.ui.core.StateModel
+import pondui.ui.controls.BalloonPoint
+import pondui.ui.controls.BalloonsData
+import pondui.ui.controls.generateAxisTicks
+import pondui.ui.core.StateModel
 import kotlinx.collections.immutable.ImmutableList
 import kotlinx.collections.immutable.persistentListOf
 import kotlinx.collections.immutable.toImmutableList

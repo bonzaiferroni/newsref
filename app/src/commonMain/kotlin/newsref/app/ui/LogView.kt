@@ -17,7 +17,7 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.withLink
 import androidx.lifecycle.viewmodel.compose.viewModel
 import kotlinx.datetime.Clock
-import io.pondlib.compose.ui.controls.Text
+import pondui.ui.controls.Text
 import newsref.model.data.LogKey
 import newsref.model.utils.formatSpanBrief
 

@@ -13,9 +13,9 @@ import androidx.compose.ui.unit.dp
 import coil3.compose.AsyncImage
 import kotlinx.collections.immutable.ImmutableList
 import kotlinx.datetime.Instant
-import io.pondlib.compose.ui.controls.*
-import io.pondlib.compose.ui.theme.Pond
-import io.pondlib.compose.ui.theme.ProvideSkyColors
+import pondui.ui.controls.*
+import pondui.ui.theme.Pond
+import pondui.ui.theme.ProvideSkyColors
 import newsref.model.data.ChapterPageLite
 import newsref.model.utils.formatSpanLong
 

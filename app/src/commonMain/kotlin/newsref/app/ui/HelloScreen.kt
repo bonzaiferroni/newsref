@@ -2,8 +2,8 @@ package newsref.app.ui
 
 import androidx.compose.runtime.*
 import newsref.app.*
-import io.pondlib.compose.ui.controls.*
-import io.pondlib.compose.ui.nav.*
+import pondui.ui.controls.*
+import pondui.ui.nav.*
 
 @Composable
 fun HelloScreen(route: HelloRoute) {

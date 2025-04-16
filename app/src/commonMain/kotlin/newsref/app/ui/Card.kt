@@ -6,10 +6,10 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Shape
-import io.pondlib.compose.ui.controls.bg
-import io.pondlib.compose.ui.theme.Pond
-import io.pondlib.compose.ui.theme.ProvideBookColors
-import io.pondlib.compose.utils.modifyIfNotNull
+import pondui.ui.controls.bg
+import pondui.ui.theme.Pond
+import pondui.ui.theme.ProvideBookColors
+import pondui.utils.modifyIfNotNull
 
 @Composable
 fun Card(

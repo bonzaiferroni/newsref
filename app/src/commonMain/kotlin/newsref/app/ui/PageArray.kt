@@ -10,7 +10,7 @@ import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.unit.dp
 import coil3.compose.AsyncImage
 import kotlinx.collections.immutable.ImmutableList
-import io.pondlib.compose.ui.theme.Pond
+import pondui.ui.theme.Pond
 import newsref.model.data.ChapterPageLite
 
 @Composable

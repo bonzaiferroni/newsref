@@ -5,7 +5,7 @@ import androidx.compose.foundation.layout.FlowRow
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
-import io.pondlib.compose.ui.theme.Pond
+import pondui.ui.theme.Pond
 
 
 @OptIn(ExperimentalLayoutApi::class)

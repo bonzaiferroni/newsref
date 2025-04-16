@@ -13,9 +13,9 @@ import io.ktor.http.HttpStatusCode
 import io.ktor.http.contentType
 import newsref.model.data.Auth
 import newsref.model.Api
-import newsref.model.GetByIdEndpoint
-import newsref.model.GetEndpoint
-import newsref.model.PostEndpoint
+import kabinet.api.GetByIdEndpoint
+import kabinet.api.GetEndpoint
+import kabinet.api.PostEndpoint
 import newsref.model.data.LoginRequest
 
 class ApiClient(

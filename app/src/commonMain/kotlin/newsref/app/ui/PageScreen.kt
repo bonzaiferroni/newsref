@@ -3,7 +3,7 @@ package newsref.app.ui
 import androidx.compose.runtime.*
 import androidx.lifecycle.viewmodel.compose.viewModel
 import newsref.app.PageRoute
-import io.pondlib.compose.ui.nav.Scaffold
+import pondui.ui.nav.Scaffold
 
 @Composable
 fun PageScreen(

@@ -11,9 +11,9 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.lifecycle.viewmodel.compose.viewModel
-import io.pondlib.compose.ui.controls.ButtonToggle
-import io.pondlib.compose.ui.core.StateModel
-import io.pondlib.compose.ui.theme.Pond
+import pondui.ui.controls.ButtonToggle
+import pondui.ui.core.StateModel
+import pondui.ui.theme.Pond
 import kotlinx.collections.immutable.ImmutableList
 import kotlinx.collections.immutable.persistentListOf
 import kotlinx.collections.immutable.toImmutableList

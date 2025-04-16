@@ -8,9 +8,9 @@ import androidx.compose.ui.*
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.window.Popup
-import io.pondlib.compose.ui.controls.Text
-import io.pondlib.compose.ui.theme.Pond
-import io.pondlib.compose.ui.theme.ProvideSkyColors
+import pondui.ui.controls.Text
+import pondui.ui.theme.Pond
+import pondui.ui.theme.ProvideSkyColors
 import kotlinx.collections.immutable.ImmutableList
 
 @Composable

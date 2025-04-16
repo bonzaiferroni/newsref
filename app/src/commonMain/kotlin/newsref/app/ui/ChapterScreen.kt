@@ -10,10 +10,10 @@ import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import kotlinx.collections.immutable.ImmutableList
 import newsref.app.*
-import io.pondlib.compose.ui.controls.*
-import io.pondlib.compose.ui.nav.LocalNav
-import io.pondlib.compose.ui.nav.Scaffold
-import io.pondlib.compose.ui.theme.Pond
+import pondui.ui.controls.*
+import pondui.ui.nav.LocalNav
+import pondui.ui.nav.Scaffold
+import pondui.ui.theme.Pond
 import newsref.model.data.ChapterPageLite
 import newsref.model.data.ChapterPerson
 import newsref.model.utils.formatSpanLong

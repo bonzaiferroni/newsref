@@ -3,8 +3,8 @@ package newsref.app.ui
 import androidx.compose.foundation.text.selection.SelectionContainer
 import androidx.compose.runtime.Composable
 import io.ktor.websocket.Frame.Text
-import io.pondlib.compose.ui.controls.PropertyTile
-import io.pondlib.compose.utils.format
+import pondui.ui.controls.PropertyTile
+import pondui.utils.format
 import newsref.model.data.Chapter
 import newsref.model.data.HuddleType
 import newsref.model.data.HuddleKey

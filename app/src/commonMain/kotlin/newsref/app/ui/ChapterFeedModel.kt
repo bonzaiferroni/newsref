@@ -6,8 +6,8 @@ import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import kotlinx.datetime.Clock
 import newsref.app.*
-import io.pondlib.compose.ui.controls.*
-import io.pondlib.compose.ui.core.*
+import pondui.ui.controls.*
+import pondui.ui.core.*
 import newsref.app.io.*
 import newsref.model.data.Chapter
 import newsref.model.utils.*

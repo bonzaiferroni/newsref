@@ -82,7 +82,7 @@ kotlin {
             implementation("dev.chrisbanes.haze:haze-materials:1.5.2")
 
             implementation(project(":model"))
-            implementation(project(":pond-compose"))
+            implementation(project(":pondui"))
         }
         desktopMain.dependencies {
             implementation(compose.desktop.currentOs)

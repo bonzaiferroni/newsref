@@ -9,10 +9,10 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import newsref.app.*
-import io.pondlib.compose.ui.controls.*
-import io.pondlib.compose.ui.nav.LazyScaffold
-import io.pondlib.compose.ui.nav.LocalNav
-import io.pondlib.compose.ui.theme.Pond
+import pondui.ui.controls.*
+import pondui.ui.nav.LazyScaffold
+import pondui.ui.nav.LocalNav
+import pondui.ui.theme.Pond
 import newsref.model.data.Host
 
 @Composable

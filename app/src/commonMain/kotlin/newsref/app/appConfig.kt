@@ -4,9 +4,9 @@ import compose.icons.TablerIcons
 import compose.icons.tablericons.CalendarEvent
 import compose.icons.tablericons.News
 import compose.icons.tablericons.YinYang
-import io.pondlib.compose.ui.core.PondConfig
-import io.pondlib.compose.ui.nav.PortalRoute
-import io.pondlib.compose.ui.nav.defaultScreen
+import pondui.ui.core.PondConfig
+import pondui.ui.nav.PortalRoute
+import pondui.ui.nav.defaultScreen
 import kotlinx.collections.immutable.persistentListOf
 import newsref.app.ui.*
 

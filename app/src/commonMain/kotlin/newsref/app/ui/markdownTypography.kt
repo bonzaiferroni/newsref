@@ -5,8 +5,8 @@ import androidx.compose.ui.text.SpanStyle
 import androidx.compose.ui.text.TextLinkStyles
 import com.mikepenz.markdown.model.DefaultMarkdownColors
 import com.mikepenz.markdown.model.DefaultMarkdownTypography
-import io.pondlib.compose.ui.theme.DefaultColors
-import io.pondlib.compose.ui.theme.Pond
+import pondui.ui.theme.DefaultColors
+import pondui.ui.theme.Pond
 
 @Composable
 fun MdTypography(): DefaultMarkdownTypography {
