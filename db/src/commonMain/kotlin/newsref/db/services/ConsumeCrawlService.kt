@@ -1,7 +1,7 @@
 package newsref.db.services
 
 import kotlinx.datetime.Clock
-import newsref.db.DbService
+import klutch.db.DbService
 import newsref.db.globalConsole
 import newsref.db.model.Content
 import newsref.db.tables.*
@@ -14,7 +14,7 @@ import newsref.db.utils.readIdOrInsert
 import newsref.db.utils.readIdOrNull
 import newsref.db.utils.sameAs
 import newsref.db.utils.sameUrl
-import newsref.db.utils.toLocalDateTimeUtc
+import klutch.utils.toLocalDateTimeUtc
 import newsref.db.utils.updateById
 import newsref.db.utils.updateOrInsert
 import org.jetbrains.exposed.sql.*

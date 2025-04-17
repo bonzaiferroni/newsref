@@ -1,6 +1,6 @@
 package newsref.db.services
 
-import newsref.db.DbService
+import klutch.db.DbService
 import newsref.db.globalConsole
 import newsref.db.tables.*
 import newsref.db.utils.sameUrl
@@ -8,7 +8,7 @@ import newsref.db.core.CheckedUrl
 import newsref.db.core.Url
 import newsref.db.model.LeadJob
 import newsref.db.utils.readFirstOrNull
-import newsref.db.utils.toLocalDateTimeUtc
+import klutch.utils.toLocalDateTimeUtc
 import org.jetbrains.exposed.sql.*
 import org.jetbrains.exposed.sql.SqlExpressionBuilder.isNull
 

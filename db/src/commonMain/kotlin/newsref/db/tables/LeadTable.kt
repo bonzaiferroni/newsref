@@ -1,5 +1,6 @@
 package newsref.db.tables
 
+import klutch.utils.toInstantUtc
 import kotlinx.datetime.*
 import newsref.db.globalConsole
 import newsref.db.model.FetchResult

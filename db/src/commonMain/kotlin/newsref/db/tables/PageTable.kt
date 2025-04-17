@@ -6,8 +6,8 @@ import klutch.db.Aspect
 import newsref.db.model.DocumentType
 import newsref.db.model.Page
 import newsref.db.utils.toCheckedFromTrusted
-import newsref.db.utils.toInstantUtc
-import newsref.db.utils.toLocalDateTimeUtc
+import klutch.utils.toInstantUtc
+import klutch.utils.toLocalDateTimeUtc
 import newsref.model.data.ArticleType
 import newsref.model.data.ContentType
 import newsref.model.data.NewsSection

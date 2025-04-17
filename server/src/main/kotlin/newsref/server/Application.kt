@@ -1,6 +1,7 @@
 package newsref.server
 
 import io.ktor.server.application.*
+import klutch.server.configureSecurity
 import newsref.db.generateMigrationScript
 import newsref.server.plugins.*
 

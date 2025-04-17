@@ -1,6 +1,6 @@
 package newsref.db.tables
 
-import newsref.db.utils.toInstantUtc
+import klutch.utils.toInstantUtc
 import newsref.db.core.toUrl
 import newsref.db.model.Feed
 import newsref.db.model.FeedPage

@@ -1,6 +1,6 @@
 package newsref.db.services
 
-import newsref.db.DbService
+import klutch.db.DbService
 import newsref.db.tables.PageDtoAspect
 
 class PageDtoService: DbService() {

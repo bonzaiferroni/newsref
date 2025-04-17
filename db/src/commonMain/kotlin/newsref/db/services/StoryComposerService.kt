@@ -1,10 +1,10 @@
 package newsref.db.services
 
-import newsref.db.DbService
+import klutch.db.DbService
 import newsref.db.core.cosineDistance
 import newsref.db.globalConsole
 import newsref.db.tables.*
-import newsref.db.utils.toLocalDateTimeUtc
+import klutch.utils.toLocalDateTimeUtc
 import newsref.db.model.Chapter
 import newsref.db.model.Story
 import org.jetbrains.exposed.sql.*

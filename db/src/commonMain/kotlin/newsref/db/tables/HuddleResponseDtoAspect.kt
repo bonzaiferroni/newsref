@@ -1,7 +1,8 @@
 package newsref.db.tables
 
 import klutch.db.Aspect
-import newsref.db.utils.toInstantUtc
+import klutch.db.tables.UserTable
+import klutch.utils.toInstantUtc
 import newsref.model.data.HuddleResponseDto
 import org.jetbrains.exposed.sql.JoinType
 import org.jetbrains.exposed.sql.ResultRow

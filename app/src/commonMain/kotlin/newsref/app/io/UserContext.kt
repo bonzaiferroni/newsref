@@ -5,9 +5,9 @@ import pondui.ui.core.StateModel
 import kotlinx.coroutines.launch
 import kotlinx.serialization.Serializable
 import newsref.app.KeyStore
-import newsref.model.data.User
-import newsref.model.data.LoginRequest
-import newsref.model.utils.obfuscate
+import kabinet.model.User
+import kabinet.model.LoginRequest
+import kabinet.utils.obfuscate
 
 class UserContext(
     private val keyStore: KeyStore = KeyStore(),

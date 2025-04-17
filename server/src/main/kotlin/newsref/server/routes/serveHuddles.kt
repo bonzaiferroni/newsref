@@ -5,11 +5,10 @@ import klutch.server.getById
 import klutch.server.post
 import newsref.db.services.*
 import newsref.model.Api
-import newsref.server.db.services.UserDtoService
+import klutch.server.UserDtoService
 import newsref.server.extensions.getClaim
-import newsref.server.plugins.CLAIM_USERNAME
-import newsref.server.plugins.authenticateJwt
-import newsref.server.utilities.*
+import klutch.server.CLAIM_USERNAME
+import klutch.server.authenticateJwt
 
 fun Routing.serveHuddles(
     service: HuddleService = HuddleService(),

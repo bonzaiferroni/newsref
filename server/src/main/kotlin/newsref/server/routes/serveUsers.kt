@@ -4,12 +4,14 @@ import io.ktor.http.*
 import io.ktor.server.request.*
 import io.ktor.server.response.*
 import io.ktor.server.routing.*
+import kabinet.model.EditUserRequest
+import kabinet.model.SignUpRequest
 import newsref.model.Api
 import newsref.model.data.*
-import newsref.server.db.services.UserDtoService
+import klutch.server.UserDtoService
 import newsref.server.extensions.getClaim
-import newsref.server.plugins.CLAIM_USERNAME
-import newsref.server.plugins.authenticateJwt
+import klutch.server.CLAIM_USERNAME
+import klutch.server.authenticateJwt
 import klutch.server.get
 
 fun Routing.serveUsers(service: UserDtoService = UserDtoService()) {

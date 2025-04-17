@@ -6,7 +6,7 @@ import newsref.db.tables.LinkTable.url
 import newsref.db.tables.LinkTable.urlText
 import newsref.db.utils.sameUrl
 import newsref.db.utils.toCheckedFromTrusted
-import newsref.db.utils.toInstantUtc
+import klutch.utils.toInstantUtc
 import newsref.db.core.CheckedUrl
 import newsref.db.model.Link
 import newsref.model.data.LinkInfo

@@ -2,13 +2,13 @@ package newsref.db.services
 
 import kotlinx.datetime.Clock
 import kotlinx.datetime.Instant
-import newsref.db.DbService
+import klutch.db.DbService
 import newsref.db.tables.*
 import newsref.db.tables.LinkTable
 import newsref.db.tables.PageScoreTable
 import newsref.db.utils.applyIfNotNull
 import newsref.db.utils.sameUrl
-import newsref.db.utils.toLocalDateTimeUtc
+import klutch.utils.toLocalDateTimeUtc
 import newsref.db.core.Url
 import newsref.db.utils.read
 import newsref.model.data.CrawledAuthor

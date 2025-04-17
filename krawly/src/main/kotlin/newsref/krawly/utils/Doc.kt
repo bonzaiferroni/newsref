@@ -3,6 +3,7 @@ package newsref.krawly.utils
 import it.skrape.selects.Doc
 import it.skrape.selects.DocElement
 import it.skrape.selects.ElementNotFoundException
+import klutch.utils.tryParseInstantOrNull
 import kotlinx.serialization.SerializationException
 import kotlinx.serialization.json.JsonArray
 import kotlinx.serialization.json.JsonObject

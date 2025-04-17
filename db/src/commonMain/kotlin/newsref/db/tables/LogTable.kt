@@ -1,9 +1,8 @@
 package newsref.db.tables
 
 import newsref.db.model.Log
-import newsref.db.utils.toInstantUtc
+import klutch.utils.toInstantUtc
 import org.jetbrains.exposed.dao.id.LongIdTable
-import org.jetbrains.exposed.sql.Query
 import org.jetbrains.exposed.sql.ReferenceOption
 import org.jetbrains.exposed.sql.ResultRow
 import org.jetbrains.exposed.sql.kotlin.datetime.datetime

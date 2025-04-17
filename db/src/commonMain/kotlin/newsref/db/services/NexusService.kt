@@ -1,6 +1,6 @@
 package newsref.db.services
 
-import newsref.db.DbService
+import klutch.db.DbService
 import newsref.db.tables.*
 import newsref.db.model.Host
 import newsref.db.model.Nexus

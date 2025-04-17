@@ -1,8 +1,8 @@
 package newsref.db
 
 import org.jetbrains.exposed.sql.Transaction
-import newsref.db.tables.UserTable
-import newsref.db.tables.toUser
+import klutch.db.tables.UserTable
+import klutch.db.tables.toUser
 import newsref.db.utils.readFirstOrNull
 
 internal fun Transaction.findUser(username: String) = UserTable.readFirstOrNull { it.username.eq(username) }?.toUser()

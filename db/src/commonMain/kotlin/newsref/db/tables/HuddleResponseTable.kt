@@ -1,12 +1,12 @@
 package newsref.db.tables
 
 import klutch.db.Aspect
+import klutch.db.tables.UserTable
 import newsref.db.model.HuddleResponse
-import newsref.db.utils.toInstantUtc
+import klutch.utils.toInstantUtc
 import org.jetbrains.exposed.dao.id.LongIdTable
 import org.jetbrains.exposed.sql.ReferenceOption
 import org.jetbrains.exposed.sql.ResultRow
-import org.jetbrains.exposed.sql.Table
 import org.jetbrains.exposed.sql.kotlin.datetime.datetime
 
 object HuddleResponseTable : LongIdTable("huddle_response") {

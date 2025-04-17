@@ -1,6 +1,7 @@
 package newsref.db.tables
 
-import newsref.db.model.RefreshToken
+import klutch.db.tables.UserTable
+import klutch.db.model.RefreshToken
 import org.jetbrains.exposed.dao.id.LongIdTable
 import org.jetbrains.exposed.sql.ReferenceOption
 import org.jetbrains.exposed.sql.ResultRow

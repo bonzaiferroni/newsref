@@ -1,12 +1,12 @@
 package newsref.db.tables
 
+import klutch.utils.toInstantUtc
 import newsref.db.core.vector
 import newsref.db.tables.StoryTable.coherence
 import newsref.db.tables.StoryTable.happenedAt
 import newsref.db.tables.StoryTable.score
 import newsref.db.tables.StoryTable.size
 import newsref.db.tables.StoryTable.title
-import newsref.db.utils.*
 import newsref.db.model.Story
 import org.jetbrains.exposed.dao.id.*
 import org.jetbrains.exposed.sql.*

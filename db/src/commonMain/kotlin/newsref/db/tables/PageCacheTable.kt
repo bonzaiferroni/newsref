@@ -1,7 +1,7 @@
 package newsref.db.tables
 
 import kotlinx.serialization.json.Json
-import newsref.db.utils.toInstantUtc
+import klutch.utils.toInstantUtc
 import newsref.db.model.PageCache
 import newsref.model.data.PageCollection
 import org.jetbrains.exposed.dao.id.IntIdTable

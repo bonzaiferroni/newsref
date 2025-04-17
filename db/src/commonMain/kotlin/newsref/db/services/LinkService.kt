@@ -1,6 +1,6 @@
 package newsref.db.services
 
-import newsref.db.DbService
+import klutch.db.DbService
 import newsref.db.tables.AuthorTable
 import newsref.db.tables.LeadTable
 import newsref.db.tables.LinkTable

@@ -1,12 +1,9 @@
 package newsref.db.services
 
-import newsref.db.DbService
+import klutch.db.DbService
 import newsref.db.core.LogBook
 import newsref.db.tables.LogTable
-import newsref.db.tables.toLog
-import newsref.db.utils.read
-import newsref.db.utils.toLocalDateTimeUtc
-import org.jetbrains.exposed.sql.SortOrder
+import klutch.utils.toLocalDateTimeUtc
 import org.jetbrains.exposed.sql.batchInsert
 
 class LogService : DbService() {

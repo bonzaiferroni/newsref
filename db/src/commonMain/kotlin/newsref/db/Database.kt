@@ -1,5 +1,6 @@
 package newsref.db
 
+import klutch.db.tables.UserTable
 import klutch.environment.Environment
 import kotlinx.coroutines.runBlocking
 import newsref.db.core.PgVectorManager
@@ -25,7 +26,7 @@ fun initDb(env: Environment) {
 }
 
 val dbTables = listOf(
-	UserTable,
+    UserTable,
 	RefreshTokenTable,
 	PageTable,
 	PageTable,

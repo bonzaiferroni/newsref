@@ -2,7 +2,7 @@ package newsref.model.data
 
 import kotlinx.datetime.Instant
 import kotlinx.serialization.Serializable
-import newsref.model.utils.takeEllipsis
+import kabinet.utils.takeEllipsis
 
 @Serializable
 data class Page(

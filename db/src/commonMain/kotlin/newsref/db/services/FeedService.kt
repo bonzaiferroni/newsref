@@ -2,16 +2,15 @@ package newsref.db.services
 
 import kotlinx.datetime.Clock
 import kotlinx.datetime.Instant
-import newsref.db.DbService
+import klutch.db.DbService
 import newsref.db.tables.FeedPageTable
 import newsref.db.tables.FeedTable
 import newsref.db.tables.HostTable
-import newsref.db.tables.NoteTable
 import newsref.db.tables.PageTable
 import newsref.db.tables.pageInfoColumns
 import newsref.db.tables.toFeed
 import newsref.db.tables.toPageInfo
-import newsref.db.utils.toLocalDateTimeUtc
+import klutch.utils.toLocalDateTimeUtc
 import newsref.db.model.Feed
 import newsref.db.model.FeedPage
 import org.jetbrains.exposed.sql.SortOrder

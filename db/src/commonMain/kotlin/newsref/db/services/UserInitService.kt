@@ -3,17 +3,13 @@ package newsref.db.services
 import kotlinx.datetime.Clock
 import kotlinx.datetime.TimeZone
 import kotlinx.datetime.toLocalDateTime
-import newsref.db.DbService
-import newsref.db.globalConsole
-import newsref.db.model.User
-import newsref.db.tables.UserTable
+import klutch.db.DbService
+import klutch.db.model.User
+import klutch.db.tables.UserTable
 import newsref.db.utils.RESOURCE_PATH
-import newsref.db.utils.createOrUpdate
 import newsref.db.utils.jsonDecoder
-import newsref.db.utils.toLocalDateTimeUtc
-import org.jetbrains.exposed.sql.SqlExpressionBuilder.eq
+import klutch.utils.toLocalDateTimeUtc
 import org.jetbrains.exposed.sql.insertIgnore
-import org.jetbrains.exposed.sql.upsert
 import java.io.File
 
 class UserInitService: DbService() {

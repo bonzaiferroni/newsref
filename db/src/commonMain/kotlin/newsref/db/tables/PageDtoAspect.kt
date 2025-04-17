@@ -1,7 +1,7 @@
 package newsref.db.tables
 
 import klutch.db.Aspect
-import newsref.db.utils.toInstantUtc
+import klutch.utils.toInstantUtc
 import newsref.model.data.Page as PageDto
 import org.jetbrains.exposed.sql.ResultRow
 

@@ -5,8 +5,8 @@ import io.ktor.server.application.*
 import io.ktor.server.auth.*
 import io.ktor.server.auth.jwt.*
 import io.ktor.server.response.*
-import newsref.server.plugins.CLAIM_ROLES
-import newsref.server.plugins.CLAIM_USERNAME
+import klutch.server.CLAIM_ROLES
+import klutch.server.CLAIM_USERNAME
 
 fun ApplicationCall.getClaim(name: String): String {
     return this.principal<JWTPrincipal>()?.payload?.getClaim(name)?.asString() ?: ""

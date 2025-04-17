@@ -1,7 +1,8 @@
 package newsref.db.services
 
+import klutch.db.tables.UserTable
 import kotlinx.datetime.Clock
-import newsref.db.DbService
+import klutch.db.DbService
 import newsref.db.tables.*
 import newsref.db.tables.ContentTable
 import newsref.db.tables.PageContentTable

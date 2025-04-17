@@ -2,7 +2,7 @@ package newsref.db.tables
 
 import klutch.db.Aspect
 import newsref.db.model.Chapter
-import newsref.db.utils.toInstantUtc
+import klutch.utils.toInstantUtc
 import org.jetbrains.exposed.sql.ResultRow
 
 object ChapterAspect : Aspect<ChapterAspect, Chapter>(ChapterTable, ResultRow::toChapter) {

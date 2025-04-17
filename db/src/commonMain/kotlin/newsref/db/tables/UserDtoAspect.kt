@@ -1,9 +1,10 @@
 package newsref.db.tables
 
 import klutch.db.Aspect
-import newsref.db.utils.toInstantUtc
-import newsref.model.data.UserRole
-import newsref.model.data.User
+import klutch.db.tables.UserTable
+import klutch.utils.toInstantUtc
+import kabinet.model.UserRole
+import kabinet.model.User
 import org.jetbrains.exposed.sql.ResultRow
 
 object UserDtoAspect : Aspect<UserDtoAspect, User>(

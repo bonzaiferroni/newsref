@@ -1,5 +1,6 @@
 package newsref.db.services
 
+import klutch.db.DbService
 import kotlinx.datetime.*
 import kotlinx.serialization.json.Json
 import kotlinx.serialization.serializer

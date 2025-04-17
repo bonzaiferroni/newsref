@@ -1,7 +1,7 @@
 package newsref.db.tables
 
+import klutch.utils.toLocalDateTimeUtc
 import newsref.db.core.*
-import newsref.db.utils.*
 import newsref.db.model.*
 import org.jetbrains.exposed.dao.id.*
 import org.jetbrains.exposed.sql.*

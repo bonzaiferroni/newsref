@@ -1,6 +1,6 @@
 package newsref.db.services
 
-import newsref.db.DbService
+import klutch.db.DbService
 import newsref.db.globalConsole
 import newsref.db.log.toYellow
 import newsref.db.model.*

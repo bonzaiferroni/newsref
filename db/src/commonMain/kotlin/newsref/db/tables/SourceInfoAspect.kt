@@ -1,6 +1,6 @@
 package newsref.db.tables
 
-import newsref.db.utils.toInstantUtc
+import klutch.utils.toInstantUtc
 import newsref.model.data.PageInfo
 import org.jetbrains.exposed.sql.ResultRow
 

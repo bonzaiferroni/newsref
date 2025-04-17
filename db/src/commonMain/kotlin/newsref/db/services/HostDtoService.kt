@@ -1,9 +1,9 @@
 package newsref.db.services
 
 import kotlinx.datetime.Instant
-import newsref.db.DbService
+import klutch.db.DbService
+import klutch.utils.greater
 import newsref.db.tables.*
-import newsref.db.utils.*
 import org.jetbrains.exposed.sql.*
 
 class HostDtoService : DbService() {

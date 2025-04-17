@@ -1,9 +1,9 @@
 package newsref.app.io
 
 import newsref.model.Api
-import newsref.model.data.Auth
-import newsref.model.data.LoginRequest
-import newsref.model.data.User
+import kabinet.model.Auth
+import kabinet.model.LoginRequest
+import kabinet.model.User
 
 class UserStore : ApiStore() {
 

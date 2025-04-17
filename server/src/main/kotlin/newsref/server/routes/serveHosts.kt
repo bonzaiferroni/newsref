@@ -1,14 +1,10 @@
 package newsref.server.routes
 
 import io.ktor.server.routing.*
-import klutch.server.get
-import klutch.server.getById
-import klutch.server.readFromCall
-import klutch.server.readFromCallOrNull
+import klutch.server.*
 import kotlinx.datetime.Clock
 import newsref.db.services.*
 import newsref.model.Api
-import newsref.server.utilities.*
 import kotlin.time.Duration.Companion.days
 
 fun Routing.serveHosts(service: HostDtoService = HostDtoService()) {

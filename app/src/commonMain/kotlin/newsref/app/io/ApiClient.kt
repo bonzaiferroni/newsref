@@ -11,12 +11,12 @@ import io.ktor.http.HttpHeaders
 import io.ktor.http.HttpMethod
 import io.ktor.http.HttpStatusCode
 import io.ktor.http.contentType
-import newsref.model.data.Auth
+import kabinet.model.Auth
 import newsref.model.Api
 import kabinet.api.GetByIdEndpoint
 import kabinet.api.GetEndpoint
 import kabinet.api.PostEndpoint
-import newsref.model.data.LoginRequest
+import kabinet.model.LoginRequest
 
 class ApiClient(
     val baseUrl: String,

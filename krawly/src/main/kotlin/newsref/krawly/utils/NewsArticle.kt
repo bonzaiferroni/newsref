@@ -1,7 +1,7 @@
 package newsref.krawly.utils
 
 import kotlinx.datetime.Instant
-import newsref.db.utils.tryParse
+import klutch.utils.tryParse
 import newsref.krawly.models.MetaNewsArticle
 import newsref.model.data.CrawledAuthor
 

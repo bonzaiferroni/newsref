@@ -1,6 +1,7 @@
 package newsref.db.tables
 
-import newsref.db.utils.toInstantUtc
+import klutch.db.tables.UserTable
+import klutch.utils.toInstantUtc
 import newsref.db.model.Note
 import newsref.model.data.NoteInfo
 import org.jetbrains.exposed.dao.id.LongIdTable

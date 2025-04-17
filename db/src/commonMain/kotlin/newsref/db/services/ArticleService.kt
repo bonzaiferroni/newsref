@@ -1,6 +1,6 @@
 package newsref.db.services
 
-import newsref.db.DbService
+import klutch.db.DbService
 import newsref.db.tables.PageTable
 import newsref.model.data.ArticleType
 import org.jetbrains.exposed.sql.update

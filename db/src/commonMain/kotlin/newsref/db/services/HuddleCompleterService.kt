@@ -2,10 +2,11 @@ package newsref.db.services
 
 import kotlinx.datetime.Clock
 import kotlinx.datetime.Instant
-import newsref.db.DbService
+import klutch.db.DbService
+import klutch.utils.less
+import klutch.utils.toLocalDateTimeUtc
 import newsref.model.data.HuddleStatus
 import newsref.db.model.Huddle
-import newsref.db.utils.*
 import newsref.db.tables.*
 import org.jetbrains.exposed.sql.*
 import org.jetbrains.exposed.sql.SqlExpressionBuilder.eq

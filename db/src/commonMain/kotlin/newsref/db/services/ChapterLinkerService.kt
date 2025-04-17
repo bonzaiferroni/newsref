@@ -1,12 +1,12 @@
 package newsref.db.services
 
-import newsref.db.DbService
+import klutch.db.DbService
 import newsref.db.core.cosineDistance
 import newsref.db.model.Chapter
 import newsref.db.tables.ChapterAspect
 import newsref.db.tables.ChapterTable
 import newsref.db.tables.toChapter
-import newsref.db.utils.toLocalDateTimeUtc
+import klutch.utils.toLocalDateTimeUtc
 import org.jetbrains.exposed.sql.SortOrder
 import org.jetbrains.exposed.sql.alias
 import org.jetbrains.exposed.sql.and

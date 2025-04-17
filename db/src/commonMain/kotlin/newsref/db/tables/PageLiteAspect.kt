@@ -1,7 +1,7 @@
 package newsref.db.tables
 
 import klutch.db.Aspect
-import newsref.db.utils.*
+import klutch.utils.toInstantUtc
 import newsref.model.data.ContentType
 import newsref.model.data.NewsSection
 import newsref.model.data.PageLite

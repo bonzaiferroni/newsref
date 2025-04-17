@@ -2,9 +2,10 @@ package newsref.db.tables
 
 import kotlinx.serialization.json.*
 import klutch.db.Aspect
+import klutch.db.tables.UserTable
 import newsref.model.data.HuddleStatus
 import newsref.db.model.*
-import newsref.db.utils.toInstantUtc
+import klutch.utils.toInstantUtc
 import newsref.model.data.HuddleType
 import newsref.model.data.HuddleKey
 import newsref.model.data.HuddleOption

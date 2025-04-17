@@ -1,5 +1,6 @@
 package newsref.db
 
+import klutch.db.DbService
 import org.jetbrains.exposed.dao.Entity
 import org.jetbrains.exposed.dao.EntityClass
 
