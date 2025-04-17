@@ -76,7 +76,6 @@ kotlin {
             implementation(libs.coil.network.ktor3)
 
             implementation("com.adamglin:compose-shadow:2.0.3")
-            implementation("com.russhwolf:multiplatform-settings-no-arg:1.3.0")
             implementation("com.mikepenz:multiplatform-markdown-renderer:0.31.0")
             implementation("dev.chrisbanes.haze:haze:1.5.2")
             implementation("dev.chrisbanes.haze:haze-materials:1.5.2")

@@ -8,6 +8,7 @@ import newsref.app.*
 import pondui.ui.core.*
 import newsref.app.io.*
 import newsref.model.data.Host
+import pondui.KeyStore
 
 class HostFeedModel(
     route: HostFeedRoute,

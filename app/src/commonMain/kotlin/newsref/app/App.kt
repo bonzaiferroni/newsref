@@ -2,7 +2,7 @@ package newsref.app
 
 import androidx.compose.runtime.*
 import androidx.compose.ui.text.font.FontWeight
-import pondui.ui.core.Blapp
+import pondui.ui.core.PondApp
 import pondui.ui.nav.NavRoute
 import pondui.ui.theme.ProvideSkyColors
 import pondui.ui.theme.ProvideTheme
@@ -14,7 +14,7 @@ import newsref.app.generated.resources.Inter_24pt_Light
 import newsref.app.generated.resources.Inter_28pt_Light
 import newsref.app.generated.resources.Res
 import org.jetbrains.compose.ui.tooling.preview.Preview
-import newsref.app.io.ProvideUserContext
+import pondui.io.ProvideUserContext
 
 @Composable
 @Preview
@@ -33,7 +33,7 @@ fun App(
     ) {
         ProvideSkyColors {
             ProvideUserContext {
-                Blapp(
+                PondApp(
                     initialRoute = initialRoute,
                     changeRoute = changeRoute,
                     config = appConfig,

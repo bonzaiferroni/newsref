@@ -7,8 +7,6 @@ import kabinet.model.User
 import newsref.model.data.*
 
 object Api : ParentEndpoint(null, "/api/v1") {
-    object Login : GetEndpoint<Auth>(this, "/login")
-
     object Pages : ParentEndpoint(this, "/articles") {
         object GetArticleById : GetByIdEndpoint<Page>(this)
     }
@@ -35,10 +33,7 @@ object Api : ParentEndpoint(null, "/api/v1") {
     }
 
     // user
-    object Users : ParentEndpoint(this, "/users") {
-        object GetUser : GetEndpoint<User>(this)
-        object GetPrivateInfo : GetEndpoint<PrivateInfo>(this, "/private")
-    }
+
 
     object Chapters : GetEndpoint<List<Chapter>>(this, "/chapters") {
         val start = addInstantParam("start")

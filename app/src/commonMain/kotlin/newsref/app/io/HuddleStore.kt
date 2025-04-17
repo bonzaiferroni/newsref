@@ -4,6 +4,7 @@ import newsref.model.Api
 import newsref.model.data.HuddleKey
 import newsref.model.data.HuddlePrompt
 import newsref.model.data.HuddleResponseSeed
+import pondui.io.ApiStore
 
 class HuddleStore : ApiStore() {
     suspend fun createHuddle(seed: HuddleResponseSeed) = client.post(Api.Huddles.SubmitHuddleResponse, seed)

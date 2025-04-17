@@ -13,7 +13,7 @@ import compose.icons.TablerIcons
 import compose.icons.tablericons.Edit
 import pondui.ui.controls.*
 import pondui.ui.theme.Pond
-import newsref.app.io.LocalUserContext
+import pondui.io.LocalUserContext
 import newsref.model.data.HuddleKey
 
 @Composable
