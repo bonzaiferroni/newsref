@@ -2,8 +2,8 @@ package newsref.db.services
 
 import newsref.db.model.Huddle
 import newsref.db.tables.PageTable
-import newsref.db.utils.readById
-import newsref.db.utils.updateById
+import klutch.db.readById
+import klutch.db.updateById
 import newsref.model.data.ArticleType
 import newsref.model.data.HuddleType
 import newsref.model.data.HuddleKey

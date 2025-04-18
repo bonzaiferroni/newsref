@@ -1,19 +1,7 @@
 package newsref.db.services
 
 import klutch.db.tables.UserTable
-import kotlinx.datetime.Clock
 import klutch.db.DbService
-import newsref.db.tables.*
-import newsref.db.tables.ContentTable
-import newsref.db.tables.PageContentTable
-import newsref.db.tables.PageTable
-import newsref.db.tables.toModel
-import newsref.db.model.Note
-import newsref.db.utils.read
-import org.jetbrains.exposed.sql.SortOrder
-import org.jetbrains.exposed.sql.SqlExpressionBuilder.eq
-import org.jetbrains.exposed.sql.and
-import org.jetbrains.exposed.sql.insert
 
 class NoteService : DbService() {
 

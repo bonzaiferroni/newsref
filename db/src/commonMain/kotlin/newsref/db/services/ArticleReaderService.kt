@@ -1,11 +1,10 @@
 package newsref.db.services
 
 import klutch.db.DbService
-import newsref.db.*
 import newsref.db.model.*
 import newsref.db.tables.*
-import newsref.db.utils.read
-import newsref.db.utils.updateById
+import klutch.db.read
+import klutch.db.updateById
 import newsref.model.data.ArticleType
 import newsref.model.data.ContentType
 import newsref.model.data.GeoPoint

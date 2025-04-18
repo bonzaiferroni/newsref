@@ -7,7 +7,7 @@ import newsref.db.utils.sameUrl
 import newsref.db.core.CheckedUrl
 import newsref.db.core.Url
 import newsref.db.model.LeadJob
-import newsref.db.utils.readFirstOrNull
+import klutch.db.readFirstOrNull
 import klutch.utils.toLocalDateTimeUtc
 import org.jetbrains.exposed.sql.*
 import org.jetbrains.exposed.sql.SqlExpressionBuilder.isNull

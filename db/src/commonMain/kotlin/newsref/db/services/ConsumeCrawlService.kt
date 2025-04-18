@@ -9,14 +9,14 @@ import newsref.model.data.ContentType
 import newsref.db.model.CrawlInfo
 import newsref.db.model.FetchResult
 import newsref.db.model.Page
-import newsref.db.utils.readFirst
-import newsref.db.utils.readIdOrInsert
-import newsref.db.utils.readIdOrNull
+import klutch.db.readFirst
+import klutch.db.readIdOrInsert
+import klutch.db.readIdOrNull
 import newsref.db.utils.sameAs
 import newsref.db.utils.sameUrl
 import klutch.utils.toLocalDateTimeUtc
-import newsref.db.utils.updateById
-import newsref.db.utils.updateOrInsert
+import klutch.db.updateById
+import klutch.db.updateOrInsert
 import org.jetbrains.exposed.sql.*
 
 private val console = globalConsole.getHandle(ConsumeCrawlService::class)

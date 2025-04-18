@@ -10,7 +10,7 @@ import newsref.db.utils.applyIfNotNull
 import newsref.db.utils.sameUrl
 import klutch.utils.toLocalDateTimeUtc
 import newsref.db.core.Url
-import newsref.db.utils.read
+import klutch.db.read
 import newsref.model.data.CrawledAuthor
 import newsref.model.data.PageCollection
 import newsref.model.data.ScoreInfo

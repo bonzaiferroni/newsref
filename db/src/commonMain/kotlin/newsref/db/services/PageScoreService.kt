@@ -1,13 +1,14 @@
 package newsref.db.services
 
 import klutch.db.DbService
+import klutch.db.readById
+import klutch.db.updateById
 import klutch.utils.toInstantUtc
 import klutch.utils.toLocalDateTimeUtc
 import kotlinx.datetime.*
 import newsref.db.*
 import newsref.db.model.PageScore
 import newsref.db.tables.*
-import newsref.db.utils.*
 import org.jetbrains.exposed.dao.id.IdTable
 import org.jetbrains.exposed.sql.*
 import org.jetbrains.exposed.sql.SqlExpressionBuilder.eq

@@ -1,11 +1,12 @@
 package newsref.db.services
 
 import klutch.db.DbService
+import klutch.db.read
+import klutch.db.readById
+import klutch.db.updateById
 import newsref.db.tables.*
 import newsref.db.model.Host
 import newsref.db.model.Nexus
-import newsref.db.utils.*
-import org.jetbrains.exposed.sql.insert
 import org.jetbrains.exposed.sql.insertAndGetId
 
 class NexusService : DbService() {

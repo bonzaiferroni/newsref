@@ -1,6 +1,7 @@
 package newsref.db.services
 
 import klutch.db.DbService
+import klutch.db.read
 import klutch.utils.since
 import klutch.utils.toLocalDateTimeUtc
 import kotlinx.datetime.Instant
@@ -8,7 +9,6 @@ import newsref.db.*
 import newsref.db.core.*
 import newsref.db.model.*
 import newsref.db.tables.*
-import newsref.db.utils.*
 import newsref.model.data.ContentType
 import newsref.model.data.SourceType
 import org.jetbrains.exposed.sql.*

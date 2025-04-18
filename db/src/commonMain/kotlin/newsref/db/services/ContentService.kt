@@ -5,8 +5,8 @@ import newsref.db.tables.ContentTable
 import newsref.db.tables.PageTable
 import newsref.db.tables.PageContentTable
 import newsref.db.tables.toContent
-import newsref.db.utils.read
-import newsref.db.utils.readById
+import klutch.db.read
+import klutch.db.readById
 
 class ContentService : DbService() {
 	suspend fun isFresh(content: String) = dbQuery {

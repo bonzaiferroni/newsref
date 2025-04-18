@@ -2,12 +2,10 @@ package newsref.db.services
 
 import klutch.db.DbService
 import newsref.db.globalConsole
-import newsref.db.log.toYellow
 import newsref.db.model.*
 import newsref.db.tables.*
-import newsref.db.utils.read
-import newsref.db.utils.toSqlString
-import newsref.db.utils.updateById
+import klutch.db.read
+import klutch.db.updateById
 import newsref.model.data.Relevance
 import newsref.model.data.SourceType
 import org.jetbrains.exposed.sql.*
