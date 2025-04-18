@@ -7,7 +7,7 @@ import klutch.db.read
 import klutch.db.updateById
 import newsref.model.data.ArticleType
 import newsref.model.data.ContentType
-import newsref.model.data.GeoPoint
+import kabinet.model.GeoPoint
 import newsref.model.data.NewsSection
 import org.jetbrains.exposed.sql.*
 import org.postgresql.geometric.PGpoint
@@ -48,6 +48,3 @@ class ArticleReaderService : DbService() {
 const val PERSON_UNCLEAR = "Unclear"
 
 const val READER_MIN_WORDS = 100
-
-fun GeoPoint.toPGpoint() = PGpoint(latitude, longitude)
-fun PGpoint.toGeoPoint() = GeoPoint(x, y)

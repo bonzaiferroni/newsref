@@ -1,5 +1,6 @@
 package newsref.model.data
 
+import kabinet.model.GeoPoint
 import kotlinx.serialization.Serializable
 
 @Serializable

@@ -1,8 +1,8 @@
 package newsref.db.tables
 
+import klutch.utils.toGeoPoint
 import newsref.db.core.*
 import newsref.db.model.Location
-import newsref.db.services.toGeoPoint
 import org.jetbrains.exposed.dao.id.*
 import org.jetbrains.exposed.sql.ResultRow
 

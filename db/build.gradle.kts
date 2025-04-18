@@ -10,7 +10,6 @@ kotlin {
             dependencies {
                 implementation(libs.kotlinx.serialization.json)
                 implementation(libs.kotlinx.datetime)
-                val exposedVersion = "0.57.0"
                 api(libs.exposed.core)
                 implementation(libs.exposed.crypt)
                 implementation(libs.exposed.dao)

@@ -2,7 +2,8 @@ package newsref.db.services
 
 import klutch.db.DbService
 import newsref.db.tables.LocationTable
-import newsref.model.data.GeoPoint
+import kabinet.model.GeoPoint
+import klutch.utils.toPGpoint
 import org.jetbrains.exposed.sql.insertAndGetId
 import org.jetbrains.exposed.sql.lowerCase
 

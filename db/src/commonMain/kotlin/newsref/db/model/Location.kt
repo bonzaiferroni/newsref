@@ -1,6 +1,6 @@
 package newsref.db.model
 
-import newsref.model.data.GeoPoint
+import kabinet.model.GeoPoint
 
 data class Location(
     val id: Int,
