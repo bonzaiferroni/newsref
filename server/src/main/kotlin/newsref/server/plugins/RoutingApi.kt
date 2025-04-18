@@ -6,7 +6,7 @@ import io.ktor.server.routing.*
 import kabinet.api.UserApi
 import newsref.model.Api
 import klutch.server.authorize
-import klutch.server.UserDtoService
+import klutch.db.services.UserDtoService
 import klutch.server.serveUsers
 import newsref.server.routes.*
 

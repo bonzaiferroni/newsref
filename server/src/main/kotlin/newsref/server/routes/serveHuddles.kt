@@ -5,7 +5,7 @@ import klutch.server.getById
 import klutch.server.post
 import newsref.db.services.*
 import newsref.model.Api
-import klutch.server.UserDtoService
+import klutch.db.services.UserDtoService
 import klutch.utils.getClaim
 import klutch.server.CLAIM_USERNAME
 import klutch.server.authenticateJwt

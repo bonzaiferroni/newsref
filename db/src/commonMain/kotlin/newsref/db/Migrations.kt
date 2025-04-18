@@ -50,7 +50,7 @@ private fun migrate(protocol: String, applyMigration: Boolean) {
 
 	try {
 		val flyway = Flyway.configure()
-			.dataSource(URL, USER, env.read(PASSWORD_KEY))
+			.dataSource(URL, USER, env.read("PSQL_PW"))
 			.locations("filesystem:$MIGRATIONS_DIRECTORY")
 			.baselineOnMigrate(isBaseline) // Used when migrating an existing database for the first time
 			.load()
