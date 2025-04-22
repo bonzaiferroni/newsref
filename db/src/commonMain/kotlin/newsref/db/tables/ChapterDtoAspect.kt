@@ -1,8 +1,8 @@
 package newsref.db.tables
 
-import klutch.db.Aspect
+import klutch.db.*
+import klutch.utils.*
 import klutch.utils.toInstantUtc
-import newsref.db.services.toGeoPoint
 import newsref.model.data.Chapter
 import newsref.model.data.Location
 import org.jetbrains.exposed.sql.*
