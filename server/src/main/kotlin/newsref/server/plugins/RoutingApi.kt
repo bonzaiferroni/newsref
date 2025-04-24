@@ -3,10 +3,7 @@ package newsref.server.plugins
 import io.ktor.server.application.*
 import io.ktor.server.response.*
 import io.ktor.server.routing.*
-import kabinet.api.UserApi
 import newsref.model.Api
-import klutch.server.authorize
-import klutch.db.services.UserDtoService
 import klutch.server.serveUsers
 import newsref.server.routes.*
 
@@ -16,11 +13,7 @@ fun Application.configureApiRoutes() {
             call.respondText("Hello World!")
         }
 
-        post(UserApi.Login.path) {
-            call.authorize()
-        }
-
-        serveUsers(UserDtoService())
+        serveUsers()
         serveArticles()
         serveChapters()
         serveHosts()

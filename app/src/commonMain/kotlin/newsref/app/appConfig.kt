@@ -5,28 +5,29 @@ import compose.icons.tablericons.CalendarEvent
 import compose.icons.tablericons.News
 import compose.icons.tablericons.YinYang
 import pondui.ui.core.PondConfig
-import pondui.ui.nav.PortalRoute
 import pondui.ui.nav.defaultScreen
 import kotlinx.collections.immutable.persistentListOf
 import newsref.app.ui.*
+import pondui.ui.core.RouteConfig
+import pondui.ui.nav.PortalDoor
 
 val appConfig = PondConfig(
     name = "Newsref",
     logo = TablerIcons.News,
     home = StartRoute,
-    navGraph = {
-        defaultScreen<StartRoute> { StartScreen(it) }
-        defaultScreen<HelloRoute> { HelloScreen(it) }
-        defaultScreen<ChapterFeedRoute> { ChapterFeedScreen(it) }
-        defaultScreen<ChapterRoute> { ChapterScreen(it) }
-        defaultScreen<ChapterPageRoute> { ChapterPageScreen(it) }
-        defaultScreen<HostFeedRoute> { HostFeedScreen(it) }
-        defaultScreen<HostRoute> { HostScreen(it) }
-        defaultScreen<PageRoute> { PageScreen(it) }
-    },
-    portalItems = persistentListOf(
-        PortalRoute(TablerIcons.CalendarEvent, ChapterFeedRoute()),
-        PortalRoute(TablerIcons.News, HostFeedRoute),
-        PortalRoute(TablerIcons.YinYang, HelloRoute),
+    doors = persistentListOf(
+        PortalDoor(TablerIcons.CalendarEvent, ChapterFeedRoute()),
+        PortalDoor(TablerIcons.News, HostFeedRoute),
+        PortalDoor(TablerIcons.YinYang, HelloRoute),
+    ),
+    routes = persistentListOf(
+        RouteConfig(StartRoute::matchRoute) { defaultScreen<StartRoute> { StartScreen(it) } },
+        RouteConfig(HelloRoute::matchRoute) { defaultScreen<HelloRoute> { HelloScreen(it) } },
+        RouteConfig() { defaultScreen<ChapterFeedRoute> { ChapterFeedScreen(it) } },
+        RouteConfig() { defaultScreen<ChapterRoute> { ChapterScreen(it) } },
+        RouteConfig() { defaultScreen<ChapterPageRoute> { ChapterPageScreen(it) } },
+        RouteConfig() { defaultScreen<HostFeedRoute> { HostFeedScreen(it) } },
+        RouteConfig() { defaultScreen<HostRoute> { HostScreen(it) } },
+        RouteConfig() { defaultScreen<PageRoute> { PageScreen(it) } },
     )
 )

@@ -21,7 +21,6 @@ plugins {
 
 dependencyResolutionManagement {
     repositories {
-        repositoriesMode.set(RepositoriesMode.FAIL_ON_PROJECT_REPOS)
         google {
             mavenContent {
                 includeGroupAndSubgroups("androidx")

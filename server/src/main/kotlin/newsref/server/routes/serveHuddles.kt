@@ -1,18 +1,18 @@
 package newsref.server.routes
 
 import io.ktor.server.routing.*
+import klutch.db.services.UserApiService
 import klutch.server.getById
 import klutch.server.post
 import newsref.db.services.*
 import newsref.model.Api
-import klutch.db.services.UserDtoService
 import klutch.utils.getClaim
 import klutch.server.CLAIM_USERNAME
 import klutch.server.authenticateJwt
 
 fun Routing.serveHuddles(
     service: HuddleService = HuddleService(),
-    userService: UserDtoService = UserDtoService()
+    userService: UserApiService = UserApiService()
 ) {
     getById(Api.Huddles.GetHuddleContentById) { id, endpoint ->
         service.readHuddleContent(id)

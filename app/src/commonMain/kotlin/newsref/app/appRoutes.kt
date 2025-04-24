@@ -7,7 +7,14 @@ import newsref.app.ui.FeedSpan
 @Serializable
 sealed class AppRoute(
     override val title: String,
-) : NavRoute
+    val id: Long? = null
+) : NavRoute {
+    private val titlePath get() = title.lowercase().replace(' ', '-')
+
+    override fun toPath() = id?.let { "$titlePath/$it" } ?: titlePath
+
+    fun matchRoute(path: String) = if (path.startsWith(titlePath)) this else null
+}
 
 @Serializable
 object StartRoute : AppRoute("Start")
@@ -20,10 +27,10 @@ data class ChapterFeedRoute(val feedSpan: Int = FeedSpan.Week.ordinal) : AppRout
 
 @Serializable
 data class ChapterRoute(
-    val id: Long,
+    val chapterId: Long,
     val chapterTitle: String?,
     val tab: String? = null,
-) : AppRoute(chapterTitle ?: "Chapter: $id")
+) : AppRoute(chapterTitle ?: "Chapter: $chapterId")
 
 @Serializable
 data class ChapterPageRoute(

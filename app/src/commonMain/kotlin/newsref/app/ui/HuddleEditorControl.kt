@@ -15,6 +15,7 @@ import pondui.ui.controls.*
 import pondui.ui.theme.Pond
 import pondui.io.LocalUserContext
 import newsref.model.data.HuddleKey
+import pondui.io.collectState
 
 @Composable
 fun HuddleEditorControl(
@@ -23,7 +24,7 @@ fun HuddleEditorControl(
     viewModel: HuddleEditorModel = viewModel { HuddleEditorModel(key) }
 ) {
     val state by viewModel.state.collectAsState()
-    val userState by LocalUserContext.current.state.collectAsState()
+    val userState by LocalUserContext.collectState()
 
     IconButton(TablerIcons.Edit) { viewModel.toggleIsOpen() }
 

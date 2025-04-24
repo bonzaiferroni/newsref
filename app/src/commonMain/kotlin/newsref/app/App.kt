@@ -2,6 +2,7 @@ package newsref.app
 
 import androidx.compose.runtime.*
 import androidx.compose.ui.text.font.FontWeight
+import kotlinx.coroutines.flow.StateFlow
 import pondui.ui.core.PondApp
 import pondui.ui.nav.NavRoute
 import pondui.ui.theme.ProvideSkyColors
@@ -19,7 +20,6 @@ import pondui.io.ProvideUserContext
 @Composable
 @Preview
 fun App(
-    initialRoute: NavRoute,
     changeRoute: (NavRoute) -> Unit,
     exitApp: (() -> Unit)?,
 ) {
@@ -34,7 +34,6 @@ fun App(
         ProvideSkyColors {
             ProvideUserContext {
                 PondApp(
-                    initialRoute = initialRoute,
                     changeRoute = changeRoute,
                     config = appConfig,
                     exitApp = exitApp

@@ -25,7 +25,7 @@ class ChapterModel(
 ) : StateModel<ChapterState>(ChapterState()) {
     init {
         viewModelScope.launch {
-            val chapter = chapterStore.readChapter(route.id)
+            val chapter = chapterStore.readChapter(route.chapterId)
             val pages = chapter.pages ?: error("Chapter had null pages")
             val articles = pages.filter { it.sourceType == SourceType.Article }.toImmutableList()
             val references = pages.filter { it.sourceType == SourceType.Reference }.toImmutableList()
@@ -38,7 +38,7 @@ class ChapterModel(
             ) }
         }
         viewModelScope.launch {
-            val persons = chapterStore.readChapterPersons(route.id)
+            val persons = chapterStore.readChapterPersons(route.chapterId)
                 .sortedByDescending { it.mentions }
                 .toImmutableList()
             setState { it.copy(persons = persons) }
