@@ -3,7 +3,7 @@ package newsref.db
 import klutch.db.tables.UserTable
 import klutch.environment.Environment
 import kotlinx.coroutines.runBlocking
-import newsref.db.core.PgVectorManager
+import klutch.db.PgVectorManager
 import klutch.db.services.UserInitService
 import newsref.db.tables.*
 import org.jetbrains.exposed.sql.*

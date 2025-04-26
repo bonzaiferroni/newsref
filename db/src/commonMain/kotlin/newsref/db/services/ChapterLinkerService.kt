@@ -1,7 +1,7 @@
 package newsref.db.services
 
 import klutch.db.DbService
-import newsref.db.core.cosineDistance
+import klutch.db.cosineDistance
 import newsref.db.model.Chapter
 import newsref.db.tables.ChapterAspect
 import newsref.db.tables.ChapterTable

@@ -1,7 +1,7 @@
 package newsref.db
 
 import klutch.environment.readEnvFromPath
-import newsref.db.core.PgVectorManager
+import klutch.db.PgVectorManager
 import org.flywaydb.core.Flyway
 import org.jetbrains.exposed.sql.ExperimentalDatabaseMigrationApi
 import org.jetbrains.exposed.sql.transactions.TransactionManager

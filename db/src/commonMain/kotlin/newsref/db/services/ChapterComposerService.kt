@@ -1,12 +1,12 @@
 package newsref.db.services
 
 import klutch.db.DbService
+import klutch.db.cosineDistance
 import klutch.db.read
 import klutch.utils.since
 import klutch.utils.toLocalDateTimeUtc
 import kotlinx.datetime.Instant
 import newsref.db.*
-import newsref.db.core.*
 import newsref.db.model.*
 import newsref.db.tables.*
 import newsref.model.data.ContentType

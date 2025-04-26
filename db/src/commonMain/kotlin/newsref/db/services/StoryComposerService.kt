@@ -1,7 +1,7 @@
 package newsref.db.services
 
 import klutch.db.DbService
-import newsref.db.core.cosineDistance
+import klutch.db.cosineDistance
 import newsref.db.globalConsole
 import newsref.db.tables.*
 import klutch.utils.toLocalDateTimeUtc

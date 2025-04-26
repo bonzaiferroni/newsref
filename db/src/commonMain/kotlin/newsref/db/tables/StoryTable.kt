@@ -1,7 +1,7 @@
 package newsref.db.tables
 
 import klutch.utils.toInstantUtc
-import newsref.db.core.vector
+import klutch.db.vector
 import newsref.db.tables.StoryTable.coherence
 import newsref.db.tables.StoryTable.happenedAt
 import newsref.db.tables.StoryTable.score
