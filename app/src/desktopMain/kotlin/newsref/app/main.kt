@@ -21,9 +21,7 @@ fun main() {
             title = "App",
             undecorated = true,
         ) {
-            DevelopmentEntryPoint {
-                App(cache.route, { cacheFlow.value = cache.copy(route = it as AppRoute )}, ::exitApplication)
-            }
+            App({ cacheFlow.value = cache.copy(route = it as AppRoute )}, ::exitApplication)
         }
     }
 }

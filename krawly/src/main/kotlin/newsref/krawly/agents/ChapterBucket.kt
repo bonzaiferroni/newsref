@@ -106,7 +106,7 @@ class ChapterBucket(
             removedIds.add(signal.page.id)
         } while (size > 1)
         if (removedIds.isNotEmpty()) {
-            console.log("${removedIds.size} shaken out of bucket of $beforeSize ($chapterId)")
+            // console.log("${removedIds.size} shaken out of bucket of $beforeSize ($chapterId)")
         }
         return removedIds
     }

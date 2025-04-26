@@ -15,11 +15,6 @@ val appConfig = PondConfig(
     name = "Newsref",
     logo = TablerIcons.News,
     home = StartRoute,
-    doors = persistentListOf(
-        PortalDoor(TablerIcons.CalendarEvent, ChapterFeedRoute()),
-        PortalDoor(TablerIcons.News, HostFeedRoute),
-        PortalDoor(TablerIcons.YinYang, HelloRoute),
-    ),
     routes = persistentListOf(
         RouteConfig(StartRoute::matchRoute) { defaultScreen<StartRoute> { StartScreen(it) } },
         RouteConfig(HelloRoute::matchRoute) { defaultScreen<HelloRoute> { HelloScreen(it) } },
@@ -29,5 +24,10 @@ val appConfig = PondConfig(
         RouteConfig() { defaultScreen<HostFeedRoute> { HostFeedScreen(it) } },
         RouteConfig() { defaultScreen<HostRoute> { HostScreen(it) } },
         RouteConfig() { defaultScreen<PageRoute> { PageScreen(it) } },
-    )
+    ),
+    doors = persistentListOf(
+        PortalDoor(TablerIcons.CalendarEvent, ChapterFeedRoute()),
+        PortalDoor(TablerIcons.News, HostFeedRoute),
+        PortalDoor(TablerIcons.YinYang, HelloRoute),
+    ),
 )
