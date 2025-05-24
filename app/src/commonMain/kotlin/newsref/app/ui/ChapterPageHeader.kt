@@ -40,7 +40,7 @@ fun ChapterPageHeader(
         modifier = Modifier.fillMaxWidth()
     ) {
         Column(
-            verticalArrangement = Pond.ruler.columnTight,
+            verticalArrangement = Pond.ruler.columnUnit,
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
             val color = Pond.colors.getSwatchFromIndex(chapterPage.chapterId)
@@ -59,7 +59,7 @@ fun ChapterPageHeader(
             Box(
                 contentAlignment = Alignment.Center,
                 modifier = Modifier.shadow(Pond.ruler.shadowElevation, Pond.ruler.round)
-                    .background(Pond.colors.accent)
+                    .background(Pond.colors.secondary)
                     .clickable { println("open in browser") }
                     .padding(Pond.ruler.basePadding)
             ) {

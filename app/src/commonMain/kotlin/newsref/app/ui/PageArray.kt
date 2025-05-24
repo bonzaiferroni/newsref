@@ -17,7 +17,7 @@ import newsref.model.data.ChapterPageLite
 fun PageArray(pages: ImmutableList<ChapterPageLite>, color: Color) {
     val ruler = Pond.ruler
     Row(
-        horizontalArrangement = ruler.rowTight
+        horizontalArrangement = ruler.rowUnit
     ) {
         for (chapterPage in pages) {
             Box(

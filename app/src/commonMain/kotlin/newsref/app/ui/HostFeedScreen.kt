@@ -45,7 +45,7 @@ fun HostItem(
 ) {
     val nav = LocalNav.current
     Row(
-        horizontalArrangement = Pond.ruler.rowTight,
+        horizontalArrangement = Pond.ruler.rowUnit,
         verticalAlignment = Alignment.CenterVertically,
         modifier = Modifier.fillMaxWidth()
             .clickable { nav.go(HostRoute(host.id, host.core)) }
@@ -53,10 +53,10 @@ fun HostItem(
         val color = Pond.colors.getSwatchFromIndex(host.id)
         ShapeImage(url = host.logo, color = color, modifier = Modifier.height(48.dp))
         Column(
-            verticalArrangement = Pond.ruler.columnTight,
+            verticalArrangement = Pond.ruler.columnUnit,
         ) {
             Row(
-                horizontalArrangement = Pond.ruler.rowTight
+                horizontalArrangement = Pond.ruler.rowUnit
             ) {
                 H2(host.name ?: host.core, modifier = Modifier.weight(1f))
                 Button(onClick = { togglePin(host.id) }) {

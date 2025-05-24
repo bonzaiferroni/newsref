@@ -28,7 +28,7 @@ fun HuddleEditorControl(
 
     IconButton(TablerIcons.Edit) { viewModel.toggleIsOpen() }
 
-    FloatyContent(state.isOpen, viewModel::toggleIsOpen) {
+    Cloud(state.isOpen, viewModel::toggleIsOpen) {
         TabCard(
             shape = Pond.ruler.rounded,
             modifier = Modifier.fillMaxWidth()

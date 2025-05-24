@@ -19,7 +19,7 @@ fun ChapterPageScreen(
     if (chapter == null) return
 
     Scaffold(
-        verticalArrangement = Pond.ruler.columnTight
+        verticalArrangement = Pond.ruler.columnUnit
     ) {
         BalloonChart(
             selectedId = state.selectedId,

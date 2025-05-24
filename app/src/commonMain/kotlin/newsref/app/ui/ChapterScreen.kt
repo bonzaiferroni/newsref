@@ -28,7 +28,7 @@ fun ChapterScreen(
     val articles = chapter?.pages
     if (chapter == null || articles == null) return
     Scaffold(
-        verticalArrangement = Pond.ruler.columnTight
+        verticalArrangement = Pond.ruler.columnUnit
     ) {
         BalloonChart(0, state.balloons, 400.dp, { })
         H1(chapter.title ?: "Chapter: ${chapter.id}")
@@ -63,7 +63,7 @@ fun ChapterPageLiteItem(
     val nav = LocalNav.current
     val page = chapterPage.page
     Row(
-        horizontalArrangement = Pond.ruler.rowTight,
+        horizontalArrangement = Pond.ruler.rowUnit,
         modifier = modifier
             .clickable {
                 if (chapterId != null) {
@@ -84,13 +84,13 @@ fun ChapterPageLiteItem(
         Column(modifier = Modifier.weight(1f)) {
             Row(
                 modifier = Modifier.fillMaxWidth(),
-                horizontalArrangement = Pond.ruler.rowTight
+                horizontalArrangement = Pond.ruler.rowUnit
             ) {
                 val uriHandler = LocalUriHandler.current
                 H4(page.headline ?: "source: ${page.id}", maxLines = 2, modifier = Modifier.weight(1f))
                 Button(
                     onClick = { uriHandler.openUri(page.url) },
-                    background = Pond.colors.accent
+                    background = Pond.colors.secondary
                 ) { Text("Read") }
             }
             FlowRow(

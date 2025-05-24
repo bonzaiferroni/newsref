@@ -15,8 +15,8 @@ fun PropertyRow(
 ) {
     FlowRow(
         modifier = Modifier.fillMaxWidth(),
-        horizontalArrangement = Pond.ruler.rowTight,
-        verticalArrangement = Pond.ruler.columnTight,
+        horizontalArrangement = Pond.ruler.rowUnit,
+        verticalArrangement = Pond.ruler.columnUnit,
     ) {
         content()
     }

@@ -33,7 +33,7 @@ fun BalloonHeader(
     pages: ImmutableList<ChapterPageLite>?
 ) {
     Row(
-        horizontalArrangement = Pond.ruler.rowTight,
+        horizontalArrangement = Pond.ruler.rowUnit,
         modifier = Modifier.height(height.dp)
     ) {
         ShapeImage(
