@@ -3,7 +3,7 @@ package newsref.krawly.agents
 import kotlinx.coroutines.*
 import newsref.db.*
 import newsref.db.services.*
-import newsref.krawly.clients.GeminiClient
+import kabinet.clients.GeminiClient
 import kotlin.time.Duration.Companion.hours
 
 private val console = globalConsole.getHandle("HuddleRunner")

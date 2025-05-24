@@ -2,7 +2,7 @@ package newsref.krawly.agents
 
 import newsref.db.readEnvFromDirectory
 import newsref.krawly.DbTest
-import newsref.krawly.clients.GeminiClient
+import kabinet.clients.GeminiClient
 import kotlin.test.Test
 
 class ChapterWatcherTests() : DbTest(true) {

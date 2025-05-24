@@ -1,10 +1,10 @@
 package newsref.krawly.clients
 
+import kabinet.clients.GeminiClient
 import kotlinx.coroutines.runBlocking
 import newsref.db.readEnvFromDirectory
 import newsref.krawly.DbTest
 import newsref.krawly.agents.ArticleReader
-import newsref.krawly.agents.TitleResponse
 import org.junit.jupiter.api.Test
 
 class GeminiClientTests : DbTest(true) {

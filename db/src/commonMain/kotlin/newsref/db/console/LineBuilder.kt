@@ -1,5 +1,7 @@
 package newsref.db.console
 
+import kabinet.log.LogLevel
+
 class LineBuilder(
 ) {
 	val builder = StringBuilder()

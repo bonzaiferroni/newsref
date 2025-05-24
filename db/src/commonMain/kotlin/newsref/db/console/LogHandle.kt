@@ -1,5 +1,7 @@
 package newsref.db.console
 
+import kabinet.log.LogLevel
+
 class LogHandle(
 	val name: String,
 	val showStatus: Boolean,

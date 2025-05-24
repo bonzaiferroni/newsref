@@ -1,5 +1,6 @@
 package newsref.db.console
 
+import kabinet.log.LogLevel
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
@@ -128,14 +129,6 @@ class LogConsole {
 const val MAX_SOURCE_CHARS = 8
 
 private typealias LogMessage = Triple<LogLevel, String, String>
-
-enum class LogLevel {
-	TRACE,
-	DEBUG,
-	INFO,
-	WARNING,
-	ERROR,
-}
 
 data class ConsoleConfig(
 	val showStatus: Boolean = false,

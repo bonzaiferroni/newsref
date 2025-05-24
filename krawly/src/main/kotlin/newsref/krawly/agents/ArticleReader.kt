@@ -1,5 +1,6 @@
 package newsref.krawly.agents
 
+import kabinet.clients.GeminiClient
 import kotlinx.coroutines.*
 import newsref.db.*
 import newsref.db.model.*

@@ -1,9 +1,9 @@
 package newsref.krawly.agents
 
+import kabinet.clients.GeminiClient
 import kotlinx.coroutines.delay
 import newsref.db.*
 import newsref.db.model.Page
-import newsref.krawly.clients.*
 import java.io.File
 import kotlin.time.Duration.Companion.seconds
 

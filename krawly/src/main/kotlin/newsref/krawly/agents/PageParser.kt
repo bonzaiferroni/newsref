@@ -7,7 +7,6 @@ import newsref.db.core.LogBook
 import newsref.db.core.toUrlOrNull
 import newsref.db.core.toUrlWithContextOrNull
 import newsref.db.globalConsole
-import newsref.db.log.toYellow
 import newsref.db.model.Host
 import newsref.db.model.LeadInfo
 import newsref.db.services.ContentService

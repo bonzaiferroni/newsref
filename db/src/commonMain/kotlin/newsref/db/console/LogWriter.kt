@@ -1,5 +1,7 @@
 package newsref.db.console
 
+import kabinet.log.LogLevel
+
 interface LogWriter {
 	val minLevel: LogLevel
 	fun writeLine(source: String, level: LogLevel, line: String)

@@ -6,7 +6,7 @@ import newsref.db.model.Page
 import newsref.db.model.Person
 import newsref.db.services.PERSON_UNCLEAR
 import newsref.db.services.PeopleLinkerService
-import newsref.krawly.clients.GeminiClient
+import kabinet.clients.GeminiClient
 import newsref.krawly.clients.promptTemplate
 
 private val console = globalConsole.getHandle(PeopleLinkerClient::class)

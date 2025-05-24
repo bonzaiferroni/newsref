@@ -1,5 +1,6 @@
 package newsref.krawly.clients
 
+import kabinet.clients.GeminiClient
 import kotlinx.serialization.ExperimentalSerializationApi
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable

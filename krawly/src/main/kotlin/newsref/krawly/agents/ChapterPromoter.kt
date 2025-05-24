@@ -5,7 +5,7 @@ import kotlinx.serialization.Serializable
 import newsref.db.*
 import newsref.db.model.Chapter
 import newsref.db.services.*
-import newsref.krawly.clients.GeminiClient
+import kabinet.clients.GeminiClient
 import newsref.krawly.clients.promptTemplate
 import newsref.model.data.Relevance
 import kotlin.time.Duration.Companion.seconds

@@ -19,7 +19,7 @@ import newsref.db.services.ChapterPageSignal
 import newsref.db.services.ContentService
 import newsref.db.services.DataLogService
 import newsref.db.services.EmbeddingService
-import newsref.krawly.clients.GeminiClient
+import kabinet.clients.GeminiClient
 import newsref.model.data.ContentType
 import kotlin.time.Duration
 import kotlin.time.Duration.Companion.hours
